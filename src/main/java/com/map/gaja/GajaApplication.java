@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GajaApplication {
 
 	public static void main(String[] args) {
+		System.out.println("good");
 		SpringApplication.run(GajaApplication.class, args);
 	}
 
