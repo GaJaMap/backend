@@ -1,13 +1,11 @@
 package com.map.gaja.user.domain.model;
 
-import com.map.gaja.bundle.domain.model.Bundle;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Builder
@@ -35,7 +33,4 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime lastLoginDate;
-
-    @OneToMany(mappedBy = "user")
-    private List<Bundle> bundles;
 }
