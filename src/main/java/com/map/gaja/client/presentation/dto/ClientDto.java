@@ -11,7 +11,7 @@ import javax.validation.constraints.Max;
 @Data
 @NoArgsConstructor
 public class ClientDto {
-    @Max(100)
+    @Max(value = 10, message = "ID는 최대 10")
     private long id;
     private String name;
 }
