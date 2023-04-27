@@ -1,6 +1,6 @@
 package com.map.gaja.global.config;
 
-import com.map.gaja.global.filter.EmailCheckInterceptor;
+import com.map.gaja.global.interceptor.EmailCheckInterceptor;
 import com.map.gaja.global.resolver.LoginEmailResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

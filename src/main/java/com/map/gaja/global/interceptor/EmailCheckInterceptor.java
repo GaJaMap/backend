@@ -1,4 +1,4 @@
-package com.map.gaja.global.filter;
+package com.map.gaja.global.interceptor;
 
 import com.map.gaja.global.resolver.LoginEmailResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
