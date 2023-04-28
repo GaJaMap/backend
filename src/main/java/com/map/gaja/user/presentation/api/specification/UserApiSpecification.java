@@ -1,4 +1,4 @@
-package com.map.gaja.user.presentation.swagger;
+package com.map.gaja.user.presentation.api.specification;
 
 import com.map.gaja.global.exception.ExceptionDto;
 import com.map.gaja.user.presentation.dto.request.Req;
