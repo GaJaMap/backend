@@ -1,8 +1,8 @@
-package com.map.gaja.client.presentation.api;
+package com.map.gaja.client.presentation.template;
 
 import com.map.gaja.client.domain.exception.ClientException;
-import com.map.gaja.client.presentation.dto.ClientBatchDto;
-import com.map.gaja.client.presentation.dto.ClientDto;
+import com.map.gaja.client.presentation.template.ClientBatchDto;
+import com.map.gaja.client.presentation.template.ClientDto;
 import com.map.gaja.global.annotation.LoginEmail;
 import org.springframework.web.bind.annotation.*;
 

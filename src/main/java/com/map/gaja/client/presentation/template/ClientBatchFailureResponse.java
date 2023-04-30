@@ -1,4 +1,4 @@
-package com.map.gaja.client.presentation.dto;
+package com.map.gaja.client.presentation.template;
 
 
 import lombok.Builder;
