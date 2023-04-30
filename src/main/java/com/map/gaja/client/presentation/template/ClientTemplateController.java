@@ -1,8 +1,6 @@
 package com.map.gaja.client.presentation.template;
 
 import com.map.gaja.client.domain.exception.ClientException;
-import com.map.gaja.client.presentation.template.ClientBatchDto;
-import com.map.gaja.client.presentation.template.ClientDto;
 import com.map.gaja.global.annotation.LoginEmail;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +12,12 @@ import java.util.stream.Collectors;
  * 예시용 코드이기 때문에 언제든지 삭제
  */
 @RestController
-public class ClientController {
+public class ClientTemplateController {
 
     /**
      * ClientException 발생을 위한 컨트롤러
      */
-    @PostMapping("/api/client/test")
+    @PostMapping("/api/test/client")
     public String testBatch(@RequestBody @Valid ClientBatchDto batchClients) {
         List<Long> result = batchClients.getClients().stream()
                 .filter(c -> c.getId() == 1L || c.getId() == 2L)
