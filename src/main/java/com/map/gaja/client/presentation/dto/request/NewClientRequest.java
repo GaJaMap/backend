@@ -8,4 +8,5 @@ import lombok.*;
 @Data
 public class NewClientRequest {
     private String clientName;
+    private Long groupId;
 }
