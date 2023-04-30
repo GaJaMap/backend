@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class ClientController {
     }
 
     @PostMapping("/bulk")
-    public ResponseEntity<ClientBulkResponse> addClients() {
+    public ResponseEntity<ClientBulkResponse> addClients(@RequestParam MultipartFile file) {
         // 엑셀 등의 파일로 거래처 등록
         log.info("ClientController.addClients");
         return new ResponseEntity<>(null, HttpStatus.CREATED);
