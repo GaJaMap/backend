@@ -8,6 +8,8 @@ import java.util.List;
  * 여러 건의 등록할 사용자 정보
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class NewClientBulkRequest {
     private List<NewClientRequest> clients;
 }

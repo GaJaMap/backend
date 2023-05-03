@@ -7,6 +7,8 @@ import lombok.*;
  * 하나의 등록된 사용자 정보
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientResponse {
     private Long clientId;
     private String name;
