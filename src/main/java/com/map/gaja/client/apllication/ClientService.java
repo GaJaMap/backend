@@ -1,7 +1,6 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.domain.service.ClientDomainService;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientBulkResponse;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +19,6 @@ import java.util.List;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
-    private final ClientDomainService clientDomainService;
 
     public ClientResponse findUser(Long clientId) {
         Client client = clientRepository.findById(clientId)
@@ -28,13 +27,31 @@ public class ClientService {
     }
 
     public ClientBulkResponse saveClients(NewClientBulkRequest requestClients) {
-        List<Client> clients = clientDomainService.createClients(requestClients);
+        List<Client> clients = dtoToEntity(requestClients);
         clientRepository.saveAll(clients);
-
-        List<ClientResponse> clientResponse = new ArrayList<>();
-        clients.forEach(client -> clientResponse.add(new ClientResponse(client)));
-        ClientBulkResponse response = new ClientBulkResponse(clientResponse);
+        ClientBulkResponse response = entityToDto(clients);
         return response;
     }
-    
+
+    private ClientBulkResponse entityToDto(List<Client> clients) {
+        List<ClientResponse> responseClients = new ArrayList<>();
+
+        clients.forEach(client -> {
+            ClientResponse clientResponse = new ClientResponse();
+            clientResponse.setClientId(client.getId());
+            clientResponse.setName(client.getName());
+            responseClients.add(clientResponse);
+        });
+
+        return new ClientBulkResponse(responseClients);
+    }
+
+    private List<Client> dtoToEntity(NewClientBulkRequest request) {
+        List<Client> clients = new ArrayList<>();
+        request.getClients().forEach(client ->
+                clients.add(new Client(client.getClientName(), "010-1111-2222", LocalDateTime.now(), null, null, null))
+        );
+        return clients;
+    }
+
 }
