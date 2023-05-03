@@ -1,17 +1,14 @@
 package com.map.gaja.client.domain.model;
 
 import com.map.gaja.bundle.domain.model.Bundle;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
-@AllArgsConstructor
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +34,12 @@ public class Client {
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
 
-    public Client(String name) {
-        // 흐름 파악을 위한 간단 생성
+    public Client(String name, String phoneNumber, LocalDateTime createdDate, ClientAddress address, ClientLocation location, Bundle bundle) {
         this.name = name;
-        this.phoneNumber = "010-1111-2222";
-        this.createdDate = LocalDateTime.now();
-        this.bundle = null;
+        this.phoneNumber = phoneNumber;
+        this.createdDate = createdDate;
+        this.address = address;
+        this.location = location;
+        this.bundle = bundle;
     }
 }
