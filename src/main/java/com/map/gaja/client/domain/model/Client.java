@@ -36,4 +36,12 @@ public class Client {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
+
+    public Client(String name) {
+        // 흐름 파악을 위한 간단 생성
+        this.name = name;
+        this.phoneNumber = "010-1111-2222";
+        this.createdDate = LocalDateTime.now();
+        this.bundle = null;
+    }
 }
