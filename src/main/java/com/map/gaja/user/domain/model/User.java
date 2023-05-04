@@ -35,4 +35,9 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime lastLoginDate;
 
+    public void checkCreateBundlePermission() {
+        if (authority.getLimitCount() <= bundleCount) {
+            throw new BundleLimitExceededException(authority.name(), authority.getLimitCount());
+        }
+    }
 }
