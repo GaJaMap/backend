@@ -40,4 +40,8 @@ public class User {
             throw new BundleLimitExceededException(authority.name(), authority.getLimitCount());
         }
     }
+
+    public void increaseBundleCount() {
+        bundleCount++;
+    }
 }
