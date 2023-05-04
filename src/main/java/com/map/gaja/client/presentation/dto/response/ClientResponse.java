@@ -12,9 +12,4 @@ import lombok.*;
 public class ClientResponse {
     private Long clientId;
     private String name;
-
-    public ClientResponse(Client client) {
-        clientId = client.getId();
-        name = client.getName();
-    }
 }

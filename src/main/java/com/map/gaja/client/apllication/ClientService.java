@@ -23,7 +23,7 @@ public class ClientService {
     public ClientResponse findUser(Long clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
-        return new ClientResponse(client);
+        return entityToDto(client);
     }
 
     public ClientBulkResponse saveClients(NewClientBulkRequest requestClients) {
@@ -52,6 +52,10 @@ public class ClientService {
                 clients.add(new Client(client.getClientName(), "010-1111-2222", LocalDateTime.now(), null, null, null))
         );
         return clients;
+    }
+
+    private ClientResponse entityToDto(Client client) {
+        return new ClientResponse(client.getId(), client.getName());
     }
 
 }
