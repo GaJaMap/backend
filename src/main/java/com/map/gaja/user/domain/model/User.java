@@ -1,5 +1,6 @@
 package com.map.gaja.user.domain.model;
 
+import com.map.gaja.user.domain.exception.BundleLimitExceededException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private Integer groupCount;
+    private Integer bundleCount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -33,4 +34,5 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime lastLoginDate;
+
 }
