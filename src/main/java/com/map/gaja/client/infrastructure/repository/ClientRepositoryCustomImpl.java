@@ -14,8 +14,8 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
     private final EntityManager em;
 
     public List<Client> mockFindClientByCondition(String name) {
-        List<Client> list = em.createQuery("Select c From Client c Where c.name like '%:name%'", Client.class)
-                .setParameter("name", name)
+        List<Client> list = em.createQuery("Select c From Client c Where c.name like :name", Client.class)
+                .setParameter("name", "%"+name+"%")
                 .getResultList();
         return list;
     }
