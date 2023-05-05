@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/clients")
 @RequiredArgsConstructor
 public class GetClientController {
-    private final ClientService clientService;
+    private final ClientQueryService clientQueryService;
 
     @GetMapping("/{clientId}")
     public ResponseEntity<ClientResponse> getClient(@PathVariable Long clientId) {
         // 거래처 조회
         log.info("ClientController.getClient clinetId={}", clientId);
-        ClientResponse response = clientService.findUser(clientId);
+        ClientResponse response = clientQueryService.findUser(clientId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -32,7 +32,7 @@ public class GetClientController {
     public ResponseEntity<ClientListResponse> searchClientsByCondition(@RequestParam String name) {
         log.info("GetClientController.searchClientsByCondition name={}",name);
         // 거래처 조건 조회
-        ClientListResponse response = clientService.findUser(name);
+        ClientListResponse response = clientQueryService.findUser(name);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
