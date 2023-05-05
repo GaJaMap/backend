@@ -24,6 +24,12 @@ public class ClientController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
+    @GetMapping("/nearby")
+    public ResponseEntity<ClientBulkResponse> getClient(NearbyClientSearchRequest nearby) {
+        // 주변 거래처 조회
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{clientId}")
     public ResponseEntity<ClientResponse> deleteClient(@PathVariable Long clientId) {
         // 거래처 삭제
