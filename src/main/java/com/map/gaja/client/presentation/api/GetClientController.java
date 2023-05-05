@@ -28,6 +28,13 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<ClientListResponse> searchClientsByCondition(@RequestParam String name) {
+        log.info("GetClientController.searchClientsByCondition name={}",name);
+        // 거래처 조건 조회
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
     @GetMapping("/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(NearbyClientSearchRequest nearby) {
         // 주변 거래처 조회
