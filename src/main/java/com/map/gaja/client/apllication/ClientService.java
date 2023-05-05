@@ -3,7 +3,7 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
-import com.map.gaja.client.presentation.dto.response.ClientBulkResponse;
+import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
@@ -28,10 +28,10 @@ public class ClientService {
         return entityToDto(client);
     }
 
-    public ClientBulkResponse saveClients(NewClientBulkRequest requestClients) {
+    public ClientListResponse saveClients(NewClientBulkRequest requestClients) {
         List<Client> clients = dtoToEntity(requestClients);
         clientRepository.saveAll(clients);
-        ClientBulkResponse response = entityToDto(clients);
+        ClientListResponse response = entityToDto(clients);
         return response;
     }
 
@@ -44,7 +44,7 @@ public class ClientService {
         );
     }
 
-    private ClientBulkResponse entityToDto(List<Client> clients) {
+    private ClientListResponse entityToDto(List<Client> clients) {
         List<ClientResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
@@ -54,7 +54,7 @@ public class ClientService {
             responseClients.add(clientResponse);
         });
 
-        return new ClientBulkResponse(responseClients);
+        return new ClientListResponse(responseClients);
     }
 
     private List<Client> dtoToEntity(NewClientBulkRequest request) {

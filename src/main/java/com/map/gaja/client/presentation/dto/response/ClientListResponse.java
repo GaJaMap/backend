@@ -10,6 +10,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientBulkResponse {
+public class ClientListResponse {
     List<ClientResponse> clients;
 }
