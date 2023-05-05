@@ -4,9 +4,11 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientBulkResponse;
+import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,15 @@ public class ClientService {
         clientRepository.saveAll(clients);
         ClientBulkResponse response = entityToDto(clients);
         return response;
+    }
+
+    public ClientDeleteResponse deleteClient(Long clientId) {
+        clientRepository.deleteById(clientId);
+        return new ClientDeleteResponse(
+                HttpStatus.OK.value(),
+                clientId,
+                "정상적으로 삭제되었습니다."
+        );
     }
 
     private ClientBulkResponse entityToDto(List<Client> clients) {

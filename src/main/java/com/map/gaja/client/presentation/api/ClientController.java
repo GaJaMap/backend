@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientBulkResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
@@ -13,13 +14,20 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/client")
+@RequestMapping("/api/clients")
 public class ClientController {
 
     @GetMapping("/{clientId}")
     public ResponseEntity<ClientResponse> getClient(@PathVariable Long clientId) {
         // 거래처 조회
         log.info("ClientController.getClient clinetId={}", clientId);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{clientId}")
+    public ResponseEntity<ClientResponse> deleteClient(@PathVariable Long clientId) {
+        // 거래처 삭제
+        log.info("ClientController.deleteClient clinetId={}", clientId);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
