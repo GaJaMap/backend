@@ -16,12 +16,12 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ClientServiceTest {
+class ClientQueryServiceTest {
     @Mock
     private ClientRepository repository;
 
     @InjectMocks
-    private ClientService clientService;
+    private ClientQueryService clientQueryService;
 
     @Test
     public void testFindUser() throws Exception {
@@ -34,7 +34,7 @@ class ClientServiceTest {
         when(findClient.getName()).thenReturn(searchName);
 
         //when
-        ClientResponse response = clientService.findUser(searchId);
+        ClientResponse response = clientQueryService.findUser(searchId);
 
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
@@ -50,7 +50,7 @@ class ClientServiceTest {
         when(repository.findById(searchId)).thenReturn(Optional.empty());
 
         //when
-        assertThatThrownBy(()->clientService.findUser(searchId))
+        assertThatThrownBy(()-> clientQueryService.findUser(searchId))
                 .isInstanceOf(ClientNotFoundException.class);
     }
 }
