@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NearbyClientSearchRequest {
-    private long latitude; // 위도
-    private long longitude; // 경도
+    private double latitude; // 위도
+    private double longitude; // 경도
     private long radius; // 반경
 }
