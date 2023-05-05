@@ -21,20 +21,6 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @GetMapping("/{clientId}")
-    public ResponseEntity<ClientResponse> getClient(@PathVariable Long clientId) {
-        // 거래처 조회
-        log.info("ClientController.getClient clinetId={}", clientId);
-        ClientResponse response = clientService.findUser(clientId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/nearby")
-    public ResponseEntity<ClientListResponse> nearbyClientSearch(NearbyClientSearchRequest nearby) {
-        // 주변 거래처 조회
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
-
     @DeleteMapping("/{clientId}")
     public ResponseEntity<ClientDeleteResponse> deleteClient(@PathVariable Long clientId) {
         // 거래처 삭제
@@ -47,8 +33,8 @@ public class ClientController {
     public ResponseEntity<ClientListResponse> addClient(@RequestBody NewClientBulkRequest clients) {
         // 거래처 등록
         log.info("ClientController.addClient  clients={}", clients);
-        clientService.saveClients(clients);
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        ClientListResponse response = clientService.saveClients(clients);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/bulk")
