@@ -39,6 +39,8 @@ public class GetClientController {
     @GetMapping("/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(NearbyClientSearchRequest nearby) {
         // 주변 거래처 조회
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        log.info("GetClientController.nearbyClientSearch param={}", nearby);
+        ClientListResponse response = clientQueryService.findClientsByLocation(nearby);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

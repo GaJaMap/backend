@@ -2,6 +2,7 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
+import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
@@ -29,5 +30,11 @@ public class ClientQueryService {
         List<Client> clients = clientRepository.mockFindClientByCondition(name);
         return entityToDto(clients);
     }
+
+    public ClientListResponse findClientsByLocation(NearbyClientSearchRequest request) {
+        List<Client> clientsByLocation = clientRepository.findClientsByLocation(request);
+        return entityToDto(clientsByLocation);
+    }
+
 
 }

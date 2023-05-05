@@ -14,5 +14,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class NearbyClientSearchRequest {
     private double latitude; // 위도
     private double longitude; // 경도
-    private long radius; // 반경
+    private double radius; // 반경(미터)
 }
