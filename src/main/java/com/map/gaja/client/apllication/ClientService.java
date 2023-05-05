@@ -28,6 +28,11 @@ public class ClientService {
         return entityToDto(client);
     }
 
+    public ClientListResponse findUser(String name) {
+        List<Client> clients = clientRepository.mockFindClientByCondition(name);
+        return entityToDto(clients);
+    }
+
     public ClientListResponse saveClients(NewClientBulkRequest requestClients) {
         List<Client> clients = dtoToEntity(requestClients);
         clientRepository.saveAll(clients);

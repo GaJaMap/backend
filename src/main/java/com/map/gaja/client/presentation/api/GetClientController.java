@@ -32,7 +32,8 @@ public class GetClientController {
     public ResponseEntity<ClientListResponse> searchClientsByCondition(@RequestParam String name) {
         log.info("GetClientController.searchClientsByCondition name={}",name);
         // 거래처 조건 조회
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        ClientListResponse response = clientService.findUser(name);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/nearby")
