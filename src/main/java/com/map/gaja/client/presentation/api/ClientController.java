@@ -41,6 +41,7 @@ public class ClientController {
     public ResponseEntity<ClientListResponse> addClients(@RequestParam MultipartFile file) {
         // 엑셀 등의 파일로 거래처 등록
         log.info("ClientController.addClients");
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        ClientListResponse response = clientService.parseFileAndSave(file);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
