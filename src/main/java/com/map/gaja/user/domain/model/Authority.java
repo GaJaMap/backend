@@ -1,11 +1,12 @@
 package com.map.gaja.user.domain.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public enum Authority {
-    FREE(2, 100), SILVER(100, 500);
+    FREE(100), SILVER(500);
 
-    private Integer limitGroupCount;
-    private Integer limitClientCount;
+    private Integer limitCount;
 }
