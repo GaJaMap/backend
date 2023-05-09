@@ -3,6 +3,7 @@ package com.map.gaja.client.domain.model;
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class Client {
     @Column(nullable = false)
     private String phoneNumber;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
@@ -35,10 +37,9 @@ public class Client {
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
 
-    public Client(String name, String phoneNumber, LocalDateTime createdDate, ClientAddress address, ClientLocation location, Bundle bundle) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.createdDate = createdDate;
         this.address = address;
         changeLocation(location);
         this.bundle = bundle;

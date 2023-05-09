@@ -29,7 +29,7 @@ public class ClientConvertor {
     protected static List<Client> dtoToEntity(NewClientBulkRequest request) {
         List<Client> clients = new ArrayList<>();
         request.getClients().forEach(client ->
-                clients.add(new Client(client.getClientName(), "010-1111-2222", LocalDateTime.now(), null, null, null))
+                clients.add(new Client(client.getClientName(), "010-1111-2222", null, null, null))
         );
         return clients;
     }
