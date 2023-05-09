@@ -1,6 +1,7 @@
 package com.map.gaja.client.domain.model;
 
 import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,7 +40,23 @@ public class Client {
         this.phoneNumber = phoneNumber;
         this.createdDate = createdDate;
         this.address = address;
-        this.location = location;
+        changeLocation(location);
         this.bundle = bundle;
+    }
+
+    public void changeLocation(ClientLocation location) {
+        validateLocation(location);
+        this.location = location;
+    }
+
+    private void validateLocation(ClientLocation location) {
+        if (!isLocationInKorea(location.getLatitude(), location.getLongitude())) {
+            throw new LocationOutsideKoreaException(location.getLatitude(), location.getLatitude());
+        }
+    }
+
+    private boolean isLocationInKorea(double latitude, double longitude) {
+        return latitude >= 33 && latitude <= 38
+                && longitude >= 124 && longitude <= 132;
     }
 }
