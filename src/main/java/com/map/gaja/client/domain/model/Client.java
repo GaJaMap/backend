@@ -40,14 +40,14 @@ public class Client {
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.address = address;
-        changeLocation(location);
+        changeLocation(location, address);
         this.bundle = bundle;
     }
 
-    public void changeLocation(ClientLocation location) {
+    public void changeLocation(ClientLocation location, ClientAddress address) {
         validateLocation(location);
         this.location = location;
+        this.address = address;
     }
 
     private void validateLocation(ClientLocation location) {
