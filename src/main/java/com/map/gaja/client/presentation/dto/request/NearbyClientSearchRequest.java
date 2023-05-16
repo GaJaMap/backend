@@ -10,9 +10,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class NearbyClientSearchRequest {
     private LocationDto location; // 위도 경도
     private double radius; // 반경(미터)
+
+    public NearbyClientSearchRequest() {
+        location = new LocationDto();
+    }
+
+    public void setLatitude(double latitude) {
+        this.location.setLatitude(latitude);
+    }
+
+    public void setLongitude(double longitude) {
+        this.location.setLongitude(longitude);
+    }
 }

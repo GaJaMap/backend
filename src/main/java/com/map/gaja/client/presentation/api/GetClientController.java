@@ -37,7 +37,7 @@ public class GetClientController {
     }
 
     @GetMapping("/nearby")
-    public ResponseEntity<ClientListResponse> nearbyClientSearch(NearbyClientSearchRequest nearby) {
+    public ResponseEntity<ClientListResponse> nearbyClientSearch(@ModelAttribute NearbyClientSearchRequest nearby) {
         // 주변 거래처 조회
         log.info("GetClientController.nearbyClientSearch param={}", nearby);
         ClientListResponse response = clientQueryService.findClientsByLocation(nearby);
