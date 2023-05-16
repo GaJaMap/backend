@@ -40,8 +40,15 @@ public class Client {
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        changeLocation(location, address);
+
+        if(hasLocation(location))
+            changeLocation(location, address);
+
         this.bundle = bundle;
+    }
+
+    private boolean hasLocation(ClientLocation location) {
+        return location != null && (location.getLatitude() != null || location.getLongitude() != null);
     }
 
     public void changeLocation(ClientLocation location, ClientAddress address) {

@@ -9,6 +9,6 @@ import javax.persistence.Embeddable;
 @Getter
 @AllArgsConstructor
 public class ClientLocation {
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 }

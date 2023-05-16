@@ -2,6 +2,8 @@ package com.map.gaja.client.infrastructure.file;
 
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +30,10 @@ public class MockExcelClientFileParser implements ClientFileParser {
         log.info("ExcelClientFileParser.parse");
         // 일단 단순 값 반환.
         List<NewClientRequest> list = new ArrayList<>();
-        NewClientRequest mock1 = new NewClientRequest("Mock", 1L);
-        NewClientRequest mock2 = new NewClientRequest("Mock", 2L);
+        NewClientRequest mock1 = new NewClientRequest("Mock1", 0L, "010-1111-2222",
+                new AddressDto("aa", "bb", "cc", "dd"), new LocationDto(12.12, 34.34));
+        NewClientRequest mock2 = new NewClientRequest("Mock2", 0L, "010-1111-2222",
+                new AddressDto("aa", "bb", "cc", "dd"), new LocationDto(12.12, 34.34));
 
         list.add(mock1);
         list.add(mock2);

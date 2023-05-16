@@ -26,8 +26,8 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
                         "WHERE c.location.latitude BETWEEN (:lat - :radius) AND (:lat + :radius) " +
                         "AND c.location.longitude BETWEEN (:lng - :radius) AND (:lng + :radius) " +
                         "AND (6371000 * SQRT(POW(c.location.latitude - :lat, 2) + POW(c.location.longitude - :lng, 2))) <= :radius", Client.class)
-                .setParameter("lat", request.getLatitude())
-                .setParameter("lng", request.getLongitude())
+                .setParameter("lat", request.getLocation().getLatitude())
+                .setParameter("lng", request.getLocation().getLongitude())
                 .setParameter("radius", request.getRadius())
                 .getResultList();
         return list;
