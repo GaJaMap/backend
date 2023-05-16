@@ -1,5 +1,7 @@
 package com.map.gaja.client.presentation.dto.request;
 
+import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import lombok.*;
 
 /**
@@ -10,5 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 public class NewClientRequest {
     private String clientName;
-    private Long groupId;
+    private Long bundleId;
+    private String phoneNumber;
+    private AddressDto address;
+    private LocationDto location;
 }

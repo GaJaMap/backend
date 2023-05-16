@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.dto.request;
 
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NearbyClientSearchRequest {
-    private double latitude; // 위도
-    private double longitude; // 경도
+    private LocationDto location; // 위도 경도
     private double radius; // 반경(미터)
 }
