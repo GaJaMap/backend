@@ -1,8 +1,7 @@
 package com.map.gaja.client.presentation.dto.response;
 
-import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.subdto.LocationDto;
 import lombok.*;
 
 /**

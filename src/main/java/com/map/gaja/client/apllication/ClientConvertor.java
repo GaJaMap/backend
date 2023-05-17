@@ -4,12 +4,11 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
-import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

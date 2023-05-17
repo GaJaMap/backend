@@ -1,13 +1,8 @@
 package com.map.gaja.client.presentation.dto.request;
 
-import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.subdto.LocationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Data
 @AllArgsConstructor

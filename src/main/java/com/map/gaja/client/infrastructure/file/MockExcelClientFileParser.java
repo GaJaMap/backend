@@ -2,8 +2,8 @@ package com.map.gaja.client.infrastructure.file;
 
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.subdto.LocationDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
