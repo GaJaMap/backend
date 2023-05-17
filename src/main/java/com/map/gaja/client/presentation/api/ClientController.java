@@ -3,6 +3,7 @@ package com.map.gaja.client.presentation.api;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
+import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
@@ -43,5 +44,14 @@ public class ClientController {
         log.info("ClientController.addClients");
         ClientListResponse response = clientService.parseFileAndSave(file);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{clientId}")
+    public ResponseEntity<ClientResponse> changeClient(@PathVariable Long clientId, @RequestBody NewClientRequest clientRequest) {
+        // 기존 거래처 정보 변경
+        // User가 Client를 가지고 있는가? + 해당 번들을 User가 가지고 있는가?
+        log.info("ClientController.changeClients clientRequest={}", clientRequest);
+        ClientResponse response = clientService.changeClient(clientId, clientRequest);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
