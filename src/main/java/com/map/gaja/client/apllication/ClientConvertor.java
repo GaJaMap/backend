@@ -21,9 +21,7 @@ public class ClientConvertor {
         List<ClientResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
-            ClientResponse clientResponse = new ClientResponse();
-            clientResponse.setClientId(client.getId());
-            clientResponse.setName(client.getName());
+            ClientResponse clientResponse = entityToDto(client);
             responseClients.add(clientResponse);
         });
 
@@ -51,6 +49,11 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
-        return new ClientResponse(client.getId(), client.getName());
+        ClientAddress address = client.getAddress();
+        ClientLocation location = client.getLocation();
+        return new ClientResponse(client.getId(), null, client.getName(), client.getPhoneNumber(),
+                new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
+                new LocationDto(location.getLatitude(), location.getLongitude())
+        );
     }
 }
