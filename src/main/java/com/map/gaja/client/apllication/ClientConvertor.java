@@ -1,7 +1,11 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.client.domain.model.ClientAddress;
+import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
+import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 
@@ -29,7 +33,19 @@ public class ClientConvertor {
     protected static List<Client> dtoToEntity(NewClientBulkRequest request) {
         List<Client> clients = new ArrayList<>();
         request.getClients().forEach(client ->
-                clients.add(new Client(client.getClientName(), "010-1111-2222", null, null, null))
+                {
+                    AddressDto address = client.getAddress();
+                    LocationDto location = client.getLocation();
+                    clients.add(
+                            new Client(
+                                client.getClientName(),
+                                client.getPhoneNumber(),
+                                new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
+                                new ClientLocation(location.getLatitude(), location.getLongitude()),
+                                null // 임시
+                            )
+                        );
+                }
         );
         return clients;
     }
