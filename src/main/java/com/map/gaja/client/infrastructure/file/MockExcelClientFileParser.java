@@ -31,9 +31,9 @@ public class MockExcelClientFileParser implements ClientFileParser {
         // 일단 단순 값 반환.
         List<NewClientRequest> list = new ArrayList<>();
         NewClientRequest mock1 = new NewClientRequest("Mock1", 0L, "010-1111-2222",
-                new AddressDto("aa", "bb", "cc", "dd"), new LocationDto(12.12, 34.34));
+                new AddressDto("aa", "bb", "cc", "dd"), new LocationDto(34.34, 125.125));
         NewClientRequest mock2 = new NewClientRequest("Mock2", 0L, "010-1111-2222",
-                new AddressDto("aa", "bb", "cc", "dd"), new LocationDto(12.12, 34.34));
+                new AddressDto("aa", "bb", "cc", "dd"), new LocationDto(35.35, 126.126));
 
         list.add(mock1);
         list.add(mock2);
