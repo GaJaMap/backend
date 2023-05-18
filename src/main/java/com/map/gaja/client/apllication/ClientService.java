@@ -11,8 +11,6 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,8 +29,15 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final List<ClientFileParser> parsers;
 
-    public ClientListResponse saveClients(NewClientBulkRequest requestClients) {
-        List<Client> clients = dtoToEntity(requestClients);
+    public ClientResponse saveClient(NewClientRequest clientRequest) {
+        Client client = dtoToEntity(clientRequest);
+        clientRepository.save(client);
+        ClientResponse response = entityToDto(client);
+        return response;
+    }
+
+    public ClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {
+        List<Client> clients = dtoToEntity(clientsRequest);
         clientRepository.saveAll(clients);
         ClientListResponse response = entityToDto(clients);
         return response;
@@ -62,7 +67,7 @@ public class ClientService {
             throw new UnsupportedFileTypeException(fileType); // 지원하지 않는 파일형식
         }
 
-        return saveClients(clients);
+        return saveClientList(clients);
     }
 
     public ClientResponse changeClient(Long clientId, NewClientRequest clientRequest) {

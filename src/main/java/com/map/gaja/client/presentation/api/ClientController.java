@@ -1,7 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientService;
-import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
@@ -31,14 +30,22 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientListResponse> addClient(@RequestBody NewClientBulkRequest clients) {
-        // 거래처 등록
-        log.info("ClientController.addClient  clients={}", clients);
-        ClientListResponse response = clientService.saveClients(clients);
+    public ResponseEntity<ClientResponse> addClient(@RequestBody NewClientRequest client) {
+        // 거래처 등록 - 단건 등록
+        log.info("ClientController.addClient  clients={}", client);
+        ClientResponse response = clientService.saveClient(client);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/bulk")
+    public ResponseEntity<ClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
+        // 거래처 등록 - 여러건 등록
+        log.info("ClientController.addBulkClient  clients={}", clients);
+        ClientListResponse response = clientService.saveClientList(clients);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/bulk/file")
     public ResponseEntity<ClientListResponse> addClients(@RequestParam MultipartFile file) {
         // 엑셀 등의 파일로 거래처 등록
         log.info("ClientController.addClients");
