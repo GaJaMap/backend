@@ -71,19 +71,20 @@ public class ClientService {
     }
 
     public ClientResponse changeClient(Long clientId, NewClientRequest clientRequest) {
-        Client clientBeChanged = clientRepository.findById(clientId)
+        Client updatedClient = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Client changedClient = dtoToEntity(clientRequest);
-        ClientLocation changedLocation = changedClient.getLocation();
-        ClientAddress changedAddress = changedClient.getAddress();
+        Client requestEntity = dtoToEntity(clientRequest);
+        ClientLocation changedLocation = requestEntity.getLocation();
+        ClientAddress changedAddress = requestEntity.getAddress();
 
-        clientBeChanged.changeName(clientRequest.getClientName());
-        clientBeChanged.changePhoneNumber(clientRequest.getPhoneNumber());
-        clientBeChanged.changeBundle(null); // 임시 정보
-        clientBeChanged.changeLocation(changedLocation, changedAddress);
+        updatedClient.updateClient(
+                clientRequest.getClientName(),
+                clientRequest.getPhoneNumber(),
+                changedAddress, changedLocation,
+                null);
 
-        return entityToDto(clientBeChanged);
+        return entityToDto(updatedClient);
     }
 }

@@ -4,7 +4,6 @@ import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -41,23 +40,30 @@ public class Client {
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        changeLocation(location, address);
+        updateLocation(location, address);
         this.bundle = bundle;
     }
 
-    public void changeBundle(Bundle bundle) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+        updateName(name);
+        updatePhoneNumber(phoneNumber);
+        updateLocation(location, address);
+        updateBundle(bundle);
+    }
+
+    private void updateBundle(Bundle bundle) {
         this.bundle = bundle;
     }
 
-    public void changeName(String changedName) {
-        this.name = changedName;
+    private void updateName(String name) {
+        this.name = name;
     }
 
-    public void changePhoneNumber(String changedPhoneNumber) {
-        this.phoneNumber = changedPhoneNumber;
+    private void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public void changeLocation(ClientLocation location, ClientAddress address) {
+    private void updateLocation(ClientLocation location, ClientAddress address) {
         validateLocation(location);
         this.location = location;
         this.address = address;
