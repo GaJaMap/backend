@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class NearbyClientSearchRequest {
     private LocationDto location; // 위도 경도
-    private double radius; // 반경(미터)
+    private Double radius; // 반경(미터)
 
     public NearbyClientSearchRequest() {
         location = new LocationDto();
