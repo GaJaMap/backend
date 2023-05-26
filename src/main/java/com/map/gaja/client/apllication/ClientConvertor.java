@@ -33,7 +33,8 @@ public class ClientConvertor {
         ClientLocation location = client.getLocation();
         return new ClientResponse(client.getId(), null, client.getName(), client.getPhoneNumber(),
                 new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
-                new LocationDto(location.getLatitude(), location.getLongitude())
+                new LocationDto(location.getLatitude(), location.getLongitude()),
+                null
         );
     }
 

@@ -17,4 +17,5 @@ public class ClientResponse {
     private String phoneNumber;
     private AddressDto address;
     private LocationDto location;
+    private Double distance; // km 기준
 }
