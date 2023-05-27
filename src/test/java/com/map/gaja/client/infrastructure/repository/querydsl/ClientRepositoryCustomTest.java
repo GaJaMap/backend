@@ -1,8 +1,9 @@
-package com.map.gaja.client.infrastructure.repository;
+package com.map.gaja.client.infrastructure.repository.querydsl;
 
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
+import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.subdto.LocationDto;
