@@ -1,13 +1,18 @@
-package com.map.gaja.client.infrastructure.repository;
+package com.map.gaja.client.infrastructure.repository.querydsl;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSQLCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.querydsl.core.types.NullExpression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,18 +24,16 @@ import java.util.List;
 
 import static com.map.gaja.client.domain.model.QClient.*;
 
-/**
- * QueryDSL없이 임시로 만듦.
- */
 @RequiredArgsConstructor
 public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
     private final EntityManager em;
     private final JPAQueryFactory query;
+    private final NativeSQLCreator nativeSQLCreator;
 
-    public List<Client> mockFindClientByCondition(String name) {
-        List<Client> list = em.createQuery("Select c From Client c Where c.name like :name", Client.class)
-                .setParameter("name", "%"+name+"%")
-                .getResultList();
+    public List<Client> mockFindClientByCondition(String nameCond) {
+        List<Client> list = query.selectFrom(client)
+                .where(client.name.containsIgnoreCase(nameCond))
+                .fetch();
         return list;
     }
 
@@ -46,7 +49,7 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
         return list;
     }
 
-    public Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationCond, String keyword, Pageable pageable) {
+    public Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
@@ -62,43 +65,66 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
                                         LocationDto.class,
                                         client.location.latitude,
                                         client.location.longitude
-                                )
+                                ),
+                                Expressions.asNumber(1d) // 임시 distance
                         )
                 )
                 .from(client)
-                .where(allContains(keyword), nearByUser(locationCond))
-                .orderBy(client.createdDate.desc())
+                .where(allContains(wordCond), isClientInRadius(locationSearchCond))
+                .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         long total = query.select(client.count())
                 .from(client)
-                .where(allContains(keyword), nearByUser(locationCond))
+                .where(allContains(wordCond), isClientInRadius(locationSearchCond))
                 .fetchOne();
 
         return new PageImpl<>(result, pageable, total);
     }
 
-    private BooleanExpression nearByUser(NearbyClientSearchRequest locationCond) {
-        if(isLocationCondEmpty(locationCond)) {
+    private OrderSpecifier<?> distanceAsc(NearbyClientSearchRequest locationCond) {
+        if(locationCond == null || isCurrentLocationEmpty(locationCond.getLocation())) {
+            return new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, OrderSpecifier.NullHandling.Default);
+        }
+
+        return getCalcDistanceNativeSQL(locationCond.getLocation()).asc();
+    }
+
+    private BooleanExpression isClientInRadius(NearbyClientSearchRequest locationSearchCond) {
+        if(isLocationSearchCondEmpty(locationSearchCond)) {
             return null;
         }
 
-        // 반경 검색 조건은 일단 null
-        return null;
+        LocationDto currentLocation = locationSearchCond.getLocation();
+        return getCalcDistanceNativeSQL(currentLocation)
+                .loe(locationSearchCond.getRadius());
     }
 
-    private boolean isLocationCondEmpty(NearbyClientSearchRequest locationCond) {
-        return locationCond == null
-                || locationCond.getLocation() == null
-                || locationCond.getRadius() == null;
+    private NumberExpression<Double> getCalcDistanceNativeSQL(LocationDto currentLocation) {
+        return nativeSQLCreator.createCalcDistanceSQL(
+                currentLocation.getLongitude(), currentLocation.getLatitude(),
+                client.location.longitude, client.location.latitude
+        );
     }
 
-    private BooleanExpression allContains(String keywordCond) {
-        return nameContains(keywordCond)
-                .or(addressContains(keywordCond))
-                .or(phoneNumberContains(keywordCond));
+    private boolean isLocationSearchCondEmpty(NearbyClientSearchRequest locationSearchCond) {
+        return locationSearchCond == null
+                || isCurrentLocationEmpty(locationSearchCond.getLocation())
+                || locationSearchCond.getRadius() == null;
+    }
+
+    private boolean isCurrentLocationEmpty(LocationDto currentLocation) {
+        return currentLocation == null
+                || currentLocation.getLatitude() == null
+                || currentLocation.getLongitude() == null;
+    }
+
+    private BooleanExpression allContains(String wordCond) {
+        return nameContains(wordCond)
+                .or(addressContains(wordCond))
+                .or(phoneNumberContains(wordCond));
     }
 
     private BooleanExpression phoneNumberContains(String phoneNumberCond) {
