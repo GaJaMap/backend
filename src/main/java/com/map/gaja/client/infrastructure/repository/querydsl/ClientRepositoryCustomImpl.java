@@ -6,6 +6,7 @@ import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -126,8 +127,10 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
                 || currentLocation.getLongitude() == null;
     }
 
-    private BooleanExpression allContains(String wordCond) {
-        return nameContains(wordCond)
+    private BooleanBuilder allContains(String wordCond) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        return builder.or(nameContains(wordCond))
                 .or(addressContains(wordCond))
                 .or(phoneNumberContains(wordCond));
     }
