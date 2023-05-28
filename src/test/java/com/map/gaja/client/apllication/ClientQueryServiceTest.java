@@ -38,7 +38,7 @@ class ClientQueryServiceTest {
         when(findClient.getLocation()).thenReturn(new ClientLocation());
 
         //when
-        ClientResponse response = clientQueryService.findUser(searchId);
+        ClientResponse response = clientQueryService.findClient(searchId);
 
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
@@ -54,7 +54,7 @@ class ClientQueryServiceTest {
         when(repository.findById(searchId)).thenReturn(Optional.empty());
 
         //when
-        assertThatThrownBy(()-> clientQueryService.findUser(searchId))
+        assertThatThrownBy(()-> clientQueryService.findClient(searchId))
                 .isInstanceOf(ClientNotFoundException.class);
     }
 }

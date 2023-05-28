@@ -27,15 +27,15 @@ public class GetClientController {
     public ResponseEntity<ClientResponse> getClient(@PathVariable Long clientId) {
         // 거래처 조회
         log.info("ClientController.getClient clinetId={}", clientId);
-        ClientResponse response = clientQueryService.findUser(clientId);
+        ClientResponse response = clientQueryService.findClient(clientId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<ClientListResponse> searchClientsByCondition(@RequestParam String name) {
-        log.info("GetClientController.searchClientsByCondition name={}",name);
-        // 거래처 조건 조회
-        ClientListResponse response = clientQueryService.findUser(name);
+    public ResponseEntity<ClientListResponse> getClientList() {
+        // 모든 거래처 조회
+        log.info("GetClientController.getClientList");
+        ClientListResponse response = clientQueryService.findClient();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

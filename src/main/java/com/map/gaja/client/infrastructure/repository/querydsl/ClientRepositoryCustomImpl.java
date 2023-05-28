@@ -1,7 +1,6 @@
 package com.map.gaja.client.infrastructure.repository.querydsl;
 
-import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSQLCreator;
+import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.subdto.AddressDto;
@@ -17,35 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.map.gaja.client.domain.model.QClient.*;
 
 @RequiredArgsConstructor
 public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
-    private final EntityManager em;
     private final JPAQueryFactory query;
-    private final NativeSQLCreator nativeSQLCreator;
-
-    public List<Client> mockFindClientByCondition(String nameCond) {
-        List<Client> list = query.selectFrom(client)
-                .where(client.name.containsIgnoreCase(nameCond))
-                .fetch();
-        return list;
-    }
-
-    public List<Client> findClientsByLocation(NearbyClientSearchRequest request) {
-        List<Client> list = em.createQuery("SELECT c FROM Client c " +
-                        "WHERE c.location.latitude BETWEEN (:lat - :radius) AND (:lat + :radius) " +
-                        "AND c.location.longitude BETWEEN (:lng - :radius) AND (:lng + :radius) " +
-                        "AND (6371000 * SQRT(POW(c.location.latitude - :lat, 2) + POW(c.location.longitude - :lng, 2))) <= :radius", Client.class)
-                .setParameter("lat", request.getLocation().getLatitude())
-                .setParameter("lng", request.getLocation().getLongitude())
-                .setParameter("radius", request.getRadius())
-                .getResultList();
-        return list;
-    }
+    private final NativeSqlCreator mysqlNativeSQLCreator;
 
     public Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
         List<ClientResponse> result = query.select(
@@ -109,7 +87,7 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
     }
 
     private NumberExpression<Double> getCalcDistanceNativeSQL(LocationDto currentLocation) {
-        return nativeSQLCreator.createCalcDistanceSQL(
+        return mysqlNativeSQLCreator.createCalcDistanceSQL(
                 currentLocation.getLongitude(), currentLocation.getLatitude(),
                 client.location.longitude, client.location.latitude
         );

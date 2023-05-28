@@ -22,14 +22,14 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 public class ClientQueryService {
     private final ClientRepository clientRepository;
 
-    public ClientResponse findUser(Long clientId) {
+    public ClientResponse findClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
         return entityToDto(client);
     }
 
-    public ClientListResponse findUser(String name) {
-        List<Client> clients = clientRepository.mockFindClientByCondition(name);
+    public ClientListResponse findClient() {
+        List<Client> clients = clientRepository.findAll();
         return entityToDto(clients);
     }
 
