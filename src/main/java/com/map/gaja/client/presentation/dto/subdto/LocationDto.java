@@ -1,16 +1,13 @@
-package com.map.gaja.client.domain.model;
+package com.map.gaja.client.presentation.dto.subdto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientLocation {
+public class LocationDto {
     private Double latitude;
     private Double longitude;
 }

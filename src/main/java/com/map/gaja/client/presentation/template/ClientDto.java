@@ -1,4 +1,4 @@
-package com.map.gaja.client.presentation.dto;
+package com.map.gaja.client.presentation.template;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import javax.validation.constraints.Max;
 @Data
 @NoArgsConstructor
 public class ClientDto {
+    private String name;
     @Max(value = 10, message = "ID는 최대 10")
     private long id;
-    private String name;
 }

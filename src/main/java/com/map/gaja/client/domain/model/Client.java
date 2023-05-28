@@ -1,17 +1,16 @@
 package com.map.gaja.client.domain.model;
 
 import com.map.gaja.bundle.domain.model.Bundle;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
-@AllArgsConstructor
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +23,7 @@ public class Client {
     @Column(nullable = false)
     private String phoneNumber;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
@@ -36,4 +36,47 @@ public class Client {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
+
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        updateLocation(location, address);
+        this.bundle = bundle;
+    }
+
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+        updateName(name);
+        updatePhoneNumber(phoneNumber);
+        updateLocation(location, address);
+        updateBundle(bundle);
+    }
+
+    private void updateBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
+    private void updateName(String name) {
+        this.name = name;
+    }
+
+    private void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    private void updateLocation(ClientLocation location, ClientAddress address) {
+        validateLocation(location);
+        this.location = location;
+        this.address = address;
+    }
+
+    private void validateLocation(ClientLocation location) {
+        if (!isLocationInKorea(location.getLatitude(), location.getLongitude())) {
+            throw new LocationOutsideKoreaException(location.getLatitude(), location.getLatitude());
+        }
+    }
+
+    private boolean isLocationInKorea(double latitude, double longitude) {
+        return latitude >= 33 && latitude <= 38
+                && longitude >= 124 && longitude <= 132;
+    }
 }
