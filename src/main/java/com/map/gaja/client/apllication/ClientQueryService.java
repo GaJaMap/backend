@@ -7,6 +7,8 @@ import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +33,8 @@ public class ClientQueryService {
         return entityToDto(clients);
     }
 
-    public ClientListResponse findClientsByLocation(NearbyClientSearchRequest request) {
-        List<Client> clientsByLocation = clientRepository.findClientsByLocation(request);
-        return entityToDto(clientsByLocation);
+    public Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
+        return clientRepository.findClientByConditions(locationSearchCond, wordCond, pageable);
     }
-
 
 }

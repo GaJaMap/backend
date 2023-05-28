@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface ClientRepositoryCustom {
     List<Client> mockFindClientByCondition(String name);
-    Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest request, String keyword, Pageable pageable);
+    Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable);
     List<Client> findClientsByLocation(NearbyClientSearchRequest request);
 }

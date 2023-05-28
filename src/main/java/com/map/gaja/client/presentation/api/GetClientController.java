@@ -6,6 +6,9 @@ import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +40,14 @@ public class GetClientController {
     }
 
     @GetMapping("/nearby")
-    public ResponseEntity<ClientListResponse> nearbyClientSearch(@ModelAttribute NearbyClientSearchRequest nearby) {
+    public ResponseEntity<Page<ClientResponse>> nearbyClientSearch(
+            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @RequestParam(required = false) String wordCond,
+            @PageableDefault Pageable pageable
+            ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch param={}", nearby);
-        ClientListResponse response = clientQueryService.findClientsByLocation(nearby);
+        log.info("GetClientController.nearbyClientSearch params={},{},{}", locationSearchCond, wordCond, pageable);
+        Page<ClientResponse> response = clientQueryService.findClientByConditions(locationSearchCond, wordCond, pageable);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
