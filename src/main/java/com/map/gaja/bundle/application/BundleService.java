@@ -3,9 +3,13 @@ package com.map.gaja.bundle.application;
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
+import com.map.gaja.bundle.presentation.dto.response.BundleInfo;
+import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,5 +42,14 @@ public class BundleService {
                 .user(user)
                 .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public BundleResponse findBundles(String email, Pageable pageable) {
+        User user = findExistingUser(userRepository, email);
+
+        Page<BundleInfo> bundleInfos = bundleRepository.findBundleByUserId(user.getId(), pageable);
+
+        return new BundleResponse(bundleInfos.getTotalElements(), bundleInfos.getContent());
     }
 }
