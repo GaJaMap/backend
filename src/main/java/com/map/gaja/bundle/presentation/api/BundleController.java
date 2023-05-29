@@ -32,6 +32,7 @@ public class BundleController implements BundleApiSpecification {
                 .build();
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<BundleResponse> read(@LoginEmail String email, @PageableDefault Pageable pageable) {
         BundleResponse response = bundleService.findBundles(email, pageable);
