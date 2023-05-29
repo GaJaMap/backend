@@ -57,6 +57,7 @@ class BundleRepositoryTest {
         //then
         assertEquals(11L, bundleInfos.getTotalElements());
         assertEquals(10, bundleInfos.getContent().size());
+        assertEquals("test", bundleInfos.getContent().get(1).getBundleName());
 
     }
 }
