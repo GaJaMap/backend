@@ -12,9 +12,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
-    public Page<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
+    public Slice<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
@@ -41,15 +39,15 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
                 .where(allContains(wordCond), isClientInRadius(locationSearchCond))
                 .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize()+1)
                 .fetch();
 
-        long total = query.select(client.count())
-                .from(client)
-                .where(allContains(wordCond), isClientInRadius(locationSearchCond))
-                .fetchOne();
+        boolean hasNext = result.size() > pageable.getPageSize();
+        if (hasNext) {
+            result.remove(pageable.getPageSize());
+        }
 
-        return new PageImpl<>(result, pageable, total);
+        return new SliceImpl<>(result, pageable, hasNext);
     }
 
     private static ConstructorExpression<LocationDto> getLocationDto() {
