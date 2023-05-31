@@ -43,13 +43,8 @@ public class ClientService {
         return response;
     }
 
-    public ClientDeleteResponse deleteClient(Long clientId) {
+    public void deleteClient(Long clientId) {
         clientRepository.deleteById(clientId);
-        return new ClientDeleteResponse(
-                HttpStatus.OK.value(),
-                clientId,
-                "정상적으로 삭제되었습니다."
-        );
     }
 
     public ClientListResponse parseFileAndSave(MultipartFile file) {
