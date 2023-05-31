@@ -3,7 +3,6 @@ package com.map.gaja.client.presentation.api;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import lombok.RequiredArgsConstructor;
