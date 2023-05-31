@@ -6,6 +6,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,10 +31,10 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientResponse> addClient(@RequestBody NewClientRequest client) {
+    public ResponseEntity<CreatedClientResponse> addClient(@RequestBody NewClientRequest client) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
-        ClientResponse response = clientService.saveClient(client);
+        CreatedClientResponse response = clientService.saveClient(client);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

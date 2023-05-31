@@ -11,6 +11,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,11 +30,10 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final List<ClientFileParser> parsers;
 
-    public ClientResponse saveClient(NewClientRequest clientRequest) {
+    public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
         Client client = dtoToEntity(clientRequest);
         clientRepository.save(client);
-        ClientResponse response = entityToDto(client);
-        return response;
+        return new CreatedClientResponse(client.getId());
     }
 
     public ClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {
