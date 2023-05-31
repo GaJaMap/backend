@@ -42,7 +42,9 @@ public class ClientService {
     }
 
     public void deleteClient(Long clientId) {
-        clientRepository.deleteById(clientId);
+        Client clientToDelete = clientRepository.findById(clientId)
+                .orElseThrow(() -> new ClientNotFoundException(clientId));
+        clientRepository.delete(clientToDelete);
     }
 
     public ClientListResponse parseFileAndSave(MultipartFile file) {
