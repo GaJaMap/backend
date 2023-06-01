@@ -5,6 +5,7 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientSliceResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +34,9 @@ public class ClientQueryService {
         return entityToDto(clients);
     }
 
-    public Slice<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
-        return clientRepository.findClientByConditions(locationSearchCond, wordCond, pageable);
+    public ClientSliceResponse findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
+        Slice<ClientResponse> clientSlice = clientRepository.findClientByConditions(locationSearchCond, wordCond, pageable);
+        return new ClientSliceResponse(clientSlice.getContent(), clientSlice.hasNext());
     }
 
 }
