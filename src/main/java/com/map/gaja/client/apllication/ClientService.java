@@ -8,8 +8,7 @@ import com.map.gaja.client.infrastructure.file.ClientFileParser;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.map.gaja.client.apllication.ClientConvertor.*;
 
@@ -27,17 +27,19 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final List<ClientFileParser> parsers;
 
-    public ClientResponse saveClient(NewClientRequest clientRequest) {
+    public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
         Client client = dtoToEntity(clientRequest);
         clientRepository.save(client);
-        ClientResponse response = entityToDto(client);
-        return response;
+        return new CreatedClientResponse(client.getId());
     }
 
-    public ClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {
+    public CreatedClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {
         List<Client> clients = dtoToEntity(clientsRequest);
         clientRepository.saveAll(clients);
-        ClientListResponse response = entityToDto(clients);
+
+        List<CreatedClientResponse> clientIdList = clients.stream().map(client -> client.getId())
+                .map(CreatedClientResponse::new).collect(Collectors.toList());
+        CreatedClientListResponse response = new CreatedClientListResponse(clientIdList);
         return response;
     }
 
@@ -47,7 +49,7 @@ public class ClientService {
         clientRepository.delete(clientToDelete);
     }
 
-    public ClientListResponse parseFileAndSave(MultipartFile file) {
+    public CreatedClientListResponse parseFileAndSave(MultipartFile file) {
         NewClientBulkRequest clients = null;
         for (ClientFileParser parser : parsers) {
             if(parser.isSupported(file)) {
