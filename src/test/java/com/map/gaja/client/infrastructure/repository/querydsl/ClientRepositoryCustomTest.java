@@ -11,9 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ class ClientRepositoryCustomTest {
     @Test
     void findClientWithoutGPSTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ClientResponse> result = clientRepository.findClientByConditions(null,"사용자", pageable);
+        Slice<ClientResponse> result = clientRepository.findClientByConditions(null,"사용자", pageable);
         List<ClientResponse> content = result.getContent();
 
         System.out.println("result = " + result);
@@ -66,7 +66,7 @@ class ClientRepositoryCustomTest {
     void findClientWithGPSTest() {
         Pageable pageable = PageRequest.of(0, 10);
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), 3000d);
-        Page<ClientResponse> result = clientRepository.findClientByConditions(request,"사용자", pageable);
+        Slice<ClientResponse> result = clientRepository.findClientByConditions(request,"사용자", pageable);
         List<ClientResponse> content = result.getContent();
 
         System.out.println("result = " + result);
