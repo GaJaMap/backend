@@ -3,7 +3,6 @@ package com.map.gaja.client.presentation.api;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDeleteResponse;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,11 @@ public class ClientController {
     private final ClientService clientService;
 
     @DeleteMapping("/{clientId}")
-    public ResponseEntity<ClientDeleteResponse> deleteClient(@PathVariable Long clientId) {
+    public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
         // 거래처 삭제
         log.info("ClientController.deleteClient clinetId={}", clientId);
-        ClientDeleteResponse response = clientService.deleteClient(clientId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        clientService.deleteClient(clientId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping
