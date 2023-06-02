@@ -9,8 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class BundleResponse {
-    @Schema(description = "총 번들 수")
-    private Long total;
+    @Schema(description = "다음 페이지가 있는 지")
+    private boolean hasNext;
 
     private List<BundleInfo> bundleInfos;
 }

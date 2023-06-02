@@ -8,8 +8,8 @@ import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +48,8 @@ public class BundleService {
     public BundleResponse findBundles(String email, Pageable pageable) {
         User user = findExistingUser(userRepository, email);
 
-        Page<BundleInfo> bundleInfos = bundleRepository.findBundleByUserId(user.getId(), pageable);
+        Slice<BundleInfo> bundleInfos = bundleRepository.findBundleByUserId(user.getId(), pageable);
 
-        return new BundleResponse(bundleInfos.getTotalElements(), bundleInfos.getContent());
+        return new BundleResponse(bundleInfos.hasNext(), bundleInfos.getContent());
     }
 }

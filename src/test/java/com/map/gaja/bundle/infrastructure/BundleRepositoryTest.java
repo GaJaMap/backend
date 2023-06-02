@@ -9,9 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -52,10 +52,10 @@ class BundleRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<BundleInfo> bundleInfos = bundleRepository.findBundleByUserId(user.getId(), pageable);
+        Slice<BundleInfo> bundleInfos = bundleRepository.findBundleByUserId(user.getId(), pageable);
 
         //then
-        assertEquals(11L, bundleInfos.getTotalElements());
+        assertEquals(true, bundleInfos.hasNext());
         assertEquals(10, bundleInfos.getContent().size());
         assertEquals("test", bundleInfos.getContent().get(1).getBundleName());
 
