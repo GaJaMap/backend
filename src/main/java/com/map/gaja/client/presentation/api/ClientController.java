@@ -20,11 +20,11 @@ public class ClientController {
     private final ClientService clientService;
 
     @DeleteMapping("/{clientId}")
-    public ResponseEntity<ClientDeleteResponse> deleteClient(@PathVariable Long clientId) {
+    public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
         // 거래처 삭제
         log.info("ClientController.deleteClient clinetId={}", clientId);
-        ClientDeleteResponse response = clientService.deleteClient(clientId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        clientService.deleteClient(clientId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping

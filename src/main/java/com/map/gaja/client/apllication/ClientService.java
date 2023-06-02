@@ -11,7 +11,6 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,13 +43,10 @@ public class ClientService {
         return response;
     }
 
-    public ClientDeleteResponse deleteClient(Long clientId) {
-        clientRepository.deleteById(clientId);
-        return new ClientDeleteResponse(
-                HttpStatus.OK.value(),
-                clientId,
-                "정상적으로 삭제되었습니다."
-        );
+    public void deleteClient(Long clientId) {
+        Client clientToDelete = clientRepository.findById(clientId)
+                .orElseThrow(() -> new ClientNotFoundException(clientId));
+        clientRepository.delete(clientToDelete);
     }
 
     public CreatedClientListResponse parseFileAndSave(MultipartFile file) {
