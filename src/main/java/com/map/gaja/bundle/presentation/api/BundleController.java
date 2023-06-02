@@ -6,6 +6,7 @@ import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
 import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -38,5 +39,12 @@ public class BundleController implements BundleApiSpecification {
         BundleResponse response = bundleService.findBundles(email, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @DeleteMapping("/{bundleId}")
+    public ResponseEntity<Void> delete(@LoginEmail String email, @PathVariable Long bundleId) {
+        bundleService.delete(email, bundleId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
