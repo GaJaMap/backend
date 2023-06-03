@@ -19,6 +19,6 @@ public interface BundleRepository extends JpaRepository<Bundle, Long> {
     @Query("DELETE FROM Bundle b WHERE b.id = :bundleId AND b.user.id = :userId")
     int deleteByIdAndUserId(@Param(value = "bundleId") Long bundleId, @Param(value = "userId") Long userId);
 
-    @Query("SELECT * FROM bundle b WHERE b.id = :bundleId AND b.user.id = :userId")
+    @Query("SELECT b FROM Bundle b WHERE b.id = :bundleId AND b.user.id = :userId")
     Optional<Bundle> findByIdAndUserId(@Param(value = "bundleId") Long bundleId, @Param(value = "userId") Long userId);
 }
