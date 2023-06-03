@@ -30,4 +30,8 @@ public class Bundle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

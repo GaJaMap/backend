@@ -1,6 +1,6 @@
 package com.map.gaja.bundle.presentation.exception;
 
-import com.map.gaja.bundle.domain.exception.BundleDeletionException;
+import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.presentation.dto.response.BundleLimitExceededResponse;
 import com.map.gaja.bundle.presentation.dto.response.DeletionFailedResponse;
 import com.map.gaja.user.domain.exception.BundleLimitExceededException;
@@ -20,8 +20,8 @@ public class BundleExceptionHandler {
         );
     }
 
-    @ExceptionHandler(BundleDeletionException.class)
-    public ResponseEntity<DeletionFailedResponse> handleDeletionFailedBundle(BundleDeletionException e) {
+    @ExceptionHandler(BundleNotFoundException.class)
+    public ResponseEntity<DeletionFailedResponse> handleDeletionFailedBundle(BundleNotFoundException e) {
         return new ResponseEntity<>(
                 new DeletionFailedResponse(e.getMessage()), e.getStatus()
         );
