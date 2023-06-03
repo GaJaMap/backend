@@ -1,6 +1,7 @@
 package com.map.gaja.bundle.presentation.api.specification;
 
 import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
+import com.map.gaja.bundle.presentation.dto.request.BundleUpdateRequest;
 import com.map.gaja.bundle.presentation.dto.response.BundleLimitExceededResponse;
 import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.bundle.presentation.dto.response.DeletionFailedResponse;
@@ -48,4 +49,16 @@ public interface BundleApiSpecification {
                     @ApiResponse(responseCode = "422", description = "존재하지 않은 번들이거나 사용자의 번들이 아닙니다.", content = @Content(schema = @Schema(implementation = DeletionFailedResponse.class)))
             })
     ResponseEntity<Void> delete(@Parameter(hidden = true) String email, Long bundleId);
+
+    @Operation(summary = "번들 수정",
+            parameters = {
+                    @Parameter(name = "token", description = "액세스 토큰"),
+                    @Parameter()
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BundleResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                    @ApiResponse(responseCode = "422", description = "존재하지 않은 번들이거나 사용자의 번들이 아닙니다.", content = @Content(schema = @Schema(implementation = DeletionFailedResponse.class)))
+            })
+    ResponseEntity<Void> update(@Parameter(hidden = true) String email, BundleUpdateRequest request);
 }

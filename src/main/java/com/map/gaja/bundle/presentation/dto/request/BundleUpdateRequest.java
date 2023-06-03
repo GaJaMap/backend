@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BundleUpdateRequest {
-    @Schema(name = "번들 아이디")
+    @Schema(description = "번들 아이디")
     private Long bundleId;
 
-    @Schema(name = "바꿀 번들 이름")
+    @Schema(description = "바꿀 번들 이름")
     private String name;
 }

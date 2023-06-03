@@ -49,6 +49,7 @@ public class BundleController implements BundleApiSpecification {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Override
     @PutMapping
     public ResponseEntity<Void> update(@LoginEmail String email, @RequestBody BundleUpdateRequest request) {
         bundleService.updateName(email, request);
