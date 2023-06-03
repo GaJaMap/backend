@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    include: oauth
+
+  output:
+    ansi:
+      enabled: always
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/GajaMap
+    hikari:
+      username: root
+      password: 1234
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
