@@ -88,4 +88,29 @@ class BundleRepositoryTest {
         //then
         assertEquals(1, count);
     }
+
+    @Test
+    @DisplayName("번들 조회 성공")
+    void find() {
+        //given
+        User user = User.builder()
+                .email("test")
+                .bundleCount(0)
+                .authority(Authority.FREE)
+                .createdDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        Bundle bundle = Bundle.builder()
+                .name("test")
+                .user(user)
+                .clientCount(0)
+                .createdDate(LocalDateTime.now())
+                .build();
+        bundleRepository.save(bundle);
+
+        //when & then
+        assertEquals(bundle, bundleRepository.findByIdAndUserId(bundle.getId(), user.getId()).get());
+    }
 }
