@@ -1,6 +1,8 @@
 package com.map.gaja.bundle.presentation.exception;
 
+import com.map.gaja.bundle.domain.exception.BundleDeletionException;
 import com.map.gaja.bundle.presentation.dto.response.BundleLimitExceededResponse;
+import com.map.gaja.bundle.presentation.dto.response.DeletionFailedResponse;
 import com.map.gaja.user.domain.exception.BundleLimitExceededException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,13 @@ public class BundleExceptionHandler {
     public ResponseEntity<BundleLimitExceededResponse> handleUserNotFound(BundleLimitExceededException e) {
         return new ResponseEntity<>(
                 new BundleLimitExceededResponse(e.getMessage()), e.getStatus()
+        );
+    }
+
+    @ExceptionHandler(BundleDeletionException.class)
+    public ResponseEntity<DeletionFailedResponse> handleDeletionFailedBundle(BundleDeletionException e) {
+        return new ResponseEntity<>(
+                new DeletionFailedResponse(e.getMessage()), e.getStatus()
         );
     }
 }

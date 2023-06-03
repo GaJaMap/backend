@@ -60,4 +60,32 @@ class BundleRepositoryTest {
         assertEquals("test", bundleInfos.getContent().get(1).getBundleName());
 
     }
+
+    @Test
+    @DisplayName("번들 삭제 성공")
+    void deleteBundle() {
+        //given
+        User user = User.builder()
+                .email("test")
+                .bundleCount(0)
+                .authority(Authority.FREE)
+                .createdDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        Bundle bundle = Bundle.builder()
+                .name("test")
+                .user(user)
+                .clientCount(0)
+                .createdDate(LocalDateTime.now())
+                .build();
+        bundleRepository.save(bundle);
+
+        //when
+        int count = bundleRepository.deleteByIdAndUserId(bundle.getId(), user.getId());
+
+        //then
+        assertEquals(1, count);
+    }
 }

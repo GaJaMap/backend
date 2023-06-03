@@ -1,10 +1,12 @@
 package com.map.gaja.bundle.application;
 
+import com.map.gaja.bundle.domain.exception.BundleDeletionException;
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
 import com.map.gaja.bundle.presentation.dto.response.BundleInfo;
 import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
+import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
 public class BundleService {
     private final BundleRepository bundleRepository;
     private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
 
     @Transactional
     public void create(String email, BundleCreateRequest request) {
@@ -35,7 +38,7 @@ public class BundleService {
         user.increaseBundleCount();
     }
 
-    private Bundle createBundle(String name, User user){
+    private Bundle createBundle(String name, User user) {
         return Bundle.builder()
                 .name(name)
                 .clientCount(0)
@@ -51,5 +54,18 @@ public class BundleService {
         Slice<BundleInfo> bundleInfos = bundleRepository.findBundleByUserId(user.getId(), pageable);
 
         return new BundleResponse(bundleInfos.hasNext(), bundleInfos.getContent());
+    }
+
+    @Transactional
+    public void delete(String email, Long bundleId) {
+        User user = findExistingUser(userRepository, email);
+
+        int deletedBundleCount = bundleRepository.deleteByIdAndUserId(bundleId, user.getId());
+
+        if (deletedBundleCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
+            throw new BundleDeletionException();
+        }
+
+        clientRepository.deleteByBundleId(bundleId);
     }
 }
