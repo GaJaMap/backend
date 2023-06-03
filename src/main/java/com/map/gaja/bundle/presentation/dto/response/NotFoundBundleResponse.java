@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class DeletionFailedResponse {
+public class NotFoundBundleResponse {
     private String message;
 }
