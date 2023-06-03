@@ -4,6 +4,7 @@ import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
+import com.map.gaja.bundle.presentation.dto.request.BundleUpdateRequest;
 import com.map.gaja.bundle.presentation.dto.response.BundleInfo;
 import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
@@ -69,4 +70,12 @@ public class BundleService {
         clientRepository.deleteByBundleId(bundleId);
     }
 
+    @Transactional
+    public void updateName(String email, BundleUpdateRequest request) {
+        User user = findExistingUser(userRepository, email);
+
+        Bundle bundle = bundleRepository.findByIdAndUserId(request.getBundleId(), user.getId())
+                .orElseThrow(BundleNotFoundException::new);
+        bundle.updateName(request.getName());
+    }
 }
