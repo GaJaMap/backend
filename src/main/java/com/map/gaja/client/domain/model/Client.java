@@ -37,6 +37,10 @@ public class Client {
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_img")
+    private ClientImage clientImage;
+
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
         this.name = name;
         this.phoneNumber = phoneNumber;
