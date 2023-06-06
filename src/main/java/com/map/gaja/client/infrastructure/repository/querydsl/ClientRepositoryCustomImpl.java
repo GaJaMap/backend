@@ -32,7 +32,7 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
                                 client.phoneNumber,
                                 getAddressDto(),
                                 getLocationDto(),
-                                Expressions.asNumber(1d) // 임시 distance
+                                getLocationDistance(locationSearchCond) // 좌표 정보가 없다면 -1을 반환함
                         )
                 )
                 .from(client)
@@ -48,6 +48,14 @@ public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
         }
 
         return new SliceImpl<>(result, pageable, hasNext);
+    }
+
+    private NumberExpression<Double> getLocationDistance(NearbyClientSearchRequest locationSearchCond) {
+        if(isLocationSearchCondEmpty(locationSearchCond)) {
+            return Expressions.asNumber(-1.0);
+        }
+
+        return getCalcDistanceNativeSQL(locationSearchCond.getLocation());
     }
 
     private static ConstructorExpression<LocationDto> getLocationDto() {
