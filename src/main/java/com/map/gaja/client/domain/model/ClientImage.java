@@ -23,4 +23,9 @@ public class ClientImage {
 
     @CreationTimestamp
     private LocalDateTime createdDate;
+
+    public ClientImage(String originalName, String savedPath) {
+        this.originalName = originalName;
+        this.savedPath = savedPath;
+    }
 }
