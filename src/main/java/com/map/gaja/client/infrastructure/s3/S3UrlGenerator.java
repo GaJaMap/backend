@@ -1,9 +1,11 @@
 package com.map.gaja.client.infrastructure.s3;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+@Component
 public class S3UrlGenerator {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
