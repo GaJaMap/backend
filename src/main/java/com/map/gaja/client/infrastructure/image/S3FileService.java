@@ -3,6 +3,7 @@ package com.map.gaja.client.infrastructure.image;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.domain.exception.S3NotWorkingException;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class S3FileService {
             throw new S3NotWorkingException(e);
         } catch (IOException e) {
             log.warn("파일 문제로 저장 실패 file={}", file);
-            throw new IllegalArgumentException();
+            throw new InvalidFileException(e);
         }
     }
 
