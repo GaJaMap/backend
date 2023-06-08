@@ -27,20 +27,10 @@ import java.util.UUID;
 public class S3FileService {
 
     private final AmazonS3Client amazonS3Client;
+    private final S3UrlGenerator s3UrlGenerator;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
-    @Value("${cloud.aws.region.static}")
-    private String region;
-
-    private String s3Url;
-
-    @PostConstruct
-    private void init() {
-        String s3UrlFormat = "https://%s.s3.%s.amazonaws.com/";
-        s3Url = String.format(s3UrlFormat, bucket, region);
-    }
 
     public StoredFileDto storeFile(MultipartFile file) {
         try (InputStream fileInputStream = file.getInputStream()) {
@@ -117,6 +107,7 @@ public class S3FileService {
     }
 
     private String extractFilePath(String fullS3Path) {
+        String s3Url = s3UrlGenerator.getS3Url();
         return fullS3Path.replace(s3Url, "");
     }
 }
