@@ -1,4 +1,4 @@
-package com.map.gaja.client.infrastructure.image;
+package com.map.gaja.client.infrastructure.s3;
 
 import org.springframework.beans.factory.annotation.Value;
 

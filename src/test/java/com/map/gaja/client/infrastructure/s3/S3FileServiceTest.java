@@ -1,10 +1,9 @@
-package com.map.gaja.client.infrastructure.image;
+package com.map.gaja.client.infrastructure.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.domain.exception.S3NotWorkingException;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
