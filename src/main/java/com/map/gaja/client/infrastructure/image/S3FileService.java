@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -29,25 +30,42 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+    private String s3Url;
+
+    @PostConstruct
+    private void init() {
+        String s3UrlFormat = "https://%s.s3.%s.amazonaws.com/";
+        s3Url = String.format(s3UrlFormat, bucket, region);
+    }
+
     public StoredFileDto storeFile(MultipartFile file) {
         try (InputStream fileInputStream = file.getInputStream()) {
             String s3StoredPath = storeFileToS3(file, fileInputStream);
             log.info("저장 완료. S3 저장위치 = {}",s3StoredPath);
             return new StoredFileDto(s3StoredPath, file.getOriginalFilename());
+        } catch(RuntimeException e) {
+            log.error("S3 문제로 파일 저장 실패" , e);
+            throw new S3NotWorkingException(e);
         } catch (IOException e) {
-            log.warn("파일 저장 실패 file={}", file);
+            log.warn("파일 문제로 저장 실패 file={}", file);
             throw new IllegalArgumentException();
         }
     }
 
     public boolean removeFile(String storedPath) {
-        if (!isStoredInS3(storedPath)) {
-            log.info("제거할 파일을 찾을 수 없습니다. storedPath={}", storedPath);
-            return false;
-        }
+        String filePath = extractFilePath(storedPath);
 
         try {
-            amazonS3Client.deleteObject(bucket, storedPath);
+            if (!isStoredInS3(filePath)) {
+                log.info("제거할 파일을 찾을 수 없습니다. filePath={}", filePath);
+                return false;
+            }
+
+            amazonS3Client.deleteObject(bucket, filePath);
+            log.info("파일 제거 성공. 제거한 파일={}", filePath);
         } catch(RuntimeException e) {
             log.error("S3 문제로 파일 제거 실패" , e);
             throw new S3NotWorkingException(e);
@@ -95,5 +113,9 @@ public class S3FileService {
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
+    }
+
+    private String extractFilePath(String fullS3Path) {
+        return fullS3Path.replace(s3Url, "");
     }
 }
