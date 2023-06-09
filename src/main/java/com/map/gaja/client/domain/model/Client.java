@@ -37,7 +37,7 @@ public class Client {
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
