@@ -1,9 +1,11 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClientController {
 
     private final ClientService clientService;
+    private final S3FileService fileService;
 
     @DeleteMapping("/{clientId}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
@@ -28,11 +31,25 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<CreatedClientResponse> addClient(@RequestBody NewClientRequest client) {
+    public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
-        CreatedClientResponse response = clientService.saveClient(client);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        CreatedClientResponse response;
+        MultipartFile clientImage = client.getClientImage();
+        if (clientImage == null || clientImage.isEmpty()) {
+            response = clientService.saveClient(client);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
+
+        StoredFileDto storedFileDto = fileService.storeFile(clientImage);
+        try {
+            response = clientService.saveClient(client, storedFileDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch(Exception e) {
+            fileService.removeFile(storedFileDto.getStoredPath());
+            throw e;
+        }
     }
 
     @PostMapping("/bulk")
