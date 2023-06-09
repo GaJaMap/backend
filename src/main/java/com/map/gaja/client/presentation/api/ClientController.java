@@ -34,22 +34,12 @@ public class ClientController {
     public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
-
-        CreatedClientResponse response;
         MultipartFile clientImage = client.getClientImage();
         if (clientImage == null || clientImage.isEmpty()) {
-            response = clientService.saveClient(client);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return saveClient(client);
         }
 
-        StoredFileDto storedFileDto = fileService.storeFile(clientImage);
-        try {
-            response = clientService.saveClient(client, storedFileDto);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch(Exception e) {
-            fileService.removeFile(storedFileDto.getStoredPath());
-            throw e;
-        }
+        return saveClientWithImage(client);
     }
 
     @PostMapping("/bulk")
@@ -75,5 +65,22 @@ public class ClientController {
         log.info("ClientController.changeClients clientRequest={}", clientRequest);
         ClientResponse response = clientService.changeClient(clientId, clientRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private ResponseEntity<CreatedClientResponse> saveClientWithImage(NewClientRequest client) {
+        StoredFileDto storedFileDto = fileService.storeFile(client.getClientImage());
+        try {
+            CreatedClientResponse response = clientService.saveClient(client, storedFileDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch(Exception e) {
+            log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
+            fileService.removeFile(storedFileDto.getStoredPath());
+            throw e;
+        }
+    }
+
+    private ResponseEntity<CreatedClientResponse> saveClient(NewClientRequest client) {
+        CreatedClientResponse response = clientService.saveClient(client);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
