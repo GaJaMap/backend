@@ -37,7 +37,7 @@ public class Client {
     @JoinColumn(name = "bundle_id")
     private Bundle bundle;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
@@ -46,6 +46,15 @@ public class Client {
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
         this.bundle = bundle;
+        this.clientImage = null;
+    }
+
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle, ClientImage clientImage) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        updateLocation(location, address);
+        this.bundle = bundle;
+        this.clientImage = clientImage;
     }
 
     public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
@@ -53,6 +62,14 @@ public class Client {
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
         updateBundle(bundle);
+    }
+
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle, ClientImage clientImage) {
+        updateName(name);
+        updatePhoneNumber(phoneNumber);
+        updateLocation(location, address);
+        updateBundle(bundle);
+        updateClientImage(clientImage);
     }
 
     private void updateBundle(Bundle bundle) {
@@ -65,6 +82,10 @@ public class Client {
 
     private void updatePhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    private void updateClientImage(ClientImage clientImage) {
+        this.clientImage = clientImage;
     }
 
     private void updateLocation(ClientLocation location, ClientAddress address) {

@@ -1,9 +1,10 @@
 package com.map.gaja.bundle.application;
 
-import com.map.gaja.bundle.domain.exception.BundleDeletionException;
+import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
+import com.map.gaja.bundle.presentation.dto.request.BundleUpdateRequest;
 import com.map.gaja.bundle.presentation.dto.response.BundleInfo;
 import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
@@ -63,9 +64,18 @@ public class BundleService {
         int deletedBundleCount = bundleRepository.deleteByIdAndUserId(bundleId, user.getId());
 
         if (deletedBundleCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
-            throw new BundleDeletionException();
+            throw new BundleNotFoundException();
         }
 
         clientRepository.deleteByBundleId(bundleId);
+    }
+
+    @Transactional
+    public void updateName(String email, BundleUpdateRequest request) {
+        User user = findExistingUser(userRepository, email);
+
+        Bundle bundle = bundleRepository.findByIdAndUserId(request.getBundleId(), user.getId())
+                .orElseThrow(BundleNotFoundException::new);
+        bundle.updateName(request.getName());
     }
 }

@@ -1,8 +1,8 @@
 package com.map.gaja.bundle.presentation.exception;
 
-import com.map.gaja.bundle.domain.exception.BundleDeletionException;
+import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.presentation.dto.response.BundleLimitExceededResponse;
-import com.map.gaja.bundle.presentation.dto.response.DeletionFailedResponse;
+import com.map.gaja.bundle.presentation.dto.response.NotFoundBundleResponse;
 import com.map.gaja.user.domain.exception.BundleLimitExceededException;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,10 @@ public class BundleExceptionHandler {
         );
     }
 
-    @ExceptionHandler(BundleDeletionException.class)
-    public ResponseEntity<DeletionFailedResponse> handleDeletionFailedBundle(BundleDeletionException e) {
+    @ExceptionHandler(BundleNotFoundException.class)
+    public ResponseEntity<NotFoundBundleResponse> handleDeletionFailedBundle(BundleNotFoundException e) {
         return new ResponseEntity<>(
-                new DeletionFailedResponse(e.getMessage()), e.getStatus()
+                new NotFoundBundleResponse(e.getMessage()), e.getStatus()
         );
     }
 }

@@ -3,6 +3,7 @@ package com.map.gaja.bundle.presentation.api;
 import com.map.gaja.bundle.application.BundleService;
 import com.map.gaja.bundle.presentation.api.specification.BundleApiSpecification;
 import com.map.gaja.bundle.presentation.dto.request.BundleCreateRequest;
+import com.map.gaja.bundle.presentation.dto.request.BundleUpdateRequest;
 import com.map.gaja.bundle.presentation.dto.response.BundleResponse;
 import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,13 @@ public class BundleController implements BundleApiSpecification {
     @DeleteMapping("/{bundleId}")
     public ResponseEntity<Void> delete(@LoginEmail String email, @PathVariable Long bundleId) {
         bundleService.delete(email, bundleId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    @PutMapping
+    public ResponseEntity<Void> update(@LoginEmail String email, @RequestBody BundleUpdateRequest request) {
+        bundleService.updateName(email, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
