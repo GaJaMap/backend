@@ -35,7 +35,8 @@ public class S3FileService {
         try (InputStream fileInputStream = file.getInputStream()) {
             String s3StoredPath = storeFileToS3(file, fileInputStream);
             log.info("저장 완료. S3 저장위치 = {}",s3StoredPath);
-            return new StoredFileDto(s3StoredPath, file.getOriginalFilename());
+
+            return createStoredFileDto(file, s3StoredPath);
         } catch(RuntimeException e) {
             log.error("S3 문제로 파일 저장 실패" , e);
             throw new S3NotWorkingException(e);
@@ -45,8 +46,13 @@ public class S3FileService {
         }
     }
 
+    private StoredFileDto createStoredFileDto(MultipartFile file, String s3FileUrl) {
+        String filePath = s3UrlGenerator.extractFilePath(s3FileUrl);
+        return new StoredFileDto(filePath, file.getOriginalFilename());
+    }
+
     public boolean removeFile(String storedPath) {
-        String filePath = extractFilePath(storedPath);
+        String filePath = s3UrlGenerator.extractFilePath(storedPath);
 
         try {
             if (!isStoredInS3(filePath)) {
@@ -105,8 +111,4 @@ public class S3FileService {
         return originalFilename.substring(pos + 1);
     }
 
-    private String extractFilePath(String fullS3Path) {
-        String s3Url = s3UrlGenerator.getS3Url();
-        return fullS3Path.replace(s3Url, "");
-    }
 }
