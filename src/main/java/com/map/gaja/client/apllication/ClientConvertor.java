@@ -61,7 +61,7 @@ public class ClientConvertor {
     protected static Client dtoToEntity(NewClientRequest request, StoredFileDto storedFileDto) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
-        ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getStoredPath());
+        ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getFilePath());
         return new Client(
                 request.getClientName(),
                 request.getPhoneNumber(),
