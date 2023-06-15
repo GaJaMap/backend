@@ -2,6 +2,7 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
+import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -9,6 +10,7 @@ import com.map.gaja.client.presentation.dto.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,5 +56,19 @@ public class ClientConvertor {
                 new ClientLocation(location.getLatitude(), location.getLongitude()),
                 null // 임시
             );
+    }
+
+    protected static Client dtoToEntity(NewClientRequest request, StoredFileDto storedFileDto) {
+        AddressDto address = request.getAddress();
+        LocationDto location = request.getLocation();
+        ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getStoredPath());
+        return new Client(
+                request.getClientName(),
+                request.getPhoneNumber(),
+                new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
+                new ClientLocation(location.getLatitude(), location.getLongitude()),
+                null, // 임시
+                clientImage
+        );
     }
 }

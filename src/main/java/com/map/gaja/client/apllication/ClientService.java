@@ -9,6 +9,7 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,12 @@ public class ClientService {
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
         Client client = dtoToEntity(clientRequest);
+        clientRepository.save(client);
+        return new CreatedClientResponse(client.getId());
+    }
+
+    public CreatedClientResponse saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
+        Client client = dtoToEntity(clientRequest, storedFileDto);
         clientRepository.save(client);
         return new CreatedClientResponse(client.getId());
     }
