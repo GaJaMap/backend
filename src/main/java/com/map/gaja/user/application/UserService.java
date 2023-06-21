@@ -22,7 +22,7 @@ public class UserService {
     private final AuthenticationHandler authenticationHandler;
 
     @Transactional
-    public void login(LoginRequest request) {
+    public Integer login(LoginRequest request) {
         String email = oauth2Client.getEmail(request.getAccessToken());
         if (email == null) { //카카오 로그인 실패
             throw new UserNotFoundException();
@@ -39,6 +39,7 @@ public class UserService {
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
-        //기존 유저는 클라이언트 정보를 리턴해야함.
+        //번들 아이디로 응답해주면 클라이언트 쪽에서 번들을 가지고 고객조회 API를 호출한다. null이면 호출X
+        return user.getReferenceBundleId();
     }
 }
