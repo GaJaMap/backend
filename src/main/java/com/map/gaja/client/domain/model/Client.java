@@ -2,6 +2,7 @@ package com.map.gaja.client.domain.model;
 
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
+import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Client {
+public class Client extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "client_id")
@@ -22,10 +23,6 @@ public class Client {
 
     @Column(nullable = false)
     private String phoneNumber;
-
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime createdDate;
 
     @Embedded
     private ClientAddress address;
