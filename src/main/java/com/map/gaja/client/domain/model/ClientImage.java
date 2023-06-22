@@ -1,5 +1,6 @@
 package com.map.gaja.client.domain.model;
 
+import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClientImage {
+public class ClientImage extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "client_image_id")

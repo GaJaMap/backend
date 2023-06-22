@@ -1,5 +1,6 @@
 package com.map.gaja.user.domain.model;
 
+import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import com.map.gaja.user.domain.exception.BundleLimitExceededException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @Getter
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
