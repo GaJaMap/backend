@@ -24,6 +24,10 @@ public class Client extends BaseTimeEntity {
     @Column(nullable = false)
     private String phoneNumber;
 
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+
     @Embedded
     private ClientAddress address;
 
