@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class StoredFileDto {
-    private String storedPath;
+    private String filePath;
     private String originalFileName;
 }

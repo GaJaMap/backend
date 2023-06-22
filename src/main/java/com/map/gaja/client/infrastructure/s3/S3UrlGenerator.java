@@ -21,7 +21,19 @@ public class S3UrlGenerator {
         s3Url = String.format(s3UrlFormat, bucket, region);
     }
 
+    /**
+     * @return S3 URL ex) https://버킷이름.s3.지역.amazonaws.com/
+     */
     public String getS3Url() {
         return s3Url;
+    }
+
+    /**
+     * S3 파일 URL에서 파일 경로만 추출해주는 메소드
+     * @param s3FileUrl S3 파일 URL ex) https://버킷이름.s3.지역.amazonaws.com/123/test.jpg
+     * @return 파일 경로 ex) 123/test.jpg
+     */
+    public String extractFilePath(String s3FileUrl) {
+        return s3FileUrl.replace(s3Url, "");
     }
 }

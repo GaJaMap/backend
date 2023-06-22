@@ -74,7 +74,7 @@ public class ClientController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch(Exception e) {
             log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
-            fileService.removeFile(storedFileDto.getStoredPath());
+            fileService.removeFile(storedFileDto.getFilePath());
             throw e;
         }
     }

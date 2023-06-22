@@ -33,9 +33,10 @@ public class S3FileService {
 
     public StoredFileDto storeFile(MultipartFile file) {
         try (InputStream fileInputStream = file.getInputStream()) {
-            String s3StoredPath = storeFileToS3(file, fileInputStream);
-            log.info("저장 완료. S3 저장위치 = {}",s3StoredPath);
-            return new StoredFileDto(s3StoredPath, file.getOriginalFilename());
+            String s3FileUrl = storeFileToS3(file, fileInputStream);
+            log.info("저장 완료. S3 저장위치 = {}",s3FileUrl);
+
+            return createStoredFileDto(s3FileUrl, file.getOriginalFilename());
         } catch(RuntimeException e) {
             log.error("S3 문제로 파일 저장 실패" , e);
             throw new S3NotWorkingException(e);
@@ -45,11 +46,11 @@ public class S3FileService {
         }
     }
 
-    public boolean removeFile(String storedPath) {
-        String filePath = extractFilePath(storedPath);
+    public boolean removeFile(String s3FileUrl) {
+        String filePath = extractFilePath(s3FileUrl);
 
         try {
-            if (!isStoredInS3(filePath)) {
+            if (!isFileStoredInS3(filePath)) {
                 log.info("제거할 파일을 찾을 수 없습니다. filePath={}", filePath);
                 return false;
             }
@@ -64,13 +65,18 @@ public class S3FileService {
         return true;
     }
 
-    private boolean isStoredInS3(String storedPath) {
-        return amazonS3Client.doesObjectExist(bucket, storedPath);
+    private boolean isFileStoredInS3(String filePath) {
+        return amazonS3Client.doesObjectExist(bucket, filePath);
+    }
+
+    private StoredFileDto createStoredFileDto(String s3FileUrl, String originalFilename) {
+        String filePath = extractFilePath(s3FileUrl);
+        return new StoredFileDto(filePath, originalFilename);
     }
 
     private String storeFileToS3(MultipartFile file, InputStream fileInputStream) {
         String originalFilename = file.getOriginalFilename();
-        String storePath = getFilePath(originalFilename);
+        String storePath = createFilePath(originalFilename);
 
         ObjectMetadata objectMetadata = getFileMetadata(file);
 
@@ -81,7 +87,7 @@ public class S3FileService {
         return amazonS3Client.getUrl(bucket, storePath).toString();
     }
 
-    private String getFilePath(String originalFilename) {
+    private String createFilePath(String originalFilename) {
         String dirName = extractExt(originalFilename);
         String storeFileName = createFileName(originalFilename);
         return dirName + "/" + storeFileName;
@@ -105,8 +111,7 @@ public class S3FileService {
         return originalFilename.substring(pos + 1);
     }
 
-    private String extractFilePath(String fullS3Path) {
-        String s3Url = s3UrlGenerator.getS3Url();
-        return fullS3Path.replace(s3Url, "");
+    private String extractFilePath(String s3FileUrl) {
+        return s3UrlGenerator.extractFilePath(s3FileUrl);
     }
 }
