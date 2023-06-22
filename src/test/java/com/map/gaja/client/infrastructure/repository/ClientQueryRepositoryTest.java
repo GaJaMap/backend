@@ -1,9 +1,8 @@
-package com.map.gaja.client.infrastructure.repository.querydsl;
+package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.subdto.LocationDto;
@@ -21,7 +20,10 @@ import java.util.List;
 
 @SpringBootTest
 @Transactional
-class ClientRepositoryCustomTest {
+class ClientQueryRepositoryTest {
+
+    @Autowired
+    ClientQueryRepository clientQueryRepository;
 
     @Autowired
     ClientRepository clientRepository;
@@ -53,7 +55,7 @@ class ClientRepositoryCustomTest {
     @Test
     void findClientWithoutGPSTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        Slice<ClientResponse> result = clientRepository.findClientByConditions(null,"사용자", pageable);
+        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(null,"사용자", pageable);
         List<ClientResponse> content = result.getContent();
 
         System.out.println("result = " + result);
@@ -66,7 +68,7 @@ class ClientRepositoryCustomTest {
     void findClientWithGPSTest() {
         Pageable pageable = PageRequest.of(0, 10);
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), 3000d);
-        Slice<ClientResponse> result = clientRepository.findClientByConditions(request,"사용자", pageable);
+        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(request,"사용자", pageable);
         List<ClientResponse> content = result.getContent();
 
         System.out.println("result = " + result);
