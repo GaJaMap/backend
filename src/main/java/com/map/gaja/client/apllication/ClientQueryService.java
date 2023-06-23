@@ -29,8 +29,8 @@ public class ClientQueryService {
         return entityToDto(client);
     }
 
-    public ClientListResponse findClient() {
-        List<Client> clients = clientRepository.findAll();
+    public ClientListResponse findAllClientsInBundle(Long bundleId) {
+        List<Client> clients = clientRepository.findByBundle_Id(bundleId);
         return entityToDto(clients);
     }
 
