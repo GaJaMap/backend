@@ -2,9 +2,7 @@ package com.map.gaja.user.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import com.map.gaja.user.domain.exception.BundleLimitExceededException;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class User extends BaseTimeEntity {
 
