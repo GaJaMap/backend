@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientImage;
@@ -42,11 +43,11 @@ public class ClientConvertor {
 
     protected static List<Client> dtoToEntity(NewClientBulkRequest request) {
         List<Client> clients = new ArrayList<>();
-        request.getClients().forEach(client -> clients.add(dtoToEntity(client)));
+        request.getClients().forEach(client -> clients.add(dtoToEntity(client, null)));
         return clients;
     }
 
-    protected static Client dtoToEntity(NewClientRequest request) {
+    protected static Client dtoToEntity(NewClientRequest request, Bundle bundle) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         return new Client(
@@ -54,11 +55,11 @@ public class ClientConvertor {
                 request.getPhoneNumber(),
                 new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
                 new ClientLocation(location.getLatitude(), location.getLongitude()),
-                null // 임시
+                bundle
             );
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, StoredFileDto storedFileDto) {
+    protected static Client dtoToEntity(NewClientRequest request, Bundle bundle, StoredFileDto storedFileDto) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getFilePath());
@@ -67,7 +68,7 @@ public class ClientConvertor {
                 request.getPhoneNumber(),
                 new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
                 new ClientLocation(location.getLatitude(), location.getLongitude()),
-                null, // 임시
+                bundle,
                 clientImage
         );
     }
