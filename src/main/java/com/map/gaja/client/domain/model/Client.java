@@ -46,7 +46,7 @@ public class Client extends BaseTimeEntity {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        this.bundle = bundle;
+        setBundle(bundle);
         this.clientImage = null;
     }
 
@@ -54,7 +54,7 @@ public class Client extends BaseTimeEntity {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        this.bundle = bundle;
+        setBundle(bundle);
         this.clientImage = clientImage;
     }
 
@@ -71,6 +71,11 @@ public class Client extends BaseTimeEntity {
         updateLocation(location, address);
         updateBundle(bundle);
         updateClientImage(clientImage);
+    }
+
+    private void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+        bundle.increaseClientCount();
     }
 
     private void updateBundle(Bundle bundle) {
@@ -96,11 +101,19 @@ public class Client extends BaseTimeEntity {
     }
 
     private void validateLocation(ClientLocation location) {
+        if (isClientLocationNull(location)) {
+            return;
+        }
+        // 위도, 경도 중 하나라도 null이 아니라면 Korea 범위에 있어야 함.
+
         if (!isLocationInKorea(location.getLatitude(), location.getLongitude())) {
             throw new LocationOutsideKoreaException(location.getLatitude(), location.getLatitude());
         }
     }
 
+    private boolean isClientLocationNull(ClientLocation location) {
+        return location.getLatitude() == null && location.getLongitude() == null;
+    }
     private boolean isLocationInKorea(double latitude, double longitude) {
         return latitude >= 33 && latitude <= 38
                 && longitude >= 124 && longitude <= 132;
