@@ -8,7 +8,6 @@ import com.map.gaja.client.presentation.dto.response.ClientSliceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("/api/bundle/{bundleId}/clients")
 @RequiredArgsConstructor
 public class GetClientController {
     private final ClientQueryService clientQueryService;
@@ -33,10 +32,10 @@ public class GetClientController {
     }
 
     @GetMapping
-    public ResponseEntity<ClientListResponse> getClientList() {
-        // 모든 거래처 조회
-        log.info("GetClientController.getClientList");
-        ClientListResponse response = clientQueryService.findClient();
+    public ResponseEntity<ClientListResponse> getClientList(@PathVariable Long bundleId) {
+        // 특정 번들 내에 모든 거래처 조회
+        log.info("GetClientController.getClientList bundleId={}", bundleId);
+        ClientListResponse response = clientQueryService.findAllClientsInBundle(bundleId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
