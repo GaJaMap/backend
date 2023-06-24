@@ -15,14 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/bundle/{bundleId}/clients")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
     private final S3FileService fileService;
 
-    @DeleteMapping("/{clientId}")
+    @DeleteMapping("/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long bundleId, @PathVariable Long clientId) {
         // 특정 번들 내에 거래처 삭제
         log.info("ClientController.deleteClient bundleId={} clientId={}", bundleId, clientId);
@@ -30,7 +30,7 @@ public class ClientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/clients")
     public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
@@ -42,7 +42,7 @@ public class ClientController {
         return saveClientWithImage(client);
     }
 
-    @PostMapping("/bulk")
+    @PostMapping("/clients/bulk")
     public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
         // 거래처 등록 - 여러건 등록
         log.info("ClientController.addBulkClient  clients={}", clients);
@@ -50,7 +50,7 @@ public class ClientController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/bulk/file")
+    @PostMapping("/clients/bulk/file")
     public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
         // 엑셀 등의 파일로 거래처 등록
         log.info("ClientController.addClients");
@@ -58,7 +58,7 @@ public class ClientController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{clientId}")
+    @PutMapping("/clients/{clientId}")
     public ResponseEntity<ClientResponse> changeClient(@PathVariable Long clientId, @RequestBody NewClientRequest clientRequest) {
         // 기존 거래처 정보 변경
         // User가 Client를 가지고 있는가? + 해당 번들을 User가 가지고 있는가?
