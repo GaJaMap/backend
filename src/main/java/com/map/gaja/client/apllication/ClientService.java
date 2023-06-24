@@ -1,10 +1,12 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.apllication.exception.UnsupportedFileTypeException;
+import com.map.gaja.client.domain.exception.ClientNotInBundleException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.file.ClientFileParser;
+import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -26,6 +28,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final ClientQueryRepository clientQueryRepository;
     private final List<ClientFileParser> parsers;
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
@@ -50,10 +53,11 @@ public class ClientService {
         return response;
     }
 
-    public void deleteClient(Long clientId) {
-        Client clientToDelete = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException(clientId));
-        clientRepository.delete(clientToDelete);
+    public void deleteClient(Long bundleId, Long clientId) {
+        Client client = clientQueryRepository.findClient(bundleId, clientId)
+                .orElseThrow(() -> new ClientNotInBundleException());
+
+        clientRepository.delete(client);
     }
 
     public CreatedClientListResponse parseFileAndSave(MultipartFile file) {

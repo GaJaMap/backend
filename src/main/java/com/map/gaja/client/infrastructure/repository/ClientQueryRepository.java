@@ -1,5 +1,6 @@
 package com.map.gaja.client.infrastructure.repository;
 
+import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.map.gaja.client.domain.model.QClient.client;
 
@@ -52,6 +54,15 @@ public class ClientQueryRepository {
         }
 
         return new SliceImpl<>(result, pageable, hasNext);
+    }
+
+    public Optional<Client> findClient(long bundleId, long clientId) {
+        Client result = query
+                .selectFrom(client)
+                .where(client.id.eq(clientId).and(client.bundle.id.eq(bundleId)))
+                .fetchFirst();
+
+        return Optional.ofNullable(result);
     }
 
     private NumberExpression<Double> getLocationDistance(NearbyClientSearchRequest locationSearchCond) {
