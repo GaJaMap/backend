@@ -1,6 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
@@ -22,6 +23,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @Transactional(readOnly = true)
 public class ClientQueryService {
     private final ClientRepository clientRepository;
+    private final ClientQueryRepository clientQueryRepository;
 
     public ClientResponse findClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
@@ -35,7 +37,7 @@ public class ClientQueryService {
     }
 
     public ClientSliceResponse findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
-        Slice<ClientResponse> clientSlice = clientRepository.findClientByConditions(locationSearchCond, wordCond, pageable);
+        Slice<ClientResponse> clientSlice = clientQueryRepository.findClientByConditions(locationSearchCond, wordCond, pageable);
         return new ClientSliceResponse(clientSlice.getContent(), clientSlice.hasNext());
     }
 

@@ -1,4 +1,4 @@
-package com.map.gaja.client.infrastructure.repository.querydsl;
+package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
@@ -12,14 +12,18 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.map.gaja.client.domain.model.QClient.*;
+import static com.map.gaja.client.domain.model.QClient.client;
 
+@Repository
 @RequiredArgsConstructor
-public class ClientRepositoryCustomImpl implements ClientRepositoryCustom {
+public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
