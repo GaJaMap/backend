@@ -46,7 +46,7 @@ public class Client extends BaseTimeEntity {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        this.bundle = bundle;
+        setBundle(bundle);
         this.clientImage = null;
     }
 
@@ -54,7 +54,7 @@ public class Client extends BaseTimeEntity {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        this.bundle = bundle;
+        setBundle(bundle);
         this.clientImage = clientImage;
     }
 
@@ -71,6 +71,11 @@ public class Client extends BaseTimeEntity {
         updateLocation(location, address);
         updateBundle(bundle);
         updateClientImage(clientImage);
+    }
+
+    private void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+        bundle.increaseClientCount();
     }
 
     private void updateBundle(Bundle bundle) {
@@ -100,7 +105,7 @@ public class Client extends BaseTimeEntity {
             throw new LocationOutsideKoreaException(location.getLatitude(), location.getLatitude());
         }
     }
-
+    
     private boolean isLocationInKorea(double latitude, double longitude) {
         return latitude >= 33 && latitude <= 38
                 && longitude >= 124 && longitude <= 132;
