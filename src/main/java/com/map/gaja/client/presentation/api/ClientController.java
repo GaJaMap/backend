@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("/api/bundle/{bundleId}/clients")
 @RequiredArgsConstructor
 public class ClientController {
 
@@ -23,10 +23,10 @@ public class ClientController {
     private final S3FileService fileService;
 
     @DeleteMapping("/{clientId}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
-        // 거래처 삭제
-        log.info("ClientController.deleteClient clinetId={}", clientId);
-        clientService.deleteClient(clientId);
+    public ResponseEntity<Void> deleteClient(@PathVariable Long bundleId, @PathVariable Long clientId) {
+        // 특정 번들 내에 거래처 삭제
+        log.info("ClientController.deleteClient bundleId={} clientId={}", bundleId, clientId);
+        clientService.deleteClient(bundleId, clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
