@@ -34,4 +34,12 @@ public class Bundle extends BaseTimeEntity {
     public void updateName(String name) {
         this.name = name;
     }
+
+    /**
+     * Client 클래스 내부에서 사용할 메소드.
+     * Client 클래스 내부 이외 호출은 자제.
+     */
+    public void increaseClientCount() {
+        clientCount++;
+    }
 }
