@@ -1,12 +1,17 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.client.domain.model.ClientAddress;
+import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
+import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,6 +76,49 @@ class ClientServiceTest {
         // then
         assertThat(response.getClientId()).isEqualTo(clientId);
         assertThat(bundle.getClientCount()).isEqualTo(clientCount + 1);
+    }
+
+    @Test
+    @DisplayName("기존 Client 업데이트 테스트")
+    public void updateClientTest() throws Exception {
+        // given
+        Long bundleId = 1L;
+        Long changedBundleId = 2L;
+        Long existingClientId = 1L;
+        String existingName = "test";
+        String changedName = "update Test";
+        String testEmail = "testEmail";
+
+        Bundle existingBundle = Bundle.builder()
+                .id(bundleId).clientCount(0)
+                .build();
+
+        Bundle changedBundle = Bundle.builder()
+                .id(changedBundleId).clientCount(0)
+                .build();
+
+        Client existngClient = new Client(
+                existingName, "test",
+                new ClientAddress(), new ClientLocation(),
+                existingBundle, null);
+
+        NewClientRequest changedRequest = new NewClientRequest();
+        changedRequest.setClientName(changedName);
+        changedRequest.setBundleId(changedBundleId);
+
+        when(clientQueryRepository.findClientByUserAndBundle(any(), anyLong(), anyLong()))
+                .thenReturn(Optional.ofNullable(existngClient));
+        when(bundleRepository.findByIdAndUserEmail(anyLong(), any()))
+                .thenReturn(Optional.ofNullable(changedBundle));
+
+        // when
+        ClientResponse response = clientService.changeClient(testEmail, existingBundle.getId(), existingClientId, changedRequest);
+
+        // then
+        assertThat(response.getClientName()).isEqualTo(changedName);
+        assertThat(response.getBundleId()).isEqualTo(changedBundleId);
+        assertThat(changedBundle.getClientCount()).isEqualTo(1);
+        assertThat(existingBundle.getClientCount()).isEqualTo(0);
     }
 
 }
