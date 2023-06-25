@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.domain.model.Bundle;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -29,6 +30,7 @@ class ClientQueryServiceTest {
     public void testFindUser() throws Exception {
         //given
         Long searchId = 1L;
+        Long bundleId = 1L;
         String searchName = "test";
         Client findClient = mock(Client.class);
         when(repository.findById(searchId)).thenReturn(Optional.ofNullable(findClient));
@@ -36,6 +38,7 @@ class ClientQueryServiceTest {
         when(findClient.getName()).thenReturn(searchName);
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
+        when(findClient.getBundle()).thenReturn(Bundle.builder().id(bundleId).build());
 
         //when
         ClientResponse response = clientQueryService.findClient(searchId);
