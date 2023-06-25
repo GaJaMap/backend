@@ -79,7 +79,8 @@ public class Client extends BaseTimeEntity {
     }
 
     private void updateBundle(Bundle bundle) {
-        this.bundle = bundle;
+        this.bundle.decreaseClientCount();
+        setBundle(bundle);
     }
 
     private void updateName(String name) {

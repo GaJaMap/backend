@@ -113,4 +113,31 @@ class BundleRepositoryTest {
         //when & then
         assertEquals(bundle, bundleRepository.findByIdAndUserId(bundle.getId(), user.getId()).get());
     }
+
+    @Test
+    @DisplayName("bundleId와 email로 Bundle 조회")
+    void findByIdAndUserEmailTest() {
+        //given
+        User user = User.builder()
+                .email("test")
+                .bundleCount(0)
+                .authority(Authority.FREE)
+                .createdDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        Bundle bundle = Bundle.builder()
+                .name("test")
+                .user(user)
+                .clientCount(0)
+                .createdDate(LocalDateTime.now())
+                .build();
+        bundleRepository.save(bundle);
+
+        Bundle result = bundleRepository.findByIdAndUserEmail(bundle.getId(), user.getEmail())
+                .orElseThrow(IllegalArgumentException::new);
+
+        assertEquals(bundle, result);
+    }
 }

@@ -42,4 +42,8 @@ public class Bundle extends BaseTimeEntity {
     public void increaseClientCount() {
         clientCount++;
     }
+
+    public void decreaseClientCount() {
+        clientCount--;
+    }
 }

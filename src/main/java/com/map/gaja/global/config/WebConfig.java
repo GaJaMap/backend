@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         FilterRegistrationBean<Filter> filterBean = new FilterRegistrationBean<>();
         filterBean.setFilter(new EmailCheckFilter());
 //        filterBean.setOrder(1);
-        filterBean.addUrlPatterns("/api/test");
+        filterBean.addUrlPatterns("/api/*"); // /api 전역으로 활성화
         return filterBean;
     }
 }

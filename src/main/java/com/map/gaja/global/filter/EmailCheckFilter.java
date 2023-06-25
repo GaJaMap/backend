@@ -18,10 +18,11 @@ public class EmailCheckFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 파라미터로 값이 들어오는 간단한 상황 가정
         String email = (String) request.getParameter("email");
+        System.out.println(email);
 
         // test로 들어오는 상황만 정상처리
         if (email != null && email.equals("test")) {
-            request.setAttribute(LoginEmailResolver.LOGIN_EMAIL_ATTRIBUTE, email); // 컨트롤러로 가기 전에 리졸버에서 이 값을 까봄
+            request.setAttribute(LoginEmailResolver.LOGIN_EMAIL_ATTRIBUTE, "email3@example.com"); // 컨트롤러로 가기 전에 리졸버에서 이 값을 까봄
             filterChain.doFilter(request, response);
         }
         else {

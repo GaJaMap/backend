@@ -86,21 +86,39 @@ public class ClientService {
         return saveClientList(clients);
     }
 
-    public ClientResponse changeClient(Long clientId, NewClientRequest clientRequest) {
-        Client updatedClient = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException(clientId));
+    public ClientResponse changeClient(
+            String loginEmail,
+            Long existingBundleId,
+            Long existingClientId,
+            NewClientRequest updateRequest
+    ) {
+        Client existingClient = clientQueryRepository.findClientByUserAndBundle(loginEmail, existingBundleId, existingClientId)
+                .orElseThrow(() -> new ClientNotFoundException(existingClientId));
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Client requestEntity = dtoToEntity(clientRequest, null);
-        ClientLocation changedLocation = requestEntity.getLocation();
-        ClientAddress changedAddress = requestEntity.getAddress();
+        Bundle updatedBundle = bundleRepository.findByIdAndUserEmail(updateRequest.getBundleId(), loginEmail)
+                .orElseThrow(BundleNotFoundException::new);
 
-        updatedClient.updateClient(
-                clientRequest.getClientName(),
-                clientRequest.getPhoneNumber(),
-                changedAddress, changedLocation,
-                null);
+        ClientAddress updatedAddress = new ClientAddress(
+                updateRequest.getAddress().getProvince(),
+                updateRequest.getAddress().getCity(),
+                updateRequest.getAddress().getDistrict(),
+                updateRequest.getAddress().getDetail()
+        );
 
-        return entityToDto(updatedClient);
+        ClientLocation updatedLocation = new ClientLocation(
+                updateRequest.getLocation().getLatitude(),
+                updateRequest.getLocation().getLongitude()
+        );
+
+        existingClient.updateClient(
+                updateRequest.getClientName(),
+                updateRequest.getPhoneNumber(),
+                updatedAddress,
+                updatedLocation,
+                updatedBundle
+        );
+
+        return entityToDto(existingClient);
     }
 }
