@@ -6,6 +6,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
+import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -58,12 +59,16 @@ public class ClientController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/clients/{clientId}")
-    public ResponseEntity<ClientResponse> changeClient(@PathVariable Long clientId, @RequestBody NewClientRequest clientRequest) {
+    @PutMapping("/bundle/{bundleId}/clients/{clientId}")
+    public ResponseEntity<ClientResponse> changeClient(
+            @LoginEmail String loginEmail,
+            @PathVariable Long bundleId,
+            @PathVariable Long clientId,
+            @RequestBody NewClientRequest clientRequest
+    ) {
         // 기존 거래처 정보 변경
-        // User가 Client를 가지고 있는가? + 해당 번들을 User가 가지고 있는가?
-        log.info("ClientController.changeClients clientRequest={}", clientRequest);
-        ClientResponse response = clientService.changeClient(clientId, clientRequest);
+        log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
+        ClientResponse response = clientService.changeClient(loginEmail, bundleId, clientId, clientRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
