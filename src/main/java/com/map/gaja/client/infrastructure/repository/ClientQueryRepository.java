@@ -21,7 +21,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.map.gaja.bundle.domain.model.QBundle.*;
 import static com.map.gaja.client.domain.model.QClient.client;
+import static com.map.gaja.user.domain.model.QUser.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -147,5 +149,18 @@ public class ClientQueryRepository {
                 .or(client.address.province.contains(addressCond))
                 .or(client.address.district.contains(addressCond))
                 .or(client.address.detail.contains(addressCond)) : null;
+    }
+
+    public Optional<Client> findClientByUserAndBundle(String loginEmail, Long bundleId, Long clientId) {
+        Client result = query.select(client)
+                .from(client)
+                .join(client.bundle, bundle).on(bundle.id.eq(bundleId))
+                .join(bundle.user, user).on(user.email.eq(loginEmail))
+                .where(
+                        client.id.eq(clientId)
+                )
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }
