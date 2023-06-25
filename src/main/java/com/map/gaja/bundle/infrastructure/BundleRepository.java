@@ -21,4 +21,7 @@ public interface BundleRepository extends JpaRepository<Bundle, Long> {
 
     @Query("SELECT b FROM Bundle b WHERE b.id = :bundleId AND b.user.id = :userId")
     Optional<Bundle> findByIdAndUserId(@Param(value = "bundleId") Long bundleId, @Param(value = "userId") Long userId);
+
+    @Query("SELECT b FROM Bundle b INNER JOIN b.user WHERE b.id = :bundleId AND b.user.email = :email") // 임시로 만듦
+    Optional<Bundle> findByIdAndUserEmail(@Param(value = "bundleId") Long bundleId, @Param(value = "email") String email);
 }
