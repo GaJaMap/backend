@@ -105,27 +105,43 @@ class ClientQueryRepositoryTest {
 
 
     @Test
+    @DisplayName("위치정보 없이 검색")
     void findClientWithoutGPSTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(null,"사용자", pageable);
+        String nameKeyword = "사용자";
+        Long bundleId = bundle2.getId();
+        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(null,nameKeyword,pageable,bundleId);
         List<ClientResponse> content = result.getContent();
 
-        System.out.println("result = " + result);
+        assertThat(result.getSize()).isEqualTo(10);
+
         for (ClientResponse client : content) {
-            System.out.println("client = " + client);
+//            System.out.println("client = " + client);
+            assertThat(client.getClientName()).contains(nameKeyword);
+            assertThat(client.getDistance()).isEqualTo(-1);
+            assertThat(client.getBundleId()).isEqualTo(bundleId);
         }
     }
 
     @Test
+    @DisplayName("위치정보 포함 검색")
     void findClientWithGPSTest() {
+        String nameKeyword = "사용자";
+        Long bundleId = bundle2.getId();
+        double radius = 3000;
+        NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         Pageable pageable = PageRequest.of(0, 10);
-        NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), 3000d);
-        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(request,"사용자", pageable);
+
+        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(request,nameKeyword,pageable,bundleId);
         List<ClientResponse> content = result.getContent();
 
-        System.out.println("result = " + result);
+        assertThat(result.getSize()).isEqualTo(10);
+
         for (ClientResponse client : content) {
-            System.out.println("client = " + client);
+//            System.out.println("client = " + client);
+            assertThat(client.getClientName()).contains(nameKeyword);
+            assertThat(client.getDistance()).isLessThan(radius);
+            assertThat(client.getBundleId()).isEqualTo(bundleId);
         }
     }
 
