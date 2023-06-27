@@ -38,7 +38,7 @@ public class ClientQueryRepository {
                                 Expressions.asNumber(1L), // 임시 번들 데이터
                                 client.name,
                                 client.phoneNumber,
-                                getAddressDto(),
+                                client.address,
                                 getLocationDto(),
                                 getLocationDistance(locationSearchCond) // 좌표 정보가 없다면 -1을 반환함
                         )
@@ -80,14 +80,6 @@ public class ClientQueryRepository {
                 LocationDto.class,
                 client.location.latitude,
                 client.location.longitude
-        );
-    }
-
-    private static ConstructorExpression<AddressDto> getAddressDto() {
-        return Projections.constructor(
-                AddressDto.class,
-                client.address.province, client.address.city,
-                client.address.district, client.address.detail
         );
     }
 
