@@ -48,7 +48,7 @@ public class GetClientController {
             ) {
         // 주변 거래처 조회
         log.info("GetClientController.nearbyClientSearch params={},{},{},{}", bundleId, locationSearchCond, wordCond, pageable);
-        ClientSliceResponse response = clientQueryService.findClientByConditions(locationSearchCond, wordCond, pageable, bundleId);
+        ClientSliceResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond, pageable);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

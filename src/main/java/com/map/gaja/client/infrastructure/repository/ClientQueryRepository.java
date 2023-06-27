@@ -30,7 +30,7 @@ public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
-    public Slice<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable, Long bundleId) {
+    public Slice<ClientResponse> findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,

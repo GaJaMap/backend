@@ -110,7 +110,7 @@ class ClientQueryRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
         String nameKeyword = "사용자";
         Long bundleId = bundle2.getId();
-        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(null,nameKeyword,pageable,bundleId);
+        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, null,nameKeyword,pageable);
         List<ClientResponse> content = result.getContent();
 
         assertThat(result.getSize()).isEqualTo(10);
@@ -132,7 +132,7 @@ class ClientQueryRepositoryTest {
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         Pageable pageable = PageRequest.of(0, 10);
 
-        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(request,nameKeyword,pageable,bundleId);
+        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, request,nameKeyword,pageable);
         List<ClientResponse> content = result.getContent();
 
         assertThat(result.getSize()).isEqualTo(10);
