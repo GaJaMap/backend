@@ -42,12 +42,13 @@ public class GetClientController {
     @GetMapping("/nearby")
     public ResponseEntity<ClientSliceResponse> nearbyClientSearch(
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @PathVariable Long bundleId,
             @RequestParam(required = false) String wordCond,
             @PageableDefault Pageable pageable
             ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{}", locationSearchCond, wordCond, pageable);
-        ClientSliceResponse response = clientQueryService.findClientByConditions(locationSearchCond, wordCond, pageable);
+        log.info("GetClientController.nearbyClientSearch params={},{},{},{}", bundleId, locationSearchCond, wordCond, pageable);
+        ClientSliceResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond, pageable);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -30,11 +30,11 @@ public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
-    public Slice<ClientResponse> findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
+    public Slice<ClientResponse> findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
-                                Expressions.asNumber(1L), // 임시 번들 데이터
+                                client.bundle.id,
                                 client.name,
                                 client.phoneNumber,
                                 client.address,
@@ -43,7 +43,7 @@ public class ClientQueryRepository {
                         )
                 )
                 .from(client)
-                .where(allContains(wordCond), isClientInRadius(locationSearchCond))
+                .where(nameContains(wordCond), isClientInRadius(locationSearchCond), bundleIdEq(bundleId))
                 .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
@@ -111,6 +111,14 @@ public class ClientQueryRepository {
                 || currentLocation.getLongitude() == null;
     }
 
+    private BooleanExpression nameContains(String nameCond) {
+        return nameCond != null ? client.name.contains(nameCond) : null;
+    }
+
+    private BooleanExpression bundleIdEq(Long bundleId) {
+        return bundleId != null ? client.bundle.id.eq(bundleId) : null;
+    }
+
     private BooleanBuilder allContains(String wordCond) {
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -121,10 +129,6 @@ public class ClientQueryRepository {
 
     private BooleanExpression phoneNumberContains(String phoneNumberCond) {
         return phoneNumberCond != null ? client.phoneNumber.contains(phoneNumberCond) : null;
-    }
-
-    private BooleanExpression nameContains(String nameCond) {
-        return nameCond != null ? client.name.contains(nameCond) : null;
     }
 
     private BooleanExpression addressContains(String addressCond) {
