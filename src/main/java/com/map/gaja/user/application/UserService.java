@@ -1,6 +1,7 @@
 package com.map.gaja.user.application;
 
 import com.map.gaja.global.authentication.AuthenticationHandler;
+import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.exception.UserNotFoundException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
@@ -20,6 +21,7 @@ public class UserService {
     private final Oauth2Client oauth2Client;
     private final UserRepository userRepository;
     private final AuthenticationHandler authenticationHandler;
+    private final SessionHandler sessionHandler;
 
     @Transactional
     public Integer login(LoginRequest request) {
@@ -27,6 +29,8 @@ public class UserService {
         if (email == null) { //카카오 로그인 실패
             throw new UserNotFoundException();
         }
+
+        sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
 
         User user = userRepository.findByEmail(email)
                 .orElse(User.builder()
