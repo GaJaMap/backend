@@ -36,8 +36,8 @@ public class ClientQueryService {
         return entityToDto(clients);
     }
 
-    public ClientSliceResponse findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
-        Slice<ClientResponse> clientSlice = clientQueryRepository.findClientByConditions(locationSearchCond, wordCond, pageable);
+    public ClientSliceResponse findClientByConditions(NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable, Long bundleId) {
+        Slice<ClientResponse> clientSlice = clientQueryRepository.findClientByConditions(locationSearchCond, wordCond, pageable, bundleId);
         return new ClientSliceResponse(clientSlice.getContent(), clientSlice.hasNext());
     }
 
