@@ -4,8 +4,7 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -38,8 +37,8 @@ public class ClientQueryRepository {
                                 Expressions.asNumber(1L), // 임시 번들 데이터
                                 client.name,
                                 client.phoneNumber,
-                                getAddressDto(),
-                                getLocationDto(),
+                                client.address,
+                                client.location,
                                 getLocationDistance(locationSearchCond) // 좌표 정보가 없다면 -1을 반환함
                         )
                 )
@@ -73,22 +72,6 @@ public class ClientQueryRepository {
         }
 
         return getCalcDistanceNativeSQL(locationSearchCond.getLocation());
-    }
-
-    private static ConstructorExpression<LocationDto> getLocationDto() {
-        return Projections.constructor(
-                LocationDto.class,
-                client.location.latitude,
-                client.location.longitude
-        );
-    }
-
-    private static ConstructorExpression<AddressDto> getAddressDto() {
-        return Projections.constructor(
-                AddressDto.class,
-                client.address.province, client.address.city,
-                client.address.district, client.address.detail
-        );
     }
 
     private OrderSpecifier<?> distanceAsc(NearbyClientSearchRequest locationCond) {

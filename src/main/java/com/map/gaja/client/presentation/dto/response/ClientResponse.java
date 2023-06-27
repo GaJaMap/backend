@@ -1,7 +1,7 @@
 package com.map.gaja.client.presentation.dto.response;
 
-import com.map.gaja.client.presentation.dto.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.map.gaja.client.domain.model.ClientAddress;
+import com.map.gaja.client.domain.model.ClientLocation;
 import lombok.*;
 
 /**
@@ -15,7 +15,7 @@ public class ClientResponse {
     private Long bundleId; // 번들 세부 정보는 나중에 추가.
     private String clientName;
     private String phoneNumber;
-    private AddressDto address;
-    private LocationDto location;
+    private ClientAddress address;
+    private ClientLocation location;
     private Double distance; // km 기준
 }

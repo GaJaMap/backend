@@ -7,8 +7,8 @@ import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
@@ -32,11 +32,9 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
-        ClientAddress address = client.getAddress();
-        ClientLocation location = client.getLocation();
         return new ClientResponse(client.getId(), client.getBundle().getId(), client.getName(), client.getPhoneNumber(),
-                new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
-                new LocationDto(location.getLatitude(), location.getLongitude()),
+                client.getAddress(),
+                client.getLocation(),
                 null
         );
     }
