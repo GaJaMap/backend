@@ -4,7 +4,7 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;

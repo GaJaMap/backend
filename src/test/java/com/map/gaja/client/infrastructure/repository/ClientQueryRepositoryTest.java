@@ -6,7 +6,7 @@ import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;

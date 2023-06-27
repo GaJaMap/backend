@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.dto.request;
 
-import com.map.gaja.client.presentation.dto.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
