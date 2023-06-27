@@ -32,10 +32,9 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
-        ClientLocation location = client.getLocation();
         return new ClientResponse(client.getId(), client.getBundle().getId(), client.getName(), client.getPhoneNumber(),
                 client.getAddress(),
-                new LocationDto(location.getLatitude(), location.getLongitude()),
+                client.getLocation(),
                 null
         );
     }
