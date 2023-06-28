@@ -90,16 +90,14 @@ public class ClientService {
     }
 
     public ClientResponse changeClient(
-            String loginEmail,
-            Long existingBundleId,
             Long existingClientId,
             NewClientRequest updateRequest
     ) {
-        Client existingClient = clientQueryRepository.findClientByUserAndBundle(loginEmail, existingBundleId, existingClientId)
+        Client existingClient = clientQueryRepository.findClientWithBundle(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException(existingClientId));
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Bundle updatedBundle = bundleRepository.findByIdAndUserEmail(updateRequest.getBundleId(), loginEmail)
+        Bundle updatedBundle = bundleRepository.findById(updateRequest.getBundleId())
                 .orElseThrow(BundleNotFoundException::new);
 
         ClientAddress updatedAddress = new ClientAddress(

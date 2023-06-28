@@ -40,8 +40,6 @@ class ClientServiceTest {
     private BundleRepository bundleRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
-    @Mock
-    private BundleQueryRepository bundleQueryRepository;
 
     @BeforeEach
     void beforeEach() {
@@ -89,7 +87,6 @@ class ClientServiceTest {
         Long existingClientId = 1L;
         String existingName = "test";
         String changedName = "update Test";
-        String testEmail = "testEmail";
 
         Bundle existingBundle = createBundle(bundleId, 0);
 
@@ -101,13 +98,13 @@ class ClientServiceTest {
         changedRequest.setClientName(changedName);
         changedRequest.setBundleId(changedBundleId);
 
-        when(clientQueryRepository.findClientByUserAndBundle(any(), anyLong(), anyLong()))
+        when(clientQueryRepository.findClientWithBundle(anyLong()))
                 .thenReturn(Optional.ofNullable(existngClient));
-        when(bundleRepository.findByIdAndUserEmail(anyLong(), any()))
+        when(bundleRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(changedBundle));
 
         // when
-        ClientResponse response = clientService.changeClient(testEmail, existingBundle.getId(), existingClientId, changedRequest);
+        ClientResponse response = clientService.changeClient(existingClientId, changedRequest);
 
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
