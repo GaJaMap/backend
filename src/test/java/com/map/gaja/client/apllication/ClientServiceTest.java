@@ -49,7 +49,6 @@ class ClientServiceTest {
                 clientRepository,
                 bundleRepository,
                 clientQueryRepository,
-                bundleQueryRepository,
                 new ArrayList<>()
         );
     }
