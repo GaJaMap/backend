@@ -105,17 +105,13 @@ class ClientQueryRepositoryTest {
 
 
     @Test
-    @DisplayName("위치정보 없이 검색")
+    @DisplayName("위치 정보 없이 반경 검색")
     void findClientWithoutGPSTest() {
-        Pageable pageable = PageRequest.of(0, 10);
         String nameKeyword = "사용자";
         Long bundleId = bundle2.getId();
-        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, null,nameKeyword,pageable);
-        List<ClientResponse> content = result.getContent();
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, null,nameKeyword);
 
-        assertThat(result.getSize()).isEqualTo(10);
-
-        for (ClientResponse client : content) {
+        for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isEqualTo(-1);
@@ -124,20 +120,16 @@ class ClientQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("위치정보 포함 검색")
+    @DisplayName("위치 정보 포함 반경 검색")
     void findClientWithGPSTest() {
         String nameKeyword = "사용자";
         Long bundleId = bundle2.getId();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
-        Pageable pageable = PageRequest.of(0, 10);
 
-        Slice<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, request,nameKeyword,pageable);
-        List<ClientResponse> content = result.getContent();
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, request,nameKeyword);
 
-        assertThat(result.getSize()).isEqualTo(10);
-
-        for (ClientResponse client : content) {
+        for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
