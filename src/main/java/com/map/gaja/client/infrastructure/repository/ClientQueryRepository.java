@@ -150,4 +150,32 @@ public class ClientQueryRepository {
 
         return Optional.ofNullable(result);
     }
+
+    /**
+     * 해당 번들이 클라이언트를 가지고 있는지 확인
+     * @param bundleId
+     * @param clientId
+     * @return 가지고 있다면 true
+     */
+    public boolean hasClientByBundle(Long bundleId, Long clientId) {
+        Integer result = query.selectOne()
+                .from(client)
+                .join(client.bundle, bundle).on(bundle.id.eq(bundleId))
+                .where(
+                        client.id.eq(clientId)
+                )
+                .fetchOne();
+
+        return result != null;
+    }
+
+    /**
+     * 해당 번들이 클라이언트를 가지고 있지 않은지 확인
+     * @param bundleId
+     * @param clientId
+     * @return 가지고 있지 않다면 true
+     */
+    public boolean hasNoClientByBundle(Long bundleId, Long clientId) {
+        return !hasClientByBundle(bundleId, clientId);
+    }
 }
