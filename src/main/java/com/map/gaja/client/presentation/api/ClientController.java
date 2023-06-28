@@ -33,34 +33,6 @@ public class ClientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/clients")
-    public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
-        // 거래처 등록 - 단건 등록
-        log.info("ClientController.addClient  clients={}", client);
-        MultipartFile clientImage = client.getClientImage();
-        if (clientImage == null || clientImage.isEmpty()) {
-            return saveClient(client);
-        }
-
-        return saveClientWithImage(client);
-    }
-
-    @PostMapping("/clients/bulk")
-    public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
-        // 거래처 등록 - 여러건 등록
-        log.info("ClientController.addBulkClient  clients={}", clients);
-        CreatedClientListResponse response = clientService.saveClientList(clients);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/clients/bulk/file")
-    public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
-        // 엑셀 등의 파일로 거래처 등록
-        log.info("ClientController.addClients");
-        CreatedClientListResponse response = clientService.parseFileAndSave(file);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
     @PutMapping("/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> changeClient(
             @LoginEmail String loginEmail,
@@ -72,6 +44,18 @@ public class ClientController {
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
         ClientResponse response = clientService.changeClient(loginEmail, bundleId, clientId, clientRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/clients")
+    public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
+        // 거래처 등록 - 단건 등록
+        log.info("ClientController.addClient  clients={}", client);
+        MultipartFile clientImage = client.getClientImage();
+        if (clientImage == null || clientImage.isEmpty()) {
+            return saveClient(client);
+        }
+
+        return saveClientWithImage(client);
     }
 
     private ResponseEntity<CreatedClientResponse> saveClientWithImage(NewClientRequest client) {
@@ -88,6 +72,22 @@ public class ClientController {
 
     private ResponseEntity<CreatedClientResponse> saveClient(NewClientRequest client) {
         CreatedClientResponse response = clientService.saveClient(client);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+//    @PostMapping("/clients/bulk")
+    public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
+        // 거래처 등록 - 여러건 등록
+        log.info("ClientController.addBulkClient  clients={}", clients);
+        CreatedClientListResponse response = clientService.saveClientList(clients);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+//    @PostMapping("/clients/bulk/file")
+    public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
+        // 엑셀 등의 파일로 거래처 등록
+        log.info("ClientController.addClients");
+        CreatedClientListResponse response = clientService.parseFileAndSave(file);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
