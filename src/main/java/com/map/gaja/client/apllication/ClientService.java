@@ -2,6 +2,7 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.apllication.exception.UnsupportedFileTypeException;
 import com.map.gaja.client.domain.exception.ClientNotInBundleException;
@@ -11,6 +12,7 @@ import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.file.ClientFileParser;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
+import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
@@ -33,6 +35,8 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final BundleRepository bundleRepository;
     private final ClientQueryRepository clientQueryRepository;
+    private final BundleQueryRepository bundleQueryRepository;
+
     private final List<ClientFileParser> parsers;
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
@@ -61,11 +65,19 @@ public class ClientService {
         return response;
     }
 
-    public void deleteClient(Long bundleId, Long clientId) {
-        Client client = clientQueryRepository.findClient(bundleId, clientId)
-                .orElseThrow(() -> new ClientNotInBundleException());
+    public void deleteClient(ClientAccessCheckDto accessRequest) {
+        ClientServiceHelper.verifyClientAccess(
+                bundleQueryRepository,
+                clientQueryRepository,
+                accessRequest
+        );
 
-        clientRepository.delete(client);
+        long deletedClientId = accessRequest.getClientId();
+        Client deletedClient = clientQueryRepository.findClientWithBundle(deletedClientId)
+                .orElseThrow(() -> new ClientNotFoundException(deletedClientId));
+        deletedClient.removeBundle();
+
+        clientRepository.delete(deletedClient);
     }
 
     public CreatedClientListResponse parseFileAndSave(MultipartFile file) {

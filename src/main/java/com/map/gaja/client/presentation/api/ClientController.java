@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
@@ -24,10 +25,11 @@ public class ClientController {
     private final S3FileService fileService;
 
     @DeleteMapping("/bundle/{bundleId}/clients/{clientId}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long bundleId, @PathVariable Long clientId) {
+    public ResponseEntity<Void> deleteClient(@LoginEmail String loginEmail, @PathVariable Long bundleId, @PathVariable Long clientId) {
         // 특정 번들 내에 거래처 삭제
-        log.info("ClientController.deleteClient bundleId={} clientId={}", bundleId, clientId);
-        clientService.deleteClient(bundleId, clientId);
+        log.info("ClientController.deleteClient loginEmail={} bundleId={} clientId={}", loginEmail, bundleId, clientId);
+        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
+        clientService.deleteClient(accessCheckDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
