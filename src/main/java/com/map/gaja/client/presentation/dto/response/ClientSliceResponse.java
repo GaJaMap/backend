@@ -9,5 +9,4 @@ import java.util.List;
 @AllArgsConstructor
 public class ClientSliceResponse {
     private List<ClientResponse> content;
-    private boolean hasNext;
 }

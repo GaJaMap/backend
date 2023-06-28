@@ -9,8 +9,6 @@ import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.response.ClientSliceResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +34,9 @@ public class ClientQueryService {
         return entityToDto(clients);
     }
 
-    public ClientSliceResponse findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
-        Slice<ClientResponse> clientSlice = clientQueryRepository.findClientByConditions(bundleId, locationSearchCond, wordCond, pageable);
-        return new ClientSliceResponse(clientSlice.getContent(), clientSlice.hasNext());
+    public ClientSliceResponse findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        List<ClientResponse> clientSlice = clientQueryRepository.findClientByConditions(bundleId, locationSearchCond, wordCond);
+        return new ClientSliceResponse(clientSlice);
     }
 
 }

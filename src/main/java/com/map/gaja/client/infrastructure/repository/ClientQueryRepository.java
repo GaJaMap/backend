@@ -12,9 +12,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,7 +27,7 @@ public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
-    public Slice<ClientResponse> findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond, Pageable pageable) {
+    public List<ClientResponse> findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
@@ -45,16 +42,10 @@ public class ClientQueryRepository {
                 .from(client)
                 .where(nameContains(wordCond), isClientInRadius(locationSearchCond), bundleIdEq(bundleId))
                 .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()+1)
+                .limit(1000)
                 .fetch();
 
-        boolean hasNext = result.size() > pageable.getPageSize();
-        if (hasNext) {
-            result.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(result, pageable, hasNext);
+        return result;
     }
 
     public Optional<Client> findClientWithBundle(long clientId) {

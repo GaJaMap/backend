@@ -60,13 +60,12 @@ public class GetClientController {
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
-            @RequestParam(required = false) String wordCond,
-            @PageableDefault Pageable pageable
+            @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{},{}", bundleId, locationSearchCond, wordCond, pageable);
+        log.info("GetClientController.nearbyClientSearch params={},{},{}", bundleId, locationSearchCond, wordCond);
         verifyBundleAccess(loginEmail, bundleId);
-        ClientSliceResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond, pageable);
+        ClientSliceResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
