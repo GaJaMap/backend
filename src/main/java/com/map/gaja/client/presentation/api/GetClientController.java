@@ -22,14 +22,13 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/bundle/{bundleId}/clients")
 @RequiredArgsConstructor
 public class GetClientController {
     private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final BundleAccessVerifyService bundleAccessVerifyService;
 
-    @GetMapping("/{clientId}")
+    @GetMapping("/api/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId,
@@ -42,7 +41,7 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/api/bundle/{bundleId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId
@@ -54,7 +53,7 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/nearby")
+    @GetMapping("/api/bundle/{bundleId}/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId,
