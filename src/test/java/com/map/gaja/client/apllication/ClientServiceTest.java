@@ -124,17 +124,11 @@ class ClientServiceTest {
         Long clientId = 1L;
         Bundle bundle = createBundle(bundleId, 0);
         Client client = createClient("testClient", bundle);
-        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto("Test Email", bundleId, clientId);
 
-        when(bundleQueryRepository.hasNoBundleByUser(anyLong(), any()))
-                .thenReturn(false);
-        when(clientQueryRepository.hasNoClientByBundle(anyLong(), any()))
-                .thenReturn(false);
         when(clientQueryRepository.findClientWithBundle(anyLong()))
                 .thenReturn(Optional.ofNullable(client));
 
-
-        clientService.deleteClient(accessRequest);
+        clientService.deleteClient(clientId);
 
         assertThat(bundle.getClientCount()).isEqualTo(0);
     }

@@ -2,11 +2,9 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
-import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import com.map.gaja.user.domain.model.Authority;
@@ -26,16 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ClientServiceHelperTest {
+class ClientAccessCheckServiceTest {
 
     @Autowired
     EntityManager em;
 
     @Autowired
-    BundleQueryRepository bundleQueryRepository;
-
-    @Autowired
-    ClientQueryRepository clientQueryRepository;
+    ClientAccessVerifyService clientAccessVerifyService;
 
     User user;
     Bundle bundle;
@@ -87,7 +82,7 @@ class ClientServiceHelperTest {
         Long clientId = client.getId();
         ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, bundleId, clientId);
 
-        ClientServiceHelper.verifyClientAccess(bundleQueryRepository, clientQueryRepository, accessRequest);
+        clientAccessVerifyService.verifyClientAccess(accessRequest);
     }
 
     @Test
@@ -99,7 +94,7 @@ class ClientServiceHelperTest {
         ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, wrongBundleId, clientId);
 
         assertThrows(BundleNotFoundException.class ,
-                () -> ClientServiceHelper.verifyClientAccess(bundleQueryRepository, clientQueryRepository, accessRequest));
+                () -> clientAccessVerifyService.verifyClientAccess(accessRequest));
     }
 
     @Test
@@ -111,6 +106,6 @@ class ClientServiceHelperTest {
         ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, bundleId, wrongClientId);
 
         assertThrows(ClientNotFoundException.class ,
-                () -> ClientServiceHelper.verifyClientAccess(bundleQueryRepository, clientQueryRepository, accessRequest));
+                () -> clientAccessVerifyService.verifyClientAccess(accessRequest));
     }
 }

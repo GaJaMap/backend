@@ -5,16 +5,16 @@ import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
-import com.map.gaja.user.domain.exception.UserNotFoundException;
-import com.map.gaja.user.domain.model.User;
-import com.map.gaja.user.infrastructure.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public class ClientServiceHelper {
-    public static void verifyClientAccess (
-            BundleQueryRepository bundleQueryRepository,
-            ClientQueryRepository clientQueryRepository,
-            ClientAccessCheckDto accessRequest
-    ) {
+@Service
+@RequiredArgsConstructor
+public class ClientAccessVerifyService {
+    private final ClientQueryRepository clientQueryRepository;
+    private final BundleQueryRepository bundleQueryRepository;
+
+    public void verifyClientAccess(ClientAccessCheckDto accessRequest) {
         String userEmail = accessRequest.getUserEmail();
         long bundleId = accessRequest.getBundleId();
         long clientId = accessRequest.getClientId();

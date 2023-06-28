@@ -35,8 +35,6 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final BundleRepository bundleRepository;
     private final ClientQueryRepository clientQueryRepository;
-    private final BundleQueryRepository bundleQueryRepository;
-
     private final List<ClientFileParser> parsers;
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
@@ -65,16 +63,9 @@ public class ClientService {
         return response;
     }
 
-    public void deleteClient(ClientAccessCheckDto accessRequest) {
-        ClientServiceHelper.verifyClientAccess(
-                bundleQueryRepository,
-                clientQueryRepository,
-                accessRequest
-        );
-
-        long deletedClientId = accessRequest.getClientId();
-        Client deletedClient = clientQueryRepository.findClientWithBundle(deletedClientId)
-                .orElseThrow(() -> new ClientNotFoundException(deletedClientId));
+    public void deleteClient(long clientId) {
+        Client deletedClient = clientQueryRepository.findClientWithBundle(clientId)
+                .orElseThrow(() -> new ClientNotFoundException(clientId));
         deletedClient.removeBundle();
 
         clientRepository.delete(deletedClient);
