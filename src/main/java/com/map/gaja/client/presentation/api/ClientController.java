@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClientController {
 
     private final ClientService clientService;
+    private final ClientAccessVerifyService clientAccessVerifyService;
     private final S3FileService fileService;
 
     @DeleteMapping("/bundle/{bundleId}/clients/{clientId}")
@@ -29,7 +31,8 @@ public class ClientController {
         // 특정 번들 내에 거래처 삭제
         log.info("ClientController.deleteClient loginEmail={} bundleId={} clientId={}", loginEmail, bundleId, clientId);
         ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
-        clientService.deleteClient(accessCheckDto);
+        clientAccessVerifyService.verifyClientAccess(accessCheckDto);
+        clientService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
