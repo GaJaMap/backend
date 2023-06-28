@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.bundle.application.BundleAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
@@ -24,14 +25,14 @@ public class ClientController {
 
     private final ClientService clientService;
     private final ClientAccessVerifyService clientAccessVerifyService;
+    private final BundleAccessVerifyService bundleAccessVerifyService;
     private final S3FileService fileService;
 
     @DeleteMapping("/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<Void> deleteClient(@LoginEmail String loginEmail, @PathVariable Long bundleId, @PathVariable Long clientId) {
         // 특정 번들 내에 거래처 삭제
         log.info("ClientController.deleteClient loginEmail={} bundleId={} clientId={}", loginEmail, bundleId, clientId);
-        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
-        clientAccessVerifyService.verifyClientAccess(accessCheckDto);
+        verifyClientAccess(loginEmail, bundleId, clientId);
         clientService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -45,7 +46,12 @@ public class ClientController {
     ) {
         // 기존 거래처 정보 변경
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
-        ClientResponse response = clientService.changeClient(loginEmail, bundleId, clientId, clientRequest);
+        verifyClientAccess(loginEmail, bundleId, clientId);
+        if (bundleId != clientRequest.getBundleId()) {
+            verifyBundleAccess(loginEmail, clientRequest);
+        }
+
+        ClientResponse response = clientService.changeClient(clientId, clientRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -76,6 +82,15 @@ public class ClientController {
     private ResponseEntity<CreatedClientResponse> saveClient(NewClientRequest client) {
         CreatedClientResponse response = clientService.saveClient(client);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    private void verifyClientAccess(String loginEmail, Long bundleId, Long clientId) {
+        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
+        clientAccessVerifyService.verifyClientAccess(accessCheckDto);
+    }
+
+    private void verifyBundleAccess(String loginEmail, NewClientRequest clientRequest) {
+        bundleAccessVerifyService.verifyBundleAccess(clientRequest.getBundleId(), loginEmail);
     }
 
 //    @PostMapping("/clients/bulk")
