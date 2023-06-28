@@ -2,12 +2,14 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
+import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
@@ -38,6 +40,8 @@ class ClientServiceTest {
     private BundleRepository bundleRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
+    @Mock
+    private BundleQueryRepository bundleQueryRepository;
 
     @BeforeEach
     void beforeEach() {
@@ -45,6 +49,7 @@ class ClientServiceTest {
                 clientRepository,
                 bundleRepository,
                 clientQueryRepository,
+                bundleQueryRepository,
                 new ArrayList<>()
         );
     }
@@ -53,13 +58,11 @@ class ClientServiceTest {
     @DisplayName("Bundle을 포함한 Client 저장 테스트")
     public void saveClientTest() throws Exception {
         // given
-        Long bundleId = 1L;
         Long clientId = 1L;
-        Integer clientCount = 0;
 
-        Bundle bundle = Bundle.builder()
-                .id(bundleId).clientCount(clientCount)
-                .build();
+        Long bundleId = 1L;
+        Integer clientCount = 0;
+        Bundle bundle = createBundle(bundleId, clientCount);
         NewClientRequest request = new NewClientRequest();
         request.setBundleId(bundleId);
 
@@ -89,18 +92,11 @@ class ClientServiceTest {
         String changedName = "update Test";
         String testEmail = "testEmail";
 
-        Bundle existingBundle = Bundle.builder()
-                .id(bundleId).clientCount(0)
-                .build();
+        Bundle existingBundle = createBundle(bundleId, 0);
 
-        Bundle changedBundle = Bundle.builder()
-                .id(changedBundleId).clientCount(0)
-                .build();
+        Bundle changedBundle = createBundle(changedBundleId, 0);
 
-        Client existngClient = new Client(
-                existingName, "test",
-                new ClientAddress(), new ClientLocation(),
-                existingBundle, null);
+        Client existngClient = createClient(existingName, existingBundle);
 
         NewClientRequest changedRequest = new NewClientRequest();
         changedRequest.setClientName(changedName);
@@ -121,4 +117,38 @@ class ClientServiceTest {
         assertThat(existingBundle.getClientCount()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("Client 삭제 테스트")
+    void deleteClientTest() {
+        Long bundleId = 1L;
+        Long clientId = 1L;
+        Bundle bundle = createBundle(bundleId, 0);
+        Client client = createClient("testClient", bundle);
+        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto("Test Email", bundleId, clientId);
+
+        when(bundleQueryRepository.hasNoBundleByUser(anyLong(), any()))
+                .thenReturn(false);
+        when(clientQueryRepository.hasNoClientByBundle(anyLong(), any()))
+                .thenReturn(false);
+        when(clientQueryRepository.findClientWithBundle(anyLong()))
+                .thenReturn(Optional.ofNullable(client));
+
+
+        clientService.deleteClient(accessRequest);
+
+        assertThat(bundle.getClientCount()).isEqualTo(0);
+    }
+
+    private static Bundle createBundle(Long bundleId, Integer clientCount) {
+        return Bundle.builder()
+                .id(bundleId).clientCount(clientCount)
+                .build();
+    }
+
+    private static Client createClient(String existingName, Bundle existingBundle) {
+        return new Client(
+                existingName, "test",
+                new ClientAddress(), new ClientLocation(),
+                existingBundle, null);
+    }
 }

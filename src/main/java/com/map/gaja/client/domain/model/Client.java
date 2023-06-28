@@ -73,13 +73,18 @@ public class Client extends BaseTimeEntity {
         updateClientImage(clientImage);
     }
 
+    public void removeBundle() {
+        bundle.decreaseClientCount();
+        bundle = null;
+    }
+
     private void setBundle(Bundle bundle) {
         this.bundle = bundle;
         bundle.increaseClientCount();
     }
 
     private void updateBundle(Bundle bundle) {
-        this.bundle.decreaseClientCount();
+        removeBundle();
         setBundle(bundle);
     }
 

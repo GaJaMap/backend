@@ -57,11 +57,12 @@ public class ClientQueryRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
-    public Optional<Client> findClient(long bundleId, long clientId) {
+    public Optional<Client> findClientWithBundle(long clientId) {
         Client result = query
                 .selectFrom(client)
-                .where(client.id.eq(clientId).and(client.bundle.id.eq(bundleId)))
-                .fetchFirst();
+                .join(client.bundle, bundle)
+                .where(client.id.eq(clientId))
+                .fetchJoin().fetchOne();
 
         return Optional.ofNullable(result);
     }
