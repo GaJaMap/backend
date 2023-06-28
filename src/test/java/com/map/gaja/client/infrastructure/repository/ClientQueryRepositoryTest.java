@@ -109,7 +109,9 @@ class ClientQueryRepositoryTest {
     void findClientWithoutGPSTest() {
         String nameKeyword = "사용자";
         Long bundleId = bundle2.getId();
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, null,nameKeyword);
+        List<Long> bundleIdList = new ArrayList<>();
+        bundleIdList.add(bundleId);
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleIdList, null,nameKeyword);
 
         for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
@@ -126,14 +128,38 @@ class ClientQueryRepositoryTest {
         Long bundleId = bundle2.getId();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
+        List<Long> bundleIdList = new ArrayList<>();
+        bundleIdList.add(bundleId);
 
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleId, request,nameKeyword);
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleIdList, request,nameKeyword);
 
         for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
             assertThat(client.getBundleId()).isEqualTo(bundleId);
+        }
+    }
+
+    @Test
+    @DisplayName("다중 번들 반경 검색")
+    void findClientWithoutBundleIdTest() {
+        String nameKeyword = "사용자";
+        Long bundleId1 = bundle1.getId();
+        Long bundleId2 = bundle2.getId();
+        double radius = 3000;
+        NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
+        List<Long> bundleIdList = new ArrayList<>();
+        bundleIdList.add(bundleId1);
+        bundleIdList.add(bundleId2);
+
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleIdList, request,nameKeyword);
+
+        for (ClientResponse client : result) {
+//            System.out.println("client = " + client);
+            assertThat(client.getClientName()).contains(nameKeyword);
+            assertThat(client.getDistance()).isLessThan(radius);
+            assertThat(client.getBundleId()).isIn(bundleId1, bundleId2);
         }
     }
 
