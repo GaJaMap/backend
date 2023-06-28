@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.application.BundleAccessVerifyService;
 import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
@@ -12,17 +13,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ClientAccessVerifyService {
     private final ClientQueryRepository clientQueryRepository;
-    private final BundleQueryRepository bundleQueryRepository;
+    private final BundleAccessVerifyService bundleAccessVerifyService;
 
     public void verifyClientAccess(ClientAccessCheckDto accessRequest) {
         String userEmail = accessRequest.getUserEmail();
         long bundleId = accessRequest.getBundleId();
         long clientId = accessRequest.getClientId();
 
-        if(bundleQueryRepository.hasNoBundleByUser(bundleId, userEmail)) {
-            throw new BundleNotFoundException();
-        }
-
+        bundleAccessVerifyService.verifyBundleAccess(bundleId, userEmail);
         if (clientQueryRepository.hasNoClientByBundle(bundleId, clientId)) {
             throw new ClientNotFoundException(clientId);
         }
