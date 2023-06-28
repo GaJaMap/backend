@@ -8,7 +8,6 @@ import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.response.ClientSliceResponse;
 import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +22,13 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/bundle/{bundleId}/clients")
 @RequiredArgsConstructor
 public class GetClientController {
     private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final BundleAccessVerifyService bundleAccessVerifyService;
 
-    @GetMapping("/{clientId}")
+    @GetMapping("/api/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId,
@@ -43,7 +41,7 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/api/bundle/{bundleId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId
@@ -55,18 +53,29 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/nearby")
-    public ResponseEntity<ClientSliceResponse> nearbyClientSearch(
+    @GetMapping("/api/bundle/{bundleId}/clients/nearby")
+    public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
-            @RequestParam(required = false) String wordCond,
-            @PageableDefault Pageable pageable
+            @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{},{}", bundleId, locationSearchCond, wordCond, pageable);
+        log.info("GetClientController.nearbyClientSearch params={},{},{}", bundleId, locationSearchCond, wordCond);
         verifyBundleAccess(loginEmail, bundleId);
-        ClientSliceResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond, pageable);
+        ClientListResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/bundle/clients/nearby")
+    public ResponseEntity<ClientListResponse> nearbyClientSearch(
+            @LoginEmail String loginEmail,
+            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @RequestParam(required = false) String wordCond
+    ) {
+        // 주변 거래처 조회
+        log.info("GetClientController.nearbyClientSearch params={},{},{}", loginEmail, locationSearchCond, wordCond);
+        ClientListResponse response = clientQueryService.findClientByConditions(loginEmail, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
