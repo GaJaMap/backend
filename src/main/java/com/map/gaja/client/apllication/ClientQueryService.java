@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.map.gaja.client.apllication.ClientConvertor.*;
@@ -21,6 +23,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 public class ClientQueryService {
     private final ClientRepository clientRepository;
     private final ClientQueryRepository clientQueryRepository;
+    private final BundleQueryRepository bundleQueryRepository;
 
     public ClientResponse findClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
@@ -34,7 +37,10 @@ public class ClientQueryService {
     }
 
     public ClientListResponse findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleId, locationSearchCond, wordCond);
+        List<Long> bundleIdList = new ArrayList<>();
+        bundleIdList.add(bundleId);
+
+        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList);
     }
 

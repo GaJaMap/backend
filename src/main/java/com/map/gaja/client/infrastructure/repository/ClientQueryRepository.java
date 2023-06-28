@@ -14,6 +14,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,11 @@ public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
-    public List<ClientResponse> findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+    public List<ClientResponse> findClientByConditions(List<Long> bundleIdList, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        if (bundleIdList.size() < 1) {
+            return new ArrayList<>();
+        }
+
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
@@ -40,7 +45,7 @@ public class ClientQueryRepository {
                         )
                 )
                 .from(client)
-                .where(nameContains(wordCond), isClientInRadius(locationSearchCond), bundleIdEq(bundleId))
+                .where(nameContains(wordCond), isClientInRadius(locationSearchCond), bundleIdEq(bundleIdList))
                 .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
                 .limit(1000)
                 .fetch();
@@ -107,8 +112,12 @@ public class ClientQueryRepository {
         return nameCond != null ? client.name.contains(nameCond) : null;
     }
 
-    private BooleanExpression bundleIdEq(Long bundleId) {
-        return bundleId != null ? client.bundle.id.eq(bundleId) : null;
+    private BooleanExpression bundleIdEq(List<Long> bundleIdList) {
+        if (bundleIdList.size() == 1) {
+            return client.bundle.id.eq(bundleIdList.get(0));
+        }
+
+        return client.bundle.id.in(bundleIdList);
     }
 
     private BooleanBuilder allContains(String wordCond) {
