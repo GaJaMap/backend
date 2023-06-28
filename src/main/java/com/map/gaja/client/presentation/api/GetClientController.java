@@ -67,6 +67,18 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/api/bundle/clients/nearby")
+    public ResponseEntity<ClientListResponse> nearbyClientSearch(
+            @LoginEmail String loginEmail,
+            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @RequestParam(required = false) String wordCond
+    ) {
+        // 주변 거래처 조회
+        log.info("GetClientController.nearbyClientSearch params={},{},{}", loginEmail, locationSearchCond, wordCond);
+        ClientListResponse response = clientQueryService.findClientByConditions(loginEmail, locationSearchCond, wordCond);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     private void verifyClientAccess(String loginEmail, Long bundleId, Long clientId) {
         ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheckDto);

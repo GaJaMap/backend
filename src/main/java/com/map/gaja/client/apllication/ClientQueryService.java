@@ -44,4 +44,11 @@ public class ClientQueryService {
         return new ClientListResponse(clientList);
     }
 
+    public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        List<Long> bundleIdList = bundleQueryRepository.findBundleId(loginEmail);
+
+        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleIdList, locationSearchCond, wordCond);
+        return new ClientListResponse(clientList);
+    }
+
 }
