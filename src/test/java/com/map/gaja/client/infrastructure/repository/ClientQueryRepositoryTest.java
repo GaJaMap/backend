@@ -170,4 +170,18 @@ class ClientQueryRepositoryTest {
         assertThat(result.isEmpty()).isTrue();
     }
 
+    @Test
+    @DisplayName("Client가 번들에 속해있을때")
+    void hasClientByBundleTrue() {
+        boolean result = clientQueryRepository.hasClientByBundle(bundle1.getId(), bundle1ClientList.get(0).getId());
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("Client가 번들에 속해있지 않을때")
+    void hasClientByBundleFalse() {
+        boolean result = clientQueryRepository.hasClientByBundle(bundle1.getId(), bundle2ClientList.get(0).getId());
+        assertThat(result).isFalse();
+    }
+
 }
