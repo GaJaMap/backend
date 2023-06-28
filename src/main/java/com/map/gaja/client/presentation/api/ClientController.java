@@ -56,9 +56,14 @@ public class ClientController {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
+    public ResponseEntity<CreatedClientResponse> addClient(
+            @LoginEmail String loginEmail,
+            @ModelAttribute NewClientRequest client
+    ) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
+        verifyBundleAccess(loginEmail, client);
+
         MultipartFile clientImage = client.getClientImage();
         if (clientImage == null || clientImage.isEmpty()) {
             return saveClient(client);
