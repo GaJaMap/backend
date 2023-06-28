@@ -8,7 +8,6 @@ import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.response.ClientSliceResponse;
 import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +55,7 @@ public class GetClientController {
     }
 
     @GetMapping("/nearby")
-    public ResponseEntity<ClientSliceResponse> nearbyClientSearch(
+    public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @LoginEmail String loginEmail,
             @PathVariable Long bundleId,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
@@ -65,7 +64,7 @@ public class GetClientController {
         // 주변 거래처 조회
         log.info("GetClientController.nearbyClientSearch params={},{},{}", bundleId, locationSearchCond, wordCond);
         verifyBundleAccess(loginEmail, bundleId);
-        ClientSliceResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond);
+        ClientListResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

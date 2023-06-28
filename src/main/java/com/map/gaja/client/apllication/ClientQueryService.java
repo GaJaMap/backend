@@ -6,7 +6,6 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.response.ClientSliceResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,9 @@ public class ClientQueryService {
         return entityToDto(clients);
     }
 
-    public ClientSliceResponse findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<ClientResponse> clientSlice = clientQueryRepository.findClientByConditions(bundleId, locationSearchCond, wordCond);
-        return new ClientSliceResponse(clientSlice);
+    public ClientListResponse findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleId, locationSearchCond, wordCond);
+        return new ClientListResponse(clientList);
     }
 
 }
