@@ -13,12 +13,14 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginEmailResolver());
-    }
+    /*
+        @Override
+        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+            resolvers.add(new LoginEmailResolver());
+        }
+     */
 
-    @Bean
+//    @Bean
     public FilterRegistrationBean<Filter> testFilter() {
         FilterRegistrationBean<Filter> filterBean = new FilterRegistrationBean<>();
         filterBean.setFilter(new EmailCheckFilter());
