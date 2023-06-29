@@ -5,16 +5,13 @@ import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
-import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,7 +27,7 @@ public class GetClientController {
 
     @GetMapping("/api/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
-            @LoginEmail String loginEmail,
+            @AuthenticationPrincipal String loginEmail,
             @PathVariable Long bundleId,
             @PathVariable Long clientId
     ) {
@@ -43,7 +40,7 @@ public class GetClientController {
 
     @GetMapping("/api/bundle/{bundleId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
-            @LoginEmail String loginEmail,
+            @AuthenticationPrincipal String loginEmail,
             @PathVariable Long bundleId
     ) {
         // 특정 번들 내에 모든 거래처 조회
@@ -55,7 +52,7 @@ public class GetClientController {
 
     @GetMapping("/api/bundle/{bundleId}/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
-            @LoginEmail String loginEmail,
+            @AuthenticationPrincipal String loginEmail,
             @PathVariable Long bundleId,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
@@ -69,7 +66,7 @@ public class GetClientController {
 
     @GetMapping("/api/bundle/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
-            @LoginEmail String loginEmail,
+            @AuthenticationPrincipal String loginEmail,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     ) {
