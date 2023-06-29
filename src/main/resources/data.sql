@@ -2,9 +2,9 @@
 INSERT INTO `user`
 (user_id, email, authority, bundle_count, created_at, updated_at, last_login_date, reference_bundle_id, created_date)
 VALUES
-(1, 'email1@example.com', 'Free', 3, NOW(), NOW(), NOW(), 0, NOW()),
-(2, 'email2@example.com', 'Free', 3, NOW(), NOW(), NOW(), 0, NOW()),
-(3, 'email3@example.com', 'Free', 3, NOW(), NOW(), NOW(), 0, NOW());
+(1, 'email1@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, NOW()),
+(2, 'email2@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, NOW()),
+(3, 'email3@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, NOW());
 
 INSERT INTO bundle
 (bundle_id, created_at, updated_at, client_count, created_date, name, user_id)
