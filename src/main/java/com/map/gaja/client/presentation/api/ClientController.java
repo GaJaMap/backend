@@ -9,11 +9,11 @@ import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +29,7 @@ public class ClientController {
     private final S3FileService fileService;
 
     @DeleteMapping("/bundle/{bundleId}/clients/{clientId}")
-    public ResponseEntity<Void> deleteClient(@LoginEmail String loginEmail, @PathVariable Long bundleId, @PathVariable Long clientId) {
+    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal String loginEmail, @PathVariable Long bundleId, @PathVariable Long clientId) {
         // 특정 번들 내에 거래처 삭제
         log.info("ClientController.deleteClient loginEmail={} bundleId={} clientId={}", loginEmail, bundleId, clientId);
         verifyClientAccess(loginEmail, bundleId, clientId);
@@ -39,7 +39,7 @@ public class ClientController {
 
     @PutMapping("/bundle/{bundleId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> changeClient(
-            @LoginEmail String loginEmail,
+            @AuthenticationPrincipal String loginEmail,
             @PathVariable Long bundleId,
             @PathVariable Long clientId,
             @RequestBody NewClientRequest clientRequest
@@ -57,7 +57,7 @@ public class ClientController {
 
     @PostMapping("/clients")
     public ResponseEntity<CreatedClientResponse> addClient(
-            @LoginEmail String loginEmail,
+            @AuthenticationPrincipal String loginEmail,
             @ModelAttribute NewClientRequest client
     ) {
         // 거래처 등록 - 단건 등록
