@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
@@ -46,6 +47,9 @@ public class ClientQueryService {
 
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
         List<Long> bundleIdList = bundleQueryRepository.findBundleId(loginEmail);
+        if (bundleIdList.size() == 0) {
+            throw new BundleNotFoundException();
+        }
 
         List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList);
