@@ -2,17 +2,14 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
-import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.apllication.exception.UnsupportedFileTypeException;
-import com.map.gaja.client.domain.exception.ClientNotInBundleException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.file.ClientFileParser;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
@@ -38,7 +35,7 @@ public class ClientService {
     private final List<ClientFileParser> parsers;
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
-        Bundle bundle = bundleRepository.findById(clientRequest.getBundleId())
+        Bundle bundle = bundleRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new BundleNotFoundException());
         Client client = dtoToEntity(clientRequest, bundle);
         clientRepository.save(client);
@@ -46,7 +43,7 @@ public class ClientService {
     }
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
-        Bundle bundle = bundleRepository.findById(clientRequest.getBundleId())
+        Bundle bundle = bundleRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new BundleNotFoundException());
         Client client = dtoToEntity(clientRequest, bundle, storedFileDto);
         clientRepository.save(client);
@@ -97,7 +94,7 @@ public class ClientService {
                 .orElseThrow(() -> new ClientNotFoundException(existingClientId));
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Bundle updatedBundle = bundleRepository.findById(updateRequest.getBundleId())
+        Bundle updatedBundle = bundleRepository.findById(updateRequest.getGroupId())
                 .orElseThrow(BundleNotFoundException::new);
 
         ClientAddress updatedAddress = new ClientAddress(

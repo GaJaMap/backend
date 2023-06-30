@@ -1,19 +1,15 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
-import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
-import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,7 +56,7 @@ class ClientServiceTest {
         Integer clientCount = 0;
         Bundle bundle = createBundle(bundleId, clientCount);
         NewClientRequest request = new NewClientRequest();
-        request.setBundleId(bundleId);
+        request.setGroupId(bundleId);
 
         when(bundleRepository.findById(any())).thenReturn(Optional.ofNullable(bundle));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
@@ -96,7 +91,7 @@ class ClientServiceTest {
 
         NewClientRequest changedRequest = new NewClientRequest();
         changedRequest.setClientName(changedName);
-        changedRequest.setBundleId(changedBundleId);
+        changedRequest.setGroupId(changedBundleId);
 
         when(clientQueryRepository.findClientWithBundle(anyLong()))
                 .thenReturn(Optional.ofNullable(existngClient));
@@ -108,7 +103,7 @@ class ClientServiceTest {
 
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
-        assertThat(response.getBundleId()).isEqualTo(changedBundleId);
+        assertThat(response.getGroupId()).isEqualTo(changedBundleId);
         assertThat(changedBundle.getClientCount()).isEqualTo(1);
         assertThat(existingBundle.getClientCount()).isEqualTo(0);
     }

@@ -47,7 +47,7 @@ public class ClientController {
         // 기존 거래처 정보 변경
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
         verifyClientAccess(loginEmail, bundleId, clientId);
-        if (bundleId != clientRequest.getBundleId()) {
+        if (bundleId != clientRequest.getGroupId()) {
             verifyBundleAccess(loginEmail, clientRequest);
         }
 
@@ -95,7 +95,7 @@ public class ClientController {
     }
 
     private void verifyBundleAccess(String loginEmail, NewClientRequest clientRequest) {
-        bundleAccessVerifyService.verifyBundleAccess(clientRequest.getBundleId(), loginEmail);
+        bundleAccessVerifyService.verifyBundleAccess(clientRequest.getGroupId(), loginEmail);
     }
 
 //    @PostMapping("/clients/bulk")

@@ -14,9 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -117,7 +114,7 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isEqualTo(-1);
-            assertThat(client.getBundleId()).isEqualTo(bundleId);
+            assertThat(client.getGroupId()).isEqualTo(bundleId);
         }
     }
 
@@ -137,7 +134,7 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getBundleId()).isEqualTo(bundleId);
+            assertThat(client.getGroupId()).isEqualTo(bundleId);
         }
     }
 
@@ -159,7 +156,7 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getBundleId()).isIn(bundleId1, bundleId2);
+            assertThat(client.getGroupId()).isIn(bundleId1, bundleId2);
         }
     }
 
