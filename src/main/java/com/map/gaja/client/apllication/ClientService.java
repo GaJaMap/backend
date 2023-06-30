@@ -30,22 +30,22 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
-    private final BundleRepository bundleRepository;
+    private final BundleRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
     private final List<ClientFileParser> parsers;
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
-        Bundle bundle = bundleRepository.findById(clientRequest.getGroupId())
+        Bundle group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new BundleNotFoundException());
-        Client client = dtoToEntity(clientRequest, bundle);
+        Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
         return new CreatedClientResponse(client.getId());
     }
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
-        Bundle bundle = bundleRepository.findById(clientRequest.getGroupId())
+        Bundle group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new BundleNotFoundException());
-        Client client = dtoToEntity(clientRequest, bundle, storedFileDto);
+        Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
         return new CreatedClientResponse(client.getId());
     }
@@ -61,9 +61,9 @@ public class ClientService {
     }
 
     public void deleteClient(long clientId) {
-        Client deletedClient = clientQueryRepository.findClientWithBundle(clientId)
+        Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
-        deletedClient.removeBundle();
+        deletedClient.removeGroup();
 
         clientRepository.delete(deletedClient);
     }
@@ -90,11 +90,11 @@ public class ClientService {
             Long existingClientId,
             NewClientRequest updateRequest
     ) {
-        Client existingClient = clientQueryRepository.findClientWithBundle(existingClientId)
+        Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException(existingClientId));
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Bundle updatedBundle = bundleRepository.findById(updateRequest.getGroupId())
+        Bundle updatedGroup = groupRepository.findById(updateRequest.getGroupId())
                 .orElseThrow(BundleNotFoundException::new);
 
         ClientAddress updatedAddress = new ClientAddress(
@@ -114,7 +114,7 @@ public class ClientService {
                 updateRequest.getPhoneNumber(),
                 updatedAddress,
                 updatedLocation,
-                updatedBundle
+                updatedGroup
         );
 
         return entityToDto(existingClient);

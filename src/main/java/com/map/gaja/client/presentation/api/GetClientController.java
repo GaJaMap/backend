@@ -46,7 +46,7 @@ public class GetClientController {
         // 특정 번들 내에 모든 거래처 조회
         log.info("GetClientController.getClientList groupId={}", groupId);
         verifyGroupAccess(loginEmail, groupId);
-        ClientListResponse response = clientQueryService.findAllClientsInBundle(groupId);
+        ClientListResponse response = clientQueryService.findAllClientsInGroup(groupId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

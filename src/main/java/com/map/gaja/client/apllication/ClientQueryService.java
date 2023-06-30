@@ -24,7 +24,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 public class ClientQueryService {
     private final ClientRepository clientRepository;
     private final ClientQueryRepository clientQueryRepository;
-    private final BundleQueryRepository bundleQueryRepository;
+    private final BundleQueryRepository groupQueryRepository;
 
     public ClientResponse findClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
@@ -32,26 +32,26 @@ public class ClientQueryService {
         return entityToDto(client);
     }
 
-    public ClientListResponse findAllClientsInBundle(Long bundleId) {
-        List<Client> clients = clientRepository.findByBundle_Id(bundleId);
+    public ClientListResponse findAllClientsInGroup(Long groupId) {
+        List<Client> clients = clientRepository.findByBundle_Id(groupId);
         return entityToDto(clients);
     }
 
-    public ClientListResponse findClientByConditions(Long bundleId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<Long> bundleIdList = new ArrayList<>();
-        bundleIdList.add(bundleId);
+    public ClientListResponse findClientByConditions(Long groupId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        List<Long> groupIdList = new ArrayList<>();
+        groupIdList.add(groupId);
 
-        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleIdList, locationSearchCond, wordCond);
+        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList);
     }
 
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<Long> bundleIdList = bundleQueryRepository.findBundleId(loginEmail);
-        if (bundleIdList.size() == 0) {
+        List<Long> groupIdList = groupQueryRepository.findBundleId(loginEmail);
+        if (groupIdList.size() == 0) {
             throw new BundleNotFoundException();
         }
 
-        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(bundleIdList, locationSearchCond, wordCond);
+        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList);
     }
 

@@ -53,7 +53,7 @@ public class ClientQueryRepository {
         return result;
     }
 
-    public Optional<Client> findClientWithBundle(long clientId) {
+    public Optional<Client> findClientWithGroup(long clientId) {
         Client result = query
                 .selectFrom(client)
                 .join(client.group, bundle)

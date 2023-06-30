@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ClientAccessVerifyService {
     private final ClientQueryRepository clientQueryRepository;
-    private final BundleAccessVerifyService bundleAccessVerifyService;
+    private final BundleAccessVerifyService groupAccessVerifyService;
 
     public void verifyClientAccess(ClientAccessCheckDto accessRequest) {
         String userEmail = accessRequest.getUserEmail();
-        long bundleId = accessRequest.getGroupId();
+        long groupId = accessRequest.getGroupId();
         long clientId = accessRequest.getClientId();
 
-        bundleAccessVerifyService.verifyBundleAccess(bundleId, userEmail);
-        if (clientQueryRepository.hasNoClientByBundle(bundleId, clientId)) {
+        groupAccessVerifyService.verifyBundleAccess(groupId, userEmail);
+        if (clientQueryRepository.hasNoClientByBundle(groupId, clientId)) {
             throw new ClientNotFoundException(clientId);
         }
     }

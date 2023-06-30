@@ -45,7 +45,7 @@ public class ClientConvertor {
         return clients;
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, Bundle bundle) {
+    protected static Client dtoToEntity(NewClientRequest request, Bundle group) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         return new Client(
@@ -53,11 +53,11 @@ public class ClientConvertor {
                 request.getPhoneNumber(),
                 new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
                 new ClientLocation(location.getLatitude(), location.getLongitude()),
-                bundle
+                group
             );
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, Bundle bundle, StoredFileDto storedFileDto) {
+    protected static Client dtoToEntity(NewClientRequest request, Bundle group, StoredFileDto storedFileDto) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getFilePath());
@@ -66,7 +66,7 @@ public class ClientConvertor {
                 request.getPhoneNumber(),
                 new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
                 new ClientLocation(location.getLatitude(), location.getLongitude()),
-                bundle,
+                group,
                 clientImage
         );
     }
