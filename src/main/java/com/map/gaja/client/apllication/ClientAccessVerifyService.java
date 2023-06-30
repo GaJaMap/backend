@@ -21,7 +21,7 @@ public class ClientAccessVerifyService {
         long clientId = accessRequest.getClientId();
 
         groupAccessVerifyService.verifyBundleAccess(groupId, userEmail);
-        if (clientQueryRepository.hasNoClientByBundle(groupId, clientId)) {
+        if (clientQueryRepository.hasNoClientByGroup(groupId, clientId)) {
             throw new ClientNotFoundException(clientId);
         }
     }

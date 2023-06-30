@@ -139,7 +139,7 @@ public class ClientQueryRepository {
                 .or(client.address.detail.contains(addressCond)) : null;
     }
 
-    public Optional<Client> findClientByUserAndBundle(String loginEmail, Long groupId, Long clientId) {
+    public Optional<Client> findClientByUserAndGroup(String loginEmail, Long groupId, Long clientId) {
         Client result = query.select(client)
                 .from(client)
                 .join(client.group, bundle).on(bundle.id.eq(groupId))
@@ -158,7 +158,7 @@ public class ClientQueryRepository {
      * @param clientId
      * @return 가지고 있다면 true
      */
-    public boolean hasClientByBundle(Long groupId, Long clientId) {
+    public boolean hasClientByGroup(Long groupId, Long clientId) {
         Integer result = query.selectOne()
                 .from(client)
                 .join(client.group, bundle).on(bundle.id.eq(groupId))
@@ -176,7 +176,7 @@ public class ClientQueryRepository {
      * @param clientId
      * @return 가지고 있지 않다면 true
      */
-    public boolean hasNoClientByBundle(Long groupId, Long clientId) {
-        return !hasClientByBundle(groupId, clientId);
+    public boolean hasNoClientByGroup(Long groupId, Long clientId) {
+        return !hasClientByGroup(groupId, clientId);
     }
 }
