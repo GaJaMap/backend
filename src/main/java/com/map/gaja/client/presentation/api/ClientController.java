@@ -1,7 +1,10 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.bundle.application.BundleAccessVerifyService;
+import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
@@ -10,61 +13,63 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
+    private final ClientAccessVerifyService clientAccessVerifyService;
+    private final BundleAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
 
-    @DeleteMapping("/{clientId}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
-        // 거래처 삭제
-        log.info("ClientController.deleteClient clinetId={}", clientId);
+    @DeleteMapping("/group/{groupId}/clients/{clientId}")
+    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal String loginEmail, @PathVariable Long groupId, @PathVariable Long clientId) {
+        // 특정 번들 내에 거래처 삭제
+        log.info("ClientController.deleteClient loginEmail={} groupId={} clientId={}", loginEmail, groupId, clientId);
+        verifyClientAccess(loginEmail, groupId, clientId);
         clientService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<CreatedClientResponse> addClient(@ModelAttribute NewClientRequest client) {
+    @PutMapping("/group/{groupId}/clients/{clientId}")
+    public ResponseEntity<ClientResponse> changeClient(
+            @AuthenticationPrincipal String loginEmail,
+            @PathVariable Long groupId,
+            @PathVariable Long clientId,
+            @RequestBody NewClientRequest clientRequest
+    ) {
+        // 기존 거래처 정보 변경
+        log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
+        verifyClientAccess(loginEmail, groupId, clientId);
+        if (groupId != clientRequest.getGroupId()) {
+            verifyGroupAccess(loginEmail, clientRequest);
+        }
+
+        ClientResponse response = clientService.changeClient(clientId, clientRequest);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/clients")
+    public ResponseEntity<CreatedClientResponse> addClient(
+            @AuthenticationPrincipal String loginEmail,
+            @ModelAttribute NewClientRequest client
+    ) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
+        verifyGroupAccess(loginEmail, client);
+
         MultipartFile clientImage = client.getClientImage();
         if (clientImage == null || clientImage.isEmpty()) {
             return saveClient(client);
         }
 
         return saveClientWithImage(client);
-    }
-
-    @PostMapping("/bulk")
-    public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
-        // 거래처 등록 - 여러건 등록
-        log.info("ClientController.addBulkClient  clients={}", clients);
-        CreatedClientListResponse response = clientService.saveClientList(clients);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/bulk/file")
-    public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
-        // 엑셀 등의 파일로 거래처 등록
-        log.info("ClientController.addClients");
-        CreatedClientListResponse response = clientService.parseFileAndSave(file);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{clientId}")
-    public ResponseEntity<ClientResponse> changeClient(@PathVariable Long clientId, @RequestBody NewClientRequest clientRequest) {
-        // 기존 거래처 정보 변경
-        // User가 Client를 가지고 있는가? + 해당 번들을 User가 가지고 있는가?
-        log.info("ClientController.changeClients clientRequest={}", clientRequest);
-        ClientResponse response = clientService.changeClient(clientId, clientRequest);
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private ResponseEntity<CreatedClientResponse> saveClientWithImage(NewClientRequest client) {
@@ -81,6 +86,31 @@ public class ClientController {
 
     private ResponseEntity<CreatedClientResponse> saveClient(NewClientRequest client) {
         CreatedClientResponse response = clientService.saveClient(client);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    private void verifyClientAccess(String loginEmail, Long groupId, Long clientId) {
+        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, groupId, clientId);
+        clientAccessVerifyService.verifyClientAccess(accessCheckDto);
+    }
+
+    private void verifyGroupAccess(String loginEmail, NewClientRequest clientRequest) {
+        groupAccessVerifyService.verifyBundleAccess(clientRequest.getGroupId(), loginEmail);
+    }
+
+//    @PostMapping("/clients/bulk")
+    public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
+        // 거래처 등록 - 여러건 등록
+        log.info("ClientController.addBulkClient  clients={}", clients);
+        CreatedClientListResponse response = clientService.saveClientList(clients);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+//    @PostMapping("/clients/bulk/file")
+    public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
+        // 엑셀 등의 파일로 거래처 등록
+        log.info("ClientController.addClients");
+        CreatedClientListResponse response = clientService.parseFileAndSave(file);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

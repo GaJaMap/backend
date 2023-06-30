@@ -1,4 +1,4 @@
-package com.map.gaja.client.presentation.dto.subdto;
+package com.map.gaja.client.presentation.dto.request.subdto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

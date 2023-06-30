@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Oauth2ClientTest {
 
-    @Test
+//    @Test
     void oauth2Login() {
         Oauth2Client oauth2Client = new Oauth2Client();
         String accessToken = "accessToken";

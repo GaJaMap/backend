@@ -2,9 +2,7 @@ package com.map.gaja.bundle.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import com.map.gaja.user.domain.model.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Bundle extends BaseTimeEntity {
     @Id
@@ -34,5 +33,17 @@ public class Bundle extends BaseTimeEntity {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Client 클래스 내부에서 사용할 메소드.
+     * Client 클래스 내부 이외 호출은 자제.
+     */
+    public void increaseClientCount() {
+        clientCount++;
+    }
+
+    public void decreaseClientCount() {
+        clientCount--;
     }
 }

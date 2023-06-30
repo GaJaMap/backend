@@ -1,10 +1,14 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
+import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.apllication.exception.UnsupportedFileTypeException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.file.ClientFileParser;
+import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -26,16 +30,22 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final BundleRepository groupRepository;
+    private final ClientQueryRepository clientQueryRepository;
     private final List<ClientFileParser> parsers;
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
-        Client client = dtoToEntity(clientRequest);
+        Bundle group = groupRepository.findById(clientRequest.getGroupId())
+                .orElseThrow(() -> new BundleNotFoundException());
+        Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
         return new CreatedClientResponse(client.getId());
     }
 
     public CreatedClientResponse saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
-        Client client = dtoToEntity(clientRequest, storedFileDto);
+        Bundle group = groupRepository.findById(clientRequest.getGroupId())
+                .orElseThrow(() -> new BundleNotFoundException());
+        Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
         return new CreatedClientResponse(client.getId());
     }
@@ -50,10 +60,12 @@ public class ClientService {
         return response;
     }
 
-    public void deleteClient(Long clientId) {
-        Client clientToDelete = clientRepository.findById(clientId)
+    public void deleteClient(long clientId) {
+        Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
-        clientRepository.delete(clientToDelete);
+        deletedClient.removeGroup();
+
+        clientRepository.delete(deletedClient);
     }
 
     public CreatedClientListResponse parseFileAndSave(MultipartFile file) {
@@ -74,21 +86,37 @@ public class ClientService {
         return saveClientList(clients);
     }
 
-    public ClientResponse changeClient(Long clientId, NewClientRequest clientRequest) {
-        Client updatedClient = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException(clientId));
+    public ClientResponse changeClient(
+            Long existingClientId,
+            NewClientRequest updateRequest
+    ) {
+        Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
+                .orElseThrow(() -> new ClientNotFoundException(existingClientId));
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Client requestEntity = dtoToEntity(clientRequest);
-        ClientLocation changedLocation = requestEntity.getLocation();
-        ClientAddress changedAddress = requestEntity.getAddress();
+        Bundle updatedGroup = groupRepository.findById(updateRequest.getGroupId())
+                .orElseThrow(BundleNotFoundException::new);
 
-        updatedClient.updateClient(
-                clientRequest.getClientName(),
-                clientRequest.getPhoneNumber(),
-                changedAddress, changedLocation,
-                null);
+        ClientAddress updatedAddress = new ClientAddress(
+                updateRequest.getAddress().getProvince(),
+                updateRequest.getAddress().getCity(),
+                updateRequest.getAddress().getDistrict(),
+                updateRequest.getAddress().getDetail()
+        );
 
-        return entityToDto(updatedClient);
+        ClientLocation updatedLocation = new ClientLocation(
+                updateRequest.getLocation().getLatitude(),
+                updateRequest.getLocation().getLongitude()
+        );
+
+        existingClient.updateClient(
+                updateRequest.getClientName(),
+                updateRequest.getPhoneNumber(),
+                updatedAddress,
+                updatedLocation,
+                updatedGroup
+        );
+
+        return entityToDto(existingClient);
     }
 }

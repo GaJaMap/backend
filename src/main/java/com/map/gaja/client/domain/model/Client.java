@@ -35,46 +35,57 @@ public class Client extends BaseTimeEntity {
     private ClientLocation location;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bundle_id")
-    private Bundle bundle;
+    @JoinColumn(name = "group_id")
+    private Bundle group;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        this.bundle = bundle;
+        setGroup(group);
         this.clientImage = null;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle, ClientImage clientImage) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group, ClientImage clientImage) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        this.bundle = bundle;
+        setGroup(group);
         this.clientImage = clientImage;
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
-        updateBundle(bundle);
+        updateGroup(group);
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle, ClientImage clientImage) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group, ClientImage clientImage) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
-        updateBundle(bundle);
+        updateGroup(group);
         updateClientImage(clientImage);
     }
 
-    private void updateBundle(Bundle bundle) {
-        this.bundle = bundle;
+    public void removeGroup() {
+        group.decreaseClientCount();
+        group = null;
+    }
+
+    private void setGroup(Bundle group) {
+        this.group = group;
+        group.increaseClientCount();
+    }
+
+    private void updateGroup(Bundle group) {
+        removeGroup();
+        setGroup(group);
     }
 
     private void updateName(String name) {
@@ -96,11 +107,19 @@ public class Client extends BaseTimeEntity {
     }
 
     private void validateLocation(ClientLocation location) {
+        if (isClientLocationNull(location)) {
+            return;
+        }
+        // 위도, 경도 중 하나라도 null이 아니라면 Korea 범위에 있어야 함.
+
         if (!isLocationInKorea(location.getLatitude(), location.getLongitude())) {
             throw new LocationOutsideKoreaException(location.getLatitude(), location.getLatitude());
         }
     }
 
+    private boolean isClientLocationNull(ClientLocation location) {
+        return location.getLatitude() == null && location.getLongitude() == null;
+    }
     private boolean isLocationInKorea(double latitude, double longitude) {
         return latitude >= 33 && latitude <= 38
                 && longitude >= 124 && longitude <= 132;

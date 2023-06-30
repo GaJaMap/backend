@@ -13,17 +13,19 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginEmailResolver());
-    }
+    /*
+        @Override
+        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+            resolvers.add(new LoginEmailResolver());
+        }
+     */
 
-    @Bean
+//    @Bean
     public FilterRegistrationBean<Filter> testFilter() {
         FilterRegistrationBean<Filter> filterBean = new FilterRegistrationBean<>();
         filterBean.setFilter(new EmailCheckFilter());
 //        filterBean.setOrder(1);
-        filterBean.addUrlPatterns("/api/test");
+        filterBean.addUrlPatterns("/api/*"); // /api 전역으로 활성화
         return filterBean;
     }
 }
