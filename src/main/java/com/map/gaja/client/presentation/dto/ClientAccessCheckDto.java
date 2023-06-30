@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 public class ClientAccessCheckDto {
     private String userEmail;
-    private long bundleId;
+    private long groupId;
     private long clientId;
 }
