@@ -38,7 +38,7 @@ class ClientQueryServiceTest {
         when(findClient.getName()).thenReturn(searchName);
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
-        when(findClient.getBundle()).thenReturn(Bundle.builder().id(bundleId).build());
+        when(findClient.getGroup()).thenReturn(Bundle.builder().id(bundleId).build());
 
         //when
         ClientResponse response = clientQueryService.findClient(searchId);

@@ -32,7 +32,7 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
-        return new ClientResponse(client.getId(), client.getBundle().getId(), client.getName(), client.getPhoneNumber(),
+        return new ClientResponse(client.getId(), client.getGroup().getId(), client.getName(), client.getPhoneNumber(),
                 client.getAddress(),
                 client.getLocation(),
                 null

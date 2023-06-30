@@ -36,7 +36,7 @@ public class ClientQueryRepository {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
-                                client.bundle.id,
+                                client.group.id,
                                 client.name,
                                 client.phoneNumber,
                                 client.address,
@@ -56,7 +56,7 @@ public class ClientQueryRepository {
     public Optional<Client> findClientWithBundle(long clientId) {
         Client result = query
                 .selectFrom(client)
-                .join(client.bundle, bundle)
+                .join(client.group, bundle)
                 .where(client.id.eq(clientId))
                 .fetchJoin().fetchOne();
 
@@ -114,10 +114,10 @@ public class ClientQueryRepository {
 
     private BooleanExpression bundleIdEq(List<Long> bundleIdList) {
         if (bundleIdList.size() == 1) {
-            return client.bundle.id.eq(bundleIdList.get(0));
+            return client.group.id.eq(bundleIdList.get(0));
         }
 
-        return client.bundle.id.in(bundleIdList);
+        return client.group.id.in(bundleIdList);
     }
 
     private BooleanBuilder allContains(String wordCond) {
@@ -142,7 +142,7 @@ public class ClientQueryRepository {
     public Optional<Client> findClientByUserAndBundle(String loginEmail, Long bundleId, Long clientId) {
         Client result = query.select(client)
                 .from(client)
-                .join(client.bundle, bundle).on(bundle.id.eq(bundleId))
+                .join(client.group, bundle).on(bundle.id.eq(bundleId))
                 .join(bundle.user, user).on(user.email.eq(loginEmail))
                 .where(
                         client.id.eq(clientId)
@@ -161,7 +161,7 @@ public class ClientQueryRepository {
     public boolean hasClientByBundle(Long bundleId, Long clientId) {
         Integer result = query.selectOne()
                 .from(client)
-                .join(client.bundle, bundle).on(bundle.id.eq(bundleId))
+                .join(client.group, bundle).on(bundle.id.eq(bundleId))
                 .where(
                         client.id.eq(clientId)
                 )
