@@ -21,7 +21,7 @@ VALUES
 
 -- 번들 1에 대한 클라이언트 데이터 (7개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (1, NOW(), NOW(), '서울특별시', '강남구', '삼성동', '서울', NOW(), 37.509884, 127.055939, '홍길동', '010-1111-1111', 1, NULL),
 (2, NOW(), NOW(), '서울특별시', '강남구', '논현동', '서울', NOW(), 37.511224, 127.022772, '김철수', '010-2222-2222', 1, NULL),
@@ -33,7 +33,7 @@ VALUES
 
 -- 번들 2에 대한 클라이언트 데이터 (8개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (8, NOW(), NOW(), '서울특별시', '송파구', '잠실동', '서울', NOW(), 37.516308, 127.084310, '이동욱', '010-8888-8888', 2, NULL),
 (9, NOW(), NOW(), '서울특별시', '송파구', '가락동', '서울', NOW(), 37.498964, 127.111271, '김지영', '010-9999-9999', 2, NULL),
@@ -46,7 +46,7 @@ VALUES
 
 -- 번들 3에 대한 클라이언트 데이터 (5개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (16, NOW(), NOW(), '인천광역시', '서구', '연희동', '인천', NOW(), 37.540550, 126.674604, '김철호', '010-1616-1616', 3, NULL),
 (17, NOW(), NOW(), '인천광역시', '남구', '주안동', '인천', NOW(), 37.451617, 126.678952, '박지영', '010-1717-1717', 3, NULL),
@@ -56,7 +56,7 @@ VALUES
 
 -- 번들 4에 대한 클라이언트 데이터 (10개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (21, NOW(), NOW(), '서울특별시', '서초구', '잠원동', '서울', NOW(), 37.512156, 127.011595, '홍길동', '010-2121-2121', 4, NULL),
 (22, NOW(), NOW(), '서울특별시', '강남구', '삼성동', '서울', NOW(), 37.509884, 127.055939, '김철수', '010-2222-2222', 4, NULL),
@@ -71,7 +71,7 @@ VALUES
 
 -- 번들 5에 대한 클라이언트 데이터 (14개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (31, NOW(), NOW(), '경기도', '용인시', '기흥구', '경기', NOW(), 37.280179, 127.118276, '홍길순', '010-3131-3131', 5, NULL),
 (32, NOW(), NOW(), '경기도', '성남시', '중원구', '경기', NOW(), 37.437372, 127.157285, '이준호', '010-3232-3232', 5, NULL),
@@ -90,7 +90,7 @@ VALUES
 
 -- 번들 6에 대한 클라이언트 데이터 (9개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (45, NOW(), NOW(), '서울특별시', '중구', '회현동', '서울', NOW(), 37.559733, 126.978736, '홍길동', '010-4545-4545', 6, NULL),
 (46, NOW(), NOW(), '서울특별시', '중구', '명동', '서울', NOW(), 37.561167, 126.982634, '김영희', '010-4646-4646', 6, NULL),
@@ -104,7 +104,7 @@ VALUES
 
 -- 번들 7에 대한 클라이언트 데이터 (7개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (54, NOW(), NOW(), '서울특별시', '강동구', '천호동', '서울', NOW(), 37.535065, 127.132607, '홍길동', '010-5454-5454', 7, NULL),
 (55, NOW(), NOW(), '서울특별시', '강동구', '둔촌동', '서울', NOW(), 37.536394, 127.147611, '김영희', '010-5555-5555', 7, NULL),
@@ -116,7 +116,7 @@ VALUES
 
 -- 번들 8에 대한 클라이언트 데이터 (8개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (61, NOW(), NOW(), '서울특별시', '서초구', '반포동', '서울', NOW(), 37.507322, 127.000348, '홍길동', '010-6161-6161', 8, NULL),
 (62, NOW(), NOW(), '서울특별시', '서초구', '잠원동', '서울', NOW(), 37.512156, 127.011595, '김영희', '010-6262-6262', 8, NULL),
@@ -129,7 +129,7 @@ VALUES
 
 -- 번들 9에 대한 클라이언트 데이터 (9개)
 INSERT INTO client
-(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, bundle_id, client_image_id)
+(client_id, created_at, updated_at, city, detail, district, province, created_date, latitude, longitude, name, phone_number, group_id, client_image_id)
 VALUES
 (69, NOW(), NOW(), '서울특별시', '마포구', '공덕동', '서울', NOW(), 37.544237, 126.951546, '홍길동', '010-6969-6969', 9, NULL),
 (70, NOW(), NOW(), '서울특별시', '마포구', '망원동', '서울', NOW(), 37.556014, 126.864087, '김영희', '010-7070-7070', 9, NULL),
