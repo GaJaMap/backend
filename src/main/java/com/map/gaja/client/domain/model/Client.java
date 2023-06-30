@@ -35,57 +35,57 @@ public class Client extends BaseTimeEntity {
     private ClientLocation location;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bundle_id")
-    private Bundle bundle;
+    @JoinColumn(name = "group_id")
+    private Bundle group;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        setBundle(bundle);
+        setGroup(group);
         this.clientImage = null;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle, ClientImage clientImage) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group, ClientImage clientImage) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
-        setBundle(bundle);
+        setGroup(group);
         this.clientImage = clientImage;
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
-        updateBundle(bundle);
+        updateGroup(group);
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle bundle, ClientImage clientImage) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group, ClientImage clientImage) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
-        updateBundle(bundle);
+        updateGroup(group);
         updateClientImage(clientImage);
     }
 
-    public void removeBundle() {
-        bundle.decreaseClientCount();
-        bundle = null;
+    public void removeGroup() {
+        group.decreaseClientCount();
+        group = null;
     }
 
-    private void setBundle(Bundle bundle) {
-        this.bundle = bundle;
-        bundle.increaseClientCount();
+    private void setGroup(Bundle group) {
+        this.group = group;
+        group.increaseClientCount();
     }
 
-    private void updateBundle(Bundle bundle) {
-        removeBundle();
-        setBundle(bundle);
+    private void updateGroup(Bundle group) {
+        removeGroup();
+        setGroup(group);
     }
 
     private void updateName(String name) {

@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class NewClientRequest {
     private String clientName;
-    private Long bundleId;
+    private Long groupId;
     private String phoneNumber;
     private AddressDto address = new AddressDto();
     private LocationDto location = new LocationDto();

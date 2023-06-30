@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ClientResponse {
     private Long clientId;
-    private Long bundleId; // 번들 세부 정보는 나중에 추가.
+    private Long groupId; // 번들 세부 정보는 나중에 추가.
     private String clientName;
     private String phoneNumber;
     private ClientAddress address;

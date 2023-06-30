@@ -1,19 +1,15 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
 import com.map.gaja.bundle.domain.model.Bundle;
-import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
 import com.map.gaja.bundle.infrastructure.BundleRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
-import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,7 +32,7 @@ class ClientServiceTest {
     @Mock
     private ClientRepository clientRepository;
     @Mock
-    private BundleRepository bundleRepository;
+    private BundleRepository groupRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
 
@@ -45,7 +40,7 @@ class ClientServiceTest {
     void beforeEach() {
         clientService = new ClientService(
                 clientRepository,
-                bundleRepository,
+                groupRepository,
                 clientQueryRepository,
                 new ArrayList<>()
         );
@@ -57,13 +52,13 @@ class ClientServiceTest {
         // given
         Long clientId = 1L;
 
-        Long bundleId = 1L;
+        Long groupId = 1L;
         Integer clientCount = 0;
-        Bundle bundle = createBundle(bundleId, clientCount);
+        Bundle group = createGroup(groupId, clientCount);
         NewClientRequest request = new NewClientRequest();
-        request.setBundleId(bundleId);
+        request.setGroupId(groupId);
 
-        when(bundleRepository.findById(any())).thenReturn(Optional.ofNullable(bundle));
+        when(groupRepository.findById(any())).thenReturn(Optional.ofNullable(group));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
             Client savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
             ReflectionTestUtils.setField(savedClient, "id", clientId);
@@ -75,70 +70,70 @@ class ClientServiceTest {
 
         // then
         assertThat(response.getClientId()).isEqualTo(clientId);
-        assertThat(bundle.getClientCount()).isEqualTo(clientCount + 1);
+        assertThat(group.getClientCount()).isEqualTo(clientCount + 1);
     }
 
     @Test
     @DisplayName("기존 Client 업데이트 테스트")
     public void updateClientTest() throws Exception {
         // given
-        Long bundleId = 1L;
-        Long changedBundleId = 2L;
+        Long groupId = 1L;
+        Long changedGroupId = 2L;
         Long existingClientId = 1L;
         String existingName = "test";
         String changedName = "update Test";
 
-        Bundle existingBundle = createBundle(bundleId, 0);
+        Bundle existingGroup = createGroup(groupId, 0);
 
-        Bundle changedBundle = createBundle(changedBundleId, 0);
+        Bundle changedGroup = createGroup(changedGroupId, 0);
 
-        Client existngClient = createClient(existingName, existingBundle);
+        Client existngClient = createClient(existingName, existingGroup);
 
         NewClientRequest changedRequest = new NewClientRequest();
         changedRequest.setClientName(changedName);
-        changedRequest.setBundleId(changedBundleId);
+        changedRequest.setGroupId(changedGroupId);
 
-        when(clientQueryRepository.findClientWithBundle(anyLong()))
+        when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existngClient));
-        when(bundleRepository.findById(anyLong()))
-                .thenReturn(Optional.ofNullable(changedBundle));
+        when(groupRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
         ClientResponse response = clientService.changeClient(existingClientId, changedRequest);
 
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
-        assertThat(response.getBundleId()).isEqualTo(changedBundleId);
-        assertThat(changedBundle.getClientCount()).isEqualTo(1);
-        assertThat(existingBundle.getClientCount()).isEqualTo(0);
+        assertThat(response.getGroupId()).isEqualTo(changedGroupId);
+        assertThat(changedGroup.getClientCount()).isEqualTo(1);
+        assertThat(existingGroup.getClientCount()).isEqualTo(0);
     }
 
     @Test
     @DisplayName("Client 삭제 테스트")
     void deleteClientTest() {
-        Long bundleId = 1L;
+        Long groupId = 1L;
         Long clientId = 1L;
-        Bundle bundle = createBundle(bundleId, 0);
-        Client client = createClient("testClient", bundle);
+        Bundle group = createGroup(groupId, 0);
+        Client client = createClient("testClient", group);
 
-        when(clientQueryRepository.findClientWithBundle(anyLong()))
+        when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(client));
 
         clientService.deleteClient(clientId);
 
-        assertThat(bundle.getClientCount()).isEqualTo(0);
+        assertThat(group.getClientCount()).isEqualTo(0);
     }
 
-    private static Bundle createBundle(Long bundleId, Integer clientCount) {
+    private static Bundle createGroup(Long groupId, Integer clientCount) {
         return Bundle.builder()
-                .id(bundleId).clientCount(clientCount)
+                .id(groupId).clientCount(clientCount)
                 .build();
     }
 
-    private static Client createClient(String existingName, Bundle existingBundle) {
+    private static Client createClient(String existingName, Bundle existingGroup) {
         return new Client(
                 existingName, "test",
                 new ClientAddress(), new ClientLocation(),
-                existingBundle, null);
+                existingGroup, null);
     }
 }

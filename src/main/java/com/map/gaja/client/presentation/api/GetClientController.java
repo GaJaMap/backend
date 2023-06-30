@@ -23,48 +23,48 @@ import org.springframework.web.bind.annotation.*;
 public class GetClientController {
     private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
-    private final BundleAccessVerifyService bundleAccessVerifyService;
+    private final BundleAccessVerifyService groupAccessVerifyService;
 
-    @GetMapping("/api/bundle/{bundleId}/clients/{clientId}")
+    @GetMapping("/api/group/{groupId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
             @AuthenticationPrincipal String loginEmail,
-            @PathVariable Long bundleId,
+            @PathVariable Long groupId,
             @PathVariable Long clientId
     ) {
         // 거래처 조회
         log.info("ClientController.getClient clientId={}", clientId);
-        verifyClientAccess(loginEmail,bundleId,clientId);
+        verifyClientAccess(loginEmail,groupId,clientId);
         ClientResponse response = clientQueryService.findClient(clientId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/api/bundle/{bundleId}/clients")
+    @GetMapping("/api/group/{groupId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
             @AuthenticationPrincipal String loginEmail,
-            @PathVariable Long bundleId
+            @PathVariable Long groupId
     ) {
         // 특정 번들 내에 모든 거래처 조회
-        log.info("GetClientController.getClientList bundleId={}", bundleId);
-        verifyBundleAccess(loginEmail, bundleId);
-        ClientListResponse response = clientQueryService.findAllClientsInBundle(bundleId);
+        log.info("GetClientController.getClientList groupId={}", groupId);
+        verifyGroupAccess(loginEmail, groupId);
+        ClientListResponse response = clientQueryService.findAllClientsInGroup(groupId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/api/bundle/{bundleId}/clients/nearby")
+    @GetMapping("/api/group/{groupId}/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @AuthenticationPrincipal String loginEmail,
-            @PathVariable Long bundleId,
+            @PathVariable Long groupId,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{}", bundleId, locationSearchCond, wordCond);
-        verifyBundleAccess(loginEmail, bundleId);
-        ClientListResponse response = clientQueryService.findClientByConditions(bundleId, locationSearchCond, wordCond);
+        log.info("GetClientController.nearbyClientSearch params={},{},{}", groupId, locationSearchCond, wordCond);
+        verifyGroupAccess(loginEmail, groupId);
+        ClientListResponse response = clientQueryService.findClientByConditions(groupId, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/api/bundle/clients/nearby")
+    @GetMapping("/api/group/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @AuthenticationPrincipal String loginEmail,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
@@ -76,12 +76,12 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private void verifyClientAccess(String loginEmail, Long bundleId, Long clientId) {
-        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
+    private void verifyClientAccess(String loginEmail, Long groupId, Long clientId) {
+        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheckDto);
     }
 
-    private void verifyBundleAccess(String loginEmail, long bundleId) {
-        bundleAccessVerifyService.verifyBundleAccess(bundleId, loginEmail);
+    private void verifyGroupAccess(String loginEmail, long groupId) {
+        groupAccessVerifyService.verifyBundleAccess(groupId, loginEmail);
     }
 }
