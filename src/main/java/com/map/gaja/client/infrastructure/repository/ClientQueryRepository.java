@@ -28,8 +28,8 @@ public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
-    public List<ClientResponse> findClientByConditions(List<Long> bundleIdList, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        if (bundleIdList.size() < 1) {
+    public List<ClientResponse> findClientByConditions(List<Long> groupIdList, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        if (groupIdList.size() < 1) {
             return new ArrayList<>();
         }
 
@@ -45,7 +45,7 @@ public class ClientQueryRepository {
                         )
                 )
                 .from(client)
-                .where(nameContains(wordCond), isClientInRadius(locationSearchCond), bundleIdEq(bundleIdList))
+                .where(nameContains(wordCond), isClientInRadius(locationSearchCond), groupIdEq(groupIdList))
                 .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
                 .limit(1000)
                 .fetch();
@@ -112,12 +112,12 @@ public class ClientQueryRepository {
         return nameCond != null ? client.name.contains(nameCond) : null;
     }
 
-    private BooleanExpression bundleIdEq(List<Long> bundleIdList) {
-        if (bundleIdList.size() == 1) {
-            return client.group.id.eq(bundleIdList.get(0));
+    private BooleanExpression groupIdEq(List<Long> groupIdList) {
+        if (groupIdList.size() == 1) {
+            return client.group.id.eq(groupIdList.get(0));
         }
 
-        return client.group.id.in(bundleIdList);
+        return client.group.id.in(groupIdList);
     }
 
     private BooleanBuilder allContains(String wordCond) {
@@ -139,10 +139,10 @@ public class ClientQueryRepository {
                 .or(client.address.detail.contains(addressCond)) : null;
     }
 
-    public Optional<Client> findClientByUserAndBundle(String loginEmail, Long bundleId, Long clientId) {
+    public Optional<Client> findClientByUserAndBundle(String loginEmail, Long groupId, Long clientId) {
         Client result = query.select(client)
                 .from(client)
-                .join(client.group, bundle).on(bundle.id.eq(bundleId))
+                .join(client.group, bundle).on(bundle.id.eq(groupId))
                 .join(bundle.user, user).on(user.email.eq(loginEmail))
                 .where(
                         client.id.eq(clientId)
@@ -154,14 +154,14 @@ public class ClientQueryRepository {
 
     /**
      * 해당 번들이 클라이언트를 가지고 있는지 확인
-     * @param bundleId
+     * @param groupId
      * @param clientId
      * @return 가지고 있다면 true
      */
-    public boolean hasClientByBundle(Long bundleId, Long clientId) {
+    public boolean hasClientByBundle(Long groupId, Long clientId) {
         Integer result = query.selectOne()
                 .from(client)
-                .join(client.group, bundle).on(bundle.id.eq(bundleId))
+                .join(client.group, bundle).on(bundle.id.eq(groupId))
                 .where(
                         client.id.eq(clientId)
                 )
@@ -172,11 +172,11 @@ public class ClientQueryRepository {
 
     /**
      * 해당 번들이 클라이언트를 가지고 있지 않은지 확인
-     * @param bundleId
+     * @param groupId
      * @param clientId
      * @return 가지고 있지 않다면 true
      */
-    public boolean hasNoClientByBundle(Long bundleId, Long clientId) {
-        return !hasClientByBundle(bundleId, clientId);
+    public boolean hasNoClientByBundle(Long groupId, Long clientId) {
+        return !hasClientByBundle(groupId, clientId);
     }
 }
