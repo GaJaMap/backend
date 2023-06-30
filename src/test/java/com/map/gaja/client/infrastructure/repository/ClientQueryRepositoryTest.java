@@ -39,53 +39,53 @@ class ClientQueryRepositoryTest {
     EntityManager em;
 
     User user;
-    Bundle bundle1, bundle2;
-    List<Client> bundle1ClientList, bundle2ClientList;
+    Bundle group1, group2;
+    List<Client> group1ClientList, group2ClientList;
 
     @BeforeEach
     void before() {
         user = createUser();
         em.persist(user);
 
-        bundle1 = createBundle("bundle1");
-        bundle2 = createBundle("bundle2");
-        em.persist(bundle1);
-        em.persist(bundle2);
+        group1 = createGroup("group1");
+        group2 = createGroup("group2");
+        em.persist(group1);
+        em.persist(group2);
 
-        bundle1ClientList = new ArrayList<>();
+        group1ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             String sig = i+""+i;
-            Client client = createClient(i, 0.003, bundle1);
-            bundle1ClientList.add(client);
+            Client client = createClient(i, 0.003, group1);
+            group1ClientList.add(client);
         }
-        clientRepository.saveAll(bundle1ClientList);
+        clientRepository.saveAll(group1ClientList);
 
-        bundle2ClientList = new ArrayList<>();
+        group2ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = createClient(i, 0.005, bundle2);
-            bundle2ClientList.add(client);
+            Client client = createClient(i, 0.005, group2);
+            group2ClientList.add(client);
         }
-        clientRepository.saveAll(bundle2ClientList);
+        clientRepository.saveAll(group2ClientList);
     }
 
-    private Client createClient(int sigIdx, double pointSig, Bundle bundle1) {
+    private Client createClient(int sigIdx, double pointSig, Bundle group) {
         String sig = sigIdx+""+sigIdx;
         String name = "사용자 " + sig;
         String phoneNumber = "010-1111-" + sig;
         ClientAddress address = new ClientAddress("aaa" + sig, "bbb" + sig, "ccc" + sig, "ddd" + sig);
         ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        Client client = new Client(name, phoneNumber, address, location, bundle1);
+        Client client = new Client(name, phoneNumber, address, location, group);
         return client;
     }
 
-    private Bundle createBundle(String bundleName) {
-        Bundle createdBundle = Bundle.builder()
-                .name(bundleName)
+    private Bundle createGroup(String groupName) {
+        Bundle createdGroup = Bundle.builder()
+                .name(groupName)
                 .user(user)
                 .clientCount(0)
                 .createdDate(LocalDateTime.now())
                 .build();
-        return createdBundle;
+        return createdGroup;
     }
 
     private User createUser() {
@@ -105,16 +105,16 @@ class ClientQueryRepositoryTest {
     @DisplayName("위치 정보 없이 반경 검색")
     void findClientWithoutGPSTest() {
         String nameKeyword = "사용자";
-        Long bundleId = bundle2.getId();
-        List<Long> bundleIdList = new ArrayList<>();
-        bundleIdList.add(bundleId);
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleIdList, null,nameKeyword);
+        Long groupId = group2.getId();
+        List<Long> groupIdList = new ArrayList<>();
+        groupIdList.add(groupId);
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, null,nameKeyword);
 
         for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isEqualTo(-1);
-            assertThat(client.getGroupId()).isEqualTo(bundleId);
+            assertThat(client.getGroupId()).isEqualTo(groupId);
         }
     }
 
@@ -122,80 +122,80 @@ class ClientQueryRepositoryTest {
     @DisplayName("위치 정보 포함 반경 검색")
     void findClientWithGPSTest() {
         String nameKeyword = "사용자";
-        Long bundleId = bundle2.getId();
+        Long groupId = group2.getId();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
-        List<Long> bundleIdList = new ArrayList<>();
-        bundleIdList.add(bundleId);
+        List<Long> groupIdList = new ArrayList<>();
+        groupIdList.add(groupId);
 
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleIdList, request,nameKeyword);
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
 
         for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getGroupId()).isEqualTo(bundleId);
+            assertThat(client.getGroupId()).isEqualTo(groupId);
         }
     }
 
     @Test
     @DisplayName("다중 번들 반경 검색")
-    void findClientWithoutBundleIdTest() {
+    void findClientWithoutgroupIdTest() {
         String nameKeyword = "사용자";
-        Long bundleId1 = bundle1.getId();
-        Long bundleId2 = bundle2.getId();
+        Long groupId1 = group1.getId();
+        Long groupId2 = group2.getId();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
-        List<Long> bundleIdList = new ArrayList<>();
-        bundleIdList.add(bundleId1);
-        bundleIdList.add(bundleId2);
+        List<Long> groupIdList = new ArrayList<>();
+        groupIdList.add(groupId1);
+        groupIdList.add(groupId2);
 
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(bundleIdList, request,nameKeyword);
+        List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
 
         for (ClientResponse client : result) {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getGroupId()).isIn(bundleId1, bundleId2);
+            assertThat(client.getGroupId()).isIn(groupId1, groupId2);
         }
     }
 
     @Test
-    @DisplayName("User, Bundle을 이용해서 Client 조회")
-    void findClientWithBundleAndUserTest() {
+    @DisplayName("User, Group을 이용해서 Client 조회")
+    void findClientWithGroupAndUserTest() {
         String loginEmail = user.getEmail();
-        Long clientId = bundle1ClientList.get(0).getId();
-        Long bundleId = bundle1.getId();
+        Long clientId = group1ClientList.get(0).getId();
+        Long groupId = group1.getId();
 
-        Client result = clientQueryRepository.findClientByUserAndBundle(loginEmail, bundleId, clientId)
+        Client result = clientQueryRepository.findClientByUserAndGroup(loginEmail, groupId, clientId)
                 .orElseThrow(() -> new IllegalArgumentException());
 
         assertThat(result).isNotNull();
     }
 
     @Test
-    @DisplayName("User, Bundle를 이용해서 Client 조회 실패")
-    void findClientWithBundleAndUserFailTest() {
+    @DisplayName("User, Group를 이용해서 Client 조회 실패")
+    void findClientWithGroupAndUserFailTest() {
         String loginEmail = user.getEmail();
-        Long clientId = bundle2ClientList.get(0).getId();
-        Long bundleId = bundle1.getId();
+        Long clientId = group2ClientList.get(0).getId();
+        Long groupId = group1.getId();
 
-        Optional<Client> result = clientQueryRepository.findClientByUserAndBundle(loginEmail, bundleId, clientId);
+        Optional<Client> result = clientQueryRepository.findClientByUserAndGroup(loginEmail, groupId, clientId);
 
         assertThat(result.isEmpty()).isTrue();
     }
 
     @Test
-    @DisplayName("Client가 번들에 속해있을때")
-    void hasClientByBundleTrue() {
-        boolean result = clientQueryRepository.hasClientByBundle(bundle1.getId(), bundle1ClientList.get(0).getId());
+    @DisplayName("Client가 그룹에 속해있을때")
+    void hasClientByGroupTrue() {
+        boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group1ClientList.get(0).getId());
         assertThat(result).isTrue();
     }
 
     @Test
     @DisplayName("Client가 번들에 속해있지 않을때")
-    void hasClientByBundleFalse() {
-        boolean result = clientQueryRepository.hasClientByBundle(bundle1.getId(), bundle2ClientList.get(0).getId());
+    void hasClientByGroupFalse() {
+        boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group2ClientList.get(0).getId());
         assertThat(result).isFalse();
     }
 

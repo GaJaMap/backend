@@ -33,15 +33,15 @@ class ClientAccessCheckServiceTest {
     ClientAccessVerifyService clientAccessVerifyService;
 
     User user;
-    Bundle bundle;
+    Bundle group;
     Client client;
 
     @BeforeEach
     void beforeEach() {
         user = createUser();
         em.persist(user);
-        bundle = createBundle();
-        em.persist(bundle);
+        group = createGroup();
+        em.persist(group);
         client = createClient();
         em.persist(client);
     }
@@ -56,7 +56,7 @@ class ClientAccessCheckServiceTest {
                 .build();
     }
 
-    private Bundle createBundle() {
+    private Bundle createGroup() {
         return Bundle.builder()
                 .name("번들 1")
                 .user(user)
@@ -71,27 +71,27 @@ class ClientAccessCheckServiceTest {
         String phoneNumber = "010-1111-" + sig;
         ClientAddress address = new ClientAddress("aaa" + sig, "bbb" + sig, "ccc" + sig, "ddd" + sig);
         ClientLocation location = new ClientLocation(35d, 125.0d);
-        return new Client(name, phoneNumber, address, location, bundle);
+        return new Client(name, phoneNumber, address, location, group);
     }
 
     @Test
     @DisplayName("Client 접근 권한 검사 성공")
     void verifyClientAccess() {
         String email = user.getEmail();
-        Long bundleId = bundle.getId();
+        Long groupId = group.getId();
         Long clientId = client.getId();
-        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, bundleId, clientId);
+        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, groupId, clientId);
 
         clientAccessVerifyService.verifyClientAccess(accessRequest);
     }
 
     @Test
-    @DisplayName("Client 접근 권한 검사 - Bundle 오류")
-    void verifyClientAccessBundleException() {
+    @DisplayName("Client 접근 권한 검사 - Group 오류")
+    void verifyClientAccessGroupException() {
         String email = user.getEmail();
-        Long wrongBundleId = -1L;
+        Long wrongGroupId = -1L;
         Long clientId = client.getId();
-        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, wrongBundleId, clientId);
+        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, wrongGroupId, clientId);
 
         assertThrows(BundleNotFoundException.class ,
                 () -> clientAccessVerifyService.verifyClientAccess(accessRequest));
@@ -101,9 +101,9 @@ class ClientAccessCheckServiceTest {
     @DisplayName("Client 접근 권한 검사 - Client 오류")
     void verifyClientAccessClientException() {
         String email = user.getEmail();
-        Long bundleId = bundle.getId();
+        Long groupId = group.getId();
         Long wrongClientId = -1L;
-        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, bundleId, wrongClientId);
+        ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, groupId, wrongClientId);
 
         assertThrows(ClientNotFoundException.class ,
                 () -> clientAccessVerifyService.verifyClientAccess(accessRequest));
