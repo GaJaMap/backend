@@ -25,30 +25,30 @@ public class ClientController {
 
     private final ClientService clientService;
     private final ClientAccessVerifyService clientAccessVerifyService;
-    private final BundleAccessVerifyService bundleAccessVerifyService;
+    private final BundleAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
 
-    @DeleteMapping("/bundle/{bundleId}/clients/{clientId}")
-    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal String loginEmail, @PathVariable Long bundleId, @PathVariable Long clientId) {
+    @DeleteMapping("/group/{groupId}/clients/{clientId}")
+    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal String loginEmail, @PathVariable Long groupId, @PathVariable Long clientId) {
         // 특정 번들 내에 거래처 삭제
-        log.info("ClientController.deleteClient loginEmail={} bundleId={} clientId={}", loginEmail, bundleId, clientId);
-        verifyClientAccess(loginEmail, bundleId, clientId);
+        log.info("ClientController.deleteClient loginEmail={} groupId={} clientId={}", loginEmail, groupId, clientId);
+        verifyClientAccess(loginEmail, groupId, clientId);
         clientService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/bundle/{bundleId}/clients/{clientId}")
+    @PutMapping("/group/{groupId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> changeClient(
             @AuthenticationPrincipal String loginEmail,
-            @PathVariable Long bundleId,
+            @PathVariable Long groupId,
             @PathVariable Long clientId,
             @RequestBody NewClientRequest clientRequest
     ) {
         // 기존 거래처 정보 변경
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
-        verifyClientAccess(loginEmail, bundleId, clientId);
-        if (bundleId != clientRequest.getGroupId()) {
-            verifyBundleAccess(loginEmail, clientRequest);
+        verifyClientAccess(loginEmail, groupId, clientId);
+        if (groupId != clientRequest.getGroupId()) {
+            verifyGroupAccess(loginEmail, clientRequest);
         }
 
         ClientResponse response = clientService.changeClient(clientId, clientRequest);
@@ -62,7 +62,7 @@ public class ClientController {
     ) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", client);
-        verifyBundleAccess(loginEmail, client);
+        verifyGroupAccess(loginEmail, client);
 
         MultipartFile clientImage = client.getClientImage();
         if (clientImage == null || clientImage.isEmpty()) {
@@ -89,13 +89,13 @@ public class ClientController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    private void verifyClientAccess(String loginEmail, Long bundleId, Long clientId) {
-        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, bundleId, clientId);
+    private void verifyClientAccess(String loginEmail, Long groupId, Long clientId) {
+        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheckDto);
     }
 
-    private void verifyBundleAccess(String loginEmail, NewClientRequest clientRequest) {
-        bundleAccessVerifyService.verifyBundleAccess(clientRequest.getGroupId(), loginEmail);
+    private void verifyGroupAccess(String loginEmail, NewClientRequest clientRequest) {
+        groupAccessVerifyService.verifyBundleAccess(clientRequest.getGroupId(), loginEmail);
     }
 
 //    @PostMapping("/clients/bulk")
