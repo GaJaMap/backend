@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.bundle.application.BundleAccessVerifyService;
+import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class GetClientController {
     private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
-    private final BundleAccessVerifyService groupAccessVerifyService;
+    private final GroupAccessVerifyService groupAccessVerifyService;
 
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
@@ -82,6 +82,6 @@ public class GetClientController {
     }
 
     private void verifyGroupAccess(String loginEmail, long groupId) {
-        groupAccessVerifyService.verifyBundleAccess(groupId, loginEmail);
+        groupAccessVerifyService.verifyGroupAccess(groupId, loginEmail);
     }
 }

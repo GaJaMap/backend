@@ -1,7 +1,7 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
-import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
+import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -33,7 +33,7 @@ class ClientAccessCheckServiceTest {
     ClientAccessVerifyService clientAccessVerifyService;
 
     User user;
-    Bundle group;
+    Group group;
     Client client;
 
     @BeforeEach
@@ -50,14 +50,14 @@ class ClientAccessCheckServiceTest {
         return User.builder()
                 .email("test@example.com")
                 .authority(Authority.FREE)
-                .bundleCount(0)
+                .groupCount(0)
                 .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
     }
 
-    private Bundle createGroup() {
-        return Bundle.builder()
+    private Group createGroup() {
+        return Group.builder()
                 .name("번들 1")
                 .user(user)
                 .clientCount(0)
@@ -93,7 +93,7 @@ class ClientAccessCheckServiceTest {
         Long clientId = client.getId();
         ClientAccessCheckDto accessRequest = new ClientAccessCheckDto(email, wrongGroupId, clientId);
 
-        assertThrows(BundleNotFoundException.class ,
+        assertThrows(GroupNotFoundException.class ,
                 () -> clientAccessVerifyService.verifyClientAccess(accessRequest));
     }
 

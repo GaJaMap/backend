@@ -1,7 +1,7 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.exception.BundleNotFoundException;
-import com.map.gaja.bundle.infrastructure.BundleQueryRepository;
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
+import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
@@ -24,7 +24,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 public class ClientQueryService {
     private final ClientRepository clientRepository;
     private final ClientQueryRepository clientQueryRepository;
-    private final BundleQueryRepository groupQueryRepository;
+    private final GroupQueryRepository groupQueryRepository;
 
     public ClientResponse findClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
@@ -33,7 +33,7 @@ public class ClientQueryService {
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId) {
-        List<Client> clients = clientRepository.findByBundle_Id(groupId);
+        List<Client> clients = clientRepository.findByGroup_Id(groupId);
         return entityToDto(clients);
     }
 
@@ -46,9 +46,9 @@ public class ClientQueryService {
     }
 
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<Long> groupIdList = groupQueryRepository.findBundleId(loginEmail);
+        List<Long> groupIdList = groupQueryRepository.findGroupId(loginEmail);
         if (groupIdList.size() == 0) {
-            throw new BundleNotFoundException();
+            throw new GroupNotFoundException();
         }
 
         List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);

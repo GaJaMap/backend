@@ -1,7 +1,7 @@
 package com.map.gaja.user.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
-import com.map.gaja.user.domain.exception.BundleLimitExceededException;
+import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +23,7 @@ public class User extends BaseTimeEntity {
     private String email;
 
     @Column(nullable = false)
-    private Integer bundleCount;
+    private Integer groupCount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -35,15 +35,15 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime lastLoginDate;
 
-    private Integer referenceBundleId;
+    private Integer referenceGroupId;
 
-    public void checkCreateBundlePermission() {
-        if (authority.getLimitCount() <= bundleCount) {
-            throw new BundleLimitExceededException(authority.name(), authority.getLimitCount());
+    public void checkCreateGroupPermission() {
+        if (authority.getLimitCount() <= groupCount) {
+            throw new GroupLimitExceededException(authority.name(), authority.getLimitCount());
         }
     }
 
-    public void increaseBundleCount() {
-        bundleCount++;
+    public void increaseGroupCount() {
+        groupCount++;
     }
 }

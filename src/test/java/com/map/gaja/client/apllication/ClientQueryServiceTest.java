@@ -1,6 +1,6 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -38,7 +38,7 @@ class ClientQueryServiceTest {
         when(findClient.getName()).thenReturn(searchName);
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
-        when(findClient.getGroup()).thenReturn(Bundle.builder().id(groupId).build());
+        when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
 
         //when
         ClientResponse response = clientQueryService.findClient(searchId);

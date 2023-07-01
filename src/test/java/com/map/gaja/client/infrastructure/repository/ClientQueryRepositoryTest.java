@@ -1,6 +1,6 @@
 package com.map.gaja.client.infrastructure.repository;
 
-import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -39,7 +39,7 @@ class ClientQueryRepositoryTest {
     EntityManager em;
 
     User user;
-    Bundle group1, group2;
+    Group group1, group2;
     List<Client> group1ClientList, group2ClientList;
 
     @BeforeEach
@@ -68,7 +68,7 @@ class ClientQueryRepositoryTest {
         clientRepository.saveAll(group2ClientList);
     }
 
-    private Client createClient(int sigIdx, double pointSig, Bundle group) {
+    private Client createClient(int sigIdx, double pointSig, Group group) {
         String sig = sigIdx+""+sigIdx;
         String name = "사용자 " + sig;
         String phoneNumber = "010-1111-" + sig;
@@ -78,8 +78,8 @@ class ClientQueryRepositoryTest {
         return client;
     }
 
-    private Bundle createGroup(String groupName) {
-        Bundle createdGroup = Bundle.builder()
+    private Group createGroup(String groupName) {
+        Group createdGroup = Group.builder()
                 .name(groupName)
                 .user(user)
                 .clientCount(0)
@@ -92,7 +92,7 @@ class ClientQueryRepositoryTest {
         User createdUser = User.builder()
                 .email("test@example.com")
                 .authority(Authority.FREE)
-                .bundleCount(0)
+                .groupCount(0)
                 .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();

@@ -1,6 +1,6 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientImage;
@@ -45,7 +45,7 @@ public class ClientConvertor {
         return clients;
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, Bundle group) {
+    protected static Client dtoToEntity(NewClientRequest request, Group group) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         return new Client(
@@ -57,7 +57,7 @@ public class ClientConvertor {
             );
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, Bundle group, StoredFileDto storedFileDto) {
+    protected static Client dtoToEntity(NewClientRequest request, Group group, StoredFileDto storedFileDto) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getFilePath());
