@@ -24,7 +24,7 @@ public class AuthenticationToken implements Authentication {
 
     @Override
     public Object getDetails() {
-        return null;
+        return email;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class AuthenticationToken implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return false;
+        return true;
     }
 
     @Override
@@ -44,6 +44,6 @@ public class AuthenticationToken implements Authentication {
 
     @Override
     public String getName() {
-        return null;
+        return email;
     }
 }
