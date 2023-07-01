@@ -36,14 +36,14 @@ public class UserService {
                 .orElse(User.builder()
                         .email(email)
                         .authority(Authority.FREE)
-                        .bundleCount(0)
+                        .groupCount(0)
                         .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build());
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
-        //번들 아이디로 응답해주면 클라이언트 쪽에서 번들을 가지고 고객조회 API를 호출한다. null이면 호출X
-        return user.getReferenceBundleId();
+        //그룹 아이디로 응답해주면 클라이언트 쪽에서 그룹을 가지고 고객조회 API를 호출한다. null이면 호출X
+        return user.getReferenceGroupId();
     }
 }

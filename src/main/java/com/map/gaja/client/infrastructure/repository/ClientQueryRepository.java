@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.map.gaja.bundle.domain.model.QBundle.*;
 import static com.map.gaja.client.domain.model.QClient.client;
+import static com.map.gaja.group.domain.model.QGroup.group;
 import static com.map.gaja.user.domain.model.QUser.*;
 
 @Repository
@@ -56,7 +56,7 @@ public class ClientQueryRepository {
     public Optional<Client> findClientWithGroup(long clientId) {
         Client result = query
                 .selectFrom(client)
-                .join(client.group, bundle)
+                .join(client.group, group)
                 .where(client.id.eq(clientId))
                 .fetchJoin().fetchOne();
 
@@ -142,8 +142,8 @@ public class ClientQueryRepository {
     public Optional<Client> findClientByUserAndGroup(String loginEmail, Long groupId, Long clientId) {
         Client result = query.select(client)
                 .from(client)
-                .join(client.group, bundle).on(bundle.id.eq(groupId))
-                .join(bundle.user, user).on(user.email.eq(loginEmail))
+                .join(client.group, group).on(group.id.eq(groupId))
+                .join(group.user, user).on(user.email.eq(loginEmail))
                 .where(
                         client.id.eq(clientId)
                 )
@@ -153,7 +153,7 @@ public class ClientQueryRepository {
     }
 
     /**
-     * 해당 번들이 클라이언트를 가지고 있는지 확인
+     * 해당 그룹이 클라이언트를 가지고 있는지 확인
      * @param groupId
      * @param clientId
      * @return 가지고 있다면 true
@@ -161,7 +161,7 @@ public class ClientQueryRepository {
     public boolean hasClientByGroup(Long groupId, Long clientId) {
         Integer result = query.selectOne()
                 .from(client)
-                .join(client.group, bundle).on(bundle.id.eq(groupId))
+                .join(client.group, group).on(group.id.eq(groupId))
                 .where(
                         client.id.eq(clientId)
                 )
@@ -171,7 +171,7 @@ public class ClientQueryRepository {
     }
 
     /**
-     * 해당 번들이 클라이언트를 가지고 있지 않은지 확인
+     * 해당 그룹이 클라이언트를 가지고 있지 않은지 확인
      * @param groupId
      * @param clientId
      * @return 가지고 있지 않다면 true

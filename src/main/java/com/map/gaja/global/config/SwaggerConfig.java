@@ -17,10 +17,10 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public GroupedOpenApi bundleApi(){
+    public GroupedOpenApi GroupApi(){
         return GroupedOpenApi.builder()
-                .group("bundle-api")
-                .pathsToMatch("/api/bundle/**")
+                .group("Group-api")
+                .pathsToMatch("/api/group/**")
                 .build();
     }
 

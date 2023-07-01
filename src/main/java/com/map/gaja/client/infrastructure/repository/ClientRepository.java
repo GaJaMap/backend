@@ -12,8 +12,8 @@ import java.util.List;
 public interface ClientRepository extends JpaRepository<Client, Long> {
     @Modifying
     @Query("DELETE FROM Client c WHERE c.group.id = :groupId")
-    void deleteByBundleId(@Param(value = "groupId") Long groupId);
+    void deleteByGroupId(@Param(value = "groupId") Long groupId);
 
     @Query("SELECT c FROM Client c WHERE c.group.id = :groupId")
-    List<Client> findByBundle_Id(Long groupId);
+    List<Client> findByGroup_Id(Long groupId);
 }

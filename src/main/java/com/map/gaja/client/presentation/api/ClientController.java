@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.bundle.application.BundleAccessVerifyService;
+import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
@@ -25,7 +25,7 @@ public class ClientController {
 
     private final ClientService clientService;
     private final ClientAccessVerifyService clientAccessVerifyService;
-    private final BundleAccessVerifyService groupAccessVerifyService;
+    private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
@@ -95,7 +95,7 @@ public class ClientController {
     }
 
     private void verifyGroupAccess(String loginEmail, NewClientRequest clientRequest) {
-        groupAccessVerifyService.verifyBundleAccess(clientRequest.getGroupId(), loginEmail);
+        groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
     }
 
 //    @PostMapping("/clients/bulk")

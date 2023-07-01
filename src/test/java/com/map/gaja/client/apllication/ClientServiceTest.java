@@ -1,7 +1,7 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.bundle.domain.model.Bundle;
-import com.map.gaja.bundle.infrastructure.BundleRepository;
+import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -32,7 +32,7 @@ class ClientServiceTest {
     @Mock
     private ClientRepository clientRepository;
     @Mock
-    private BundleRepository groupRepository;
+    private GroupRepository groupRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
 
@@ -54,7 +54,7 @@ class ClientServiceTest {
 
         Long groupId = 1L;
         Integer clientCount = 0;
-        Bundle group = createGroup(groupId, clientCount);
+        Group group = createGroup(groupId, clientCount);
         NewClientRequest request = new NewClientRequest();
         request.setGroupId(groupId);
 
@@ -83,9 +83,9 @@ class ClientServiceTest {
         String existingName = "test";
         String changedName = "update Test";
 
-        Bundle existingGroup = createGroup(groupId, 0);
+        Group existingGroup = createGroup(groupId, 0);
 
-        Bundle changedGroup = createGroup(changedGroupId, 0);
+        Group changedGroup = createGroup(changedGroupId, 0);
 
         Client existngClient = createClient(existingName, existingGroup);
 
@@ -113,7 +113,7 @@ class ClientServiceTest {
     void deleteClientTest() {
         Long groupId = 1L;
         Long clientId = 1L;
-        Bundle group = createGroup(groupId, 0);
+        Group group = createGroup(groupId, 0);
         Client client = createClient("testClient", group);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
@@ -124,13 +124,13 @@ class ClientServiceTest {
         assertThat(group.getClientCount()).isEqualTo(0);
     }
 
-    private static Bundle createGroup(Long groupId, Integer clientCount) {
-        return Bundle.builder()
+    private static Group createGroup(Long groupId, Integer clientCount) {
+        return Group.builder()
                 .id(groupId).clientCount(clientCount)
                 .build();
     }
 
-    private static Client createClient(String existingName, Bundle existingGroup) {
+    private static Client createClient(String existingName, Group existingGroup) {
         return new Client(
                 existingName, "test",
                 new ClientAddress(), new ClientLocation(),

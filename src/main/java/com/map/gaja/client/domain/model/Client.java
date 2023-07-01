@@ -1,6 +1,6 @@
 package com.map.gaja.client.domain.model;
 
-import com.map.gaja.bundle.domain.model.Bundle;
+import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.*;
@@ -36,13 +36,13 @@ public class Client extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
-    private Bundle group;
+    private Group group;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
@@ -50,7 +50,7 @@ public class Client extends BaseTimeEntity {
         this.clientImage = null;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group, ClientImage clientImage) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
@@ -58,14 +58,14 @@ public class Client extends BaseTimeEntity {
         this.clientImage = clientImage;
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
         updateGroup(group);
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Bundle group, ClientImage clientImage) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
@@ -78,12 +78,12 @@ public class Client extends BaseTimeEntity {
         group = null;
     }
 
-    private void setGroup(Bundle group) {
+    private void setGroup(Group group) {
         this.group = group;
         group.increaseClientCount();
     }
 
-    private void updateGroup(Bundle group) {
+    private void updateGroup(Group group) {
         removeGroup();
         setGroup(group);
     }
