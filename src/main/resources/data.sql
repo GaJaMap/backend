@@ -6,7 +6,7 @@ VALUES
 (2, 'email2@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, NOW()),
 (3, 'email3@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, NOW());
 
-INSERT INTO groups
+INSERT INTO group_set
 (group_id, created_at, updated_at, client_count, created_date, name, user_id)
 VALUES
 (1, NOW(), NOW(), 7, NOW(), '그룹1', 1),
