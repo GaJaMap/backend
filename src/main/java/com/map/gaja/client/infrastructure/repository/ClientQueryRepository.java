@@ -139,19 +139,6 @@ public class ClientQueryRepository {
                 .or(client.address.detail.contains(addressCond)) : null;
     }
 
-    public Optional<Client> findClientByUserAndGroup(String loginEmail, Long groupId, Long clientId) {
-        Client result = query.select(client)
-                .from(client)
-                .join(client.group, group).on(group.id.eq(groupId))
-                .join(group.user, user).on(user.email.eq(loginEmail))
-                .where(
-                        client.id.eq(clientId)
-                )
-                .fetchOne();
-
-        return Optional.ofNullable(result);
-    }
-
     /**
      * 해당 그룹이 클라이언트를 가지고 있는지 확인
      * @param groupId

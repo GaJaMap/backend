@@ -161,31 +161,6 @@ class ClientQueryRepositoryTest {
     }
 
     @Test
-    @DisplayName("User, Group을 이용해서 Client 조회")
-    void findClientWithGroupAndUserTest() {
-        String loginEmail = user.getEmail();
-        Long clientId = group1ClientList.get(0).getId();
-        Long groupId = group1.getId();
-
-        Client result = clientQueryRepository.findClientByUserAndGroup(loginEmail, groupId, clientId)
-                .orElseThrow(() -> new IllegalArgumentException());
-
-        assertThat(result).isNotNull();
-    }
-
-    @Test
-    @DisplayName("User, Group를 이용해서 Client 조회 실패")
-    void findClientWithGroupAndUserFailTest() {
-        String loginEmail = user.getEmail();
-        Long clientId = group2ClientList.get(0).getId();
-        Long groupId = group1.getId();
-
-        Optional<Client> result = clientQueryRepository.findClientByUserAndGroup(loginEmail, groupId, clientId);
-
-        assertThat(result.isEmpty()).isTrue();
-    }
-
-    @Test
     @DisplayName("Client가 그룹에 속해있을때")
     void hasClientByGroupTrue() {
         boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group1ClientList.get(0).getId());
