@@ -36,7 +36,8 @@ class S3FileServiceTest {
     String s3Url = "http://bucket.s3.amazonaws.com/";
     String originalFileName = "test.jpg";
     String s3FileUrl = s3Url+originalFileName;
-    String filePath = "/111/" + originalFileName;
+    String loginEmail = "aaa@naver.com";
+    String filePath = "/"+loginEmail+"/" + originalFileName;
 
     @Test
     @DisplayName("파일 정상 저장")
@@ -47,7 +48,7 @@ class S3FileServiceTest {
         when(awsS3Client.getUrl(any(), any())).thenReturn(new URL(s3FileUrl));
         when(s3UrlGenerator.extractFilePath(any())).thenReturn(filePath);
 
-        StoredFileDto result = s3FileService.storeFile(mockFile);
+        StoredFileDto result = s3FileService.storeFile(loginEmail, mockFile);
 
         assertThat(result.getFilePath()).isEqualTo(filePath);
         assertThat(result.getOriginalFileName()).isEqualTo(originalFileName);
@@ -60,7 +61,7 @@ class S3FileServiceTest {
 
         when(mockFile.getInputStream()).thenThrow(IOException.class);
 
-        assertThrows(InvalidFileException.class, () -> s3FileService.storeFile(mockFile));
+        assertThrows(InvalidFileException.class, () -> s3FileService.storeFile(loginEmail, mockFile));
     }
 
     @Test
