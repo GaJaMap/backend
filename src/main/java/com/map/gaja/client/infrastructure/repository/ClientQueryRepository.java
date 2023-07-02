@@ -53,6 +53,11 @@ public class ClientQueryRepository {
         return result;
     }
 
+    /**
+     * 그룹을 패치 조인 해서 Client 검색
+     * @param clientId
+     * @return
+     */
     public Optional<Client> findClientWithGroup(long clientId) {
         Client result = query
                 .selectFrom(client)

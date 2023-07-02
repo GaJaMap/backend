@@ -27,7 +27,7 @@ public class ClientQueryService {
     private final GroupQueryRepository groupQueryRepository;
 
     public ClientResponse findClient(Long clientId) {
-        Client client = clientRepository.findById(clientId)
+        Client client = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
         return entityToDto(client);
     }
