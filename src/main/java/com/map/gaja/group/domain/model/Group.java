@@ -23,9 +23,6 @@ public class Group extends BaseTimeEntity {
     private String name;
 
     @Column(nullable = false)
-    private LocalDateTime createdDate;
-
-    @Column(nullable = false)
     private Integer clientCount;
 
     @ManyToOne(fetch = FetchType.LAZY)

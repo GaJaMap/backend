@@ -44,7 +44,6 @@ public class GroupService {
                 .name(name)
                 .clientCount(0)
                 .user(user)
-                .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
     }
 

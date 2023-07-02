@@ -51,17 +51,15 @@ class ClientAccessCheckServiceTest {
                 .email("test@example.com")
                 .authority(Authority.FREE)
                 .groupCount(0)
-                .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
     }
 
     private Group createGroup() {
         return Group.builder()
-                .name("번들 1")
+                .name("그룹 1")
                 .user(user)
                 .clientCount(0)
-                .createdDate(LocalDateTime.now())
                 .build();
     }
 

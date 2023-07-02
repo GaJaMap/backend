@@ -37,7 +37,6 @@ public class UserService {
                         .email(email)
                         .authority(Authority.FREE)
                         .groupCount(0)
-                        .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build());
 

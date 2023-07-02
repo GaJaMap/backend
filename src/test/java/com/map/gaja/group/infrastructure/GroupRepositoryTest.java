@@ -35,7 +35,6 @@ class GroupRepositoryTest {
                 .email("test")
                 .groupCount(0)
                 .authority(Authority.FREE)
-                .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
         userRepository.save(user);
@@ -45,7 +44,6 @@ class GroupRepositoryTest {
                     .name("test")
                     .clientCount(0)
                     .user(user)
-                    .createdDate(LocalDateTime.now())
                     .build();
             groupRepository.save(group);
         }
@@ -69,7 +67,6 @@ class GroupRepositoryTest {
                 .email("test")
                 .groupCount(0)
                 .authority(Authority.FREE)
-                .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
         userRepository.save(user);
@@ -78,7 +75,6 @@ class GroupRepositoryTest {
                 .name("test")
                 .user(user)
                 .clientCount(0)
-                .createdDate(LocalDateTime.now())
                 .build();
         groupRepository.save(group);
 
@@ -97,7 +93,6 @@ class GroupRepositoryTest {
                 .email("test")
                 .groupCount(0)
                 .authority(Authority.FREE)
-                .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
         userRepository.save(user);
@@ -106,7 +101,6 @@ class GroupRepositoryTest {
                 .name("test")
                 .user(user)
                 .clientCount(0)
-                .createdDate(LocalDateTime.now())
                 .build();
         groupRepository.save(group);
 
@@ -122,7 +116,6 @@ class GroupRepositoryTest {
                 .email("test")
                 .groupCount(0)
                 .authority(Authority.FREE)
-                .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
         userRepository.save(user);
@@ -131,7 +124,6 @@ class GroupRepositoryTest {
                 .name("test")
                 .user(user)
                 .clientCount(0)
-                .createdDate(LocalDateTime.now())
                 .build();
         groupRepository.save(group);
 

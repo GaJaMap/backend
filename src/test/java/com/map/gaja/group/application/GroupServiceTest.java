@@ -39,7 +39,6 @@ class GroupServiceTest {
                 .email(email)
                 .groupCount(100)
                 .authority(Authority.FREE)
-                .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
