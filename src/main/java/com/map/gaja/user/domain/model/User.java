@@ -30,9 +30,6 @@ public class User extends BaseTimeEntity {
     private Authority authority;
 
     @Column(nullable = false)
-    private LocalDateTime createdDate;
-
-    @Column(nullable = false)
     private LocalDateTime lastLoginDate;
 
     private Integer referenceGroupId;

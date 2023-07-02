@@ -83,7 +83,6 @@ class ClientQueryRepositoryTest {
                 .name(groupName)
                 .user(user)
                 .clientCount(0)
-                .createdDate(LocalDateTime.now())
                 .build();
         return createdGroup;
     }
@@ -93,7 +92,6 @@ class ClientQueryRepositoryTest {
                 .email("test@example.com")
                 .authority(Authority.FREE)
                 .groupCount(0)
-                .createdDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 

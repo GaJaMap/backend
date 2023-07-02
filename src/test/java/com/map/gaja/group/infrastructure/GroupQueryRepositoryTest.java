@@ -35,7 +35,6 @@ class GroupQueryRepositoryTest {
                 .email(ownerEmail)
                 .authority(Authority.FREE)
                 .groupCount(0)
-                .createdDate(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .build();
         em.persist(createdUser);
@@ -44,7 +43,6 @@ class GroupQueryRepositoryTest {
                 .name("그룹 1")
                 .user(createdUser)
                 .clientCount(0)
-                .createdDate(LocalDateTime.now())
                 .build();
         em.persist(createdGroup);
 
