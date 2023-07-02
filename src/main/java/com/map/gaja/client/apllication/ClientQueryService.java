@@ -33,7 +33,7 @@ public class ClientQueryService {
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId) {
-        List<Client> clients = clientRepository.findByGroup_Id(groupId);
+        List<Client> clients = clientQueryRepository.findByGroup_Id(groupId);
         return entityToDto(clients);
     }
 

@@ -63,6 +63,21 @@ public class ClientQueryRepository {
         return Optional.ofNullable(result);
     }
 
+    /**
+     * Group 내에 있는 Client 조회
+     * @param groupId
+     * @return
+     */
+    public List<Client> findByGroup_Id(long groupId) {
+        List<Client> result = query
+                .selectFrom(client)
+                .join(client.group, group)
+                .where(group.id.eq(groupId))
+                .fetchJoin().fetch();
+
+        return result;
+    }
+
     private NumberExpression<Double> getLocationDistance(NearbyClientSearchRequest locationSearchCond) {
         if(isLocationSearchCondEmpty(locationSearchCond)) {
             return Expressions.asNumber(-1.0);
