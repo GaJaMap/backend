@@ -5,6 +5,7 @@ import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreat
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,6 +29,20 @@ public class ClientQueryRepository {
     private final JPAQueryFactory query;
     private final NativeSqlCreator mysqlNativeSQLCreator;
 
+    /**
+     * 반경 검색 동적 쿼리
+     * groupIdList.size < 1 이면 그룹에 포함된 Client가 아니기 때문에 비어있는 ArrayList 반환
+     * groupIdList.size >= 1 이면 groupIdList에 포함된 Client를 검색
+     * NearbyClientSearchRequest에 위도, 경도 정보가 없다면 생성일로 정렬
+     * 위도, 경도 정보가 있다면 위도 경도를 기준으로 거리를 계산하여 거리순으로 정렬
+     * NearbyClientSearchRequest에 radius로 검색 반경 설정
+     * wordCond가 있다면 Client Name으로 맞는 Client가 있는지 확인
+     *
+     * @param groupIdList
+     * @param locationSearchCond
+     * @param wordCond
+     * @return
+     */
     public List<ClientResponse> findClientByConditions(List<Long> groupIdList, NearbyClientSearchRequest locationSearchCond, String wordCond) {
         if (groupIdList.size() < 1) {
             return new ArrayList<>();
@@ -36,7 +51,8 @@ public class ClientQueryRepository {
         List<ClientResponse> result = query.select(
                         Projections.constructor(ClientResponse.class,
                                 client.id,
-                                client.group.id,
+//                                client.group.id,
+                                Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
                                 client.name,
                                 client.phoneNumber,
                                 client.address,
