@@ -66,6 +66,8 @@ class ClientQueryRepositoryTest {
             group2ClientList.add(client);
         }
         clientRepository.saveAll(group2ClientList);
+        em.flush();
+        em.clear();
     }
 
     private Client createClient(int sigIdx, double pointSig, Group group) {
@@ -172,6 +174,15 @@ class ClientQueryRepositoryTest {
     void hasClientByGroupFalse() {
         boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group2ClientList.get(0).getId());
         assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("그룹 ID로 Client 조회 성공")
+    void findByGroup_IdTest() {
+        List<Client> clientInGroup1 = clientQueryRepository.findByGroup_Id(group1.getId());
+        for (Client client : clientInGroup1) {
+            assertThat(client.getGroup().getName()).isEqualTo(group1.getName());
+        }
     }
 
 }
