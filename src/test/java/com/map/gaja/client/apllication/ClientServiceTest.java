@@ -103,7 +103,7 @@ class ClientServiceTest {
 
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
-        assertThat(response.getGroupId()).isEqualTo(changedGroupId);
+        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
         assertThat(existingGroup.getClientCount()).isEqualTo(0);
     }

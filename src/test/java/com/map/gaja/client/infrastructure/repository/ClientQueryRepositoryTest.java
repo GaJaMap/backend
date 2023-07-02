@@ -108,6 +108,7 @@ class ClientQueryRepositoryTest {
     void findClientWithoutGPSTest() {
         String nameKeyword = "사용자";
         Long groupId = group2.getId();
+        String groupName = group2.getName();
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId);
         List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, null,nameKeyword);
@@ -116,7 +117,8 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isEqualTo(-1);
-            assertThat(client.getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
         }
     }
 
@@ -125,6 +127,7 @@ class ClientQueryRepositoryTest {
     void findClientWithGPSTest() {
         String nameKeyword = "사용자";
         Long groupId = group2.getId();
+        String groupName = group2.getName();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         List<Long> groupIdList = new ArrayList<>();
@@ -136,7 +139,8 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
         }
     }
 
@@ -146,6 +150,8 @@ class ClientQueryRepositoryTest {
         String nameKeyword = "사용자";
         Long groupId1 = group1.getId();
         Long groupId2 = group2.getId();
+        String groupName1 = group1.getName();
+        String groupName2 = group2.getName();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         List<Long> groupIdList = new ArrayList<>();
@@ -158,7 +164,8 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getGroupId()).isIn(groupId1, groupId2);
+            assertThat(client.getGroupInfo().getGroupId()).isIn(groupId1, groupId2);
+            assertThat(client.getGroupInfo().getGroupName()).isIn(groupName1, groupName2);
         }
     }
 

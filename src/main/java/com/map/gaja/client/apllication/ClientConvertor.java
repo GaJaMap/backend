@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
@@ -32,7 +33,13 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
-        return new ClientResponse(client.getId(), client.getGroup().getId(), client.getName(), client.getPhoneNumber(),
+        return new ClientResponse(
+                client.getId(),
+//                client.getGroup().getId(),
+                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
+//                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
+                client.getName(),
+                client.getPhoneNumber(),
                 client.getAddress(),
                 client.getLocation(),
                 null
