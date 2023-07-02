@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ExceptionDto {
-    private final String description;
+    private final String message;
 }
