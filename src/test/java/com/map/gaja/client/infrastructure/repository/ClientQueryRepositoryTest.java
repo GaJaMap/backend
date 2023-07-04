@@ -66,6 +66,8 @@ class ClientQueryRepositoryTest {
             group2ClientList.add(client);
         }
         clientRepository.saveAll(group2ClientList);
+        em.flush();
+        em.clear();
     }
 
     private Client createClient(int sigIdx, double pointSig, Group group) {
@@ -104,6 +106,7 @@ class ClientQueryRepositoryTest {
     void findClientWithoutGPSTest() {
         String nameKeyword = "사용자";
         Long groupId = group2.getId();
+        String groupName = group2.getName();
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId);
         List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, null,nameKeyword);
@@ -112,7 +115,8 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isEqualTo(-1);
-            assertThat(client.getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
         }
     }
 
@@ -121,6 +125,7 @@ class ClientQueryRepositoryTest {
     void findClientWithGPSTest() {
         String nameKeyword = "사용자";
         Long groupId = group2.getId();
+        String groupName = group2.getName();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         List<Long> groupIdList = new ArrayList<>();
@@ -132,7 +137,8 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
+            assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
         }
     }
 
@@ -142,6 +148,8 @@ class ClientQueryRepositoryTest {
         String nameKeyword = "사용자";
         Long groupId1 = group1.getId();
         Long groupId2 = group2.getId();
+        String groupName1 = group1.getName();
+        String groupName2 = group2.getName();
         double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         List<Long> groupIdList = new ArrayList<>();
@@ -154,33 +162,9 @@ class ClientQueryRepositoryTest {
 //            System.out.println("client = " + client);
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
-            assertThat(client.getGroupId()).isIn(groupId1, groupId2);
+            assertThat(client.getGroupInfo().getGroupId()).isIn(groupId1, groupId2);
+            assertThat(client.getGroupInfo().getGroupName()).isIn(groupName1, groupName2);
         }
-    }
-
-    @Test
-    @DisplayName("User, Group을 이용해서 Client 조회")
-    void findClientWithGroupAndUserTest() {
-        String loginEmail = user.getEmail();
-        Long clientId = group1ClientList.get(0).getId();
-        Long groupId = group1.getId();
-
-        Client result = clientQueryRepository.findClientByUserAndGroup(loginEmail, groupId, clientId)
-                .orElseThrow(() -> new IllegalArgumentException());
-
-        assertThat(result).isNotNull();
-    }
-
-    @Test
-    @DisplayName("User, Group를 이용해서 Client 조회 실패")
-    void findClientWithGroupAndUserFailTest() {
-        String loginEmail = user.getEmail();
-        Long clientId = group2ClientList.get(0).getId();
-        Long groupId = group1.getId();
-
-        Optional<Client> result = clientQueryRepository.findClientByUserAndGroup(loginEmail, groupId, clientId);
-
-        assertThat(result.isEmpty()).isTrue();
     }
 
     @Test
@@ -195,6 +179,15 @@ class ClientQueryRepositoryTest {
     void hasClientByGroupFalse() {
         boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group2ClientList.get(0).getId());
         assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("그룹 ID로 Client 조회 성공")
+    void findByGroup_IdTest() {
+        List<Client> clientInGroup1 = clientQueryRepository.findByGroup_Id(group1.getId());
+        for (Client client : clientInGroup1) {
+            assertThat(client.getGroup().getName()).isEqualTo(group1.getName());
+        }
     }
 
 }

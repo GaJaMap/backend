@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.dto.response;
 
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
+import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import lombok.*;
 
 /**
@@ -12,7 +13,8 @@ import lombok.*;
 @AllArgsConstructor
 public class ClientResponse {
     private Long clientId;
-    private Long groupId; // 번들 세부 정보는 나중에 추가.
+//    private Long groupId;
+    private GroupInfoDto groupInfo;
     private String clientName;
     private String phoneNumber;
     private ClientAddress address;

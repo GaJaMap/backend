@@ -27,13 +27,13 @@ public class ClientQueryService {
     private final GroupQueryRepository groupQueryRepository;
 
     public ClientResponse findClient(Long clientId) {
-        Client client = clientRepository.findById(clientId)
+        Client client = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
         return entityToDto(client);
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId) {
-        List<Client> clients = clientRepository.findByGroup_Id(groupId);
+        List<Client> clients = clientQueryRepository.findByGroup_Id(groupId);
         return entityToDto(clients);
     }
 

@@ -1,10 +1,10 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.exception.ClientNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClientQueryServiceTest {
+
     @Mock
-    private ClientRepository repository;
+    private ClientQueryRepository repository;
 
     @InjectMocks
     private ClientQueryService clientQueryService;
@@ -33,7 +34,7 @@ class ClientQueryServiceTest {
         Long groupId = 1L;
         String searchName = "test";
         Client findClient = mock(Client.class);
-        when(repository.findById(searchId)).thenReturn(Optional.ofNullable(findClient));
+        when(repository.findClientWithGroup(searchId)).thenReturn(Optional.ofNullable(findClient));
         when(findClient.getId()).thenReturn(searchId);
         when(findClient.getName()).thenReturn(searchName);
         when(findClient.getAddress()).thenReturn(new ClientAddress());
@@ -54,7 +55,7 @@ class ClientQueryServiceTest {
         Long searchId = 1L;
         String searchName = "test";
         Client findClient = mock(Client.class);
-        when(repository.findById(searchId)).thenReturn(Optional.empty());
+        when(repository.findClientWithGroup(searchId)).thenReturn(Optional.empty());
 
         //when
         assertThatThrownBy(()-> clientQueryService.findClient(searchId))
