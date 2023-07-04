@@ -1,11 +1,13 @@
 package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.client.domain.model.QClientImage;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.map.gaja.client.domain.model.QClient.client;
+import static com.map.gaja.client.domain.model.QClientImage.*;
 import static com.map.gaja.group.domain.model.QGroup.group;
 import static com.map.gaja.user.domain.model.QUser.*;
 
@@ -57,11 +60,13 @@ public class ClientQueryRepository {
                                 client.phoneNumber,
                                 client.address,
                                 client.location,
+                                Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName),
                                 getLocationDistance(locationSearchCond) // 좌표 정보가 없다면 -1을 반환함
                         )
                 )
                 .from(client)
                 .join(client.group, group)
+                .leftJoin(client.clientImage, clientImage)
                 .where(nameContains(wordCond), isClientInRadius(locationSearchCond), groupIdEq(groupIdList))
                 .orderBy(distanceAsc(locationSearchCond), client.createdAt.desc())
                 .limit(1000)
@@ -79,6 +84,7 @@ public class ClientQueryRepository {
         Client result = query
                 .selectFrom(client)
                 .join(client.group, group)
+                .leftJoin(client.clientImage, clientImage)
                 .where(client.id.eq(clientId))
                 .fetchJoin().fetchOne();
 
@@ -94,6 +100,7 @@ public class ClientQueryRepository {
         List<Client> result = query
                 .selectFrom(client)
                 .join(client.group, group)
+                .leftJoin(client.clientImage, clientImage)
                 .where(group.id.eq(groupId))
                 .fetchJoin().fetch();
 

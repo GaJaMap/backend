@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
@@ -40,6 +41,7 @@ class ClientQueryServiceTest {
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
         when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
+        when(findClient.getClientImage()).thenReturn(new ClientImage("testImage", "testImage"));
 
         //when
         ClientResponse response = clientQueryService.findClient(searchId);

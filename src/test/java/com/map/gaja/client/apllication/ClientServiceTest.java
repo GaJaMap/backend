@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
@@ -87,14 +88,14 @@ class ClientServiceTest {
 
         Group changedGroup = createGroup(changedGroupId, 0);
 
-        Client existngClient = createClient(existingName, existingGroup);
+        Client existingClient = createClient(existingName, existingGroup);
 
         NewClientRequest changedRequest = new NewClientRequest();
         changedRequest.setClientName(changedName);
         changedRequest.setGroupId(changedGroupId);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
-                .thenReturn(Optional.ofNullable(existngClient));
+                .thenReturn(Optional.ofNullable(existingClient));
         when(groupRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(changedGroup));
 
@@ -134,6 +135,6 @@ class ClientServiceTest {
         return new Client(
                 existingName, "test",
                 new ClientAddress(), new ClientLocation(),
-                existingGroup, null);
+                existingGroup, new ClientImage("aaa", "bbb"));
     }
 }
