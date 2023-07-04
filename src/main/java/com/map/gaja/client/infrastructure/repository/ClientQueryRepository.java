@@ -63,7 +63,7 @@ public class ClientQueryRepository {
                 .from(client)
                 .join(client.group, group)
                 .where(nameContains(wordCond), isClientInRadius(locationSearchCond), groupIdEq(groupIdList))
-                .orderBy(distanceAsc(locationSearchCond), client.createdDate.desc())
+                .orderBy(distanceAsc(locationSearchCond), client.createdAt.desc())
                 .limit(1000)
                 .fetch();
 
