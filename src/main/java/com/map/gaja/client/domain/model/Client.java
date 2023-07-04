@@ -109,7 +109,7 @@ public class Client extends BaseTimeEntity {
         // 위도, 경도 중 하나라도 null이 아니라면 Korea 범위에 있어야 함.
 
         if (!isLocationInKorea(location.getLatitude(), location.getLongitude())) {
-            throw new LocationOutsideKoreaException(location.getLatitude(), location.getLatitude());
+            throw new LocationOutsideKoreaException();
         }
     }
 

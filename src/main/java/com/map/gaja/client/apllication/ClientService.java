@@ -3,7 +3,7 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
-import com.map.gaja.client.apllication.exception.UnsupportedFileTypeException;
+import com.map.gaja.client.domain.exception.UnsupportedFileTypeException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -14,7 +14,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.map.gaja.client.presentation.exception.ClientNotFoundException;
+import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +62,7 @@ public class ClientService {
 
     public void deleteClient(long clientId) {
         Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
-                .orElseThrow(() -> new ClientNotFoundException(clientId));
+                .orElseThrow(() -> new ClientNotFoundException());
         deletedClient.removeGroup();
 
         clientRepository.delete(deletedClient);
@@ -91,7 +91,7 @@ public class ClientService {
             NewClientRequest updateRequest
     ) {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
-                .orElseThrow(() -> new ClientNotFoundException(existingClientId));
+                .orElseThrow(() -> new ClientNotFoundException());
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
         Group updatedGroup = groupRepository.findById(updateRequest.getGroupId())

@@ -1,15 +1,14 @@
 package com.map.gaja.client.domain.exception;
 
+import com.map.gaja.global.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
-public class S3NotWorkingException extends RuntimeException {
-    private final String message = "서버 내부에서 오류가 발생했습니다.";
-    private final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
+public class S3NotWorkingException extends BusinessException {
     public S3NotWorkingException() {
+        super(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다.");
     }
 
     public S3NotWorkingException(Throwable cause) {
-        super(cause);
+        super(cause, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다.");
     }
 }
