@@ -31,12 +31,22 @@ public class ClientController {
     private final S3FileService fileService;
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal String loginEmail, @PathVariable Long groupId, @PathVariable Long clientId) {
-        // 특정 번들 내에 거래처 삭제
+    public ResponseEntity<Void> deleteClient(
+            @AuthenticationPrincipal String loginEmail,
+            @PathVariable Long groupId,
+            @PathVariable Long clientId
+    ) {
+        // 특정 그룹 내에 거래처 삭제
         log.info("ClientController.deleteClient loginEmail={} groupId={} clientId={}", loginEmail, groupId, clientId);
         verifyClientAccess(loginEmail, groupId, clientId);
+
+        String existingImageFilePath = clientQueryService.findClientImage(clientId).getFilePath();
         clientService.deleteClient(clientId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (existingImageFilePath != null) {
+            fileService.removeFile(existingImageFilePath);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
