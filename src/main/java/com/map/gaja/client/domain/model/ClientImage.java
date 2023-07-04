@@ -24,9 +24,6 @@ public class ClientImage extends BaseTimeEntity {
     @Column(nullable = false)
     private String savedPath;
 
-    @CreationTimestamp
-    private LocalDateTime createdDate;
-
     public ClientImage(String originalName, String savedPath) {
         this.originalName = originalName;
         this.savedPath = savedPath;
