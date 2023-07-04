@@ -62,7 +62,7 @@ public class ClientService {
 
     public void deleteClient(long clientId) {
         Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
-                .orElseThrow(() -> new ClientNotFoundException(clientId));
+                .orElseThrow(() -> new ClientNotFoundException());
         deletedClient.removeGroup();
 
         clientRepository.delete(deletedClient);
@@ -91,7 +91,7 @@ public class ClientService {
             NewClientRequest updateRequest
     ) {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
-                .orElseThrow(() -> new ClientNotFoundException(existingClientId));
+                .orElseThrow(() -> new ClientNotFoundException());
 
         // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
         Group updatedGroup = groupRepository.findById(updateRequest.getGroupId())

@@ -22,7 +22,7 @@ public class ClientAccessVerifyService {
 
         groupAccessVerifyService.verifyGroupAccess(groupId, userEmail);
         if (clientQueryRepository.hasNoClientByGroup(groupId, clientId)) {
-            throw new ClientNotFoundException(clientId);
+            throw new ClientNotFoundException();
         }
     }
 }
