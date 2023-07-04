@@ -59,8 +59,8 @@ public class ClientConvertor {
         return new Client(
                 request.getClientName(),
                 request.getPhoneNumber(),
-                new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
-                new ClientLocation(location.getLatitude(), location.getLongitude()),
+                dtoToVo(address),
+                dtoToVo(location),
                 group
             );
     }
@@ -72,10 +72,20 @@ public class ClientConvertor {
         return new Client(
                 request.getClientName(),
                 request.getPhoneNumber(),
-                new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail()),
-                new ClientLocation(location.getLatitude(), location.getLongitude()),
+                dtoToVo(address),
+                dtoToVo(location),
                 group,
                 clientImage
         );
     }
+
+    protected static ClientLocation dtoToVo(LocationDto location) {
+        return new ClientLocation(location.getLatitude(), location.getLongitude());
+    }
+
+    protected static ClientAddress dtoToVo(AddressDto address) {
+        return new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
+    }
+
+
 }
