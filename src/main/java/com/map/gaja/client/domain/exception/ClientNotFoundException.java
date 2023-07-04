@@ -1,4 +1,4 @@
-package com.map.gaja.client.presentation.exception;
+package com.map.gaja.client.domain.exception;
 
 public class ClientNotFoundException extends RuntimeException {
     private Long clinetId;

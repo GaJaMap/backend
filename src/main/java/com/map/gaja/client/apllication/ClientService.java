@@ -14,7 +14,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.map.gaja.client.presentation.exception.ClientNotFoundException;
+import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
