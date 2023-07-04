@@ -41,6 +41,7 @@ class ClientQueryRepositoryTest {
     User user;
     Group group1, group2;
     List<Client> group1ClientList, group2ClientList;
+    double radius = 1000000;
 
     @BeforeEach
     void before() {
@@ -111,13 +112,13 @@ class ClientQueryRepositoryTest {
         groupIdList.add(groupId);
         List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, null,nameKeyword);
 
-        for (ClientResponse client : result) {
-//            System.out.println("client = " + client);
+        assertThat(result.size()).isEqualTo(group2ClientList.size());
+        result.forEach((client) -> {
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isEqualTo(-1);
             assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
             assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
-        }
+        });
     }
 
     @Test
@@ -126,31 +127,34 @@ class ClientQueryRepositoryTest {
         String nameKeyword = "사용자";
         Long groupId = group2.getId();
         String groupName = group2.getName();
-        double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId);
 
         List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
 
-        for (ClientResponse client : result) {
-//            System.out.println("client = " + client);
+        assertThat(result.size()).isEqualTo(group2ClientList.size());
+        double beforeDistance = -1;
+        result.forEach((client) -> {
+            assertThat(client.getDistance()).isGreaterThan(beforeDistance);
+
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
             assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
             assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
-        }
+        });
     }
 
     @Test
     @DisplayName("다중 번들 반경 검색")
-    void findClientWithoutgroupIdTest() {
+    void findClientWithoutGroupIdTest() {
         String nameKeyword = "사용자";
         Long groupId1 = group1.getId();
         Long groupId2 = group2.getId();
+        System.out.println("groupId1 = " + groupId1);
+        System.out.println("groupId2 = " + groupId2);
         String groupName1 = group1.getName();
         String groupName2 = group2.getName();
-        double radius = 3000;
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId1);
@@ -158,13 +162,14 @@ class ClientQueryRepositoryTest {
 
         List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
 
-        for (ClientResponse client : result) {
-//            System.out.println("client = " + client);
+        assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
+        result.forEach((client) -> {
+            System.out.println("client = " + client.getGroupInfo().getGroupId());
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
             assertThat(client.getGroupInfo().getGroupId()).isIn(groupId1, groupId2);
             assertThat(client.getGroupInfo().getGroupName()).isIn(groupName1, groupName2);
-        }
+        });
     }
 
     @Test
@@ -185,9 +190,10 @@ class ClientQueryRepositoryTest {
     @DisplayName("그룹 ID로 Client 조회 성공")
     void findByGroup_IdTest() {
         List<Client> clientInGroup1 = clientQueryRepository.findByGroup_Id(group1.getId());
-        for (Client client : clientInGroup1) {
+
+        clientInGroup1.forEach((client -> {
             assertThat(client.getGroup().getName()).isEqualTo(group1.getName());
-        }
+        }));
     }
 
 }
