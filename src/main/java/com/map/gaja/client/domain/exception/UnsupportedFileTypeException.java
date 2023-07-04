@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication.exception;
+package com.map.gaja.client.domain.exception;
 
 public class UnsupportedFileTypeException extends RuntimeException {
     private String errorFileFormat; // 예외가 발생한 파일 포맷

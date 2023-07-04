@@ -3,7 +3,7 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
-import com.map.gaja.client.apllication.exception.UnsupportedFileTypeException;
+import com.map.gaja.client.domain.exception.UnsupportedFileTypeException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
