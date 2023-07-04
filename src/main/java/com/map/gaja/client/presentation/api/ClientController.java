@@ -69,11 +69,11 @@ public class ClientController {
             return saveClient(client);
         }
 
-        return saveClientWithImage(client);
+        return saveClientWithImage(loginEmail, client);
     }
 
-    private ResponseEntity<CreatedClientResponse> saveClientWithImage(NewClientRequest client) {
-        StoredFileDto storedFileDto = fileService.storeFile(client.getClientImage());
+    private ResponseEntity<CreatedClientResponse> saveClientWithImage(String loginEmail, NewClientRequest client) {
+        StoredFileDto storedFileDto = fileService.storeFile(loginEmail, client.getClientImage());
         try {
             CreatedClientResponse response = clientService.saveClient(client, storedFileDto);
             return new ResponseEntity<>(response, HttpStatus.CREATED);

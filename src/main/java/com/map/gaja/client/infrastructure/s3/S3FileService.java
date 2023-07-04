@@ -31,9 +31,9 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public StoredFileDto storeFile(MultipartFile file) {
+    public StoredFileDto storeFile(String loginEmail, MultipartFile file) {
         try (InputStream fileInputStream = file.getInputStream()) {
-            String s3FileUrl = storeFileToS3(file, fileInputStream);
+            String s3FileUrl = storeFileToS3(loginEmail, file, fileInputStream);
             log.info("저장 완료. S3 저장위치 = {}",s3FileUrl);
 
             return createStoredFileDto(s3FileUrl, file.getOriginalFilename());
@@ -74,9 +74,9 @@ public class S3FileService {
         return new StoredFileDto(filePath, originalFilename);
     }
 
-    private String storeFileToS3(MultipartFile file, InputStream fileInputStream) {
+    private String storeFileToS3(String loginEmail, MultipartFile file, InputStream fileInputStream) {
         String originalFilename = file.getOriginalFilename();
-        String storePath = createFilePath(originalFilename);
+        String storePath = createFilePath(loginEmail, originalFilename);
 
         ObjectMetadata objectMetadata = getFileMetadata(file);
 
@@ -87,8 +87,8 @@ public class S3FileService {
         return amazonS3Client.getUrl(bucket, storePath).toString();
     }
 
-    private String createFilePath(String originalFilename) {
-        String dirName = extractExt(originalFilename);
+    private String createFilePath(String loginEmail, String originalFilename) {
+        String dirName = loginEmail;
         String storeFileName = createFileName(originalFilename);
         return dirName + "/" + storeFileName;
     }
