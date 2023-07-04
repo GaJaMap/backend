@@ -129,9 +129,9 @@ VALUES
 
 -- 그룹 9에 이미지 추가
 INSERT INTO client_image
-(client_image_id,created_at, updated_at, created_date, original_name, saved_path)
+(client_image_id,created_at, updated_at, original_name, saved_path)
 VALUES
-(1, NOW(), NOW(), NOW(), 'aa.png', 'uuid-aa.png');
+(1, NOW(), NOW(), 'aa.png', 'uuid-aa.png');
 
 -- 그룹 9에 대한 클라이언트 데이터 (9개)
 INSERT INTO client
