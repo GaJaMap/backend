@@ -1,13 +1,10 @@
 package com.map.gaja.client.domain.exception;
 
-public class UnsupportedFileTypeException extends RuntimeException {
-    private String errorFileFormat; // 예외가 발생한 파일 포맷
+import com.map.gaja.global.exception.BusinessException;
+import org.springframework.http.HttpStatus;
 
-    public UnsupportedFileTypeException(String fileFormat) {
-        this.errorFileFormat = fileFormat;
-    }
-
-    public String getErrorFileFormat() {
-        return errorFileFormat;
+public class UnsupportedFileTypeException extends BusinessException {
+    public UnsupportedFileTypeException(String exceptionFileType) {
+        super(HttpStatus.BAD_REQUEST, String.format("%s는 지원하지 않는 파일 형식입니다.", exceptionFileType));
     }
 }
