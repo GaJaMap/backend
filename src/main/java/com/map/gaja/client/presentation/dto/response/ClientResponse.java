@@ -3,6 +3,7 @@ package com.map.gaja.client.presentation.dto.response;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import lombok.*;
 
 /**
@@ -19,5 +20,6 @@ public class ClientResponse {
     private String phoneNumber;
     private ClientAddress address;
     private ClientLocation location;
+    private StoredFileDto image;
     private Double distance; // km 기준
 }

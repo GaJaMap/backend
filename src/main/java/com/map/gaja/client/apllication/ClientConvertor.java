@@ -42,6 +42,7 @@ public class ClientConvertor {
                 client.getPhoneNumber(),
                 client.getAddress(),
                 client.getLocation(),
+                new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
                 null
         );
     }
