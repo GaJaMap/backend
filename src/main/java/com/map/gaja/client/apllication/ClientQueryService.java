@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.client.domain.model.Client;
@@ -55,4 +56,8 @@ public class ClientQueryService {
         return new ClientListResponse(clientList);
     }
 
+    public StoredFileDto findClientImage(Long clientId) {
+        ClientResponse client = findClient(clientId);
+        return client.getImage();
+    }
 }

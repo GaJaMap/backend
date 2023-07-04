@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
@@ -88,7 +89,8 @@ public class ClientService {
 
     public ClientResponse changeClient(
             Long existingClientId,
-            NewClientRequest updateRequest
+            NewClientRequest updateRequest,
+            StoredFileDto updatedFileDto
     ) {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
@@ -97,26 +99,26 @@ public class ClientService {
         Group updatedGroup = groupRepository.findById(updateRequest.getGroupId())
                 .orElseThrow(GroupNotFoundException::new);
 
-        ClientAddress updatedAddress = new ClientAddress(
-                updateRequest.getAddress().getProvince(),
-                updateRequest.getAddress().getCity(),
-                updateRequest.getAddress().getDistrict(),
-                updateRequest.getAddress().getDetail()
-        );
-
-        ClientLocation updatedLocation = new ClientLocation(
-                updateRequest.getLocation().getLatitude(),
-                updateRequest.getLocation().getLongitude()
-        );
+        ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
+        ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
+        ClientImage updatedClientImage = existingClient.getClientImage();
+        if (isNewFileDto(updatedFileDto)) {
+            updatedClientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
+        }
 
         existingClient.updateClient(
                 updateRequest.getClientName(),
                 updateRequest.getPhoneNumber(),
                 updatedAddress,
                 updatedLocation,
-                updatedGroup
+                updatedGroup,
+                updatedClientImage
         );
 
         return entityToDto(existingClient);
+    }
+
+    private boolean isNewFileDto(StoredFileDto updatedFileDto) {
+        return updatedFileDto.getOriginalFileName() != null && updatedFileDto.getOriginalFileName() != null;
     }
 }
