@@ -54,13 +54,6 @@ public class Client extends BaseTimeEntity {
         this.clientImage = clientImage;
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
-        updateName(name);
-        updatePhoneNumber(phoneNumber);
-        updateLocation(location, address);
-        updateGroup(group);
-    }
-
     public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
         updateName(name);
         updatePhoneNumber(phoneNumber);

@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClientController {
 
     private final ClientService clientService;
+    private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
@@ -42,7 +44,7 @@ public class ClientController {
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
-            @RequestBody NewClientRequest clientRequest
+            @ModelAttribute NewClientRequest clientRequest
     ) {
         // 기존 거래처 정보 변경
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
@@ -51,8 +53,29 @@ public class ClientController {
             verifyGroupAccess(loginEmail, clientRequest);
         }
 
-        ClientResponse response = clientService.changeClient(clientId, clientRequest);
+        StoredFileDto updatedFileDto = getUpdatedFileDto(loginEmail, clientId, clientRequest);
+
+        ClientResponse response = clientService.changeClient(clientId, clientRequest, updatedFileDto);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private StoredFileDto getUpdatedFileDto(String loginEmail, Long clientId, NewClientRequest clientRequest) {
+        StoredFileDto storedFileDto = new StoredFileDto();
+        StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
+        String existingOriginalImageName = existingFile.getOriginalFileName();
+
+        if (isNewFile(clientRequest.getClientImage(), existingOriginalImageName)) {
+            fileService.removeFile(existingFile.getFilePath());
+            storedFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
+        }
+
+        return storedFileDto;
+    }
+
+    private boolean isNewFile(MultipartFile newImage, String existingOriginalImageName) {
+        return existingOriginalImageName != null &&
+                !existingOriginalImageName.equals(newImage.getOriginalFilename());
     }
 
     @PostMapping("/clients")

@@ -1,6 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
@@ -100,7 +101,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        ClientResponse response = clientService.changeClient(existingClientId, changedRequest);
+        ClientResponse response = clientService.changeClient(existingClientId, changedRequest, new StoredFileDto());
 
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
