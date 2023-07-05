@@ -70,10 +70,10 @@ public class GroupService {
     }
 
     @Transactional
-    public void updateName(String email, GroupUpdateRequest request) {
+    public void updateName(String email, Long groupId, GroupUpdateRequest request) {
         User user = findExistingUser(userRepository, email);
 
-        Group group = groupRepository.findByIdAndUserId(request.getGroupId(), user.getId())
+        Group group = groupRepository.findByIdAndUserId(groupId, user.getId())
                 .orElseThrow(GroupNotFoundException::new);
         group.updateName(request.getName());
     }
