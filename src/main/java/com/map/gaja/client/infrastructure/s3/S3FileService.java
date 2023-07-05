@@ -48,17 +48,15 @@ public class S3FileService {
         }
     }
 
-    public boolean removeFile(String s3FileUrl) {
-        String filePath = extractFilePath(s3FileUrl);
-
+    public boolean removeFile(String s3ObjectUri) {
         try {
-            if (!isFileStoredInS3(filePath)) {
-                log.info("제거할 파일을 찾을 수 없습니다. filePath={}", filePath);
+            if (!isFileStoredInS3(s3ObjectUri)) {
+                log.info("제거할 파일을 찾을 수 없습니다. s3ObjectUri={}", s3ObjectUri);
                 return false;
             }
 
-            amazonS3Client.deleteObject(bucket, filePath);
-            log.info("파일 제거 성공. 제거한 파일={}", filePath);
+            amazonS3Client.deleteObject(bucket, s3ObjectUri);
+            log.info("파일 제거 성공. 제거한 파일={}", s3ObjectUri);
         } catch(RuntimeException e) {
             log.error("S3 문제로 파일 제거 실패" , e);
             throw new S3NotWorkingException(e);
