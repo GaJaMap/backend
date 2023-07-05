@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.client.presentation.api.specification.ClientQueryApiSpecification;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class GetClientController {
+public class GetClientController implements ClientQueryApiSpecification {
     private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
@@ -64,7 +65,7 @@ public class GetClientController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/api/group/clients/nearby")
+    @GetMapping("/api/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @AuthenticationPrincipal String loginEmail,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,

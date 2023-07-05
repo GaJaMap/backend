@@ -1,6 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientQueryService;
+import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
@@ -22,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class ClientController {
+public class ClientController implements ClientCommandApiSpecification {
 
     private final ClientService clientService;
     private final ClientQueryService clientQueryService;
