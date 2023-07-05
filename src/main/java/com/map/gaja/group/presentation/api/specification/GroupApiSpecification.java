@@ -21,7 +21,7 @@ public interface GroupApiSpecification {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
     ResponseEntity<Void> create(
-            String email,
+            @Schema(hidden = true) String email,
             GroupCreateRequest request
     );
 
