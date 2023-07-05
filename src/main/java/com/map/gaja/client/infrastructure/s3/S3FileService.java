@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -84,7 +86,12 @@ public class S3FileService {
                 new PutObjectRequest(bucket, storePath, fileInputStream, objectMetadata)
         );
 
-        return amazonS3Client.getUrl(bucket, storePath).toString();
+        String storedPath = amazonS3Client.getUrl(bucket, storePath).toString();
+        return decodePath(storedPath);
+    }
+
+    private String decodePath(String storedPath) {
+        return URLDecoder.decode(storedPath, StandardCharsets.UTF_8);
     }
 
     private String createFilePath(String loginEmail, String originalFilename) {

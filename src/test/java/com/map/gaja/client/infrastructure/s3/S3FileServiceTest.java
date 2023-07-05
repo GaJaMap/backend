@@ -16,6 +16,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,9 +37,10 @@ class S3FileServiceTest {
 
     String s3Url = "http://bucket.s3.amazonaws.com/";
     String originalFileName = "test.jpg";
-    String s3FileUrl = s3Url+originalFileName;
     String loginEmail = "aaa@naver.com";
-    String filePath = "/"+loginEmail+"/" + originalFileName;
+    String filePath = loginEmail+"/" + originalFileName;
+    String encodingSavedPath = URLEncoder.encode(filePath, StandardCharsets.UTF_8);
+    String s3FileUrl = s3Url+encodingSavedPath;
 
     @Test
     @DisplayName("파일 정상 저장")
