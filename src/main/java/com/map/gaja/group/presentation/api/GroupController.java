@@ -49,9 +49,9 @@ public class GroupController implements GroupApiSpecification {
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<Void> update(@AuthenticationPrincipal String email, @RequestBody GroupUpdateRequest request) {
-        groupService.updateName(email, request);
+    @PutMapping("/{groupId}")
+    public ResponseEntity<Void> update(@AuthenticationPrincipal String email, @PathVariable Long groupId, @RequestBody GroupUpdateRequest request) {
+        groupService.updateName(email, groupId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
