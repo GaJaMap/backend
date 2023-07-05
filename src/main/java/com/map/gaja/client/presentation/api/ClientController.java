@@ -73,9 +73,8 @@ public class ClientController {
     private StoredFileDto getUpdatedFileDto(String loginEmail, Long clientId, NewClientRequest clientRequest) {
         StoredFileDto storedFileDto = new StoredFileDto();
         StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
-        String existingOriginalImageName = existingFile.getOriginalFileName();
 
-        if (isNewFile(clientRequest.getClientImage(), existingOriginalImageName)) {
+        if (isNewFile(clientRequest.getClientImage())) {
             fileService.removeFile(existingFile.getFilePath());
             storedFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
         }
@@ -83,9 +82,8 @@ public class ClientController {
         return storedFileDto;
     }
 
-    private boolean isNewFile(MultipartFile newImage, String existingOriginalImageName) {
-        return existingOriginalImageName != null &&
-                !existingOriginalImageName.equals(newImage.getOriginalFilename());
+    private boolean isNewFile(MultipartFile newImage) {
+        return newImage != null && !newImage.isEmpty();
     }
 
     @PostMapping("/clients")
