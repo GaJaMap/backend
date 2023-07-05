@@ -5,12 +5,12 @@ import com.map.gaja.group.presentation.api.specification.GroupApiSpecification;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
 import com.map.gaja.group.presentation.dto.response.GroupResponse;
-import com.map.gaja.global.annotation.LoginEmail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,7 +23,7 @@ public class GroupController implements GroupApiSpecification {
     @Override
     @PostMapping
     public ResponseEntity<Void> create(
-            @LoginEmail String email,
+            @AuthenticationPrincipal String email,
             @RequestBody GroupCreateRequest request
     ) {
         groupService.create(email, request);
@@ -35,22 +35,22 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @GetMapping
-    public ResponseEntity<GroupResponse> read(@LoginEmail String email, @PageableDefault Pageable pageable) {
+    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal String email, @PageableDefault Pageable pageable) {
         GroupResponse response = groupService.findGroups(email, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    @DeleteMapping("/{bundleId}")
-    public ResponseEntity<Void> delete(@LoginEmail String email, @PathVariable Long bundleId) {
-        groupService.delete(email, bundleId);
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal String email, @PathVariable Long groupId) {
+        groupService.delete(email, groupId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     @PutMapping
-    public ResponseEntity<Void> update(@LoginEmail String email, @RequestBody GroupUpdateRequest request) {
+    public ResponseEntity<Void> update(@AuthenticationPrincipal String email, @RequestBody GroupUpdateRequest request) {
         groupService.updateName(email, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
