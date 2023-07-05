@@ -16,6 +16,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,10 +36,13 @@ class S3FileServiceTest {
     S3FileService s3FileService;
 
     String s3Url = "http://bucket.s3.amazonaws.com/";
-    String originalFileName = "test.jpg";
-    String s3FileUrl = s3Url+originalFileName;
     String loginEmail = "aaa@naver.com";
-    String filePath = "/"+loginEmail+"/" + originalFileName;
+    String originalFileName = "test.jpg";
+    String uuidFileName = "3b44d88c-d8cf-45e0-966b-a609043bc51f.jpg";
+
+    String s3ObjectUri = loginEmail+ "/" + uuidFileName;
+    String encodingStoredObjectUri = URLEncoder.encode(s3ObjectUri, StandardCharsets.UTF_8);
+    String s3FileUrl = s3Url+ encodingStoredObjectUri;
 
     @Test
     @DisplayName("파일 정상 저장")
@@ -46,11 +51,11 @@ class S3FileServiceTest {
 
         when(awsS3Client.putObject(any())).thenReturn(null);
         when(awsS3Client.getUrl(any(), any())).thenReturn(new URL(s3FileUrl));
-        when(s3UrlGenerator.extractFilePath(any())).thenReturn(filePath);
+        when(s3UrlGenerator.extractFilePath(any())).thenReturn(s3ObjectUri);
 
         StoredFileDto result = s3FileService.storeFile(loginEmail, mockFile);
 
-        assertThat(result.getFilePath()).isEqualTo(filePath);
+        assertThat(result.getFilePath()).isEqualTo(s3ObjectUri);
         assertThat(result.getOriginalFileName()).isEqualTo(originalFileName);
     }
 
@@ -67,10 +72,9 @@ class S3FileServiceTest {
     @Test
     @DisplayName("파일 정상 삭제")
     void removeFileSuccessTest() {
-        when(s3UrlGenerator.extractFilePath(any())).thenReturn(filePath);
         when(awsS3Client.doesObjectExist(any(), any())).thenReturn(true);
 
-        boolean result = s3FileService.removeFile(s3FileUrl);
+        boolean result = s3FileService.removeFile(s3ObjectUri);
 
         assertTrue(result);
     }
@@ -78,10 +82,9 @@ class S3FileServiceTest {
     @Test
     @DisplayName("제거할 파일 못찾음")
     void removeFileNotFoundTest() {
-        when(s3UrlGenerator.extractFilePath(any())).thenReturn(filePath);
         when(awsS3Client.doesObjectExist(any(), any())).thenReturn(false);
 
-        boolean result = s3FileService.removeFile(s3FileUrl);
+        boolean result = s3FileService.removeFile(s3ObjectUri);
 
         assertFalse(result);
     }
@@ -89,11 +92,10 @@ class S3FileServiceTest {
     @Test
     @DisplayName("파일 제거 중 S3 에러 발생")
     void removeS3FailTest() {
-        when(s3UrlGenerator.extractFilePath(any())).thenReturn(filePath);
         when(awsS3Client.doesObjectExist(any(), any())).thenReturn(true);
         doThrow(RuntimeException.class).when(awsS3Client).deleteObject(any(), any());
 
-        assertThrows(S3NotWorkingException.class, () -> s3FileService.removeFile(s3FileUrl));
+        assertThrows(S3NotWorkingException.class, () -> s3FileService.removeFile(s3ObjectUri));
     }
 
     private MockMultipartFile createMockFile() {
