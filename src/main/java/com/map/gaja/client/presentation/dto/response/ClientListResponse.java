@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -11,5 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientListResponse {
+    @Schema(description = "고객 리스트")
     List<ClientResponse> clients;
 }
