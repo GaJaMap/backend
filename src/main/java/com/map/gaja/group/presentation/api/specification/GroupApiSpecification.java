@@ -39,7 +39,7 @@ public interface GroupApiSpecification {
     @Operation(summary = "그룹 삭제",
             parameters = {
                     @Parameter(name = "token", description = "액세스 토큰"),
-                    @Parameter(name = "bundleId", description = "그룹 아이디")
+                    @Parameter(name = "groupId", description = "그룹 아이디")
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = GroupResponse.class))),

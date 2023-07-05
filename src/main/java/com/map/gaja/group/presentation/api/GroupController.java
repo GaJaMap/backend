@@ -42,9 +42,9 @@ public class GroupController implements GroupApiSpecification {
     }
 
     @Override
-    @DeleteMapping("/{bundleId}")
-    public ResponseEntity<Void> delete(@LoginEmail String email, @PathVariable Long bundleId) {
-        groupService.delete(email, bundleId);
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<Void> delete(@LoginEmail String email, @PathVariable Long groupId) {
+        groupService.delete(email, groupId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
