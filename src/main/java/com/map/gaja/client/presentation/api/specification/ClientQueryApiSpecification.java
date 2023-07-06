@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 public interface ClientQueryApiSpecification {
 
-    @Operation(summary = "특정 그룹내에 특정 거래처 조회",
+    @Operation(summary = "특정 그룹내에 특정 고객 조회",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 client가 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
@@ -34,13 +34,13 @@ public interface ClientQueryApiSpecification {
             @PathVariable Long clientId
     );
 
-    @Operation(summary = "특정 그룹내에 거래처 전부 조회",
+    @Operation(summary = "특정 그룹내에 고객 전부 조회",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 client가 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
@@ -48,16 +48,16 @@ public interface ClientQueryApiSpecification {
             @PathVariable Long groupId
     );
 
-    @Operation(summary = "반경 검색",
-            description = "현재 사용자 위치에서 특정 그룹내에 고객들을 대상으로 반경 검색",
+    @Operation(summary = "특정 그룹내에 고객 반경 검색",
+            description = "현재 사용자 위치에서 특정 그룹내에 고객들을 대상으로 반경 검색 - 가장 가까운 순으로 정렬",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
-                    @Parameter(name = "wordCond", description = "조회할 거래처 이름"),
+                    @Parameter(name = "wordCond", description = "조회할 고객 이름"),
                     @Parameter(name = "locationSearchCond", description = "반경 검색 조건", content = @Content(schema = @Schema(implementation = NearbyClientSearchRequest.class)))
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 client가 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
@@ -67,21 +67,37 @@ public interface ClientQueryApiSpecification {
             @RequestParam(required = false) String wordCond
     );
 
-    @Operation(summary = "전체 고객들 반경 검색",
-            description = "현재 사용자 위치에서 전체 고객들을 대상으로 반경 검색",
+    @Operation(summary = "전체 고객 대상 반경 검색",
+            description = "현재 사용자 위치에서 전체 고객들을 대상으로 반경 검색 - 가장 가까운 순으로 정렬",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
-                    @Parameter(name = "wordCond", description = "조회할 거래처 이름"),
+                    @Parameter(name = "wordCond", description = "조회할 고객 이름"),
                     @Parameter(name = "locationSearchCond", description = "반경 검색 조건", content = @Content(schema = @Schema(implementation = NearbyClientSearchRequest.class)))
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 client가 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @RequestParam(required = false) String wordCond
+    );
+
+    @Operation(summary = "전체 고객 검색",
+            description = "사용자가 가지고 있는 전체 고객 검색 - 생성일을 기준으로 최신순 정렬",
+            parameters = {
+                    @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
+                    @Parameter(name = "wordCond", description = "조회할 고객 이름"),
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            })
+    @GetMapping("/api/clients")
+    public ResponseEntity<ClientListResponse> getAllClients(
+            @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @RequestParam(required = false) String wordCond
     );
 }
