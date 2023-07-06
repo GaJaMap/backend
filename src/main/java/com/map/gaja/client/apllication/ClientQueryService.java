@@ -11,7 +11,6 @@ import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +34,9 @@ public class ClientQueryService {
         return entityToDto(client);
     }
 
-    public ClientListResponse findAllClientsInGroup(Long groupId) {
-        List<Client> clients = clientQueryRepository.findByGroup_Id(groupId);
+    public ClientListResponse findAllClientsInGroup(Long groupId, @Nullable String wordCond) {
+        System.out.println("???");
+        List<Client> clients = clientQueryRepository.findByGroup_Id(groupId, wordCond);
         return entityToDto(clients);
     }
 

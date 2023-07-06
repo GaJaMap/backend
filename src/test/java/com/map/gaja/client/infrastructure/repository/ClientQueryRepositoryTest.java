@@ -169,10 +169,12 @@ class ClientQueryRepositoryTest {
     @Test
     @DisplayName("그룹 ID로 Client 조회 성공")
     void findByGroup_IdTest() {
-        List<Client> clientInGroup1 = clientQueryRepository.findByGroup_Id(group1.getId());
+        String nameCond = "사용자";
+        List<Client> clientInGroup1 = clientQueryRepository.findByGroup_Id(group1.getId(), nameCond);
 
         clientInGroup1.forEach((client -> {
             assertThat(client.getGroup().getName()).isEqualTo(group1.getName());
+            assertThat(client.getName()).contains(nameCond);
         }));
     }
 

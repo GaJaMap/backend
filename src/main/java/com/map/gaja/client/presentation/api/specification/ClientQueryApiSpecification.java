@@ -37,6 +37,7 @@ public interface ClientQueryApiSpecification {
     @Operation(summary = "특정 그룹내에 고객 전부 조회",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
+                    @Parameter(name = "wordCond", description = "조회할 고객 이름")
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
@@ -45,7 +46,8 @@ public interface ClientQueryApiSpecification {
     @GetMapping("/api/group/{groupId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
-            @PathVariable Long groupId
+            @PathVariable Long groupId,
+            @RequestParam(required = false) String wordCond
     );
 
     @Operation(summary = "특정 그룹내에 고객 반경 검색",
