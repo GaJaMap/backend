@@ -196,4 +196,16 @@ class ClientQueryRepositoryTest {
         }));
     }
 
+    @Test
+    @DisplayName("로그인 한 유저가 가지고 있는 Client 검색")
+    void ss() {
+        String nameCond = "사용자";
+
+        List<ClientResponse> result = clientQueryRepository.findAllClientByEmail(user.getEmail(), nameCond);
+
+        assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
+        result.forEach((client) -> {
+            assertThat(client.getClientName()).contains(nameCond);
+        });
+    }
 }

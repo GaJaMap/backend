@@ -15,6 +15,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -209,5 +210,34 @@ public class ClientQueryRepository {
      */
     public boolean hasNoClientByGroup(Long groupId, Long clientId) {
         return !hasClientByGroup(groupId, clientId);
+    }
+
+    /**
+     * loginEmail User가 가지고 있는 Client 전체 검색.
+     * @param loginEmail 로그인한 이메일
+     * @param nameCond 이름 검색 조건
+     * @return
+     */
+    public List<ClientResponse> findAllClientByEmail(String loginEmail, @Nullable String nameCond) {
+        List<ClientResponse> result = query
+                .select(
+                        Projections.constructor(ClientResponse.class,
+                                client.id,
+                                Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
+                                client.name,
+                                client.phoneNumber,
+                                client.address,
+                                client.location,
+                                Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName)
+                        )
+                )
+                .from(client)
+                .leftJoin(client.clientImage, clientImage)
+                .join(client.group, group)
+                .join(client.group.user, user)
+                .where(user.email.eq(loginEmail), nameContains(nameCond))
+                .fetch();
+
+        return result;
     }
 }
