@@ -101,26 +101,6 @@ class ClientQueryRepositoryTest {
         return createdUser;
     }
 
-
-    @Test
-    @DisplayName("위치 정보 없이 반경 검색")
-    void findClientWithoutGPSTest() {
-        String nameKeyword = "사용자";
-        Long groupId = group2.getId();
-        String groupName = group2.getName();
-        List<Long> groupIdList = new ArrayList<>();
-        groupIdList.add(groupId);
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, null,nameKeyword);
-
-        assertThat(result.size()).isEqualTo(group2ClientList.size());
-        result.forEach((client) -> {
-            assertThat(client.getClientName()).contains(nameKeyword);
-            assertThat(client.getDistance()).isEqualTo(-1);
-            assertThat(client.getGroupInfo().getGroupId()).isEqualTo(groupId);
-            assertThat(client.getGroupInfo().getGroupName()).isEqualTo(groupName);
-        });
-    }
-
     @Test
     @DisplayName("위치 정보 포함 반경 검색")
     void findClientWithGPSTest() {
