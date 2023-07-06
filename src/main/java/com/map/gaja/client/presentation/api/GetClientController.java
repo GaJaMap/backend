@@ -77,6 +77,16 @@ public class GetClientController implements ClientQueryApiSpecification {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/api/clients")
+    public ResponseEntity<ClientListResponse> getAllClients(
+            @AuthenticationPrincipal String loginEmail,
+            @RequestParam(required = false) String wordCond
+    ) {
+        // 사용자가 가지고 있는 전체 고객 조회
+        ClientListResponse response = clientQueryService.findAllClient(loginEmail, wordCond);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     private void verifyClientAccess(String loginEmail, Long groupId, Long clientId) {
         ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheckDto);

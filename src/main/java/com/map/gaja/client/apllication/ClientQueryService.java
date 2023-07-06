@@ -11,6 +11,8 @@ import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +61,13 @@ public class ClientQueryService {
     public StoredFileDto findClientImage(Long clientId) {
         ClientResponse client = findClient(clientId);
         return client.getImage();
+    }
+
+    public ClientListResponse findAllClient(
+            String loginEmail,
+            @Nullable String nameCond
+    ) {
+        List<ClientResponse> clientList = clientQueryRepository.findAllClientByEmail(loginEmail, nameCond);
+        return new ClientListResponse(clientList);
     }
 }
