@@ -93,12 +93,12 @@ public class ClientQueryRepository {
      * @param groupId
      * @return
      */
-    public List<Client> findByGroup_Id(long groupId) {
+    public List<Client> findByGroup_Id(long groupId, @Nullable String nameCond) {
         List<Client> result = query
                 .selectFrom(client)
                 .join(client.group, group)
                 .leftJoin(client.clientImage, clientImage)
-                .where(group.id.eq(groupId))
+                .where(group.id.eq(groupId), nameContains(nameCond))
                 .fetchJoin().fetch();
 
         return result;
