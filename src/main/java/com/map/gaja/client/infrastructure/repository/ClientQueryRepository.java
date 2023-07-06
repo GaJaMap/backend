@@ -236,6 +236,7 @@ public class ClientQueryRepository {
                 .join(client.group, group)
                 .join(client.group.user, user)
                 .where(user.email.eq(loginEmail), nameContains(nameCond))
+                .orderBy(client.createdAt.desc())
                 .fetch();
 
         return result;
