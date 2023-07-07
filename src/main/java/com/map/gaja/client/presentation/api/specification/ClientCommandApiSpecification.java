@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 public interface ClientCommandApiSpecification {
 
     @Operation(summary = "고객 삭제",
@@ -47,7 +49,7 @@ public interface ClientCommandApiSpecification {
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
-            @ModelAttribute NewClientRequest clientRequest
+            @Valid @ModelAttribute NewClientRequest clientRequest
     );
 
 
@@ -63,6 +65,6 @@ public interface ClientCommandApiSpecification {
             })
     ResponseEntity<CreatedClientResponse> addClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
-            @ModelAttribute NewClientRequest clientRequest
+            @Valid @ModelAttribute NewClientRequest clientRequest
     );
 }
