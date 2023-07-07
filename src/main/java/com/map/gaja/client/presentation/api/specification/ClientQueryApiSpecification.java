@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 public interface ClientQueryApiSpecification {
 
     @Operation(summary = "특정 그룹내에 특정 고객 조회",
@@ -65,7 +67,7 @@ public interface ClientQueryApiSpecification {
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
-            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @Valid @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     );
 
@@ -83,7 +85,7 @@ public interface ClientQueryApiSpecification {
     @GetMapping("/api/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
-            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @Valid @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     );
 

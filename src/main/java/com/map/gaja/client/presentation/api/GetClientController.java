@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * ReadOnly Client 컨트롤러
  */
@@ -56,7 +58,7 @@ public class GetClientController implements ClientQueryApiSpecification {
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
-            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @Valid @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
@@ -69,7 +71,7 @@ public class GetClientController implements ClientQueryApiSpecification {
     @GetMapping("/api/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
             @AuthenticationPrincipal String loginEmail,
-            @ModelAttribute NearbyClientSearchRequest locationSearchCond,
+            @Valid @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
