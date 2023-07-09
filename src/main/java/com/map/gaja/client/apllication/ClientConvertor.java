@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
@@ -63,6 +64,14 @@ public class ClientConvertor {
                 dtoToVo(location),
                 group
             );
+    }
+
+    protected static Client dtoToEntity(SimpleNewClientRequest request, Group group) {
+        return new Client(
+                request.getClientName(),
+                request.getPhoneNumber(),
+                group
+        );
     }
 
     protected static Client dtoToEntity(NewClientRequest request, Group group, StoredFileDto storedFileDto) {

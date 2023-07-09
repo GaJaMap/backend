@@ -2,6 +2,8 @@ package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -87,6 +90,17 @@ public class ClientController implements ClientCommandApiSpecification {
 
     private boolean isNewFile(MultipartFile newImage) {
         return newImage != null && !newImage.isEmpty();
+    }
+
+    @PostMapping("/clients/bulk")
+    public ResponseEntity<List<Long>> addSimpleBulkClient(
+            @AuthenticationPrincipal String loginEmail,
+            @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
+    ) {
+        // 단순한 Client 정보 등록
+        groupAccessVerifyService.verifyGroupAccess(clientBulkRequest.getGroupId(), loginEmail);
+        List<Long> body = clientService.saveSimpleClientList(clientBulkRequest);
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
     @PostMapping("/clients")
