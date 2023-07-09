@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/group")
@@ -24,7 +26,7 @@ public class GroupController implements GroupApiSpecification {
     @PostMapping
     public ResponseEntity<Void> create(
             @AuthenticationPrincipal String email,
-            @RequestBody GroupCreateRequest request
+            @Valid @RequestBody GroupCreateRequest request
     ) {
         groupService.create(email, request);
 
@@ -50,7 +52,11 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @PutMapping("/{groupId}")
-    public ResponseEntity<Void> update(@AuthenticationPrincipal String email, @PathVariable Long groupId, @RequestBody GroupUpdateRequest request) {
+    public ResponseEntity<Void> update(
+            @AuthenticationPrincipal String email,
+            @PathVariable Long groupId,
+            @Valid @RequestBody GroupUpdateRequest request
+    ) {
         groupService.updateName(email, groupId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
