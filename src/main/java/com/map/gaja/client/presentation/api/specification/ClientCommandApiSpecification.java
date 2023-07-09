@@ -12,6 +12,7 @@ import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 public interface ClientCommandApiSpecification {
 
@@ -76,11 +78,11 @@ public interface ClientCommandApiSpecification {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
             },
             responses = {
-                    @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = CreatedClientListResponse.class))),
+                    @ApiResponse(responseCode = "200", description = "성공 - 생성된 고객 id에 대한 리스트", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Long.class)))),
                     @ApiResponse(responseCode = "404", description = "사용자에게 요청 그룹이 없거나, 그룹에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
     @PostMapping("/clients/bulk")
-    public ResponseEntity<CreatedClientListResponse> addSimpleBulkClient(
+    public ResponseEntity<List<Long>> addSimpleBulkClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
     );

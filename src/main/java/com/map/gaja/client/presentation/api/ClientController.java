@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -92,13 +93,13 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PostMapping("/clients/bulk")
-    public ResponseEntity<CreatedClientListResponse> addSimpleBulkClient(
+    public ResponseEntity<List<Long>> addSimpleBulkClient(
             @AuthenticationPrincipal String loginEmail,
             @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
     ) {
         // 단순한 Client 정보 등록
         groupAccessVerifyService.verifyGroupAccess(clientBulkRequest.getGroupId(), loginEmail);
-        CreatedClientListResponse body = clientService.saveSimpleClientList(clientBulkRequest);
+        List<Long> body = clientService.saveSimpleClientList(clientBulkRequest);
         return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 

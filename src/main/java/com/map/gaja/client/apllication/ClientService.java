@@ -125,17 +125,17 @@ public class ClientService {
         return updatedFileDto.getOriginalFileName() != null && updatedFileDto.getOriginalFileName() != null;
     }
 
-    public CreatedClientListResponse saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
+    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
         Group group = groupRepository.findById(bulkRequest.getGroupId())
                 .orElseThrow(GroupNotFoundException::new);
 
-        List<CreatedClientResponse> savedList = new ArrayList<>();
+        List<Long> savedIdList = new ArrayList<>();
         bulkRequest.getClients().forEach((clientRequest) -> {
             Client client = dtoToEntity(clientRequest, group);
             clientRepository.save(client);
-            savedList.add(new CreatedClientResponse(client.getId()));
+            savedIdList.add(client.getId());
         });
 
-        return new CreatedClientListResponse(savedList);
+        return savedIdList;
     }
 }
