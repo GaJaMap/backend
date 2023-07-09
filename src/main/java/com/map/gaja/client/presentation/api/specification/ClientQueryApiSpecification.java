@@ -19,6 +19,7 @@ import javax.validation.Valid;
 public interface ClientQueryApiSpecification {
 
     @Operation(summary = "특정 그룹내에 특정 고객 조회",
+            description = "위치 정보가 없기 때문에 distance 필드는 null로 초기화됩니다.",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
             },
@@ -34,6 +35,7 @@ public interface ClientQueryApiSpecification {
     );
 
     @Operation(summary = "특정 그룹내에 고객 전부 조회",
+            description = "위치 정보가 없기 때문에 distance 필드는 null로 초기화됩니다.",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
                     @Parameter(name = "wordCond", description = "조회할 고객 이름")
