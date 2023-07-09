@@ -17,6 +17,6 @@ public class GroupAccessVerifyService {
         Group group = groupQueryRepository.findGroupByUser(groupId, userEmail)
                 .orElseThrow(GroupNotFoundException::new);
 
-        group.accessGroup();
+        group.getUser().accessGroup(groupId);
     }
 }
