@@ -19,6 +19,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -55,7 +57,7 @@ public class ClientController implements ClientCommandApiSpecification {
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
-            @ModelAttribute NewClientRequest clientRequest
+            @Valid @ModelAttribute NewClientRequest clientRequest
     ) {
         // 기존 거래처 정보 변경
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
@@ -90,18 +92,18 @@ public class ClientController implements ClientCommandApiSpecification {
     @PostMapping("/clients")
     public ResponseEntity<CreatedClientResponse> addClient(
             @AuthenticationPrincipal String loginEmail,
-            @ModelAttribute NewClientRequest client
+            @Valid @ModelAttribute NewClientRequest clientRequest
     ) {
         // 거래처 등록 - 단건 등록
-        log.info("ClientController.addClient  clients={}", client);
-        verifyGroupAccess(loginEmail, client);
+        log.info("ClientController.addClient  clients={}", clientRequest);
+        verifyGroupAccess(loginEmail, clientRequest);
 
-        MultipartFile clientImage = client.getClientImage();
+        MultipartFile clientImage = clientRequest.getClientImage();
         if (clientImage == null || clientImage.isEmpty()) {
-            return saveClient(client);
+            return saveClient(clientRequest);
         }
 
-        return saveClientWithImage(loginEmail, client);
+        return saveClientWithImage(loginEmail, clientRequest);
     }
 
     private ResponseEntity<CreatedClientResponse> saveClientWithImage(String loginEmail, NewClientRequest client) {
