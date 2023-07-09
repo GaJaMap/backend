@@ -35,8 +35,8 @@ public class User extends BaseTimeEntity {
     private Integer referenceGroupId;
 
     public void checkCreateGroupPermission() {
-        if (authority.getLimitCount() <= groupCount) {
-            throw new GroupLimitExceededException(authority.name(), authority.getLimitCount());
+        if (authority.getGroupLimitCount() <= groupCount) {
+            throw new GroupLimitExceededException(authority.name(), authority.getGroupLimitCount());
         }
     }
 
