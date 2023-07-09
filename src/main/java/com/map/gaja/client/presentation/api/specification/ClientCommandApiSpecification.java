@@ -1,12 +1,7 @@
 package com.map.gaja.client.presentation.api.specification;
 
-import com.map.gaja.client.domain.exception.ClientNotFoundException;
-import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
 import com.map.gaja.global.exception.ExceptionDto;
-import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

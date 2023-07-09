@@ -130,6 +130,7 @@ public class ClientController implements ClientCommandApiSpecification {
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
     }
 
+    /*
 //    @PostMapping("/clients/bulk")
     public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
         // 거래처 등록 - 여러건 등록
@@ -145,4 +146,5 @@ public class ClientController implements ClientCommandApiSpecification {
         CreatedClientListResponse response = clientService.parseFileAndSave(file);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    */
 }
