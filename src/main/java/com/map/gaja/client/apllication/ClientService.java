@@ -35,20 +35,20 @@ public class ClientService {
     private final ClientQueryRepository clientQueryRepository;
     private final List<ClientFileParser> parsers;
 
-    public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
+    public Long saveClient(NewClientRequest clientRequest) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
-        return new CreatedClientResponse(client.getId());
+        return client.getId();
     }
 
-    public CreatedClientResponse saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
+    public Long saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
-        return new CreatedClientResponse(client.getId());
+        return client.getId();
     }
 
     public CreatedClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {

@@ -68,10 +68,10 @@ class ClientServiceTest {
         });
 
         // when
-        CreatedClientResponse response = clientService.saveClient(request);
+        Long result = clientService.saveClient(request);
 
         // then
-        assertThat(response.getClientId()).isEqualTo(clientId);
+        assertThat(result).isEqualTo(clientId);
         assertThat(group.getClientCount()).isEqualTo(clientCount + 1);
     }
 
