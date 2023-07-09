@@ -1,6 +1,8 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,5 +125,19 @@ public class ClientService {
 
     private boolean isNewFileDto(StoredFileDto updatedFileDto) {
         return updatedFileDto.getOriginalFileName() != null && updatedFileDto.getOriginalFileName() != null;
+    }
+
+    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
+        Group group = groupRepository.findById(bulkRequest.getGroupId())
+                .orElseThrow(GroupNotFoundException::new);
+
+        List<Long> savedIdList = new ArrayList<>();
+        bulkRequest.getClients().forEach((clientRequest) -> {
+            Client client = dtoToEntity(clientRequest, group);
+            clientRepository.save(client);
+            savedIdList.add(client.getId());
+        });
+
+        return savedIdList;
     }
 }

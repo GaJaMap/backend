@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
@@ -33,15 +34,15 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
+
+
         return new ClientResponse(
                 client.getId(),
-//                client.getGroup().getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
-//                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
                 client.getName(),
                 client.getPhoneNumber(),
-                client.getAddress(),
-                client.getLocation(),
+                voToDto(client.getAddress()),
+                voToDto(client.getLocation()),
                 new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
                 null
         );
@@ -65,6 +66,14 @@ public class ClientConvertor {
             );
     }
 
+    protected static Client dtoToEntity(SimpleNewClientRequest request, Group group) {
+        return new Client(
+                request.getClientName(),
+                request.getPhoneNumber(),
+                group
+        );
+    }
+
     protected static Client dtoToEntity(NewClientRequest request, Group group, StoredFileDto storedFileDto) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
@@ -85,6 +94,14 @@ public class ClientConvertor {
 
     protected static ClientAddress dtoToVo(AddressDto address) {
         return new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
+    }
+
+    protected static LocationDto voToDto(ClientLocation location) {
+        return new LocationDto(location.getLatitude(), location.getLongitude());
+    }
+
+    protected static AddressDto voToDto(ClientAddress address) {
+        return new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
     }
 
 

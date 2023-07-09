@@ -4,8 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
@@ -35,9 +39,11 @@ public class GlobalExceptionHandler {
 
     /**
      * Valid 어노테이션에서 걸리는 경우
+     * Form 형식 -> BindException
+     * Json 형식 -> MethodArgumentNotValidException
      */
-    @ExceptionHandler
-    public ResponseEntity<CommonErrorResponse> validationErrorHandle(MethodArgumentNotValidException e) {
+    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+    public ResponseEntity<CommonErrorResponse> validationErrorHandle(BindException e) {
         List<ValidationErrorInfo> body = new ArrayList<>();
         e.getAllErrors().stream().forEach(
                 error -> body.add(
@@ -45,9 +51,9 @@ public class GlobalExceptionHandler {
                 )
         );
 
-        log.info("Validation 걸림");
         return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
     }
+
 
     /**
      * RequestBody로 들어온 값을 객체 파싱할 수 없는 경우
