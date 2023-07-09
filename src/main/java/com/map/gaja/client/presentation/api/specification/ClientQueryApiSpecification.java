@@ -89,7 +89,8 @@ public interface ClientQueryApiSpecification {
     );
 
     @Operation(summary = "전체 고객 검색",
-            description = "사용자가 가지고 있는 전체 고객 검색 - 생성일을 기준으로 최신순 정렬",
+            description = "사용자가 가지고 있는 전체 고객 검색 - 생성일을 기준으로 최신순 정렬" +
+                    "<br>위치 정보가 없기 때문에 distance 필드는 null로 초기화됩니다.",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
                     @Parameter(name = "wordCond", description = "조회할 고객 이름"),
