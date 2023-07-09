@@ -44,4 +44,9 @@ public class Group extends BaseTimeEntity {
     public void decreaseClientCount() {
         clientCount--;
     }
+
+    public void accessGroup() {
+        this.user.accessGroup(this.id);
+    }
+
 }

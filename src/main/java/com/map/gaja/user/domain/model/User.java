@@ -32,7 +32,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime lastLoginDate;
 
-    private Integer referenceGroupId;
+    private Long referenceGroupId;
 
     public void checkCreateGroupPermission() {
         if (authority.getGroupLimitCount() <= groupCount) {
@@ -42,5 +42,9 @@ public class User extends BaseTimeEntity {
 
     public void increaseGroupCount() {
         groupCount++;
+    }
+
+    public void accessGroup(Long groupId) {
+        this.referenceGroupId = groupId;
     }
 }

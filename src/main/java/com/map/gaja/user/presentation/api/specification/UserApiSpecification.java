@@ -18,5 +18,5 @@ public interface UserApiSpecification {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             }
     )
-    ResponseEntity<Integer> login(LoginRequest request);
+    ResponseEntity<Long> login(LoginRequest request);
 }

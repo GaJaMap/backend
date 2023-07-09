@@ -35,7 +35,6 @@ public class ClientQueryService {
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId, @Nullable String wordCond) {
-        System.out.println("???");
         List<Client> clients = clientQueryRepository.findByGroup_Id(groupId, wordCond);
         return entityToDto(clients);
     }

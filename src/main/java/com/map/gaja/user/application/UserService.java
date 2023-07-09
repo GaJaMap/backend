@@ -24,7 +24,7 @@ public class UserService {
     private final SessionHandler sessionHandler;
 
     @Transactional
-    public Integer login(LoginRequest request) {
+    public Long login(LoginRequest request) {
         String email = oauth2Client.getEmail(request.getAccessToken());
         if (email == null) { //카카오 로그인 실패
             throw new UserNotFoundException();

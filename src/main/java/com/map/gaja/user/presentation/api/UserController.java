@@ -15,7 +15,7 @@ public class UserController implements UserApiSpecification {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<Integer> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Long> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.login(request));
     }
 
