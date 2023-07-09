@@ -10,8 +10,6 @@ import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,10 +66,10 @@ class ClientServiceTest {
         });
 
         // when
-        CreatedClientResponse response = clientService.saveClient(request);
+        Long result = clientService.saveClient(request);
 
         // then
-        assertThat(response.getClientId()).isEqualTo(clientId);
+        assertThat(result).isEqualTo(clientId);
         assertThat(group.getClientCount()).isEqualTo(clientCount + 1);
     }
 
@@ -101,11 +99,12 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        ClientResponse response = clientService.changeClient(existingClientId, changedRequest, new StoredFileDto());
+        clientService.changeClient(existingClientId, changedRequest, new StoredFileDto());
 
         // then
-        assertThat(response.getClientName()).isEqualTo(changedName);
-        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroupId);
+
+        assertThat(existingClient.getName()).isEqualTo(changedName);
+        assertThat(existingClient.getGroup().getId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
         assertThat(existingGroup.getClientCount()).isEqualTo(0);
     }

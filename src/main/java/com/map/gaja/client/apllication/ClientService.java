@@ -38,22 +38,23 @@ public class ClientService {
     private final ClientQueryRepository clientQueryRepository;
     private final List<ClientFileParser> parsers;
 
-    public CreatedClientResponse saveClient(NewClientRequest clientRequest) {
+    public Long saveClient(NewClientRequest clientRequest) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
-        return new CreatedClientResponse(client.getId());
+        return client.getId();
     }
 
-    public CreatedClientResponse saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
+    public Long saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
-        return new CreatedClientResponse(client.getId());
+        return client.getId();
     }
 
+    /*
     public CreatedClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {
         List<Client> clients = dtoToEntity(clientsRequest);
         clientRepository.saveAll(clients);
@@ -63,6 +64,7 @@ public class ClientService {
         CreatedClientListResponse response = new CreatedClientListResponse(clientIdList);
         return response;
     }
+     */
 
     public void deleteClient(long clientId) {
         Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
@@ -72,7 +74,8 @@ public class ClientService {
         clientRepository.delete(deletedClient);
     }
 
-    public CreatedClientListResponse parseFileAndSave(MultipartFile file) {
+    /*
+    public Long parseFileAndSave(MultipartFile file) {
         NewClientBulkRequest clients = null;
         for (ClientFileParser parser : parsers) {
             if(parser.isSupported(file)) {
@@ -89,8 +92,9 @@ public class ClientService {
 
         return saveClientList(clients);
     }
+     */
 
-    public ClientResponse changeClient(
+    public void changeClient(
             Long existingClientId,
             NewClientRequest updateRequest,
             StoredFileDto updatedFileDto
@@ -117,8 +121,6 @@ public class ClientService {
                 updatedGroup,
                 updatedClientImage
         );
-
-        return entityToDto(existingClient);
     }
 
     private boolean isNewFileDto(StoredFileDto updatedFileDto) {

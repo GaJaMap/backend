@@ -1,10 +1,8 @@
 package com.map.gaja.client.presentation.api.specification;
 
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
-import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
-import com.map.gaja.client.presentation.dto.response.CreatedClientResponse;
 import com.map.gaja.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,7 +10,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +19,7 @@ import javax.validation.Valid;
 public interface ClientQueryApiSpecification {
 
     @Operation(summary = "특정 그룹내에 특정 고객 조회",
+            description = "위치 정보가 없기 때문에 distance 필드는 null로 초기화됩니다.",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
             },
@@ -37,6 +35,7 @@ public interface ClientQueryApiSpecification {
     );
 
     @Operation(summary = "특정 그룹내에 고객 전부 조회",
+            description = "위치 정보가 없기 때문에 distance 필드는 null로 초기화됩니다.",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
                     @Parameter(name = "wordCond", description = "조회할 고객 이름")

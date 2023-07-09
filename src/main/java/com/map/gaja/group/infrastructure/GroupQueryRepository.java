@@ -67,7 +67,7 @@ public class GroupQueryRepository {
                 .where(group.id.eq(groupId))
                 .fetchJoin().fetchOne();
 
-        if(result.getUser().getEmail().equals(userEmail))
+        if(result != null && result.getUser() != null && result.getUser().getEmail().equals(userEmail))
             return Optional.ofNullable(result);
 
         return Optional.ofNullable(null);
