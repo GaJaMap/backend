@@ -22,6 +22,7 @@ public class UserController implements UserApiSpecification {
         return ResponseEntity.ok(userService.login(request));
     }
 
+    @Override
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpSession session) {
         session.invalidate();
