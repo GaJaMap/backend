@@ -63,10 +63,13 @@ public class GroupQueryRepository {
      */
     public Optional<Group> findGroupByUser(Long groupId, String userEmail) {
         Group result = query.selectFrom(group)
-                .join(group.user, user).on(user.email.eq(userEmail))
+                .join(group.user, user)
                 .where(group.id.eq(groupId))
                 .fetchJoin().fetchOne();
 
-        return Optional.ofNullable(result);
+        if(result.getUser().getEmail().equals(userEmail))
+            return Optional.ofNullable(result);
+
+        return Optional.ofNullable(null);
     }
 }
