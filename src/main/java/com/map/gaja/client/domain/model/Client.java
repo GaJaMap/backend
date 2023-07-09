@@ -38,6 +38,12 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
+    public Client(String name, String phoneNumber, Group group) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        setGroup(group);
+    }
+
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
