@@ -14,6 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleClientBulkRequest {
+
+    @NotNull(message = "그룹 ID는 필수 입력 사항입니다.")
+    @Schema(description = "등록할 그룹 ID 번호", example = "123")
+    private Long groupId;
+
     @Valid
     @Size(min = 1, max = 300)
     private List<SimpleNewClientRequest> clients;
