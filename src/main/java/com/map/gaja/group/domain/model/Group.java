@@ -5,7 +5,6 @@ import com.map.gaja.user.domain.model.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -19,7 +18,7 @@ public class Group extends BaseTimeEntity {
     @Column(name = "group_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String name;
 
     @Column(nullable = false)
