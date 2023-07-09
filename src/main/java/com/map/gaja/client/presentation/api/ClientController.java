@@ -53,7 +53,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<ClientResponse> changeClient(
+    public ResponseEntity<Void> changeClient(
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
@@ -68,9 +68,9 @@ public class ClientController implements ClientCommandApiSpecification {
 
         StoredFileDto updatedFileDto = getUpdatedFileDto(loginEmail, clientId, clientRequest);
 
-        ClientResponse response = clientService.changeClient(clientId, clientRequest, updatedFileDto);
+        clientService.changeClient(clientId, clientRequest, updatedFileDto);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private StoredFileDto getUpdatedFileDto(String loginEmail, Long clientId, NewClientRequest clientRequest) {
@@ -90,7 +90,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<CreatedClientResponse> addClient(
+    public ResponseEntity<Long> addClient(
             @AuthenticationPrincipal String loginEmail,
             @Valid @ModelAttribute NewClientRequest clientRequest
     ) {
@@ -99,18 +99,22 @@ public class ClientController implements ClientCommandApiSpecification {
         verifyGroupAccess(loginEmail, clientRequest);
 
         MultipartFile clientImage = clientRequest.getClientImage();
+        Long id;
         if (clientImage == null || clientImage.isEmpty()) {
-            return saveClient(clientRequest);
+            id = saveClient(clientRequest);
+        }
+        else {
+            id = saveClientWithImage(loginEmail, clientRequest);
         }
 
-        return saveClientWithImage(loginEmail, clientRequest);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    private ResponseEntity<CreatedClientResponse> saveClientWithImage(String loginEmail, NewClientRequest client) {
+    private Long saveClientWithImage(String loginEmail, NewClientRequest client) {
         StoredFileDto storedFileDto = fileService.storeFile(loginEmail, client.getClientImage());
         try {
             CreatedClientResponse response = clientService.saveClient(client, storedFileDto);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return response.getClientId();
         } catch(Exception e) {
             log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
             fileService.removeFile(storedFileDto.getFilePath());
@@ -118,9 +122,9 @@ public class ClientController implements ClientCommandApiSpecification {
         }
     }
 
-    private ResponseEntity<CreatedClientResponse> saveClient(NewClientRequest client) {
+    private Long saveClient(NewClientRequest client) {
         CreatedClientResponse response = clientService.saveClient(client);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return response.getClientId();
     }
 
     private void verifyClientAccess(String loginEmail, Long groupId, Long clientId) {
