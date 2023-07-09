@@ -43,4 +43,8 @@ public class User extends BaseTimeEntity {
     public void increaseGroupCount() {
         groupCount++;
     }
+
+    public void accessGroup(Long groupId) {
+        this.referenceGroupId = groupId;
+    }
 }

@@ -1,10 +1,12 @@
 package com.map.gaja.group.infrastructure;
 
+import com.map.gaja.group.domain.model.Group;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.map.gaja.group.domain.model.QGroup.group;
 import static com.map.gaja.user.domain.model.QUser.*;
@@ -51,5 +53,20 @@ public class GroupQueryRepository {
                 .from(group)
                 .join(group.user, user).on(user.email.eq(userEmail))
                 .fetch();
+    }
+
+    /**
+     * 해당 Email의 User가 그룹을 가지고 있는지 확인
+     * @param groupId 그룹 ID
+     * @param userEmail User Email
+     * @return 가지고 있다면 true
+     */
+    public Optional<Group> findGroupByUser(Long groupId, String userEmail) {
+        Group result = query.selectFrom(group)
+                .join(group.user, user).on(user.email.eq(userEmail))
+                .where(group.id.eq(groupId))
+                .fetchJoin().fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }
