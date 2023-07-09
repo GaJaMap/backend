@@ -4,8 +4,11 @@ import com.map.gaja.user.application.UserService;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.api.specification.UserApiSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/user")
@@ -18,5 +21,12 @@ public class UserController implements UserApiSpecification {
     public ResponseEntity<Long> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.login(request));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+        session.invalidate();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 }
