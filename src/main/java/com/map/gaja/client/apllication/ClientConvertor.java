@@ -33,15 +33,15 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
+
+
         return new ClientResponse(
                 client.getId(),
-//                client.getGroup().getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
-//                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
                 client.getName(),
                 client.getPhoneNumber(),
-                client.getAddress(),
-                client.getLocation(),
+                voToDto(client.getAddress()),
+                voToDto(client.getLocation()),
                 new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
                 null
         );
@@ -85,6 +85,14 @@ public class ClientConvertor {
 
     protected static ClientAddress dtoToVo(AddressDto address) {
         return new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
+    }
+
+    protected static LocationDto voToDto(ClientLocation location) {
+        return new LocationDto(location.getLatitude(), location.getLongitude());
+    }
+
+    protected static AddressDto voToDto(ClientAddress address) {
+        return new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
     }
 
 

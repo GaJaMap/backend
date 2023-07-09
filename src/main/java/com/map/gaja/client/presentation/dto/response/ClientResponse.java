@@ -2,6 +2,8 @@ package com.map.gaja.client.presentation.dto.response;
 
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
+import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
+import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,15 +26,15 @@ public class ClientResponse {
     @Schema(description = "고객 전화번호", example = "010-3333-4444")
     private String phoneNumber;
     @Schema(description = "고객 주소")
-    private ClientAddress address;
+    private AddressDto address;
     @Schema(description = "고객 위치")
-    private ClientLocation location;
+    private LocationDto location;
     @Schema(description = "고객 사진")
     private StoredFileDto image;
     @Schema(description = "현재 위치에서 떨어진 거리(M - 미터)", example = "2398")
     private Double distance; // km 기준
 
-    public ClientResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, ClientAddress address, ClientLocation location, StoredFileDto image) {
+    public ClientResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, AddressDto address, LocationDto location, StoredFileDto image) {
         this.clientId = clientId;
         this.groupInfo = groupInfo;
         this.clientName = clientName;
