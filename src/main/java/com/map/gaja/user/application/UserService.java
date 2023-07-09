@@ -39,6 +39,7 @@ public class UserService {
                         .groupCount(0)
                         .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build());
+        userRepository.save(user);
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
