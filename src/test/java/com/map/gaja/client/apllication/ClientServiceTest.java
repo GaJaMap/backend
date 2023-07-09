@@ -101,11 +101,12 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        ClientResponse response = clientService.changeClient(existingClientId, changedRequest, new StoredFileDto());
+        clientService.changeClient(existingClientId, changedRequest, new StoredFileDto());
 
         // then
-        assertThat(response.getClientName()).isEqualTo(changedName);
-        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroupId);
+
+        assertThat(existingClient.getName()).isEqualTo(changedName);
+        assertThat(existingClient.getGroup().getId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
         assertThat(existingGroup.getClientCount()).isEqualTo(0);
     }

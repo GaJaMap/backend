@@ -87,7 +87,7 @@ public class ClientService {
         return saveClientList(clients);
     }
 
-    public ClientResponse changeClient(
+    public void changeClient(
             Long existingClientId,
             NewClientRequest updateRequest,
             StoredFileDto updatedFileDto
@@ -114,8 +114,6 @@ public class ClientService {
                 updatedGroup,
                 updatedClientImage
         );
-
-        return entityToDto(existingClient);
     }
 
     private boolean isNewFileDto(StoredFileDto updatedFileDto) {
