@@ -40,11 +40,7 @@ class GroupRepositoryTest {
         userRepository.save(user);
 
         for (int i = 0; i < 11; i++) {
-            Group group = Group.builder()
-                    .name("test")
-                    .clientCount(0)
-                    .user(user)
-                    .build();
+            Group group = new Group("test", user);
             groupRepository.save(group);
         }
         Pageable pageable = PageRequest.of(0, 10);
@@ -71,11 +67,7 @@ class GroupRepositoryTest {
                 .build();
         userRepository.save(user);
 
-        Group group = Group.builder()
-                .name("test")
-                .user(user)
-                .clientCount(0)
-                .build();
+        Group group = new Group("test", user);
         groupRepository.save(group);
 
         //when
@@ -97,11 +89,7 @@ class GroupRepositoryTest {
                 .build();
         userRepository.save(user);
 
-        Group group = Group.builder()
-                .name("test")
-                .user(user)
-                .clientCount(0)
-                .build();
+        Group group = new Group("test", user);
         groupRepository.save(group);
 
         //when & then
@@ -120,11 +108,7 @@ class GroupRepositoryTest {
                 .build();
         userRepository.save(user);
 
-        Group group = Group.builder()
-                .name("test")
-                .user(user)
-                .clientCount(0)
-                .build();
+        Group group = new Group("test", user);
         groupRepository.save(group);
 
         Group result = groupRepository.findByIdAndUserEmail(group.getId(), user.getEmail())
