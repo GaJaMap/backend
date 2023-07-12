@@ -1,5 +1,6 @@
 package com.map.gaja.client.infrastructure.file;
 
+import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,7 @@ public class FileValidator {
             "image/jpg"
     );
 
-    public static boolean isAllowedImageType(MultipartFile file) {
+    private static boolean isAllowedImageType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
@@ -33,7 +34,7 @@ public class FileValidator {
         }
     }
 
-    public static boolean isAllowedFileType(MultipartFile file) {
+    private static boolean isAllowedFileType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             inputStream.close();
             Tika tika = new Tika();
@@ -44,6 +45,18 @@ public class FileValidator {
             return false;
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    public static void verifyImageFile(MultipartFile imageFile) {
+        if (!isAllowedImageType(imageFile)) {
+            throw new FileNotAllowedException();
+        }
+    }
+
+    public static void verifyFile(MultipartFile file) {
+        if (!isAllowedFileType(file)) {
+            throw new FileNotAllowedException();
         }
     }
 }
