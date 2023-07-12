@@ -95,11 +95,13 @@ public class ClientConvertor {
     }
 
     protected static LocationDto voToDto(ClientLocation location) {
-        return new LocationDto(location.getLatitude(), location.getLongitude());
+        return (location == null) ? new LocationDto() :
+                new LocationDto(location.getLatitude(), location.getLongitude());
     }
 
     protected static AddressDto voToDto(ClientAddress address) {
-        return new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
+        return (address == null) ? new AddressDto() :
+                new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
     }
 
 
