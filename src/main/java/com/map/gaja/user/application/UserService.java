@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -33,17 +35,18 @@ public class UserService {
         sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
 
         User user = userRepository.findByEmail(email)
-                .orElse(User.builder()
-                        .email(email)
-                        .authority(Authority.FREE)
-                        .groupCount(0)
-                        .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                        .build());
+                .orElse(new User(email));
         userRepository.save(user);
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
         //그룹 아이디로 응답해주면 클라이언트 쪽에서 그룹을 가지고 고객조회 API를 호출한다. null이면 호출X
         return user.getReferenceGroupId();
+    }
+
+    public void withdrawal(String email) {
+        User user = findExistingUser(userRepository, email);
+
+        user.withdrawal();
     }
 }

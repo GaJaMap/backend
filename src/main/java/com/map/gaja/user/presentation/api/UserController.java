@@ -6,6 +6,7 @@ import com.map.gaja.user.presentation.api.specification.UserApiSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -29,5 +30,11 @@ public class UserController implements UserApiSpecification {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @Override
+    @DeleteMapping
+    public ResponseEntity<Void> withdrawal(@AuthenticationPrincipal String email, HttpSession session) {
+        userService.withdrawal(email);
+        session.invalidate();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
