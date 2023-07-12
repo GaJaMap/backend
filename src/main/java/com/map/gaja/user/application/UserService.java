@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -40,5 +42,11 @@ public class UserService {
 
         //그룹 아이디로 응답해주면 클라이언트 쪽에서 그룹을 가지고 고객조회 API를 호출한다. null이면 호출X
         return user.getReferenceGroupId();
+    }
+
+    public void withdrawal(String email) {
+        User user = findExistingUser(userRepository, email);
+
+        user.withdrawal();
     }
 }

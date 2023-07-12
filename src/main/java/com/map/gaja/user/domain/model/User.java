@@ -59,4 +59,8 @@ public class User extends BaseTimeEntity {
         this.referenceGroupId = groupId;
     }
 
+    public void withdrawal() {
+        active = false;
+    }
+
 }
