@@ -24,7 +24,6 @@ public class FileValidator {
         try (InputStream inputStream = file.getInputStream()) {
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
-            System.out.println("mimeType = " + mimeType);
             if (allowedImageTypes.contains(mimeType)) {
                 return true;
             }
