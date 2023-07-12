@@ -12,16 +12,16 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    @Query("SELECT g.id as groupId, g.name as groupName, g.clientCount as clientCount FROM Group g WHERE g.user.id = :userId")
+    @Query("SELECT g.id as groupId, g.name as groupName, g.clientCount as clientCount FROM Group g WHERE g.user.id = :userId AND g.isDeleted = false")
     Slice<GroupInfo> findGroupByUserId(@Param(value = "userId") Long userId, Pageable pageable);
 
     @Modifying
-    @Query("DELETE FROM Group g WHERE g.id = :groupId AND g.user.id = :userId")
+    @Query("UPDATE Group g SET g.isDeleted = true WHERE g.id = :groupId AND g.user.id = :userId")
     int deleteByIdAndUserId(@Param(value = "groupId") Long groupId, @Param(value = "userId") Long userId);
 
-    @Query("SELECT g FROM Group g WHERE g.id = :groupId AND g.user.id = :userId")
+    @Query("SELECT g FROM Group g WHERE g.id = :groupId AND g.user.id = :userId AND g.isDeleted = false")
     Optional<Group> findByIdAndUserId(@Param(value = "groupId") Long groupId, @Param(value = "userId") Long userId);
 
-    @Query("SELECT g FROM Group g INNER JOIN g.user WHERE g.id = :groupId AND g.user.email = :email") // 임시로 만듦
+    @Query("SELECT g FROM Group g INNER JOIN g.user WHERE g.id = :groupId AND g.user.email = :email AND g.isDeleted = false") // 임시로 만듦
     Optional<Group> findByIdAndUserEmail(@Param(value = "groupId") Long groupId, @Param(value = "email") String email);
 }

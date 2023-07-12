@@ -1,8 +1,8 @@
 package com.map.gaja.client.infrastructure.s3;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.domain.exception.S3NotWorkingException;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 저장경로: /{파일확장자}/{uuid}.{파일확장자}
@@ -36,11 +39,11 @@ public class S3FileService {
     public StoredFileDto storeFile(String loginEmail, MultipartFile file) {
         try (InputStream fileInputStream = file.getInputStream()) {
             String s3FileUrl = storeFileToS3(loginEmail, file, fileInputStream);
-            log.info("저장 완료. S3 저장위치 = {}",s3FileUrl);
+            log.info("저장 완료. S3 저장위치 = {}", s3FileUrl);
 
             return createStoredFileDto(s3FileUrl, file.getOriginalFilename());
-        } catch(RuntimeException e) {
-            log.error("S3 문제로 파일 저장 실패" , e);
+        } catch (RuntimeException e) {
+            log.error("S3 문제로 파일 저장 실패", e);
             throw new S3NotWorkingException(e);
         } catch (IOException e) {
             log.warn("파일 문제로 저장 실패 file={}", file);
@@ -57,12 +60,39 @@ public class S3FileService {
 
             amazonS3Client.deleteObject(bucket, s3ObjectUri);
             log.info("파일 제거 성공. 제거한 파일={}", s3ObjectUri);
-        } catch(RuntimeException e) {
-            log.error("S3 문제로 파일 제거 실패" , e);
+        } catch (RuntimeException e) {
+            log.error("S3 문제로 파일 제거 실패", e);
             throw new S3NotWorkingException(e);
         }
 
         return true;
+    }
+
+    public void deleteAllFile(String email) {
+        String folderPath = email + "/"; //s3에 파일들이 "email@gmail.com/" 경로의 폴더 안에 저장됨
+
+        List<S3ObjectSummary> allFiles = new ArrayList<>(); //파일 객체를 가져올 리스트 생성
+
+        //s3에서 한번 요청으로 가져오는 데이터는 최대 1000개라서 그 이상으로 가져오려면 반복적으로 호출해야됨.
+        String continueToken = null;
+        do {
+            ListObjectsV2Request request = new ListObjectsV2Request()
+                    .withBucketName(bucket)
+                    .withPrefix(folderPath)
+                    .withContinuationToken(continueToken);
+            ListObjectsV2Result result = amazonS3Client.listObjectsV2(request);
+
+            // 가져온 객체를 리스트에 추가
+            allFiles.addAll(result.getObjectSummaries());
+
+            //1000개가 넘었을 때 가져올 데이터가 더 있는지 확인 -> s3에서 주는 자체적인 고유 식별자 값이라 어떤 것인지 모름 null 또는 문자열임
+            continueToken = result.getNextContinuationToken();
+        } while (continueToken != null);
+
+        //모든 파일 삭제
+        for (S3ObjectSummary summary : allFiles) {
+            amazonS3Client.deleteObject(bucket, summary.getKey());
+        }
     }
 
     private boolean isFileStoredInS3(String filePath) {

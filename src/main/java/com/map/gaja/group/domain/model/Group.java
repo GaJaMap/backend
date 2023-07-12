@@ -24,12 +24,29 @@ public class Group extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer clientCount;
 
+    @Column(nullable = false)
+    private Boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Group(String name, User user) {
+        this.name = name;
+        this.user = user;
+        clientCount = 0;
+        isDeleted = false;
+    }
+
     public void updateName(String name) {
         this.name = name;
+    }
+
+    /**
+     * 그룹삭제시 이미지 삭제 배치 작업을 위해 삭제 필드를 true 상태로 변경
+     */
+    public void remove() {
+        isDeleted = true;
     }
 
     /**
