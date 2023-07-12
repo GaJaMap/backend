@@ -6,17 +6,17 @@ VALUES
 (3, 'email3@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0);
 
 INSERT INTO group_set
-(group_id, created_at, updated_at, client_count, name, user_id)
+(group_id, created_at, updated_at, client_count, name, user_id, is_deleted)
 VALUES
-(1, NOW(), NOW(), 7, '그룹1', 1),
-(2, NOW(), NOW(), 8, '그룹2', 1),
-(3, NOW(), NOW(), 5, '그룹3', 1),
-(4, NOW(), NOW(), 10, '그룹4', 2),
-(5, NOW(), NOW(), 14, '그룹5', 2),
-(6, NOW(), NOW(), 9, '그룹6', 2),
-(7, NOW(), NOW(), 7, '그룹7', 3),
-(8, NOW(), NOW(), 8, '그룹8', 3),
-(9, NOW(), NOW(), 9, '그룹9', 3);
+(1, NOW(), NOW(), 7, '그룹1', 1, 0),
+(2, NOW(), NOW(), 8, '그룹2', 1, 0),
+(3, NOW(), NOW(), 5, '그룹3', 1, 0),
+(4, NOW(), NOW(), 10, '그룹4', 2, 0),
+(5, NOW(), NOW(), 14, '그룹5', 2, 0),
+(6, NOW(), NOW(), 9, '그룹6', 2, 0),
+(7, NOW(), NOW(), 7, '그룹7', 3, 0),
+(8, NOW(), NOW(), 8, '그룹8', 3, 0),
+(9, NOW(), NOW(), 9, '그룹9', 3, 0);
 
 
 -- 그룹 1에 대한 클라이언트 데이터 (7개)
