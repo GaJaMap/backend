@@ -45,6 +45,9 @@ dependencies {
 	// session db 설정
 	implementation 'org.springframework.session:spring-session-jdbc'
 
+	// 파일 검사
+	implementation group: 'org.apache.tika', name: 'tika-core', version: '2.7.0'
+
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
