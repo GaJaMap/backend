@@ -34,8 +34,6 @@ public class ClientConvertor {
     }
 
     protected static ClientResponse entityToDto(Client client) {
-
-
         return new ClientResponse(
                 client.getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
@@ -43,7 +41,7 @@ public class ClientConvertor {
                 client.getPhoneNumber(),
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
-                new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
+                (client.getClientImage() == null) ? new StoredFileDto() : new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
                 null
         );
     }
