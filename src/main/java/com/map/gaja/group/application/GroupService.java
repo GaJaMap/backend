@@ -40,11 +40,7 @@ public class GroupService {
     }
 
     private Group createGroup(String name, User user) {
-        return Group.builder()
-                .name(name)
-                .clientCount(0)
-                .user(user)
-                .build();
+        return new Group(name, user);
     }
 
     @Transactional(readOnly = true)
@@ -65,8 +61,6 @@ public class GroupService {
         if (deletedBundleCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
             throw new GroupNotFoundException();
         }
-
-        clientRepository.deleteByGroupId(groupId);
     }
 
     @Transactional
