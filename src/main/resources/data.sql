@@ -1,9 +1,9 @@
 INSERT INTO `user`
-(user_id, email, authority, group_count, created_at, updated_at, last_login_date, reference_group_id)
+(user_id, email, authority, group_count, created_at, updated_at, last_login_date, reference_group_id, active)
 VALUES
-(1, 'email1@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0),
-(2, 'email2@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0),
-(3, 'email3@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0);
+(1, 'email1@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, 1),
+(2, 'email2@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, 1),
+(3, 'email3@example.com', 'FREE', 3, NOW(), NOW(), NOW(), 0, 1);
 
 INSERT INTO group_set
 (group_id, created_at, updated_at, client_count, name, user_id)
