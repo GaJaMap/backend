@@ -30,6 +30,7 @@ public class UserController implements UserApiSpecification {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Override
     @DeleteMapping
     public ResponseEntity<Void> withdrawal(@AuthenticationPrincipal String email, HttpSession session) {
         userService.withdrawal(email);

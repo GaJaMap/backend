@@ -57,7 +57,7 @@ public interface GroupApiSpecification {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-                    @ApiResponse(responseCode = "422", description = "존재하지 않은 그룹이거나 사용자의 번그룹이 아닙니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+                    @ApiResponse(responseCode = "422", description = "존재하지 않은 그룹이거나 사용자의 그룹이 아닙니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
     ResponseEntity<Void> update(@Parameter(hidden = true) String email, Long groupId, GroupUpdateRequest request);
 }
