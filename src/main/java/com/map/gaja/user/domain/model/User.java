@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Builder
@@ -34,6 +35,16 @@ public class User extends BaseTimeEntity {
 
     private Long referenceGroupId;
 
+    private Boolean active;
+
+    public User(String email) {
+        this.email = email;
+        authority = Authority.FREE;
+        groupCount = 0;
+        lastLoginDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        active = true;
+    }
+
     public void checkCreateGroupPermission() {
         if (authority.getGroupLimitCount() <= groupCount) {
             throw new GroupLimitExceededException(authority.name(), authority.getGroupLimitCount());
@@ -47,4 +58,5 @@ public class User extends BaseTimeEntity {
     public void accessGroup(Long groupId) {
         this.referenceGroupId = groupId;
     }
+
 }

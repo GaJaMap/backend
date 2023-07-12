@@ -33,12 +33,7 @@ public class UserService {
         sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
 
         User user = userRepository.findByEmail(email)
-                .orElse(User.builder()
-                        .email(email)
-                        .authority(Authority.FREE)
-                        .groupCount(0)
-                        .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                        .build());
+                .orElse(new User(email));
         userRepository.save(user);
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
