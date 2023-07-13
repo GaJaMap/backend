@@ -60,6 +60,7 @@ class ClientAccessCheckServiceTest {
                 .name("그룹 1")
                 .user(user)
                 .clientCount(0)
+                .isDeleted(false)
                 .build();
     }
 

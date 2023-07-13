@@ -43,6 +43,7 @@ class GroupQueryRepositoryTest {
                 .name("그룹 1")
                 .user(createdUser)
                 .clientCount(0)
+                .isDeleted(false)
                 .build();
         em.persist(createdGroup);
 
