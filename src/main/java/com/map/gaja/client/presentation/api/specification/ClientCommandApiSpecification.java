@@ -45,7 +45,7 @@ public interface ClientCommandApiSpecification {
                     @ApiResponse(responseCode = "422", description = "서버에서 지원하지 않는 파일 형식", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류로 이미지 저장 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
-    ResponseEntity<Void> changeClient(
+    ResponseEntity<Void> updateClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
