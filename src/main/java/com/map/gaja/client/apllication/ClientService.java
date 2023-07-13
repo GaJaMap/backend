@@ -29,8 +29,6 @@ public class ClientService {
     private final GroupRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
 
-
-
     public Long saveClient(NewClientRequest clientRequest) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
@@ -62,8 +60,7 @@ public class ClientService {
      */
     public void changeClient(
             Long existingClientId,
-            NewClientRequest updateRequest,
-            StoredFileDto updatedFileDto
+            NewClientRequest updateRequest
     ) {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());

@@ -98,7 +98,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        clientService.changeClient(existingClientId, changedRequest, new StoredFileDto());
+        clientService.changeClient(existingClientId, changedRequest);
 
         // then
 
