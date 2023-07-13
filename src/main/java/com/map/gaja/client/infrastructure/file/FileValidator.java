@@ -1,6 +1,7 @@
 package com.map.gaja.client.infrastructure.file;
 
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+@Slf4j
 public class FileValidator {
     private static final List<String> allowedFileTypes = List.of(
             "application/x-tika-ooxml", // .xlsx, .pptx, .docx
@@ -29,6 +31,7 @@ public class FileValidator {
             }
             return false;
         } catch (IOException e) {
+            log.warn("파일 검사 중 IOException 발생", e);
             return false;
         }
     }
@@ -43,6 +46,7 @@ public class FileValidator {
             }
             return false;
         } catch (IOException e) {
+            log.warn("파일 검사 중 IOException 발생",e);
             return false;
         }
     }
