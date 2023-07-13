@@ -4,15 +4,12 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
-import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
-import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +42,8 @@ public class ClientController implements ClientCommandApiSpecification {
     ) {
         // 특정 그룹 내에 거래처 삭제
         log.info("ClientController.deleteClient loginEmail={} groupId={} clientId={}", loginEmail, groupId, clientId);
-        verifyClientAccess(loginEmail, groupId, clientId);
+        ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
+        clientAccessVerifyService.verifyClientAccess(accessCheck);
 
         String existingImageFilePath = clientQueryService.findClientImage(clientId).getFilePath();
         clientService.deleteClient(clientId);
@@ -57,40 +55,45 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<Void> changeClient(
+    public ResponseEntity<Void> updateClient(
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
             @Valid @ModelAttribute NewClientRequest clientRequest
     ) {
-        // 기존 거래처 정보 변경
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
-        verifyClientAccess(loginEmail, groupId, clientId);
-        if (groupId != clientRequest.getGroupId()) {
-            verifyGroupAccess(loginEmail, clientRequest);
+        if (isNotEmptyFile(clientRequest.getClientImage())) {
+            FileValidator.verifyImageFile(clientRequest.getClientImage());
         }
 
-        StoredFileDto updatedFileDto = getUpdatedFileDto(loginEmail, clientId, clientRequest);
+        ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
+        verifyChangeClientRequest(accessCheck, clientRequest);
 
-        clientService.changeClient(clientId, clientRequest, updatedFileDto);
+        if (isNotEmptyFile(clientRequest.getClientImage())) {
+            updateClientWithImage(loginEmail, clientId, clientRequest);
+        }
+        else {
+            clientService.changeClient(clientId, clientRequest);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private StoredFileDto getUpdatedFileDto(String loginEmail, Long clientId, NewClientRequest clientRequest) {
-        StoredFileDto storedFileDto = new StoredFileDto();
-
-        if (isNewFile(clientRequest.getClientImage())) {
-            FileValidator.verifyImageFile(clientRequest.getClientImage());
-            StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
-            fileService.removeFile(existingFile.getFilePath());
-            storedFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
+    private void verifyChangeClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
+        clientAccessVerifyService.verifyClientAccess(accessCheck);
+        if (accessCheck.getGroupId() != clientRequest.getGroupId()) {
+            groupAccessVerifyService.verifyGroupAccess(accessCheck.getGroupId(), accessCheck.getUserEmail());
         }
-
-        return storedFileDto;
     }
 
-    private boolean isNewFile(MultipartFile newImage) {
+    private void updateClientWithImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
+        StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
+        fileService.removeFile(existingFile.getFilePath());
+        StoredFileDto updatedFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
+        clientService.changeClientWithImage(clientId, clientRequest, updatedFileDto);
+    }
+
+    private boolean isNotEmptyFile(MultipartFile newImage) {
         return newImage != null && !newImage.isEmpty();
     }
 
@@ -112,16 +115,15 @@ public class ClientController implements ClientCommandApiSpecification {
     ) {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", clientRequest);
-        verifyGroupAccess(loginEmail, clientRequest);
+        groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
-        MultipartFile clientImage = clientRequest.getClientImage();
         Long id;
-        if (clientImage == null || clientImage.isEmpty()) {
-            id = clientService.saveClient(clientRequest);
-        }
-        else {
+        if (isNotEmptyFile(clientRequest.getClientImage())) {
             FileValidator.verifyImageFile(clientRequest.getClientImage());
             id = saveClientWithImage(loginEmail, clientRequest);
+        }
+        else {
+            id = clientService.saveClient(clientRequest);
         }
 
         return new ResponseEntity<>(id, HttpStatus.CREATED);
@@ -130,38 +132,11 @@ public class ClientController implements ClientCommandApiSpecification {
     private Long saveClientWithImage(String loginEmail, NewClientRequest client) {
         StoredFileDto storedFileDto = fileService.storeFile(loginEmail, client.getClientImage());
         try {
-            return clientService.saveClient(client, storedFileDto);
+            return clientService.saveClientWithImage(client, storedFileDto);
         } catch(Exception e) {
             log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
             fileService.removeFile(storedFileDto.getFilePath());
             throw e;
         }
     }
-
-    private void verifyClientAccess(String loginEmail, Long groupId, Long clientId) {
-        ClientAccessCheckDto accessCheckDto = new ClientAccessCheckDto(loginEmail, groupId, clientId);
-        clientAccessVerifyService.verifyClientAccess(accessCheckDto);
-    }
-
-    private void verifyGroupAccess(String loginEmail, NewClientRequest clientRequest) {
-        groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
-    }
-
-    /*
-//    @PostMapping("/clients/bulk")
-    public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
-        // 거래처 등록 - 여러건 등록
-        log.info("ClientController.addBulkClient  clients={}", clients);
-        CreatedClientListResponse response = clientService.saveClientList(clients);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-//    @PostMapping("/clients/bulk/file")
-    public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
-        // 엑셀 등의 파일로 거래처 등록
-        log.info("ClientController.addClients");
-        CreatedClientListResponse response = clientService.parseFileAndSave(file);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-    */
 }

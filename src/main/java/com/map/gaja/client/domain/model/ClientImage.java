@@ -28,4 +28,9 @@ public class ClientImage extends BaseTimeEntity {
         this.originalName = originalName;
         this.savedPath = savedPath;
     }
+
+    public void updateImage(String originalName, String savedPath) {
+        this.originalName = originalName;
+        this.savedPath = savedPath;
+    }
 }

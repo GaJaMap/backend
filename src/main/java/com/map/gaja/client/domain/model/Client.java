@@ -4,10 +4,8 @@ import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -60,12 +58,11 @@ public class Client extends BaseTimeEntity {
         this.clientImage = clientImage;
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
+    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
         updateGroup(group);
-        updateClientImage(clientImage);
     }
 
     public void removeGroup() {
@@ -89,10 +86,6 @@ public class Client extends BaseTimeEntity {
 
     private void updatePhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    private void updateClientImage(ClientImage clientImage) {
-        this.clientImage = clientImage;
     }
 
     private void updateLocation(ClientLocation location, ClientAddress address) {
