@@ -47,16 +47,6 @@ public class ClientQueryService {
         return new ClientListResponse(clientList);
     }
 
-    public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<Long> groupIdList = groupQueryRepository.findGroupId(loginEmail);
-        if (groupIdList.size() == 0) {
-            throw new GroupNotFoundException();
-        }
-
-        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList);
-    }
-
     public StoredFileDto findClientImage(Long clientId) {
         ClientResponse client = findClient(clientId);
         return client.getImage();
@@ -66,7 +56,17 @@ public class ClientQueryService {
             String loginEmail,
             @Nullable String nameCond
     ) {
-        List<ClientResponse> clientList = clientQueryRepository.findAllClientByEmail(loginEmail, nameCond);
+        List<ClientResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
+        return new ClientListResponse(clientList);
+    }
+
+    public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        List<Long> groupIdList = groupQueryRepository.findActiveGroup(loginEmail);
+        if (groupIdList.size() == 0) {
+            throw new GroupNotFoundException();
+        }
+
+        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList);
     }
 }

@@ -8,7 +8,6 @@ import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -163,12 +162,12 @@ public class ClientQueryRepository {
     }
 
     /**
-     * loginEmail User가 가지고 있는 Client 전체 검색.
+     * loginEmail User가 가지고 있는 "삭제되지 않은 그룹"의 Client 전체 검색.
      * @param loginEmail 로그인한 이메일
      * @param nameCond 이름 검색 조건
      * @return
      */
-    public List<ClientResponse> findAllClientByEmail(String loginEmail, @Nullable String nameCond) {
+    public List<ClientResponse> findActiveClientByEmail(String loginEmail, @Nullable String nameCond) {
         List<ClientResponse> result = query
                 .select(
                         Projections.constructor(ClientResponse.class,
@@ -185,10 +184,14 @@ public class ClientQueryRepository {
                 .leftJoin(client.clientImage, clientImage)
                 .join(client.group, group)
                 .join(client.group.user, user)
-                .where(user.email.eq(loginEmail), nameContains(nameCond))
+                .where(user.email.eq(loginEmail), nameContains(nameCond), notDeletedGroup())
                 .orderBy(client.createdAt.desc())
                 .fetch();
 
         return result;
+    }
+
+    private static BooleanExpression notDeletedGroup() {
+        return group.isDeleted.eq(Boolean.FALSE);
     }
 }

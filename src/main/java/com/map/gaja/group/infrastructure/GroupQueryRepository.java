@@ -44,32 +44,29 @@ public class GroupQueryRepository {
 
 
     /**
-     * 해당 Email의 User가 가지고 있는 그룹 ID 반환
+     * 해당 Email의 User가 가지고 있는 "삭제되지 않은" 그룹 ID 반환
      * @param userEmail 로그인한 Email
      * @return 가지고 있는 그룹의 ID List
      */
-    public List<Long> findGroupId(String userEmail) {
+    public List<Long> findActiveGroup(String userEmail) {
         return query.select(group.id)
                 .from(group)
                 .join(group.user, user).on(user.email.eq(userEmail))
+                .where(group.isDeleted.eq(Boolean.FALSE))
                 .fetch();
     }
 
     /**
-     * 해당 Email의 User가 그룹을 가지고 있는지 확인
+     * 해당 Group과 연관된 User를 함께 가져옴
      * @param groupId 그룹 ID
-     * @param userEmail User Email
-     * @return 가지고 있다면 true
+     * @return 찾은 Group 반환
      */
-    public Optional<Group> findGroupByUser(Long groupId, String userEmail) {
+    public Optional<Group> findGroupWithUser(Long groupId) {
         Group result = query.selectFrom(group)
                 .join(group.user, user)
                 .where(group.id.eq(groupId))
                 .fetchJoin().fetchOne();
 
-        if(result != null && result.getUser() != null && result.getUser().getEmail().equals(userEmail))
-            return Optional.ofNullable(result);
-
-        return Optional.ofNullable(null);
+        return Optional.ofNullable(result);
     }
 }
