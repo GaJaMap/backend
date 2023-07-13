@@ -14,9 +14,21 @@ public class GroupAccessVerifyService {
     private final GroupQueryRepository groupQueryRepository;
 
     public void verifyGroupAccess(long groupId, String userEmail) {
-        Group group = groupQueryRepository.findGroupByUser(groupId, userEmail)
+        Group group = groupQueryRepository.findGroupWithUser(groupId)
                 .orElseThrow(GroupNotFoundException::new);
 
+        if (isNotMatchingEmail(group, userEmail) || isDeleted(group)) {
+            throw new GroupNotFoundException();
+        }
+
         group.getUser().accessGroup(groupId);
+    }
+
+    private static boolean isNotMatchingEmail(Group group, String userEmail) {
+        return !group.getUser().getEmail().equals(userEmail);
+    }
+
+    private static boolean isDeleted(Group group) {
+        return group.getIsDeleted();
     }
 }
