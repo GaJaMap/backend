@@ -1,6 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientQueryService;
+import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
@@ -78,9 +79,10 @@ public class ClientController implements ClientCommandApiSpecification {
 
     private StoredFileDto getUpdatedFileDto(String loginEmail, Long clientId, NewClientRequest clientRequest) {
         StoredFileDto storedFileDto = new StoredFileDto();
-        StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
 
         if (isNewFile(clientRequest.getClientImage())) {
+            FileValidator.verifyImageFile(clientRequest.getClientImage());
+            StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
             fileService.removeFile(existingFile.getFilePath());
             storedFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
         }
@@ -118,6 +120,7 @@ public class ClientController implements ClientCommandApiSpecification {
             id = clientService.saveClient(clientRequest);
         }
         else {
+            FileValidator.verifyImageFile(clientRequest.getClientImage());
             id = saveClientWithImage(loginEmail, clientRequest);
         }
 
