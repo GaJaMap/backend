@@ -86,6 +86,7 @@ class ClientQueryRepositoryTest {
                 .name(groupName)
                 .user(user)
                 .clientCount(0)
+                .isDeleted(false)
                 .build();
         return createdGroup;
     }
