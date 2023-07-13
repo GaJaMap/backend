@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -184,7 +183,7 @@ class ClientQueryRepositoryTest {
     void ss() {
         String nameCond = "사용자";
 
-        List<ClientResponse> result = clientQueryRepository.findAllClientByEmail(user.getEmail(), nameCond);
+        List<ClientResponse> result = clientQueryRepository.findActiveClientByEmail(user.getEmail(), nameCond);
 
         assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
         result.forEach((client) -> {

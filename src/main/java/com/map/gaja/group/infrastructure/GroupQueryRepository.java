@@ -44,14 +44,15 @@ public class GroupQueryRepository {
 
 
     /**
-     * 해당 Email의 User가 가지고 있는 그룹 ID 반환
+     * 해당 Email의 User가 가지고 있는 "삭제되지 않은" 그룹 ID 반환
      * @param userEmail 로그인한 Email
      * @return 가지고 있는 그룹의 ID List
      */
-    public List<Long> findGroupId(String userEmail) {
+    public List<Long> findActiveGroup(String userEmail) {
         return query.select(group.id)
                 .from(group)
                 .join(group.user, user).on(user.email.eq(userEmail))
+                .where(group.isDeleted.eq(Boolean.FALSE))
                 .fetch();
     }
 
