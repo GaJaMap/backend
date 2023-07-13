@@ -1,6 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
@@ -104,6 +105,33 @@ class ClientServiceTest {
         assertThat(existingClient.getGroup().getId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
         assertThat(existingGroup.getClientCount()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("기존 Client 이미지 업데이트 테스트")
+    public void updateClientImageTest() throws Exception {
+        // given
+        Long groupId = 1L;
+        Long existingClientId = 1L;
+        String existingName = "test";
+
+        Group existingGroup = createGroup(groupId, 0);
+        Client existingClient = createClient(existingName, existingGroup);
+        StoredFileDto updatedImageFile = new StoredFileDto("ccc", "ddd");
+        NewClientRequest changedRequest = new NewClientRequest();
+        changedRequest.setClientName(existingName);
+        changedRequest.setGroupId(existingGroup.getId());
+
+        when(clientQueryRepository.findClientWithGroup(anyLong()))
+                .thenReturn(Optional.ofNullable(existingClient));
+
+        // when
+        clientService.changeClientWithImage(existingClientId, changedRequest, updatedImageFile);
+
+        // then
+        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
+        assertThat(existingClient.getClientImage().getOriginalName()).isSameAs(updatedImageFile.getOriginalFileName());
+        assertThat(existingClient.getClientImage().getSavedPath()).isSameAs(updatedImageFile.getFilePath());
     }
 
     @Test
