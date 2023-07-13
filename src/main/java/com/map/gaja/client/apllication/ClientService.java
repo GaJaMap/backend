@@ -29,6 +29,11 @@ public class ClientService {
     private final GroupRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
 
+    /**
+     * 이미지 없는 고객 등록
+     * @param clientRequest 고객 등록 요청 정보
+     * @return 만들어진 고객 ID
+     */
     public Long saveClient(NewClientRequest clientRequest) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
@@ -37,7 +42,13 @@ public class ClientService {
         return client.getId();
     }
 
-    public Long saveClient(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
+    /**
+     * 이미지와 함께 고객 등록
+     * @param clientRequest 고객 등록 요청 정보
+     * @param storedFileDto S3에 저장된 이미지 저장 정보
+     * @return 만들어진 고객 ID
+     */
+    public Long saveClientWithImage(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group, storedFileDto);

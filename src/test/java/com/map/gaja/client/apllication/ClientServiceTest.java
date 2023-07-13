@@ -1,7 +1,6 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
@@ -18,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;

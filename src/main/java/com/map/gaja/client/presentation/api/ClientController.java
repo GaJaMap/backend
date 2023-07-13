@@ -117,14 +117,13 @@ public class ClientController implements ClientCommandApiSpecification {
         log.info("ClientController.addClient  clients={}", clientRequest);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
-        MultipartFile clientImage = clientRequest.getClientImage();
         Long id;
-        if (clientImage == null || clientImage.isEmpty()) {
-            id = clientService.saveClient(clientRequest);
-        }
-        else {
+        if (isNotEmptyFile(clientRequest.getClientImage())) {
             FileValidator.verifyImageFile(clientRequest.getClientImage());
             id = saveClientWithImage(loginEmail, clientRequest);
+        }
+        else {
+            id = clientService.saveClient(clientRequest);
         }
 
         return new ResponseEntity<>(id, HttpStatus.CREATED);
@@ -133,7 +132,7 @@ public class ClientController implements ClientCommandApiSpecification {
     private Long saveClientWithImage(String loginEmail, NewClientRequest client) {
         StoredFileDto storedFileDto = fileService.storeFile(loginEmail, client.getClientImage());
         try {
-            return clientService.saveClient(client, storedFileDto);
+            return clientService.saveClientWithImage(client, storedFileDto);
         } catch(Exception e) {
             log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
             fileService.removeFile(storedFileDto.getFilePath());
