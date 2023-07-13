@@ -1,31 +1,23 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
-import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
-import com.map.gaja.client.domain.exception.UnsupportedFileTypeException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.infrastructure.file.ClientFileParser;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
-import com.map.gaja.client.presentation.dto.request.NewClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.response.*;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.map.gaja.client.apllication.ClientConvertor.*;
 
@@ -36,6 +28,8 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
+
+
 
     public Long saveClient(NewClientRequest clientRequest) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
@@ -61,6 +55,11 @@ public class ClientService {
         clientRepository.delete(deletedClient);
     }
 
+    /**
+     * 고객 정보 변경
+     * @param existingClientId 기존 고객 ID
+     * @param updateRequest 고객 업데이트 요청 정보
+     */
     public void changeClient(
             Long existingClientId,
             NewClientRequest updateRequest,
@@ -69,29 +68,60 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        // 일단 애플리케이션에 몰아넣고 나중에 도메인과 분리함.
-        Group updatedGroup = groupRepository.findById(updateRequest.getGroupId())
-                .orElseThrow(GroupNotFoundException::new);
-
+        Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
         ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
         ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
-        ClientImage updatedClientImage = existingClient.getClientImage();
-        if (isNewFileDto(updatedFileDto)) {
-            updatedClientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
-        }
 
         existingClient.updateClient(
                 updateRequest.getClientName(),
                 updateRequest.getPhoneNumber(),
                 updatedAddress,
                 updatedLocation,
-                updatedGroup,
-                updatedClientImage
+                updatedGroup
         );
     }
 
-    private boolean isNewFileDto(StoredFileDto updatedFileDto) {
-        return updatedFileDto.getOriginalFileName() != null && updatedFileDto.getOriginalFileName() != null;
+    /**
+     * 고객 + 고객 이미지 정보 변경
+     * @param existingClientId 기존 고객 ID
+     * @param updateRequest 고객 업데이트 요청 정보
+     * @param updatedFileDto 고객 이미지 업데이트 정보
+     */
+    public void changeClientWithImage(
+            Long existingClientId,
+            NewClientRequest updateRequest,
+            StoredFileDto updatedFileDto
+    ) {
+        Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
+                .orElseThrow(() -> new ClientNotFoundException());
+
+        Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
+        ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
+        ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
+
+        existingClient.updateClient(
+                updateRequest.getClientName(),
+                updateRequest.getPhoneNumber(),
+                updatedAddress,
+                updatedLocation,
+                updatedGroup
+        );
+
+        existingClient.getClientImage()
+                .updateImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
+    }
+
+    private static boolean isUpdatedGroup(NewClientRequest updateRequest, Client existingClient) {
+        return existingClient.getGroup().getId() != updateRequest.getGroupId();
+    }
+
+    private Group getUpdatedGroup(NewClientRequest updateRequest, Client existingClient) {
+        if (isUpdatedGroup(updateRequest, existingClient)) {
+            return groupRepository.findById(updateRequest.getGroupId())
+                    .orElseThrow(GroupNotFoundException::new);
+        } else {
+            return existingClient.getGroup();
+        }
     }
 
     public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {

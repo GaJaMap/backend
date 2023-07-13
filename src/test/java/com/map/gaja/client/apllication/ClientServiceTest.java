@@ -41,8 +41,7 @@ class ClientServiceTest {
         clientService = new ClientService(
                 clientRepository,
                 groupRepository,
-                clientQueryRepository,
-                new ArrayList<>()
+                clientQueryRepository
         );
     }
 
