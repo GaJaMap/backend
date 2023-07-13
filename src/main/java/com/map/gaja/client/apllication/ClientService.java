@@ -36,7 +36,6 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
-    private final List<ClientFileParser> parsers;
 
     public Long saveClient(NewClientRequest clientRequest) {
         Group group = groupRepository.findById(clientRequest.getGroupId())
@@ -54,18 +53,6 @@ public class ClientService {
         return client.getId();
     }
 
-    /*
-    public CreatedClientListResponse saveClientList(NewClientBulkRequest clientsRequest) {
-        List<Client> clients = dtoToEntity(clientsRequest);
-        clientRepository.saveAll(clients);
-
-        List<CreatedClientResponse> clientIdList = clients.stream().map(client -> client.getId())
-                .map(CreatedClientResponse::new).collect(Collectors.toList());
-        CreatedClientListResponse response = new CreatedClientListResponse(clientIdList);
-        return response;
-    }
-     */
-
     public void deleteClient(long clientId) {
         Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException());
@@ -73,26 +60,6 @@ public class ClientService {
 
         clientRepository.delete(deletedClient);
     }
-
-    /*
-    public Long parseFileAndSave(MultipartFile file) {
-        NewClientBulkRequest clients = null;
-        for (ClientFileParser parser : parsers) {
-            if(parser.isSupported(file)) {
-                clients = parser.parse(file);
-                break;
-            }
-        }
-
-        if (clients == null) {
-            String oriName = file.getOriginalFilename();
-            String fileType = oriName.substring(oriName.lastIndexOf(".")+1);
-            throw new UnsupportedFileTypeException(fileType); // 지원하지 않는 파일형식
-        }
-
-        return saveClientList(clients);
-    }
-     */
 
     public void changeClient(
             Long existingClientId,

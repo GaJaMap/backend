@@ -146,22 +146,4 @@ public class ClientController implements ClientCommandApiSpecification {
     private void verifyGroupAccess(String loginEmail, NewClientRequest clientRequest) {
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
     }
-
-    /*
-//    @PostMapping("/clients/bulk")
-    public ResponseEntity<CreatedClientListResponse> addBulkClient(@RequestBody NewClientBulkRequest clients) {
-        // 거래처 등록 - 여러건 등록
-        log.info("ClientController.addBulkClient  clients={}", clients);
-        CreatedClientListResponse response = clientService.saveClientList(clients);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-//    @PostMapping("/clients/bulk/file")
-    public ResponseEntity<CreatedClientListResponse> addClients(@RequestParam MultipartFile file) {
-        // 엑셀 등의 파일로 거래처 등록
-        log.info("ClientController.addClients");
-        CreatedClientListResponse response = clientService.parseFileAndSave(file);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-    */
 }
