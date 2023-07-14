@@ -18,6 +18,7 @@
         <div class="row justify-content-center mt-0">
             <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
                 <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                    <h1>(가자맵 로고)</h1>
                     <h2><strong>엑셀로 사용자 등록하기</strong></h2>
                     <p>모든 단계를 완료하면 사용자가 등록됩니다!</p>
                     <div class="row">
@@ -31,11 +32,7 @@
                                 </ul>
                                 <fieldset>
                                     <div class="form-card">
-                                        <h2 class="fs-title">그룹 선택</h2>
-                                        <input type="text" name="fname" placeholder="First Name"/>
-                                        <input type="text" name="lname" placeholder="Last Name"/>
-                                        <input type="text" name="phno" placeholder="Contact No."/>
-                                        <input type="text" name="phno_2" placeholder="Alternate Contact No."/>
+                                        <div th:replace="fragments/group-radio :: fragment-group-radio">RowTable 공간</div>
                                     </div>
                                     <input type="button" name="next" class="next action-button" value="Next Step"/>
                                 </fieldset>
