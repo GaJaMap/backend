@@ -11,10 +11,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/excel-form.js}" src="../js/excel-form.js"></script>
 
-    <!-- 파일 업로드 관련 -->
-    <link th:href="@{/css/excel-file-upload.css}" href="../css/excel-file-upload.css" rel="stylesheet">
-    <script type="text/javascript" th:src="@{/js/excel-file-upload.js}" src="../js/excel-file-upload.js"></script>
-    <!---->
+    <script>
+        $(document).ready(function() {
+          // 폼 submit 이벤트 처리
+          $("#msform").submit(function(event) {
+            event.preventDefault(); // 기본 submit 동작을 막음
+
+            // Ajax 요청
+            $.ajax({
+              type: "POST",
+              url: $(this).attr("action"),
+              data: new FormData(this),
+              processData: false,
+              contentType: false,
+              success: function(response) {
+                // 리다이렉트 URL이 포함된 응답 처리
+              },
+              error: function(xhr, status, error) {
+                // 오류가 발생하면 오류 메시지를 표시하거나 다른 처리를 수행합니다.
+                console.log("Error: " + error);
+              }
+            });
+          });
+
+          // 새로고침 이벤트 처리
+          /*$(window).on('beforeunload', function() {
+            window.location.href = '/clients/file';
+          });*/
+        });
+    </script>
 
 </head>
 <body>
@@ -28,7 +53,7 @@
                     <p>모든 단계를 완료하면 사용자가 등록됩니다!</p>
                     <div class="row">
                         <div class="col-md-12 mx-0">
-                            <form id="msform" action="/clients/file" method="post" enctype="multipart/form-data">
+                            <form id="msform" action="/api/clients/file" method="post" enctype="multipart/form-data">
                                 <!-- progressbar -->
                                 <ul id="progressbar">
                                     <li class="active" id="personal"><strong>그룹 선택</strong></li>

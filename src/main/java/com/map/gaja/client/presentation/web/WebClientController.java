@@ -1,14 +1,21 @@
 package com.map.gaja.client.presentation.web;
 
+import com.map.gaja.client.infrastructure.file.FileValidator;
+import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @Controller
 public class WebClientController {
@@ -25,23 +32,14 @@ public class WebClientController {
         return "index";
     }
 
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    static class ExcelFileRequest {
-        private Long groupId;
-        private MultipartFile excelFile;
-    }
-
-    @PostMapping("/clients/file")
-    public String clientUpload(
-            Long groupId,
-            MultipartFile excelFile
+    @PostMapping("/api/clients/file")
+    @ResponseBody
+    public ResponseEntity<Void> clientUpload(
+            ClientExcelRequest excelRequest
     ) {
-        System.out.println("groupId = " + groupId);
-        System.out.println("excelFile = " + excelFile);
-
-        return "index";
+        FileValidator.verifyFile(excelRequest.getExcelFile());
+        System.out.println("excelRequest.getGroupId() = " + excelRequest.getGroupId());
+        System.out.println("getExcelFile() = " + excelRequest.getExcelFile().getOriginalFilename());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
