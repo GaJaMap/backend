@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>가자맵 엑셀 추가</title>
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+    <link th:href="@{/css/excel-form.css}" href="../css/excel-form.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/excel-form.js}" src="../js/excel-form.js"></script>
+
+    <!-- 파일 업로드 관련 -->
+    <link th:href="@{/css/excel-file-upload.css}" href="../css/excel-file-upload.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/js/excel-file-upload.js}" src="../js/excel-file-upload.js"></script>
+    <!---->
+
+</head>
+<body>
+    <!-- MultiStep Form -->
+    <div class="container-fluid" id="grad1">
+        <div class="row justify-content-center mt-0">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
+                <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                    <h1>(가자맵 로고)</h1>
+                    <h2 class="mt-3"><strong>엑셀로 사용자 등록하기</strong></h2>
+                    <p>모든 단계를 완료하면 사용자가 등록됩니다!</p>
+                    <div class="row">
+                        <div class="col-md-12 mx-0">
+                            <form id="msform">
+                                <!-- progressbar -->
+                                <ul id="progressbar">
+                                    <li class="active" id="personal"><strong>그룹 선택</strong></li>
+                                    <li id="payment"><strong>엑셀 업로드</strong></li>
+                                    <li id="confirm"><strong>등록 완료</strong></li>
+                                </ul>
+                                <fieldset>
+                                    <div class="form-card">
+                                        <div th:replace="fragments/group-radio :: fragment-group-radio">group-radio 공간</div>
+                                    </div>
+                                    <input type="button" name="next" class="next action-button" value="다음 단계"/>
+                                </fieldset>
+                                <fieldset>
+                                    <div class="form-card">
+                                        <div th:replace="fragments/excel-file-upload :: fragment-excel-file-upload">excel-file-upload 공간</div>
+                                    </div>
+                                    <input type="button" name="previous" class="previous action-button-previous" value="이전 단계"/>
+                                    <input type="button" name="make_payment" class="next action-button" value="완료"/>
+                                </fieldset>
+                                <fieldset>
+                                    <div class="form-card">
+                                        <h2 class="fs-title text-center">등록 완료 !</h2>
+                                        <br><br>
+                                        <div class="row justify-content-center">
+                                            <div class="col-3">
+                                                <img src="https://img.icons8.com/color/96/000000/ok--v2.png" class="fit-image">
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <div class="row justify-content-center">
+                                            <div class="col-7 text-center">
+                                                <h5>고객 정보가 등록되었습니다. 앱으로 확인해주세요!</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

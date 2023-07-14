@@ -48,6 +48,9 @@ dependencies {
 	// 파일 검사
 	implementation group: 'org.apache.tika', name: 'tika-core', version: '2.7.0'
 
+	// Thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
