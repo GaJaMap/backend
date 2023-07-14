@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="row justify-content-md-center" th:fragment="fragment-login">
+  <h2 class="fs-title">로그인</h2>
+  <div class="mt-3">
+    <a href="/oauth2/authorization/kakao">
+      <img th:src="@{/image/kakao_login_medium_wide.png}">
+    </a>
+
+    <form action="/testLogin" method="POST">
+      <input type="text" name="loginEmail" id="loginEmail">
+      <input type="submit" value="임시 로그인">
+    </form>
+  </div>
+</div>
+</html>
