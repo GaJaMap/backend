@@ -38,7 +38,6 @@ public class FileValidator {
 
     private static boolean isAllowedFileType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
-            inputStream.close();
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
             if (allowedFileTypes.contains(mimeType)) {
