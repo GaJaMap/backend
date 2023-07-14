@@ -28,7 +28,7 @@
                     <p>모든 단계를 완료하면 사용자가 등록됩니다!</p>
                     <div class="row">
                         <div class="col-md-12 mx-0">
-                            <form id="msform">
+                            <form id="msform" action="/clients/file" method="post" enctype="multipart/form-data">
                                 <!-- progressbar -->
                                 <ul id="progressbar">
                                     <li class="active" id="personal"><strong>그룹 선택</strong></li>
@@ -46,7 +46,8 @@
                                         <div th:replace="fragments/excel-file-upload :: fragment-excel-file-upload">excel-file-upload 공간</div>
                                     </div>
                                     <input type="button" name="previous" class="previous action-button-previous" value="이전 단계"/>
-                                    <input type="button" name="make_payment" class="next action-button" value="완료"/>
+<!--                                    <input type="button" name="make_payment" class="next action-button" value="완료"/>-->
+                                    <input type="submit" name="make_payment" class="next action-button" value="완료"/>
                                 </fieldset>
                                 <fieldset>
                                     <div class="form-card">
