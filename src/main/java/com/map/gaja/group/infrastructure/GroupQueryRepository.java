@@ -1,6 +1,8 @@
 package com.map.gaja.group.infrastructure;
 
+import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -50,6 +52,19 @@ public class GroupQueryRepository {
      */
     public List<Long> findActiveGroupId(String userEmail) {
         return query.select(group.id)
+                .from(group)
+                .join(group.user, user).on(user.email.eq(userEmail))
+                .where(group.isDeleted.eq(Boolean.FALSE))
+                .fetch();
+    }
+
+    /**
+     * 해당 Email의 User가 가지고 있는 "삭제되지 않은" 그룹 정보 반환
+     * @param userEmail 로그인한 Email
+     * @return 가지고 있는 그룹의 ID List
+     */
+    public List<GroupInfoDto> findActiveGroupInfo(String userEmail) {
+        return query.select(Projections.constructor(GroupInfoDto.class, group.id, group.name))
                 .from(group)
                 .join(group.user, user).on(user.email.eq(userEmail))
                 .where(group.isDeleted.eq(Boolean.FALSE))
