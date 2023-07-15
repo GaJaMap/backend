@@ -61,7 +61,7 @@ public class ClientQueryService {
     }
 
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
-        List<Long> groupIdList = groupQueryRepository.findActiveGroup(loginEmail);
+        List<Long> groupIdList = groupQueryRepository.findActiveGroupId(loginEmail);
         if (groupIdList.size() == 0) {
             throw new GroupNotFoundException();
         }

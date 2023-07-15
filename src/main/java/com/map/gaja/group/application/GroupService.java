@@ -1,7 +1,9 @@
 package com.map.gaja.group.application;
 
+import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
@@ -16,8 +18,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.List;
 
 import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
 
@@ -27,6 +28,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
+    private final GroupQueryRepository groupQueryRepository;
 
     @Transactional
     public void create(String email, GroupCreateRequest request) {
@@ -50,6 +52,16 @@ public class GroupService {
         Slice<GroupInfo> groupInfos = groupRepository.findGroupByUserId(user.getId(), pageable);
 
         return new GroupResponse(groupInfos.hasNext(), groupInfos.getContent());
+    }
+
+    /**
+     * 삭제되지 않은 그룹 정보 반환 -> 엑셀 등록 시에 그룹 정보 출력을 위해 필요.
+     * @param email 로그인 이메일
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<GroupInfoDto> findActiveGroupInfo(String email) {
+        return groupQueryRepository.findActiveGroupInfo(email);
     }
 
     @Transactional

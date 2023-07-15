@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="row justify-content-md-center" th:fragment="fragment-group-radio">
+<div class="row justify-content-md-center" th:fragment="fragment-group-radio(groupList)">
   <h2 class="fs-title">그룹 선택</h2>
 
   <script>
@@ -22,19 +22,10 @@
 
   <div class="list-group mt-3">
     <div class="list-group-item list-group-item-action disabled bg-light" tabindex="-1">
-      그룹을 선택하세요
+      그룹을 클릭해서 선택해주세요.
     </div>
-    <div class="list-group-item list-group-item-action" onclick="selectItem(this)" value="1">
-      The current button
-    </div>
-    <div class="list-group-item list-group-item-action" onclick="selectItem(this)" value="2">
-      A second item
-    </div>
-    <div class="list-group-item list-group-item-action" onclick="selectItem(this)" value="3">
-      A third button item
-    </div>
-    <div class="list-group-item list-group-item-action" onclick="selectItem(this)" value="4">
-      A fourth button item
+    <div style="cursor:pointer" class="list-group-item list-group-item-action" onclick="selectItem(this)" th:each="group: ${groupList}"  th:value="${group.groupId}">
+      <span th:text="${group.groupName}">그룹명</span>
     </div>
   </div>
   <input type="hidden" name="groupId" id="groupId">
