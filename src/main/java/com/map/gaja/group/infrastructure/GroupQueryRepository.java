@@ -48,7 +48,7 @@ public class GroupQueryRepository {
      * @param userEmail 로그인한 Email
      * @return 가지고 있는 그룹의 ID List
      */
-    public List<Long> findActiveGroup(String userEmail) {
+    public List<Long> findActiveGroupId(String userEmail) {
         return query.select(group.id)
                 .from(group)
                 .join(group.user, user).on(user.email.eq(userEmail))
