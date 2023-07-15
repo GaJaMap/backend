@@ -4,9 +4,11 @@ import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import com.map.gaja.global.exception.ExceptionDto;
+import com.map.gaja.global.exception.ValidationErrorInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,7 +27,7 @@ public interface GroupClientQueryApiSpecification {
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "422", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
     public ResponseEntity<ClientResponse> getClient(
@@ -42,7 +44,7 @@ public interface GroupClientQueryApiSpecification {
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "422", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
@@ -60,7 +62,8 @@ public interface GroupClientQueryApiSpecification {
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientListResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ValidationErrorInfo.class)))),
+                    @ApiResponse(responseCode = "422", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(

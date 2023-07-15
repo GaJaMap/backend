@@ -89,20 +89,8 @@ public class Client extends BaseTimeEntity {
     }
 
     private void updateLocation(ClientLocation location, ClientAddress address) {
-        validateLocation(location);
         this.location = location;
         this.address = address;
-    }
-
-    private void validateLocation(ClientLocation location) {
-        if (isClientLocationNull(location)) {
-            return;
-        }
-        // 위도, 경도 중 하나라도 null이 아니라면 Korea 범위에 있어야 함.
-
-        if (!isLocationInKorea(location.getLatitude(), location.getLongitude())) {
-            throw new LocationOutsideKoreaException();
-        }
     }
 
     private boolean isClientLocationNull(ClientLocation location) {
