@@ -40,6 +40,9 @@ public class WebClientController {
             return "redirect:/login";
         }
 
+        List<GroupInfoDto> activeGroupInfo = groupService.findActiveGroupInfo(loginEmail);
+        model.addAttribute("groupList", activeGroupInfo);
+
         return "index";
     }
 
