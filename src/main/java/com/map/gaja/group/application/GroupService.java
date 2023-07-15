@@ -31,14 +31,16 @@ public class GroupService {
     private final GroupQueryRepository groupQueryRepository;
 
     @Transactional
-    public void create(String email, GroupCreateRequest request) {
+    public Long create(String email, GroupCreateRequest request) {
         User user = findExistingUser(userRepository, email);
 
         user.checkCreateGroupPermission();
 
-        groupRepository.save(createGroup(request.getName(), user));
+        Group group = groupRepository.save(createGroup(request.getName(), user));
 
         user.increaseGroupCount();
+
+        return group.getId();
     }
 
     private Group createGroup(String name, User user) {

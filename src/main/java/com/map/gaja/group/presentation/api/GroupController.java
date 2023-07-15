@@ -24,15 +24,13 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<Long> create(
             @AuthenticationPrincipal String email,
             @Valid @RequestBody GroupCreateRequest request
     ) {
-        groupService.create(email, request);
+        Long groupId = groupService.create(email, request);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
+        return new ResponseEntity<>(groupId, HttpStatus.CREATED);
     }
 
     @Override
