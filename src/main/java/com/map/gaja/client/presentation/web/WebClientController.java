@@ -57,7 +57,6 @@ public class WebClientController {
         Long groupId = excelRequest.getGroupId();
         groupAccessVerifyService.verifyGroupAccess(excelRequest.getGroupId(), loginEmail);
 
-        System.out.println(excelRequest);
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelRequest.getExcelFile());
         clientService.saveClientExcelData(groupId, clientExcelData);
 
