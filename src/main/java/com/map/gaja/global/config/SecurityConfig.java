@@ -12,7 +12,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(request -> request
-                        .antMatchers("/api/**").authenticated()
+                        .antMatchers("/api/**").permitAll()
                         .antMatchers("/").permitAll()) // 엑셀 페이지 설정
                 .csrf().disable()
                 .formLogin().disable();
