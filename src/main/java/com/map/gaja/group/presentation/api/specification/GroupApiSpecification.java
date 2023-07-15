@@ -17,11 +17,11 @@ public interface GroupApiSpecification {
     @Operation(summary = "그룹 생성",
             parameters = {@Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER)},
             responses = {
-                    @ApiResponse(responseCode = "204", description = "성공"),
+                    @ApiResponse(responseCode = "201", description = "응답 값: 그룹 id", content = @Content(schema = @Schema(implementation = Long.class))),
                     @ApiResponse(responseCode = "403", description = "권한에 따른 그룹 생성 초과", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
-    ResponseEntity<Void> create(
+    ResponseEntity<Long> create(
             @Schema(hidden = true) String email,
             GroupCreateRequest request
     );
