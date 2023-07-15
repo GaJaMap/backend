@@ -63,4 +63,8 @@ public class User extends BaseTimeEntity {
         active = false;
     }
 
+    public void decreaseGroupCount() {
+        groupCount--;
+    }
+
 }

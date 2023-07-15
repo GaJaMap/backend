@@ -68,11 +68,13 @@ public class GroupService {
     public void delete(String email, Long groupId) {
         User user = findExistingUser(userRepository, email);
 
-        int deletedBundleCount = groupRepository.deleteByIdAndUserId(groupId, user.getId());
+        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, user.getId());
 
-        if (deletedBundleCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
+        if (deletedGroupCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
             throw new GroupNotFoundException();
         }
+
+        user.decreaseGroupCount();
     }
 
     @Transactional
