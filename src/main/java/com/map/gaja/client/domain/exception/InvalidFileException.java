@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidFileException extends BusinessException {
     public InvalidFileException() {
-        super(HttpStatus.BAD_REQUEST, "잘못된 파일입니다.");
+        super(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "잘못된 파일입니다.");
     }
 
     public InvalidFileException(Throwable cause) {
-        super(cause, HttpStatus.BAD_REQUEST, "잘못된 파일입니다.");
+        super(cause, HttpStatus.UNSUPPORTED_MEDIA_TYPE, "잘못된 파일입니다.");
     }
 }
