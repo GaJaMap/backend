@@ -26,7 +26,6 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ClientQueryService {
-    private final ClientRepository clientRepository;
     private final ClientQueryRepository clientQueryRepository;
     private final GroupQueryRepository groupQueryRepository;
     private final S3UrlGenerator s3UrlGenerator;
@@ -39,7 +38,7 @@ public class ClientQueryService {
 
     public ClientListResponse findAllClientsInGroup(Long groupId, @Nullable String wordCond) {
         List<Client> clients = clientQueryRepository.findByGroup_Id(groupId, wordCond);
-        return entityToDto(clients);
+        return entityToDto(clients, s3UrlGenerator);
     }
 
     public ClientListResponse findClientByConditions(Long groupId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
@@ -47,7 +46,7 @@ public class ClientQueryService {
         groupIdList.add(groupId);
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList);
+        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 
     public StoredFileDto findClientImage(Long clientId) {
@@ -60,7 +59,7 @@ public class ClientQueryService {
             @Nullable String nameCond
     ) {
         List<ClientOverviewResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
-        return new ClientListResponse(clientList);
+        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
@@ -70,6 +69,6 @@ public class ClientQueryService {
         }
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList);
+        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 }

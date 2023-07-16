@@ -25,7 +25,7 @@ import java.util.List;
  * Request -> Entity 또는 Entity -> Response 컨버터
  */
 public class ClientConvertor {
-    protected static ClientListResponse entityToDto(List<Client> clients) {
+    protected static ClientListResponse entityToDto(List<Client> clients, S3UrlGenerator s3UrlGenerator) {
         List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
@@ -33,7 +33,7 @@ public class ClientConvertor {
             responseClients.add(clientResponse);
         });
 
-        return new ClientListResponse(responseClients);
+        return new ClientListResponse(responseClients, s3UrlGenerator.getS3Url());
     }
 
     protected static ClientDetailResponse entityToDetailDto(Client client, S3UrlGenerator s3UrlGenerator) {
