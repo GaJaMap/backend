@@ -1,7 +1,9 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
@@ -34,6 +36,20 @@ public class ClientConvertor {
         return new ClientListResponse(responseClients);
     }
 
+    protected static ClientDetailResponse entityToDetailDto(Client client, S3UrlGenerator s3UrlGenerator) {
+        StoredFileDto image = getStoredFileUrlDto(client.getClientImage(), s3UrlGenerator);
+        return new ClientDetailResponse(
+                client.getId(),
+                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
+                client.getName(),
+                client.getPhoneNumber(),
+                voToDto(client.getAddress()),
+                voToDto(client.getLocation()),
+                image,
+                null
+        );
+    }
+
     protected static ClientOverviewResponse entityToDto(Client client) {
         return new ClientOverviewResponse(
                 client.getId(),
@@ -42,7 +58,7 @@ public class ClientConvertor {
                 client.getPhoneNumber(),
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
-                (client.getClientImage() == null) ? new StoredFileDto() : new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
+                getStoredFileDto(client.getClientImage()),
                 null
         );
     }
@@ -117,5 +133,19 @@ public class ClientConvertor {
                 new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
     }
 
+
+    private static StoredFileDto getStoredFileUrlDto(ClientImage clientImage, S3UrlGenerator s3UrlGenerator) {
+        if (clientImage == null) {
+            return new StoredFileDto();
+        }
+        else {
+            String imageUrl = s3UrlGenerator.getS3Url() + clientImage.getSavedPath();
+            return new StoredFileDto(imageUrl, clientImage.getOriginalName());
+        }
+    }
+
+    private static StoredFileDto getStoredFileDto(ClientImage clientImage) {
+        return (clientImage == null) ? new StoredFileDto() : new StoredFileDto(clientImage.getSavedPath(), clientImage.getOriginalName());
+    }
 
 }

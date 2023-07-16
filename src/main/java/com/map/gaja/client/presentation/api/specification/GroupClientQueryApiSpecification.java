@@ -1,6 +1,7 @@
 package com.map.gaja.client.presentation.api.specification;
 
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.exception.ExceptionDto;
@@ -30,7 +31,7 @@ public interface GroupClientQueryApiSpecification {
                     @ApiResponse(responseCode = "422", description = "사용자에게 요청 번들이 없거나, 번들에 요청 고객이 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             })
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<ClientOverviewResponse> getClient(
+    public ResponseEntity<ClientDetailResponse> getClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId

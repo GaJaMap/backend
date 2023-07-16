@@ -1,5 +1,7 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
@@ -27,11 +29,12 @@ public class ClientQueryService {
     private final ClientRepository clientRepository;
     private final ClientQueryRepository clientQueryRepository;
     private final GroupQueryRepository groupQueryRepository;
+    private final S3UrlGenerator s3UrlGenerator;
 
-    public ClientOverviewResponse findClient(Long clientId) {
+    public ClientDetailResponse findClient(Long clientId) {
         Client client = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException());
-        return entityToDto(client);
+        return entityToDetailDto(client, s3UrlGenerator);
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId, @Nullable String wordCond) {
@@ -48,7 +51,7 @@ public class ClientQueryService {
     }
 
     public StoredFileDto findClientImage(Long clientId) {
-        ClientOverviewResponse client = findClient(clientId);
+        ClientDetailResponse client = findClient(clientId);
         return client.getImage();
     }
 

@@ -5,10 +5,16 @@ import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Client 상세보기 Data
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientDetailResponse {
     @Schema(description = "고객 등록 ID 번호", example = "111")
     private Long clientId;
