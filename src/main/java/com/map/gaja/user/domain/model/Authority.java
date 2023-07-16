@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Authority {
-    FREE(1, 200), SILVER(500, 1000);
+    FREE(1, 200), VIP(500, 1000);
 
     private Integer groupLimitCount;
     private Integer clientLimitCount;
