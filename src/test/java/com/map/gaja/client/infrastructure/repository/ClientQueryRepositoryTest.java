@@ -5,7 +5,7 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
@@ -111,7 +111,7 @@ class ClientQueryRepositoryTest {
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId);
 
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
+        List<ClientOverviewResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
 
         assertThat(result.size()).isEqualTo(group2ClientList.size());
         double beforeDistance = -1;
@@ -140,7 +140,7 @@ class ClientQueryRepositoryTest {
         groupIdList.add(groupId1);
         groupIdList.add(groupId2);
 
-        List<ClientResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
+        List<ClientOverviewResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
 
         assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
         result.forEach((client) -> {
@@ -183,7 +183,7 @@ class ClientQueryRepositoryTest {
     void ss() {
         String nameCond = "사용자";
 
-        List<ClientResponse> result = clientQueryRepository.findActiveClientByEmail(user.getEmail(), nameCond);
+        List<ClientOverviewResponse> result = clientQueryRepository.findActiveClientByEmail(user.getEmail(), nameCond);
 
         assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
         result.forEach((client) -> {

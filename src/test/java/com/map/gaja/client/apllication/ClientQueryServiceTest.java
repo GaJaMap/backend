@@ -6,7 +6,7 @@ import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ class ClientQueryServiceTest {
         when(findClient.getClientImage()).thenReturn(new ClientImage("testImage", "testImage"));
 
         //when
-        ClientResponse response = clientQueryService.findClient(searchId);
+        ClientOverviewResponse response = clientQueryService.findClient(searchId);
 
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);

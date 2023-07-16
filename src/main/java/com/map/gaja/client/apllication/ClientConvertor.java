@@ -13,7 +13,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 
 import java.util.ArrayList;
@@ -24,18 +24,18 @@ import java.util.List;
  */
 public class ClientConvertor {
     protected static ClientListResponse entityToDto(List<Client> clients) {
-        List<ClientResponse> responseClients = new ArrayList<>();
+        List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
-            ClientResponse clientResponse = entityToDto(client);
+            ClientOverviewResponse clientResponse = entityToDto(client);
             responseClients.add(clientResponse);
         });
 
         return new ClientListResponse(responseClients);
     }
 
-    protected static ClientResponse entityToDto(Client client) {
-        return new ClientResponse(
+    protected static ClientOverviewResponse entityToDto(Client client) {
+        return new ClientOverviewResponse(
                 client.getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
                 client.getName(),

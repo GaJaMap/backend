@@ -1,7 +1,5 @@
 package com.map.gaja.client.presentation.dto.response;
 
-import com.map.gaja.client.domain.model.ClientAddress;
-import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
@@ -15,10 +13,9 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientResponse {
+public class ClientOverviewResponse {
     @Schema(description = "고객 등록 ID 번호", example = "111")
     private Long clientId;
-//    private Long groupId;
     @Schema(description = "고객이 속한 그룹")
     private GroupInfoDto groupInfo;
     @Schema(description = "고객 이름", example = "홍길동")
@@ -34,7 +31,7 @@ public class ClientResponse {
     @Schema(description = "현재 위치에서 떨어진 거리(M - 미터)", example = "2398")
     private Double distance; // km 기준
 
-    public ClientResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, AddressDto address, LocationDto location, StoredFileDto image) {
+    public ClientOverviewResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, AddressDto address, LocationDto location, StoredFileDto image) {
         this.clientId = clientId;
         this.groupInfo = groupInfo;
         this.clientName = clientName;

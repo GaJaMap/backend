@@ -7,7 +7,7 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
     private final GroupAccessVerifyService groupAccessVerifyService;
 
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<ClientResponse> getClient(
+    public ResponseEntity<ClientOverviewResponse> getClient(
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId
@@ -37,7 +37,7 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
         // 거래처 조회
         log.info("ClientController.getClient clientId={}", clientId);
         verifyClientAccess(loginEmail,groupId,clientId);
-        ClientResponse response = clientQueryService.findClient(clientId);
+        ClientOverviewResponse response = clientQueryService.findClient(clientId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

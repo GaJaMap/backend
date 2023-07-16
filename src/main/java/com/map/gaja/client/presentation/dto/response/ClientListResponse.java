@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ClientListResponse {
     @Schema(description = "고객 리스트")
-    List<ClientResponse> clients;
+    List<ClientOverviewResponse> clients;
 }
