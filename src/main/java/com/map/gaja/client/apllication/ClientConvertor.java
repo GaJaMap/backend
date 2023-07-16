@@ -29,7 +29,7 @@ public class ClientConvertor {
         List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
-            ClientOverviewResponse clientResponse = entityToDto(client);
+            ClientOverviewResponse clientResponse = entityToOverviewDto(client);
             responseClients.add(clientResponse);
         });
 
@@ -50,7 +50,7 @@ public class ClientConvertor {
         );
     }
 
-    protected static ClientOverviewResponse entityToDto(Client client) {
+    protected static ClientOverviewResponse entityToOverviewDto(Client client) {
         return new ClientOverviewResponse(
                 client.getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
