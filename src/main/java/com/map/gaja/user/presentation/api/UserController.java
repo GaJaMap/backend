@@ -3,6 +3,7 @@ package com.map.gaja.user.presentation.api;
 import com.map.gaja.user.application.UserService;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.api.specification.UserApiSpecification;
+import com.map.gaja.user.presentation.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class UserController implements UserApiSpecification {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<Long> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(userService.login(request));
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        return new ResponseEntity<>(userService.login(request), HttpStatus.OK);
     }
 
     @Override

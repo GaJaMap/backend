@@ -8,6 +8,7 @@ import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.Oauth2Client;
 import com.map.gaja.user.infrastructure.UserRepository;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
+import com.map.gaja.user.presentation.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class UserService {
     private final SessionHandler sessionHandler;
 
     @Transactional
-    public Long login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         String email = oauth2Client.getEmail(request.getAccessToken());
         if (email == null) { //카카오 로그인 실패
             throw new UserNotFoundException();
@@ -40,8 +41,7 @@ public class UserService {
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
-        //그룹 아이디로 응답해주면 클라이언트 쪽에서 그룹을 가지고 고객조회 API를 호출한다. null이면 호출X
-        return user.getReferenceGroupId();
+        return new LoginResponse(user.getReferenceGroupId(), user.getAuthority().name());
     }
 
     public void withdrawal(String email) {
