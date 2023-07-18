@@ -52,7 +52,7 @@ public class WebClientController {
     @PostMapping("/api/clients/file")
     @ResponseBody
     public ResponseEntity<Void> clientUpload(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
         FileValidator.verifyFile(excelRequest.getExcelFile());

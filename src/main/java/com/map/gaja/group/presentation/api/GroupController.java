@@ -25,7 +25,7 @@ public class GroupController implements GroupApiSpecification {
     @Override
     @PostMapping
     public ResponseEntity<Long> create(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal(expression = "name") String email,
             @Valid @RequestBody GroupCreateRequest request
     ) {
         Long groupId = groupService.create(email, request);
@@ -35,7 +35,7 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @GetMapping
-    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal String email, @PageableDefault Pageable pageable) {
+    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal(expression = "name") String email, @PageableDefault Pageable pageable) {
         GroupResponse response = groupService.findGroups(email, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -43,7 +43,7 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal String email, @PathVariable Long groupId) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal(expression = "name") String email, @PathVariable Long groupId) {
         groupService.delete(email, groupId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -51,7 +51,7 @@ public class GroupController implements GroupApiSpecification {
     @Override
     @PutMapping("/{groupId}")
     public ResponseEntity<Void> update(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal(expression = "name") String email,
             @PathVariable Long groupId,
             @Valid @RequestBody GroupUpdateRequest request
     ) {

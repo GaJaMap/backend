@@ -23,7 +23,7 @@ public class GetClientController implements ClientQueryApiSpecification {
 
     @GetMapping("/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond
     ) {
@@ -35,7 +35,7 @@ public class GetClientController implements ClientQueryApiSpecification {
 
     @GetMapping
     public ResponseEntity<ClientListResponse> getAllClients(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @RequestParam(required = false) String wordCond
     ) {
         // 사용자가 가지고 있는 전체 고객 조회
