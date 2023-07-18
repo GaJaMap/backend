@@ -8,11 +8,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Slf4j
 @Aspect
 @Component
 public class TimeCheckLogAspect {
     private static final double NANOSECONDS_TO_MILLISECONDS = 1_000_000.0;
+    private static final int LOG_ID_LENGTH = 8;
 
     @Around("@within(com.map.gaja.global.log.TimeCheckLog) || @annotation(com.map.gaja.global.log.TimeCheckLog)")
     public Object checkTime(ProceedingJoinPoint pjp) throws Exception {
@@ -20,11 +23,11 @@ public class TimeCheckLogAspect {
         long start, end;
 
         start = System.nanoTime();
-        Signature sig = pjp.getSignature();
         Object[] args = pjp.getArgs();
         String classDotMethod = getClassDotMethod(pjp);
+        String logId = createLogId();
 
-        log.info("{} 메소드 시작. 파라미터: {}", classDotMethod, args);
+        log.info("[{}] {} 메소드 시작. 파라미터: {}", logId, classDotMethod, args);
         try {
             result = pjp.proceed(); // 핵심 기능 실행
             return result;
@@ -38,8 +41,17 @@ public class TimeCheckLogAspect {
             end = System.nanoTime();
             long runningTimeNano = end - start;
             double runningTimeMillis = runningTimeNano / NANOSECONDS_TO_MILLISECONDS;
-            log.info("{} 메소드 동작 시간: {}ms", classDotMethod, runningTimeMillis);
+            log.info("[{}] {} 메소드 동작 시간: {}ms", logId, classDotMethod, runningTimeMillis);
         }
+    }
+
+    /**
+     * 로그 판단을 위해 로그 ID 생성
+     * ex) 880aea9c
+     * @return
+     */
+    private String createLogId() {
+        return UUID.randomUUID().toString().substring(0, LOG_ID_LENGTH);
     }
 
     /**
