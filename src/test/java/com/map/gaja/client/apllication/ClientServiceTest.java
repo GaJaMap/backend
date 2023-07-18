@@ -161,6 +161,22 @@ class ClientServiceTest {
         assertThat(group.getClientCount()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("Client-Image 삭제 테스트")
+    void deleteClientWithImageTest() {
+        Group group = createGroup(groupId, 0);
+        ClientImage image = createClientImageImage();
+        Client client = createClientWithImage(existingName, group, image);
+
+        when(clientQueryRepository.findClientWithGroup(anyLong()))
+                .thenReturn(Optional.ofNullable(client));
+
+        clientService.deleteClient(clientId);
+
+        assertThat(group.getClientCount()).isEqualTo(0);
+        assertThat(image.getIsDeleted()).isTrue();
+    }
+
     private static Group createGroup(Long groupId, Integer clientCount) {
         return Group.builder()
                 .id(groupId).clientCount(clientCount)
