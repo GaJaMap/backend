@@ -82,7 +82,7 @@ public class ClientController implements ClientCommandApiSpecification {
     private void verifyChangeClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
         clientAccessVerifyService.verifyClientAccess(accessCheck);
         if (accessCheck.getGroupId() != clientRequest.getGroupId()) {
-            groupAccessVerifyService.verifyGroupAccess(accessCheck.getGroupId(), accessCheck.getUserEmail());
+            groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), accessCheck.getUserEmail());
         }
     }
 
