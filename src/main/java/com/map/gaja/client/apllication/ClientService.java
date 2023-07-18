@@ -64,7 +64,8 @@ public class ClientService {
         Client deletedClient = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException());
         deletedClient.removeGroup();
-
+        deletedClient.removeClientImage();
+        
         clientRepository.delete(deletedClient);
     }
 
