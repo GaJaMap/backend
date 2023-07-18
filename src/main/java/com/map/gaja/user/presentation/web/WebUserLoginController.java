@@ -1,6 +1,7 @@
 package com.map.gaja.user.presentation.web;
 
 import com.map.gaja.global.authentication.AuthenticationHandler;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+@TimeCheckLog
 @Controller
 @RequiredArgsConstructor
 public class WebUserLoginController {
