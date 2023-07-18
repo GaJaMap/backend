@@ -159,7 +159,7 @@ public class ClientController implements ClientCommandApiSpecification {
         }
 
         // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
-        if (!FileValidator.isAllowedImageType(clientImage)) {
+        if (isNotEmptyFile(clientImage) && !FileValidator.isAllowedImageType(clientImage)) {
             throw new FileNotAllowedException();
         }
     }
