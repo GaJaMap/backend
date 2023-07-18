@@ -1,5 +1,6 @@
 package com.map.gaja.client.domain.model;
 
+import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,13 +25,20 @@ public class ClientImage extends BaseTimeEntity {
     @Column(nullable = false)
     private String savedPath;
 
+    @Column(nullable = false)
+    private Boolean isDeleted;
+
     public ClientImage(String originalName, String savedPath) {
+        if (originalName == null || savedPath == null) {
+            throw new InvalidFileException();
+        }
+
         this.originalName = originalName;
         this.savedPath = savedPath;
+        this.isDeleted = false;
     }
 
-    public void updateImage(String originalName, String savedPath) {
-        this.originalName = originalName;
-        this.savedPath = savedPath;
+    public void delete() {
+        this.isDeleted = true;
     }
 }

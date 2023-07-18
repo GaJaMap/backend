@@ -1,7 +1,6 @@
 package com.map.gaja.client.domain.model;
 
 import com.map.gaja.group.domain.model.Group;
-import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -32,7 +31,7 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
@@ -58,7 +57,7 @@ public class Client extends BaseTimeEntity {
         this.clientImage = clientImage;
     }
 
-    public void updateClient(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
+    public void updateWithoutImage(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
@@ -93,11 +92,16 @@ public class Client extends BaseTimeEntity {
         this.address = address;
     }
 
-    private boolean isClientLocationNull(ClientLocation location) {
-        return location.getLatitude() == null && location.getLongitude() == null;
+    public void updateImage(ClientImage image) {
+        this.clientImage = image;
     }
-    private boolean isLocationInKorea(double latitude, double longitude) {
-        return latitude >= 33 && latitude <= 38
-                && longitude >= 124 && longitude <= 132;
+
+    public void removeClientImage() {
+        if (clientImage != null) {
+            return;
+        }
+
+        clientImage.delete();
+        this.clientImage = null;
     }
 }
