@@ -35,6 +35,13 @@ class ClientServiceTest {
     @Mock
     private ClientQueryRepository clientQueryRepository;
 
+    Long clientId = 1L;
+    Long groupId = 1L;
+    Long changedGroupId = 2L;
+    Long existingClientId = 1L;
+    String existingName = "test";
+    String changedName = "update Test";
+
     @BeforeEach
     void beforeEach() {
         clientService = new ClientService(
@@ -45,16 +52,12 @@ class ClientServiceTest {
     }
 
     @Test
-    @DisplayName("Bundle을 포함한 Client 저장 테스트")
+    @DisplayName("Group을 포함한 Client 저장 테스트")
     public void saveClientTest() throws Exception {
         // given
-        Long clientId = 1L;
-
-        Long groupId = 1L;
         Integer clientCount = 0;
         Group group = createGroup(groupId, clientCount);
-        NewClientRequest request = new NewClientRequest();
-        request.setGroupId(groupId);
+        NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
         when(groupRepository.findById(any())).thenReturn(Optional.ofNullable(group));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
@@ -64,7 +67,7 @@ class ClientServiceTest {
         });
 
         // when
-        Long result = clientService.saveClient(request);
+        Long result = clientService.saveClient(changedRequest);
 
         // then
         assertThat(result).isEqualTo(clientId);
@@ -72,24 +75,13 @@ class ClientServiceTest {
     }
 
     @Test
-    @DisplayName("기존 Client 업데이트 테스트")
+    @DisplayName("이미지를 제외한 Client 업데이트 테스트")
     public void updateClientTest() throws Exception {
         // given
-        Long groupId = 1L;
-        Long changedGroupId = 2L;
-        Long existingClientId = 1L;
-        String existingName = "test";
-        String changedName = "update Test";
-
         Group existingGroup = createGroup(groupId, 0);
-
         Group changedGroup = createGroup(changedGroupId, 0);
-
         Client existingClient = createClient(existingName, existingGroup);
-
-        NewClientRequest changedRequest = new NewClientRequest();
-        changedRequest.setClientName(changedName);
-        changedRequest.setGroupId(changedGroupId);
+        NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
@@ -100,7 +92,6 @@ class ClientServiceTest {
         clientService.updateClientWithoutImage(existingClientId, changedRequest);
 
         // then
-
         assertThat(existingClient.getName()).isEqualTo(changedName);
         assertThat(existingClient.getGroup().getId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
@@ -108,19 +99,14 @@ class ClientServiceTest {
     }
 
     @Test
-    @DisplayName("기존 Client 이미지 업데이트 테스트")
+    @DisplayName("Client 이미지 업데이트 테스트")
     public void updateClientImageTest() throws Exception {
         // given
-        Long groupId = 1L;
-        Long existingClientId = 1L;
-        String existingName = "test";
-
         Group existingGroup = createGroup(groupId, 0);
-        Client existingClient = createClient(existingName, existingGroup);
+        ClientImage existingClientImage = createClientImageImage();
+        Client existingClient = createClientWithImage(existingName, existingGroup, existingClientImage);
         StoredFileDto updatedImageFile = new StoredFileDto("ccc", "ddd");
-        NewClientRequest changedRequest = new NewClientRequest();
-        changedRequest.setClientName(existingName);
-        changedRequest.setGroupId(existingGroup.getId());
+        NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
@@ -132,15 +118,40 @@ class ClientServiceTest {
         assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
         assertThat(existingClient.getClientImage().getOriginalName()).isSameAs(updatedImageFile.getOriginalFileName());
         assertThat(existingClient.getClientImage().getSavedPath()).isSameAs(updatedImageFile.getFilePath());
+        assertThat(existingClientImage.getIsDeleted()).isTrue();
+        assertThat(existingClient.getClientImage().getIsDeleted()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Client Basic Image로 업데이트")
+    public void updateClientWithBasicImageTest() throws Exception {
+        // given
+        Group existingGroup = createGroup(groupId, 0);
+        ClientImage existingClientImage = createClientImageImage();
+        Client existingClient = createClientWithImage(existingName, existingGroup, existingClientImage);
+        NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
+
+        when(clientQueryRepository.findClientWithGroup(anyLong()))
+                .thenReturn(Optional.ofNullable(existingClient));
+
+        // when
+        clientService.updateClientWithBasicImage(existingClientId, changedRequest);
+
+        // then
+        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
+        assertThat(existingClientImage.getIsDeleted()).isTrue();
+        assertThat(existingClient.getClientImage()).isNull();
+    }
+
+    private static ClientImage createClientImageImage() {
+        return new ClientImage("aaa", "bbb");
     }
 
     @Test
     @DisplayName("Client 삭제 테스트")
     void deleteClientTest() {
-        Long groupId = 1L;
-        Long clientId = 1L;
         Group group = createGroup(groupId, 0);
-        Client client = createClient("testClient", group);
+        Client client = createClient(existingName, group);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(client));
@@ -160,6 +171,20 @@ class ClientServiceTest {
         return new Client(
                 existingName, "test",
                 new ClientAddress(), new ClientLocation(),
-                existingGroup, new ClientImage("aaa", "bbb"));
+                existingGroup, createClientImageImage());
+    }
+
+    private static Client createClientWithImage(String existingName, Group existingGroup, ClientImage existingImage) {
+        return new Client(
+                existingName, "test",
+                new ClientAddress(), new ClientLocation(),
+                existingGroup, existingImage);
+    }
+
+    private static NewClientRequest createChangeRequest(Long changedGroupId, String changedName) {
+        NewClientRequest changedRequest = new NewClientRequest();
+        changedRequest.setClientName(changedName);
+        changedRequest.setGroupId(changedGroupId);
+        return changedRequest;
     }
 }
