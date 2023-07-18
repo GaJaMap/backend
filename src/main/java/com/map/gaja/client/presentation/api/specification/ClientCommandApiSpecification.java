@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,8 +53,9 @@ public interface ClientCommandApiSpecification {
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
-            @Valid @ModelAttribute NewClientRequest clientRequest
-    );
+            @Valid @ModelAttribute NewClientRequest clientRequest,
+            @Schema(hidden = true) BindingResult bindingResult
+    ) throws BindException;
 
 
     @Operation(summary = "고객 등록", description = "form 형식으로 clientRequest 데이터를 전달해주세요",
@@ -68,8 +71,9 @@ public interface ClientCommandApiSpecification {
             })
     ResponseEntity<Long> addClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
-            @Valid @ModelAttribute NewClientRequest clientRequest
-    );
+            @Valid @ModelAttribute NewClientRequest clientRequest,
+            @Schema(hidden = true) BindingResult bindingResult
+    ) throws BindException;
 
     @Operation(summary = "카카오, 전화번호부 데이터 등록",
             parameters = {

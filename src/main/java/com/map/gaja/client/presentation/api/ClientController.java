@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
+import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -16,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,12 +63,11 @@ public class ClientController implements ClientCommandApiSpecification {
             @AuthenticationPrincipal String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
-            @Valid @ModelAttribute NewClientRequest clientRequest
-    ) {
+            @Valid @ModelAttribute NewClientRequest clientRequest,
+            BindingResult bindingResult
+    ) throws BindException {
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
-        if (isNotEmptyFile(clientRequest.getClientImage())) {
-            FileValidator.verifyImageFile(clientRequest.getClientImage());
-        }
+        validateNewClientRequestFields(clientRequest, bindingResult);
 
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         verifyChangeClientRequest(accessCheck, clientRequest);
@@ -97,6 +100,10 @@ public class ClientController implements ClientCommandApiSpecification {
         return newImage != null && !newImage.isEmpty();
     }
 
+    private boolean isEmptyFile(MultipartFile newImage) {
+        return newImage == null || newImage.isEmpty();
+    }
+
     @PostMapping("/clients/bulk")
     public ResponseEntity<List<Long>> addSimpleBulkClient(
             @AuthenticationPrincipal String loginEmail,
@@ -111,22 +118,50 @@ public class ClientController implements ClientCommandApiSpecification {
     @PostMapping("/clients")
     public ResponseEntity<Long> addClient(
             @AuthenticationPrincipal String loginEmail,
-            @Valid @ModelAttribute NewClientRequest clientRequest
-    ) {
+            @Valid @ModelAttribute NewClientRequest clientRequest,
+            BindingResult bindingResult
+    ) throws BindException {
         // 거래처 등록 - 단건 등록
         log.info("ClientController.addClient  clients={}", clientRequest);
+        validateNewClientRequestFields(clientRequest, bindingResult);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
         Long id;
         if (isNotEmptyFile(clientRequest.getClientImage())) {
-            FileValidator.verifyImageFile(clientRequest.getClientImage());
             id = saveClientWithImage(loginEmail, clientRequest);
-        }
-        else {
+        } else {
             id = clientService.saveClient(clientRequest);
         }
 
         return new ResponseEntity<>(id, HttpStatus.CREATED);
+    }
+
+    /**
+     * clientRequest Global 에러 검증
+     */
+    private void validateNewClientRequestFields(NewClientRequest clientRequest, BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
+
+        MultipartFile clientImage = clientRequest.getClientImage();
+
+        // 기본 이미지라면 이미지는 없어야 한다.
+        if (clientRequest.getIsBasicImage() && isNotEmptyFile(clientImage)) {
+            bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image를 사용 중이기 때문에 이미지 파일을 받을 수 없습니다."));
+            throw new BindException(bindingResult);
+        }
+
+        // 기본 이미지가 아니라면 이미지가 필수로 있어야 한다.
+        if (!clientRequest.getIsBasicImage() && isEmptyFile(clientImage)) {
+            bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image가 아니라면 이미지 파일이 있어야 합니다."));
+            throw new BindException(bindingResult);
+        }
+
+        // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
+        if (!FileValidator.isAllowedImageType(clientImage)) {
+            throw new FileNotAllowedException();
+        }
     }
 
     private Long saveClientWithImage(String loginEmail, NewClientRequest client) {
