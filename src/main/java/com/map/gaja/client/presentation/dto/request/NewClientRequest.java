@@ -41,8 +41,11 @@ public class NewClientRequest {
     @Schema(description = "고객 사진 파일", example = "실제사진.jpg")
     private MultipartFile clientImage;
 
-    @Schema(description = "기본 이미지 인가요?", example = "FALSE")
-    private boolean isBasicImage;
+    @NotNull(message = "기본 이미지 유무는 필수 값입니다.")
+    @Schema(description = "기본 이미지 인가요?<br> " +
+            "해당 필드가 true라면 clientImage 필드를 넘겨주면 안됩니다.<br> " +
+            "해당 필드가 false라면 clientImage 필드를 필수로 함께 넘겨줘야 합니다.", example = "FALSE")
+    private Boolean isBasicImage;
 
     @JsonIgnore
     public void setProvince(String province) {
