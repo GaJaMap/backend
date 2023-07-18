@@ -97,7 +97,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        clientService.changeClient(existingClientId, changedRequest);
+        clientService.updateClientWithoutImage(existingClientId, changedRequest);
 
         // then
 
@@ -126,7 +126,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        clientService.changeClientWithImage(existingClientId, changedRequest, updatedImageFile);
+        clientService.updateClientWithNewImage(existingClientId, changedRequest, updatedImageFile);
 
         // then
         assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());

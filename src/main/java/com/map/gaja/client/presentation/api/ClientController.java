@@ -72,14 +72,29 @@ public class ClientController implements ClientCommandApiSpecification {
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         verifyChangeClientRequest(accessCheck, clientRequest);
 
-        if (isNotEmptyFile(clientRequest.getClientImage())) {
-            updateClientWithImage(loginEmail, clientId, clientRequest);
-        }
-        else {
-            clientService.changeClient(clientId, clientRequest);
+        MultipartFile clientImage = clientRequest.getClientImage();
+        if (clientRequest.getIsBasicImage()) {
+            // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
+            clearExistingImageFile(clientId);
+            clientService.updateClientWithBasicImage(clientId, clientRequest);
+        } else if (isEmptyFile(clientImage)) {
+            // 저장되어 있는 기존 이미지를 사용한다.
+            clientService.updateClientWithoutImage(clientId, clientRequest);
+        } else {
+            // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
+            clearExistingImageFile(clientId);
+            StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
+            clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void clearExistingImageFile(Long clientId) {
+        StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
+        if (existingFile.getFilePath() != null) {
+            fileService.removeFile(existingFile.getFilePath());
+        }
     }
 
     private void verifyChangeClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
@@ -87,13 +102,6 @@ public class ClientController implements ClientCommandApiSpecification {
         if (accessCheck.getGroupId() != clientRequest.getGroupId()) {
             groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), accessCheck.getUserEmail());
         }
-    }
-
-    private void updateClientWithImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
-        StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
-        fileService.removeFile(existingFile.getFilePath());
-        StoredFileDto updatedFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
-        clientService.changeClientWithImage(clientId, clientRequest, updatedFileDto);
     }
 
     private boolean isNotEmptyFile(MultipartFile newImage) {

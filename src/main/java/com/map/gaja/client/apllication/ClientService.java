@@ -67,11 +67,11 @@ public class ClientService {
     }
 
     /**
-     * 고객 정보 변경
+     * 이미지 정보를 제외한 고객 정보 변경
      * @param existingClientId 기존 고객 ID
      * @param updateRequest 고객 업데이트 요청 정보
      */
-    public void changeClient(
+    public void updateClientWithoutImage(
             Long existingClientId,
             NewClientRequest updateRequest
     ) {
@@ -97,7 +97,7 @@ public class ClientService {
      * @param updateRequest 고객 업데이트 요청 정보
      * @param updatedFileDto 고객 이미지 업데이트 정보
      */
-    public void changeClientWithImage(
+    public void updateClientWithNewImage(
             Long existingClientId,
             NewClientRequest updateRequest,
             StoredFileDto updatedFileDto
@@ -119,6 +119,12 @@ public class ClientService {
 
         existingClient.getClientImage()
                 .updateImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
+    }
+
+    /**
+     * 기본 이미지(null)를 사용하는 고객으로 업데이트
+     */
+    public void updateClientWithBasicImage(Long clientId, NewClientRequest clientRequest) {
     }
 
     private static boolean isUpdatedGroup(NewClientRequest updateRequest, Client existingClient) {
