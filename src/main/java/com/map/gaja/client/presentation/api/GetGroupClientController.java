@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.presentation.api.specification.GroupClientQueryApiSpecification;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 /**
  * ReadOnly Client 컨트롤러
  */
+@TimeCheckLog
 @RestController
 @RequiredArgsConstructor
 public class GetGroupClientController implements GroupClientQueryApiSpecification {

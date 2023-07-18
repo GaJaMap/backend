@@ -4,6 +4,7 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
+@TimeCheckLog
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
