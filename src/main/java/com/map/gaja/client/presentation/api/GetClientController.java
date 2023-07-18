@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/clients")
@@ -28,7 +27,6 @@ public class GetClientController implements ClientQueryApiSpecification {
             @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{}", loginEmail, locationSearchCond, wordCond);
         ClientListResponse response = clientQueryService.findClientByConditions(loginEmail, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

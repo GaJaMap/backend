@@ -41,7 +41,6 @@ public class ClientController implements ClientCommandApiSpecification {
             @PathVariable Long clientId
     ) {
         // 특정 그룹 내에 거래처 삭제
-        log.info("ClientController.deleteClient loginEmail={} groupId={} clientId={}", loginEmail, groupId, clientId);
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheck);
 
@@ -61,7 +60,6 @@ public class ClientController implements ClientCommandApiSpecification {
             @PathVariable Long clientId,
             @Valid @ModelAttribute NewClientRequest clientRequest
     ) {
-        log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
         if (isNotEmptyFile(clientRequest.getClientImage())) {
             FileValidator.verifyImageFile(clientRequest.getClientImage());
         }
@@ -114,7 +112,6 @@ public class ClientController implements ClientCommandApiSpecification {
             @Valid @ModelAttribute NewClientRequest clientRequest
     ) {
         // 거래처 등록 - 단건 등록
-        log.info("ClientController.addClient  clients={}", clientRequest);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
         Long id;
