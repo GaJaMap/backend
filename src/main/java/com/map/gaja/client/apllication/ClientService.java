@@ -1,5 +1,7 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.domain.service.ClientDomainService;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
@@ -78,17 +80,7 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
-        ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
-        ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
-
-        existingClient.updateClient(
-                updateRequest.getClientName(),
-                updateRequest.getPhoneNumber(),
-                updatedAddress,
-                updatedLocation,
-                updatedGroup
-        );
+        updateFieldWithoutImage(existingClient, updateRequest);
     }
 
     /**
@@ -105,26 +97,36 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
+        updateFieldWithoutImage(existingClient, updateRequest);
+        ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
+
+        existingClient.removeClientImage();
+        existingClient.updateImage(clientImage);
+    }
+
+    /**
+     * 기본 이미지(null)를 사용하는 고객으로 업데이트
+     */
+    public void updateClientWithBasicImage(Long existingClientId, NewClientRequest updateRequest) {
+        Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
+                .orElseThrow(() -> new ClientNotFoundException());
+
+        updateFieldWithoutImage(existingClient, updateRequest);
+        existingClient.removeClientImage();
+    }
+
+    private void updateFieldWithoutImage(Client existingClient, NewClientRequest updateRequest) {
         Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
         ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
         ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
 
-        existingClient.updateClient(
+        existingClient.updateWithoutImage(
                 updateRequest.getClientName(),
                 updateRequest.getPhoneNumber(),
                 updatedAddress,
                 updatedLocation,
                 updatedGroup
         );
-
-        existingClient.getClientImage()
-                .updateImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
-    }
-
-    /**
-     * 기본 이미지(null)를 사용하는 고객으로 업데이트
-     */
-    public void updateClientWithBasicImage(Long clientId, NewClientRequest clientRequest) {
     }
 
     private static boolean isUpdatedGroup(NewClientRequest updateRequest, Client existingClient) {
