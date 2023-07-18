@@ -49,11 +49,7 @@ public class ClientController implements ClientCommandApiSpecification {
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheck);
 
-        String existingImageFilePath = clientQueryService.findClientImage(clientId).getFilePath();
         clientService.deleteClient(clientId);
-        if (existingImageFilePath != null) {
-            fileService.removeFile(existingImageFilePath);
-        }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -75,26 +71,23 @@ public class ClientController implements ClientCommandApiSpecification {
         MultipartFile clientImage = clientRequest.getClientImage();
         if (clientRequest.getIsBasicImage()) {
             // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
-            clearExistingImageFile(clientId);
             clientService.updateClientWithBasicImage(clientId, clientRequest);
         } else if (isEmptyFile(clientImage)) {
             // 저장되어 있는 기존 이미지를 사용한다.
             clientService.updateClientWithoutImage(clientId, clientRequest);
         } else {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            clearExistingImageFile(clientId);
             StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
-            clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
+            try {
+                clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
+            } catch(Exception e) {
+                log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
+                fileService.removeFile(newFileDto.getFilePath());
+                throw e;
+            }
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private void clearExistingImageFile(Long clientId) {
-        String existingFilePath = clientQueryService.findImageFilePath(clientId);
-        if (existingFilePath != null) {
-            fileService.removeFile(existingFilePath);
-        }
     }
 
     private void verifyChangeClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
