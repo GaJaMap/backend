@@ -41,6 +41,9 @@ public class NewClientRequest {
     @Schema(description = "고객 사진 파일", example = "실제사진.jpg")
     private MultipartFile clientImage;
 
+    @Schema(description = "기본 이미지 인가요?", example = "FALSE")
+    private boolean isBasicImage;
+
     @JsonIgnore
     public void setProvince(String province) {
         address.setProvince(province);
