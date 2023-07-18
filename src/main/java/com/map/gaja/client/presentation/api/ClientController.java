@@ -91,9 +91,9 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     private void clearExistingImageFile(Long clientId) {
-        StoredFileDto existingFile = clientQueryService.findClientImage(clientId);
-        if (existingFile.getFilePath() != null) {
-            fileService.removeFile(existingFile.getFilePath());
+        String existingFilePath = clientQueryService.findImageFilePath(clientId);
+        if (existingFilePath != null) {
+            fileService.removeFile(existingFilePath);
         }
     }
 

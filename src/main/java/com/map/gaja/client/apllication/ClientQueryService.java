@@ -7,7 +7,6 @@ import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
-import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
@@ -52,6 +51,10 @@ public class ClientQueryService {
     public StoredFileDto findClientImage(Long clientId) {
         ClientDetailResponse client = findClient(clientId);
         return client.getImage();
+    }
+
+    public String findImageFilePath(Long clientId) {
+        return clientQueryRepository.findClientImageFilePath(clientId);
     }
 
     public ClientListResponse findAllClient(
