@@ -31,7 +31,7 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
