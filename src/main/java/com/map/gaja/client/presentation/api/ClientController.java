@@ -67,7 +67,7 @@ public class ClientController implements ClientCommandApiSpecification {
             BindingResult bindingResult
     ) throws BindException {
         log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
-        validateNewClientRequestFields(clientRequest, bindingResult);
+        validateUpdateClientRequestFields(clientRequest, bindingResult);
 
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         verifyChangeClientRequest(accessCheck, clientRequest);
@@ -137,7 +137,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     /**
-     * clientRequest Global 에러 검증
+     * 고객 등록시에 clientRequest Global 에러 검증
      */
     private void validateNewClientRequestFields(NewClientRequest clientRequest, BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
@@ -152,9 +152,31 @@ public class ClientController implements ClientCommandApiSpecification {
             throw new BindException(bindingResult);
         }
 
-        // 기본 이미지가 아니라면 이미지가 필수로 있어야 한다.
+        // POST 요청시에는 기본 이미지가 아니라면 이미지가 필수로 있어야 한다.
         if (!clientRequest.getIsBasicImage() && isEmptyFile(clientImage)) {
             bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image가 아니라면 이미지 파일이 있어야 합니다."));
+            throw new BindException(bindingResult);
+        }
+
+        // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
+        if (isNotEmptyFile(clientImage) && !FileValidator.isAllowedImageType(clientImage)) {
+            throw new FileNotAllowedException();
+        }
+    }
+
+    /**
+     * 고객 업데이트 시에 clientRequest Global 에러 검증
+     */
+    private void validateUpdateClientRequestFields(NewClientRequest clientRequest, BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
+
+        MultipartFile clientImage = clientRequest.getClientImage();
+
+        // 기본 이미지라면 이미지는 없어야 한다.
+        if (clientRequest.getIsBasicImage() && isNotEmptyFile(clientImage)) {
+            bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image를 사용 중이기 때문에 이미지 파일을 받을 수 없습니다."));
             throw new BindException(bindingResult);
         }
 
