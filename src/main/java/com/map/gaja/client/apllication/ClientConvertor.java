@@ -1,7 +1,9 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
@@ -13,7 +15,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 
 import java.util.ArrayList;
@@ -23,26 +25,40 @@ import java.util.List;
  * Request -> Entity 또는 Entity -> Response 컨버터
  */
 public class ClientConvertor {
-    protected static ClientListResponse entityToDto(List<Client> clients) {
-        List<ClientResponse> responseClients = new ArrayList<>();
+    protected static ClientListResponse entityToDto(List<Client> clients, S3UrlGenerator s3UrlGenerator) {
+        List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
-            ClientResponse clientResponse = entityToDto(client);
+            ClientOverviewResponse clientResponse = entityToOverviewDto(client);
             responseClients.add(clientResponse);
         });
 
-        return new ClientListResponse(responseClients);
+        return new ClientListResponse(responseClients, s3UrlGenerator.getS3Url());
     }
 
-    protected static ClientResponse entityToDto(Client client) {
-        return new ClientResponse(
+    protected static ClientDetailResponse entityToDetailDto(Client client, S3UrlGenerator s3UrlGenerator) {
+        StoredFileDto image = getStoredFileUrlDto(client.getClientImage(), s3UrlGenerator);
+        return new ClientDetailResponse(
                 client.getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
                 client.getName(),
                 client.getPhoneNumber(),
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
-                (client.getClientImage() == null) ? new StoredFileDto() : new StoredFileDto(client.getClientImage().getSavedPath(), client.getClientImage().getOriginalName()),
+                image,
+                null
+        );
+    }
+
+    protected static ClientOverviewResponse entityToOverviewDto(Client client) {
+        return new ClientOverviewResponse(
+                client.getId(),
+                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
+                client.getName(),
+                client.getPhoneNumber(),
+                voToDto(client.getAddress()),
+                voToDto(client.getLocation()),
+                getStoredFileDto(client.getClientImage()),
                 null
         );
     }
@@ -117,5 +133,19 @@ public class ClientConvertor {
                 new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
     }
 
+
+    private static StoredFileDto getStoredFileUrlDto(ClientImage clientImage, S3UrlGenerator s3UrlGenerator) {
+        if (clientImage == null) {
+            return new StoredFileDto();
+        }
+        else {
+            String imageUrl = s3UrlGenerator.getS3Url() + clientImage.getSavedPath();
+            return new StoredFileDto(imageUrl, clientImage.getOriginalName());
+        }
+    }
+
+    private static StoredFileDto getStoredFileDto(ClientImage clientImage) {
+        return (clientImage == null) ? new StoredFileDto() : new StoredFileDto(clientImage.getSavedPath(), clientImage.getOriginalName());
+    }
 
 }

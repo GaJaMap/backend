@@ -4,7 +4,7 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
@@ -44,13 +44,13 @@ public class ClientQueryRepository {
      * @param wordCond
      * @return
      */
-    public List<ClientResponse> findClientByConditions(List<Long> groupIdList, NearbyClientSearchRequest locationSearchCond, @Nullable String wordCond) {
+    public List<ClientOverviewResponse> findClientByConditions(List<Long> groupIdList, NearbyClientSearchRequest locationSearchCond, @Nullable String wordCond) {
         if (groupIdList.size() < 1) {
             return new ArrayList<>();
         }
 
-        List<ClientResponse> result = query.select(
-                        Projections.constructor(ClientResponse.class,
+        List<ClientOverviewResponse> result = query.select(
+                        Projections.constructor(ClientOverviewResponse.class,
                                 client.id,
                                 Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
                                 client.name,
@@ -167,10 +167,10 @@ public class ClientQueryRepository {
      * @param nameCond 이름 검색 조건
      * @return
      */
-    public List<ClientResponse> findActiveClientByEmail(String loginEmail, @Nullable String nameCond) {
-        List<ClientResponse> result = query
+    public List<ClientOverviewResponse> findActiveClientByEmail(String loginEmail, @Nullable String nameCond) {
+        List<ClientOverviewResponse> result = query
                 .select(
-                        Projections.constructor(ClientResponse.class,
+                        Projections.constructor(ClientOverviewResponse.class,
                                 client.id,
                                 Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
                                 client.name,
