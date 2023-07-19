@@ -21,7 +21,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
-                        .antMatchers("/", "/api/user/login").permitAll()
+                        .antMatchers("/", "/api/user/login", "/login").permitAll()
                         .anyRequest().authenticated()) // 엑셀 페이지 설정
                 .csrf().disable()
                 .formLogin().disable()
