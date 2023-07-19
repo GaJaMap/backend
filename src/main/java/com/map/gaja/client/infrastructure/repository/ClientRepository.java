@@ -24,16 +24,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "WHERE ci.id IN (SELECT c.clientImage.id FROM Client c WHERE c.id IN :clientIds)")
     void markClientImageAsDeleted(List<Long> clientIds);
 
-
-    /**
-     * 그룹 내에 특정 고객들 제거를 위한 기능
-     * Client와 ClientImage의 연관 관계를 끊음
-     */
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("UPDATE Client c SET c.clientImage = null " +
-            "WHERE c.id IN :clientIds")
-    void setClientForeignKeyToNull(List<Long> clientIds);
-
     /**
      * 그룹 내에 특정 고객들 제거를 위한 기능
      * clientIds에 있는 Client 전부 제거

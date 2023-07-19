@@ -179,7 +179,6 @@ public class ClientService {
      */
     public void deleteBulkClient(Long groupId, List<Long> clientIds) {
         clientRepository.markClientImageAsDeleted(clientIds);
-        clientRepository.setClientForeignKeyToNull(clientIds);
         clientRepository.deleteClientsInClientIds(clientIds);
 
         Group group = groupRepository.findById(groupId)
