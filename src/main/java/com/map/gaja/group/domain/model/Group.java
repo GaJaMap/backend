@@ -57,8 +57,8 @@ public class Group extends BaseTimeEntity {
         clientCount += count;
     }
 
-    public void decreaseClientCount() {
-        clientCount--;
+    public void decreaseClientCount(int count) {
+        clientCount -= count;
     }
 
     public void accessGroup() {
