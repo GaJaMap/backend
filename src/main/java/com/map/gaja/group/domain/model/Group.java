@@ -53,8 +53,8 @@ public class Group extends BaseTimeEntity {
      * Client 클래스 내부에서 사용할 메소드.
      * Client 클래스 내부 이외 호출은 자제.
      */
-    public void increaseClientCount() {
-        clientCount++;
+    public void increaseClientCount(int count) {
+        clientCount += count;
     }
 
     public void decreaseClientCount() {
