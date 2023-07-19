@@ -12,5 +12,5 @@ import java.util.List;
 public class ClientListAccessCheckDto {
     private String userEmail;
     private long groupId;
-    private List<Long> clientId;
+    private List<Long> clientIds;
 }

@@ -31,7 +31,7 @@ public class ClientAccessVerifyService {
     public void verifyClientListAccess(ClientListAccessCheckDto accessRequest) {
         String userEmail = accessRequest.getUserEmail();
         long groupId = accessRequest.getGroupId();
-        List<Long> clientIds = accessRequest.getClientId();
+        List<Long> clientIds = accessRequest.getClientIds();
 
         groupAccessVerifyService.verifyGroupAccess(groupId, userEmail);
         long matchingCount = clientQueryRepository.findMatchingClientCountInGroup(groupId, clientIds);
