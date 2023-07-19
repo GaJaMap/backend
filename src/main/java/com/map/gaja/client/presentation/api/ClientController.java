@@ -66,7 +66,7 @@ public class ClientController implements ClientCommandApiSpecification {
         validateUpdateClientRequestFields(clientRequest, bindingResult);
 
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
-        verifyChangeClientRequest(accessCheck, clientRequest);
+        verifyUpdateClientRequest(accessCheck, clientRequest);
 
         MultipartFile clientImage = clientRequest.getClientImage();
         if (clientRequest.getIsBasicImage()) {
@@ -77,20 +77,27 @@ public class ClientController implements ClientCommandApiSpecification {
             clientService.updateClientWithoutImage(clientId, clientRequest);
         } else {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
-            try {
-                clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
-            } catch(Exception e) {
-                log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
-                fileService.removeFile(newFileDto.getFilePath());
-                throw e;
-            }
+            updateClientWithNewImage(loginEmail, clientId, clientRequest);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void verifyChangeClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
+    /**
+     * 이미지와 함께 고객 업데이트
+     */
+    private void updateClientWithNewImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
+        StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
+        try {
+            clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
+        } catch(Exception e) {
+            log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
+            fileService.removeFile(newFileDto.getFilePath());
+            throw e;
+        }
+    }
+
+    private void verifyUpdateClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
         clientAccessVerifyService.verifyClientAccess(accessCheck);
         if (accessCheck.getGroupId() != clientRequest.getGroupId()) {
             groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), accessCheck.getUserEmail());
