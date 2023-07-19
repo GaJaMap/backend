@@ -194,4 +194,17 @@ public class ClientQueryRepository {
     private static BooleanExpression notDeletedGroup() {
         return group.isDeleted.eq(Boolean.FALSE);
     }
+
+    /**
+     * Client 이미지 S3 저장 위치 가져오기
+     */
+    public String findClientImageFilePath(Long clientId) {
+        return query
+                .select(client.clientImage.savedPath)
+                .from(client)
+                .join(client.group, group)
+                .leftJoin(client.clientImage, clientImage)
+                .where(client.id.eq(clientId))
+                .fetchOne();
+    }
 }

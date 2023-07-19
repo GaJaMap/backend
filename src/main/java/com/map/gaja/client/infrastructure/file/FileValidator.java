@@ -22,7 +22,7 @@ public class FileValidator {
             "image/jpg"
     );
 
-    private static boolean isAllowedImageType(MultipartFile file) {
+    public static boolean isAllowedImageType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
@@ -36,7 +36,7 @@ public class FileValidator {
         }
     }
 
-    private static boolean isAllowedFileType(MultipartFile file) {
+    public static boolean isAllowedFileType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
@@ -47,12 +47,6 @@ public class FileValidator {
         } catch (IOException e) {
             log.warn("파일 검사 중 IOException 발생",e);
             return false;
-        }
-    }
-
-    public static void verifyImageFile(MultipartFile imageFile) {
-        if (!isAllowedImageType(imageFile)) {
-            throw new FileNotAllowedException();
         }
     }
 
