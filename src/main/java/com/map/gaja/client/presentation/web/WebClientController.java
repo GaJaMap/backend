@@ -38,7 +38,7 @@ public class WebClientController {
     ) {
         // 로그인이 안된 사용자
         if (authentication == null) {
-            return "redirect:/oauth2/authorization/kakao";
+            return "redirect:/login";
         }
 
         String email = authentication.getName(); //이메일
