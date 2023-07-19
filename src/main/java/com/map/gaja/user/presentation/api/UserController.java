@@ -35,7 +35,7 @@ public class UserController implements UserApiSpecification {
 
     @Override
     @DeleteMapping
-    public ResponseEntity<Void> withdrawal(@AuthenticationPrincipal String email, HttpSession session) {
+    public ResponseEntity<Void> withdrawal(@AuthenticationPrincipal(expression = "name") String email, HttpSession session) {
         userService.withdrawal(email);
         session.invalidate();
         return new ResponseEntity<>(HttpStatus.OK);

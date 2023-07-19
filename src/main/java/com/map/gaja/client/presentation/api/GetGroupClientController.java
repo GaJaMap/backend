@@ -31,7 +31,7 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
 
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
     public ResponseEntity<ClientDetailResponse> getClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId
     ) {
@@ -43,7 +43,7 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
 
     @GetMapping("/api/group/{groupId}/clients")
     public ResponseEntity<ClientListResponse> getClientList(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @RequestParam(required = false) String wordCond
     ) {
@@ -55,7 +55,7 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
 
     @GetMapping("/api/group/{groupId}/clients/nearby")
     public ResponseEntity<ClientListResponse> nearbyClientSearch(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @Valid @ModelAttribute NearbyClientSearchRequest locationSearchCond,
             @RequestParam(required = false) String wordCond

@@ -42,7 +42,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
     public ResponseEntity<Void> deleteClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId
     ) {
@@ -57,7 +57,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
     public ResponseEntity<Void> updateClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
             @Valid @ModelAttribute NewClientRequest clientRequest,
@@ -114,7 +114,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
     @PostMapping("/clients/bulk")
     public ResponseEntity<List<Long>> addSimpleBulkClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
     ) {
         // 단순한 Client 정보 등록
@@ -125,7 +125,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
     @PostMapping("/clients")
     public ResponseEntity<Long> addClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @ModelAttribute NewClientRequest clientRequest,
             BindingResult bindingResult
     ) throws BindException {

@@ -58,6 +58,9 @@ dependencies {
 	implementation group: 'org.apache.poi', name: 'poi', version: '5.2.2'
 	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.2'
 
+	// oauth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
