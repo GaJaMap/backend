@@ -1,5 +1,6 @@
 package com.map.gaja.group.presentation.api;
 
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.presentation.api.specification.GroupApiSpecification;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 
+@TimeCheckLog
 @RestController
 @RequestMapping("/api/group")
 @RequiredArgsConstructor

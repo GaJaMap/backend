@@ -129,17 +129,17 @@ VALUES
 
 -- 그룹 9에 이미지 추가
 INSERT INTO client_image
-(client_image_id,created_at, updated_at, original_name, saved_path)
+(client_image_id,created_at, updated_at, original_name, saved_path, is_deleted)
 VALUES
-(1, NOW(), NOW(), 'aa.png', 'uuid-aa.png'),
-(2, NOW(), NOW(), 'bb.png', 'uuid-bb.png'),
-(3, NOW(), NOW(), 'cc.png', 'uuid-cc.png'),
-(4, NOW(), NOW(), 'dd.png', 'uuid-dd.png'),
-(5, NOW(), NOW(), 'ee.png', 'uuid-ee.png'),
-(6, NOW(), NOW(), 'ff.png', 'uuid-ff.png'),
-(7, NOW(), NOW(), 'gg.png', 'uuid-gg.png'),
-(8, NOW(), NOW(), 'hh.png', 'uuid-hh.png'),
-(9, NOW(), NOW(), 'ii.png', 'uuid-ii.png');
+(1, NOW(), NOW(), 'aa.png', 'uuid-aa.png', 0),
+(2, NOW(), NOW(), 'bb.png', 'uuid-bb.png', 0),
+(3, NOW(), NOW(), 'cc.png', 'uuid-cc.png', 0),
+(4, NOW(), NOW(), 'dd.png', 'uuid-dd.png', 0),
+(5, NOW(), NOW(), 'ee.png', 'uuid-ee.png', 0),
+(6, NOW(), NOW(), 'ff.png', 'uuid-ff.png', 0),
+(7, NOW(), NOW(), 'gg.png', 'uuid-gg.png', 0),
+(8, NOW(), NOW(), 'hh.png', 'uuid-hh.png', 0),
+(9, NOW(), NOW(), 'ii.png', 'uuid-ii.png', 0);
 
 -- 그룹 9에 대한 클라이언트 데이터 (9개)
 INSERT INTO client

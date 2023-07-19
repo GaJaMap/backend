@@ -34,9 +34,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
+	// aop 설정
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
 	// aws s3 설정
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-
 
 	// querydsl 설정
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"

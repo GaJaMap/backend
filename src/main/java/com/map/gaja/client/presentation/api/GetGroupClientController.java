@@ -1,13 +1,14 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.presentation.api.specification.GroupClientQueryApiSpecification;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import javax.validation.Valid;
 /**
  * ReadOnly Client 컨트롤러
  */
-@Slf4j
+@TimeCheckLog
 @RestController
 @RequiredArgsConstructor
 public class GetGroupClientController implements GroupClientQueryApiSpecification {
@@ -29,15 +30,14 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
     private final GroupAccessVerifyService groupAccessVerifyService;
 
     @GetMapping("/api/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<ClientResponse> getClient(
+    public ResponseEntity<ClientDetailResponse> getClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId
     ) {
         // 거래처 조회
-        log.info("ClientController.getClient clientId={}", clientId);
         verifyClientAccess(loginEmail,groupId,clientId);
-        ClientResponse response = clientQueryService.findClient(clientId);
+        ClientDetailResponse response = clientQueryService.findClient(clientId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -48,7 +48,6 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
             @RequestParam(required = false) String wordCond
     ) {
         // 특정 번들 내에 모든 거래처 조회
-        log.info("GetClientController.getClientList groupId={}", groupId);
         verifyGroupAccess(loginEmail, groupId);
         ClientListResponse response = clientQueryService.findAllClientsInGroup(groupId, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -62,7 +61,6 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
             @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{}", groupId, locationSearchCond, wordCond);
         verifyGroupAccess(loginEmail, groupId);
         ClientListResponse response = clientQueryService.findClientByConditions(groupId, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);

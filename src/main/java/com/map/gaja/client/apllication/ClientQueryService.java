@@ -1,14 +1,15 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
-import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
@@ -24,40 +25,44 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ClientQueryService {
-    private final ClientRepository clientRepository;
     private final ClientQueryRepository clientQueryRepository;
     private final GroupQueryRepository groupQueryRepository;
+    private final S3UrlGenerator s3UrlGenerator;
 
-    public ClientResponse findClient(Long clientId) {
+    public ClientDetailResponse findClient(Long clientId) {
         Client client = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException());
-        return entityToDto(client);
+        return entityToDetailDto(client, s3UrlGenerator);
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId, @Nullable String wordCond) {
         List<Client> clients = clientQueryRepository.findByGroup_Id(groupId, wordCond);
-        return entityToDto(clients);
+        return entityToDto(clients, s3UrlGenerator);
     }
 
     public ClientListResponse findClientByConditions(Long groupId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId);
 
-        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList);
+        List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
+        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 
     public StoredFileDto findClientImage(Long clientId) {
-        ClientResponse client = findClient(clientId);
+        ClientDetailResponse client = findClient(clientId);
         return client.getImage();
+    }
+
+    public String findImageFilePath(Long clientId) {
+        return clientQueryRepository.findClientImageFilePath(clientId);
     }
 
     public ClientListResponse findAllClient(
             String loginEmail,
             @Nullable String nameCond
     ) {
-        List<ClientResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
-        return new ClientListResponse(clientList);
+        List<ClientOverviewResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
+        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
@@ -66,7 +71,7 @@ public class ClientQueryService {
             throw new GroupNotFoundException();
         }
 
-        List<ClientResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList);
+        List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
+        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 }

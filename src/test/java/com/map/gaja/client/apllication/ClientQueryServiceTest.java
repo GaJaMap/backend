@@ -2,11 +2,13 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.presentation.dto.response.ClientResponse;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +27,9 @@ class ClientQueryServiceTest {
     @Mock
     private ClientQueryRepository repository;
 
+    @Mock
+    private S3UrlGenerator s3UrlGenerator;
+
     @InjectMocks
     private ClientQueryService clientQueryService;
 
@@ -41,14 +46,19 @@ class ClientQueryServiceTest {
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
         when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
-        when(findClient.getClientImage()).thenReturn(new ClientImage("testImage", "testImage"));
+
+        String urlPrefix = "s3.aaa.bbb/";
+        String savedPath = "testImage";
+        when(findClient.getClientImage()).thenReturn(new ClientImage("testImage", savedPath));
+        when(s3UrlGenerator.getS3Url()).thenReturn(urlPrefix);
 
         //when
-        ClientResponse response = clientQueryService.findClient(searchId);
+        ClientDetailResponse response = clientQueryService.findClient(searchId);
 
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
         assertThat(response.getClientName()).isEqualTo(searchName);
+        assertThat(response.getImage().getFilePath()).isEqualTo(urlPrefix + savedPath);
     }
 
     @Test
