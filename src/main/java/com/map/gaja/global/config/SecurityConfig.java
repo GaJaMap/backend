@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
@@ -20,8 +21,8 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
-                        .antMatchers("/api/**").permitAll()
-                        .antMatchers("/").permitAll()) // 엑셀 페이지 설정
+                        .antMatchers("/", "/api/user/login").permitAll()
+                        .anyRequest().authenticated()) // 엑셀 페이지 설정
                 .csrf().disable()
                 .formLogin().disable()
                 .oauth2Login()
@@ -34,4 +35,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }
