@@ -6,6 +6,7 @@ import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
+@TimeCheckLog
 @Controller
 @RequiredArgsConstructor
 public class WebClientController {

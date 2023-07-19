@@ -5,6 +5,7 @@ import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
+@TimeCheckLog
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -45,7 +47,6 @@ public class ClientController implements ClientCommandApiSpecification {
             @PathVariable Long clientId
     ) {
         // 특정 그룹 내에 거래처 삭제
-        log.info("ClientController.deleteClient loginEmail={} groupId={} clientId={}", loginEmail, groupId, clientId);
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheck);
 
@@ -62,7 +63,6 @@ public class ClientController implements ClientCommandApiSpecification {
             @Valid @ModelAttribute NewClientRequest clientRequest,
             BindingResult bindingResult
     ) throws BindException {
-        log.info("ClientController.changeClients loginEmail={}, clientRequest={}", loginEmail, clientRequest);
         validateUpdateClientRequestFields(clientRequest, bindingResult);
 
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
@@ -130,7 +130,6 @@ public class ClientController implements ClientCommandApiSpecification {
             BindingResult bindingResult
     ) throws BindException {
         // 거래처 등록 - 단건 등록
-        log.info("ClientController.addClient  clients={}", clientRequest);
         validateNewClientRequestFields(clientRequest, bindingResult);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 

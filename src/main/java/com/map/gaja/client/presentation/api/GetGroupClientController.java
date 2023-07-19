@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.presentation.api.specification.GroupClientQueryApiSpecification;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
@@ -20,7 +21,7 @@ import javax.validation.Valid;
 /**
  * ReadOnly Client 컨트롤러
  */
-@Slf4j
+@TimeCheckLog
 @RestController
 @RequiredArgsConstructor
 public class GetGroupClientController implements GroupClientQueryApiSpecification {
@@ -35,7 +36,6 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
             @PathVariable Long clientId
     ) {
         // 거래처 조회
-        log.info("ClientController.getClient clientId={}", clientId);
         verifyClientAccess(loginEmail,groupId,clientId);
         ClientDetailResponse response = clientQueryService.findClient(clientId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -48,7 +48,6 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
             @RequestParam(required = false) String wordCond
     ) {
         // 특정 번들 내에 모든 거래처 조회
-        log.info("GetClientController.getClientList groupId={}", groupId);
         verifyGroupAccess(loginEmail, groupId);
         ClientListResponse response = clientQueryService.findAllClientsInGroup(groupId, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -62,7 +61,6 @@ public class GetGroupClientController implements GroupClientQueryApiSpecificatio
             @RequestParam(required = false) String wordCond
     ) {
         // 주변 거래처 조회
-        log.info("GetClientController.nearbyClientSearch params={},{},{}", groupId, locationSearchCond, wordCond);
         verifyGroupAccess(loginEmail, groupId);
         ClientListResponse response = clientQueryService.findClientByConditions(groupId, locationSearchCond, wordCond);
         return new ResponseEntity<>(response, HttpStatus.OK);

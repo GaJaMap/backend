@@ -1,5 +1,6 @@
 package com.map.gaja.user.presentation.api;
 
+import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.user.application.UserService;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.api.specification.UserApiSpecification;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
+@TimeCheckLog
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
