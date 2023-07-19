@@ -1,7 +1,6 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.domain.service.ClientDomainService;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
@@ -173,5 +172,17 @@ public class ClientService {
         clientRepository.saveAll(savedClient);
 
         return savedClient.stream().map(Client::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * 그룹 내의 특정 고객들을 제거
+     */
+    public void deleteBulkClient(Long groupId, List<Long> clientIds) {
+        clientRepository.markClientImageAsDeleted(clientIds);
+        clientRepository.deleteClientsInClientIds(clientIds);
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(GroupNotFoundException::new);
+        // ======= Group의 ClientCount를 줄여줘야 함 추가 예정 =======
     }
 }

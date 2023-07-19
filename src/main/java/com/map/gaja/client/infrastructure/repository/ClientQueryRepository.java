@@ -127,7 +127,7 @@ public class ClientQueryRepository {
 
     private BooleanExpression groupIdEq(List<Long> groupIdList) {
         if (groupIdList.size() == 1) {
-            return client.group.id.eq(groupIdList.get(0));
+            return isClientInGroup(groupIdList.get(0));
         }
 
         return client.group.id.in(groupIdList);
@@ -206,5 +206,32 @@ public class ClientQueryRepository {
                 .leftJoin(client.clientImage, clientImage)
                 .where(client.id.eq(clientId))
                 .fetchOne();
+    }
+
+    /**
+     *
+     * groupId 내에 있는 Client들 중에 clientIds와 매칭되는 Client의 개수를 반환
+     */
+    public long findMatchingClientCountInGroup(long groupId, List<Long> clientIds) {
+        return query
+                .selectOne()
+                .from(client)
+                .innerJoin(client.group, group)
+                .where(isClientInGroup(groupId), areClientsInIds(clientIds))
+                .fetchCount();
+    }
+
+    /**
+     * clientId 리스트가 client에 들어가는지
+     */
+    private static BooleanExpression areClientsInIds(List<Long> clientIds) {
+        return client.id.in(clientIds);
+    }
+
+    /**
+     * Client와 Group 일치하는지
+     */
+    private static BooleanExpression isClientInGroup(long groupId) {
+        return client.group.id.eq(groupId);
     }
 }

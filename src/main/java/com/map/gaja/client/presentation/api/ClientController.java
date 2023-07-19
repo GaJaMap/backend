@@ -4,13 +4,15 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
+import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
+import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
+import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,21 @@ public class ClientController implements ClientCommandApiSpecification {
         clientAccessVerifyService.verifyClientAccess(accessCheck);
 
         clientService.deleteClient(clientId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/group/{groupId}/clients/bulk")
+    public ResponseEntity<Void> deleteBulkClient(
+            @AuthenticationPrincipal String loginEmail,
+            @PathVariable Long groupId,
+            @Valid @RequestBody ClientIdsRequest clientIdsRequest
+    ) {
+        // 특정 그룹 내에 여러 거래처 삭제
+        ClientListAccessCheckDto accessCheck = new ClientListAccessCheckDto(loginEmail, groupId, clientIdsRequest.getClientIds());
+        clientAccessVerifyService.verifyClientListAccess(accessCheck);
+
+        clientService.deleteBulkClient(groupId, clientIdsRequest.getClientIds());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

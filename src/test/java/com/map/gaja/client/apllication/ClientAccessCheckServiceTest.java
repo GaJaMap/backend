@@ -5,7 +5,7 @@ import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
+import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
