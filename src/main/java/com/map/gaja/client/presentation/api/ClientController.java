@@ -4,6 +4,7 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
+import com.map.gaja.client.presentation.dto.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -51,6 +52,21 @@ public class ClientController implements ClientCommandApiSpecification {
         clientAccessVerifyService.verifyClientAccess(accessCheck);
 
         clientService.deleteClient(clientId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/group/{groupId}/clients/bulk")
+    public ResponseEntity<Void> deleteBulkClient(
+            @AuthenticationPrincipal String loginEmail,
+            @PathVariable Long groupId,
+            @RequestBody List<Long> clientIds
+    ) {
+        // 특정 그룹 내에 거래처 삭제
+        ClientListAccessCheckDto accessCheck = new ClientListAccessCheckDto(loginEmail, groupId, clientIds);
+        clientAccessVerifyService.verifyClientListAccess(accessCheck);
+
+        clientService.deleteBulkClient(groupId, clientIds);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
