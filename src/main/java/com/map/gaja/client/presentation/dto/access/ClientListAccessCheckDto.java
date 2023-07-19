@@ -1,4 +1,4 @@
-package com.map.gaja.client.presentation.dto;
+package com.map.gaja.client.presentation.dto.access;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

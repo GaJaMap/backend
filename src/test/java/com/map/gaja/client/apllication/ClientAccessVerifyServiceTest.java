@@ -2,8 +2,8 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
-import com.map.gaja.client.presentation.dto.ClientListAccessCheckDto;
+import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
+import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.User;

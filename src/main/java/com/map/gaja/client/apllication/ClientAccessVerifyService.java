@@ -1,9 +1,9 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.client.presentation.dto.ClientListAccessCheckDto;
+import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
-import com.map.gaja.client.presentation.dto.ClientAccessCheckDto;
+import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
