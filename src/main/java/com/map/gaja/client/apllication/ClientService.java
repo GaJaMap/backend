@@ -186,5 +186,6 @@ public class ClientService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(GroupNotFoundException::new);
         // ======= Group의 ClientCount를 줄여줘야 함 추가 예정 =======
+        group.decreaseClientCount(clientIds.size());
     }
 }
