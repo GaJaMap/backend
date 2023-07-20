@@ -48,16 +48,8 @@ public class NewClientRequest {
     private Boolean isBasicImage;
 
     @JsonIgnore
-    public void setProvince(String province) {
-        address.setProvince(province);
-    }
-    @JsonIgnore
-    public void setCity(String city) {
-        address.setCity(city);
-    }
-    @JsonIgnore
-    public void setDistrict(String district) {
-        address.setDistrict(district);
+    public void setAddress(String address) {
+        this.address.setAddress(address);
     }
     @JsonIgnore
     public void setDetail(String detail) {
