@@ -59,7 +59,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
     @DeleteMapping("/group/{groupId}/clients/bulk")
     public ResponseEntity<Void> deleteBulkClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @Valid @RequestBody ClientIdsRequest clientIdsRequest
     ) {
