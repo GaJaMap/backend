@@ -59,7 +59,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
     @DeleteMapping("/group/{groupId}/clients/bulk")
     public ResponseEntity<Void> deleteBulkClient(
-            @AuthenticationPrincipal String loginEmail,
+            @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @Valid @RequestBody ClientIdsRequest clientIdsRequest
     ) {
@@ -91,6 +91,7 @@ public class ClientController implements ClientCommandApiSpecification {
             clientService.updateClientWithBasicImage(clientId, clientRequest);
         } else if (isEmptyFile(clientImage)) {
             // 저장되어 있는 기존 이미지를 사용한다.
+            // 만약 저장되어 있는 이미지가 없다면 오류를 보내줘야 하나? 쿼리가 하나 더 날아간다.
             clientService.updateClientWithoutImage(clientId, clientRequest);
         } else {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
