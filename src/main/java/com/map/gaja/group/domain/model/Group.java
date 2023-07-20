@@ -1,6 +1,7 @@
 package com.map.gaja.group.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
+import com.map.gaja.group.domain.exception.ClientNotDeletedException;
 import com.map.gaja.user.domain.model.User;
 import lombok.*;
 
@@ -53,12 +54,15 @@ public class Group extends BaseTimeEntity {
      * Client 클래스 내부에서 사용할 메소드.
      * Client 클래스 내부 이외 호출은 자제.
      */
-    public void increaseClientCount() {
-        clientCount++;
+    public void increaseClientCount(int count) {
+        clientCount += count;
     }
 
-    public void decreaseClientCount() {
-        clientCount--;
+    public void decreaseClientCount(int decreaseInCount) {
+        if (clientCount < decreaseInCount) {
+            throw new ClientNotDeletedException();
+        }
+        clientCount -= decreaseInCount;
     }
 
     public void accessGroup() {

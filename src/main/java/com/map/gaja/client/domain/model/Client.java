@@ -65,13 +65,13 @@ public class Client extends BaseTimeEntity {
     }
 
     public void removeGroup() {
-        group.decreaseClientCount();
+        group.decreaseClientCount(1);
         group = null;
     }
 
     private void setGroup(Group group) {
         this.group = group;
-        group.increaseClientCount();
+        group.increaseClientCount(1);
     }
 
     private void updateGroup(Group group) {
