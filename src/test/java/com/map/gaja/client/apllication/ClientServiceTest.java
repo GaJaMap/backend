@@ -3,6 +3,8 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.domain.service.IncreasingClientService;
+import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
@@ -10,6 +12,7 @@ import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +37,9 @@ class ClientServiceTest {
     private GroupRepository groupRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
+    @Mock
+    GroupQueryRepository groupQueryRepository;
+    IncreasingClientService increasingClientService = new IncreasingClientService();
 
     Long clientId = 1L;
     Long groupId = 1L;
@@ -41,25 +47,37 @@ class ClientServiceTest {
     Long existingClientId = 1L;
     String existingName = "test";
     String changedName = "update Test";
+    String email = "testEmail";
+
+    User user;
+    Group group;
+    Client existingClient;
+    ClientImage clientImage;
 
     @BeforeEach
     void beforeEach() {
         clientService = new ClientService(
                 clientRepository,
                 groupRepository,
-                clientQueryRepository
+                groupQueryRepository,
+                clientQueryRepository,
+                increasingClientService
         );
+
+        user = new User(email);
+        group = createGroup(user, groupId, 1);
+        clientImage = createClientImageImage();
+        existingClient = createClientWithImage(existingName, group, clientImage);
     }
 
     @Test
     @DisplayName("Group을 포함한 Client 저장 테스트")
     public void saveClientTest() throws Exception {
         // given
-        Integer clientCount = 0;
-        Group group = createGroup(groupId, clientCount);
+        Integer clientCount = 1;
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
-        when(groupRepository.findById(any())).thenReturn(Optional.ofNullable(group));
+        when(groupQueryRepository.findGroupWithUser(any())).thenReturn(Optional.ofNullable(group));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
             Client savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
             ReflectionTestUtils.setField(savedClient, "id", clientId);
@@ -78,14 +96,12 @@ class ClientServiceTest {
     @DisplayName("이미지를 제외한 Client 업데이트 테스트")
     public void updateClientTest() throws Exception {
         // given
-        Group existingGroup = createGroup(groupId, 0);
-        Group changedGroup = createGroup(changedGroupId, 0);
-        Client existingClient = createClient(existingName, existingGroup);
+        Group changedGroup = createGroup(user, changedGroupId, 0);
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
-        when(groupRepository.findById(anyLong()))
+        when(groupQueryRepository.findGroupWithUser(anyLong()))
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
@@ -95,18 +111,15 @@ class ClientServiceTest {
         assertThat(existingClient.getName()).isEqualTo(changedName);
         assertThat(existingClient.getGroup().getId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
-        assertThat(existingGroup.getClientCount()).isEqualTo(0);
+        assertThat(group.getClientCount()).isEqualTo(0);
     }
 
     @Test
     @DisplayName("Client 이미지 업데이트 테스트")
     public void updateClientImageTest() throws Exception {
         // given
-        Group existingGroup = createGroup(groupId, 0);
-        ClientImage existingClientImage = createClientImageImage();
-        Client existingClient = createClientWithImage(existingName, existingGroup, existingClientImage);
         StoredFileDto updatedImageFile = new StoredFileDto("ccc", "ddd");
-        NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
+        NewClientRequest changedRequest = createChangeRequest(group.getId(), existingName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
@@ -115,10 +128,10 @@ class ClientServiceTest {
         clientService.updateClientWithNewImage(existingClientId, changedRequest, updatedImageFile);
 
         // then
-        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
+        assertThat(existingClient.getGroup().getId()).isEqualTo(group.getId());
         assertThat(existingClient.getClientImage().getOriginalName()).isSameAs(updatedImageFile.getOriginalFileName());
         assertThat(existingClient.getClientImage().getSavedPath()).isSameAs(updatedImageFile.getFilePath());
-        assertThat(existingClientImage.getIsDeleted()).isTrue();
+        assertThat(clientImage.getIsDeleted()).isTrue();
         assertThat(existingClient.getClientImage().getIsDeleted()).isFalse();
     }
 
@@ -126,10 +139,7 @@ class ClientServiceTest {
     @DisplayName("Client Basic Image로 업데이트")
     public void updateClientWithBasicImageTest() throws Exception {
         // given
-        Group existingGroup = createGroup(groupId, 0);
-        ClientImage existingClientImage = createClientImageImage();
-        Client existingClient = createClientWithImage(existingName, existingGroup, existingClientImage);
-        NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
+        NewClientRequest changedRequest = createChangeRequest(group.getId(), existingName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
@@ -138,8 +148,8 @@ class ClientServiceTest {
         clientService.updateClientWithBasicImage(existingClientId, changedRequest);
 
         // then
-        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
-        assertThat(existingClientImage.getIsDeleted()).isTrue();
+        assertThat(existingClient.getGroup().getId()).isEqualTo(group.getId());
+        assertThat(clientImage.getIsDeleted()).isTrue();
         assertThat(existingClient.getClientImage()).isNull();
     }
 
@@ -150,11 +160,8 @@ class ClientServiceTest {
     @Test
     @DisplayName("Client 삭제 테스트")
     void deleteClientTest() {
-        Group group = createGroup(groupId, 0);
-        Client client = createClient(existingName, group);
-
         when(clientQueryRepository.findClientWithGroup(anyLong()))
-                .thenReturn(Optional.ofNullable(client));
+                .thenReturn(Optional.ofNullable(existingClient));
 
         clientService.deleteClient(clientId);
 
@@ -164,7 +171,6 @@ class ClientServiceTest {
     @Test
     @DisplayName("Client-Image 삭제 테스트")
     void deleteClientWithImageTest() {
-        Group group = createGroup(groupId, 0);
         ClientImage image = createClientImageImage();
         Client client = createClientWithImage(existingName, group, image);
 
@@ -177,8 +183,9 @@ class ClientServiceTest {
         assertThat(image.getIsDeleted()).isTrue();
     }
 
-    private static Group createGroup(Long groupId, Integer clientCount) {
+    private static Group createGroup(User user, Long groupId, Integer clientCount) {
         return Group.builder()
+                .user(user)
                 .id(groupId).clientCount(clientCount)
                 .build();
     }
