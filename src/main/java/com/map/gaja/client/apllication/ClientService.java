@@ -1,7 +1,6 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.domain.service.ClientGroupService;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
@@ -45,10 +44,11 @@ public class ClientService {
      * @return 만들어진 고객 ID
      */
     public Long saveClient(NewClientRequest clientRequest) {
-        Group group = groupRepository.findById(clientRequest.getGroupId())
+        Group group = groupQueryRepository.findGroupWithUser(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
+        increasingClientService.increase(group, group.getUser().getAuthority(), 1);
         return client.getId();
     }
 
@@ -59,10 +59,11 @@ public class ClientService {
      * @return 만들어진 고객 ID
      */
     public Long saveClientWithImage(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
-        Group group = groupRepository.findById(clientRequest.getGroupId())
+        Group group = groupQueryRepository.findGroupWithUser(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
+        increasingClientService.increase(group, group.getUser().getAuthority(), 1);
         return client.getId();
     }
 
@@ -153,7 +154,7 @@ public class ClientService {
         ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
         ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
 
-        existingClient.updateWithoutImage(
+        existingClient.updateClientField(
                 updateRequest.getClientName(),
                 updateRequest.getPhoneNumber(),
                 updatedAddress,
@@ -170,8 +171,8 @@ public class ClientService {
     }
 
     public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
-        Group group = groupRepository.findById(bulkRequest.getGroupId())
-                .orElseThrow(GroupNotFoundException::new);
+        Group group = groupQueryRepository.findGroupWithUser(bulkRequest.getGroupId())
+                .orElseThrow(() -> new GroupNotFoundException());
 
         List<Long> savedIdList = new ArrayList<>();
         bulkRequest.getClients().forEach((clientRequest) -> {
@@ -179,6 +180,7 @@ public class ClientService {
             clientRepository.save(client);
             savedIdList.add(client.getId());
         });
+        increasingClientService.increase(group, group.getUser().getAuthority(), savedIdList.size());
 
         return savedIdList;
     }
