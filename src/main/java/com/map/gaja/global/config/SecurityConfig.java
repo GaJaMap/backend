@@ -21,8 +21,10 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
-                        .antMatchers("/", "/api/user/login", "/login").permitAll()
-                        .anyRequest().authenticated()) // 엑셀 페이지 설정
+                        .antMatchers("/api/user/login",
+                                "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
+                        ).permitAll()
+                        .anyRequest().authenticated())
                 .csrf().disable()
                 .formLogin().disable()
                 .oauth2Login()
