@@ -2,6 +2,7 @@ package com.map.gaja.group.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.global.authentication.AuthenticationToken;
+import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 
@@ -49,7 +50,7 @@ class GroupControllerTest {
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/group")
                 .with(csrf())
-                .with(SecurityMockMvcRequestPostProcessors.authentication(new AuthenticationToken("test@gmail.com", "FREE")))
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestToString);
 
