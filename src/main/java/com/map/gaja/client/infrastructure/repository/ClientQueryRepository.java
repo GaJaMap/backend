@@ -55,7 +55,7 @@ public class ClientQueryRepository {
                                 Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
                                 client.name,
                                 client.phoneNumber,
-                                Projections.constructor(AddressDto.class, client.address.province, client.address.city, client.address.district, client.address.detail),
+                                Projections.constructor(AddressDto.class, client.address.address, client.address.detail),
                                 Projections.constructor(LocationDto.class, client.location.latitude, client.location.longitude),
                                 Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName),
                                 getCalcDistanceWithNativeSQL(locationSearchCond.getLocation())
@@ -175,7 +175,7 @@ public class ClientQueryRepository {
                                 Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
                                 client.name,
                                 client.phoneNumber,
-                                Projections.constructor(AddressDto.class, client.address.province, client.address.city, client.address.district, client.address.detail),
+                                Projections.constructor(AddressDto.class, client.address.address, client.address.detail),
                                 Projections.constructor(LocationDto.class, client.location.latitude, client.location.longitude),
                                 Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName)
                         )

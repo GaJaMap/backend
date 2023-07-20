@@ -68,7 +68,7 @@ class ClientAccessCheckServiceTest {
         String sig = "1";
         String name = "사용자 " + sig;
         String phoneNumber = "010-1111-" + sig;
-        ClientAddress address = new ClientAddress("aaa" + sig, "bbb" + sig, "ccc" + sig, "ddd" + sig);
+        ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
         ClientLocation location = new ClientLocation(35d, 125.0d);
         return new Client(name, phoneNumber, address, location, group);
     }

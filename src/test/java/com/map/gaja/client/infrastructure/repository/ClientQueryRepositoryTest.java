@@ -74,7 +74,7 @@ class ClientQueryRepositoryTest {
         String sig = sigIdx+""+sigIdx;
         String name = "사용자 " + sig;
         String phoneNumber = "010-1111-" + sig;
-        ClientAddress address = new ClientAddress("aaa" + sig, "bbb" + sig, "ccc" + sig, "ddd" + sig);
+        ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
         ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
         Client client = new Client(name, phoneNumber, address, location, group);
         return client;

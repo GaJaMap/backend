@@ -90,7 +90,7 @@ public class ClientConvertor {
     }
 
     protected static Client dtoToEntity(ClientExcelData clientData, Group group) {
-        ClientAddress address = new ClientAddress(null, clientData.getAddress(), null, clientData.getAddressDetail()); // 임시
+        ClientAddress address = new ClientAddress(clientData.getAddress(), clientData.getAddressDetail());
         ClientLocation location = dtoToVo(clientData.getLocation());
         return new Client(
                 clientData.getName(),
@@ -120,7 +120,7 @@ public class ClientConvertor {
     }
 
     protected static ClientAddress dtoToVo(AddressDto address) {
-        return new ClientAddress(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
+        return new ClientAddress(address.getAddress(), address.getDetail());
     }
 
     protected static LocationDto voToDto(ClientLocation location) {
@@ -130,7 +130,7 @@ public class ClientConvertor {
 
     protected static AddressDto voToDto(ClientAddress address) {
         return (address == null) ? new AddressDto() :
-                new AddressDto(address.getProvince(), address.getCity(), address.getDistrict(), address.getDetail());
+                new AddressDto(address.getAddress(), address.getDetail());
     }
 
 
