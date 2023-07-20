@@ -16,4 +16,12 @@ public class ClientExcelData {
     private String addressDetail;
     private LocationDto location;
     private Boolean isValid;
+
+    public void setLocation(LocationDto location) {
+        this.location = location;
+    }
+
+    public void setValid(Boolean valid) {
+        isValid = valid;
+    }
 }
