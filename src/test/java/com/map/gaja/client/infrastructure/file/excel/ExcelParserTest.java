@@ -21,7 +21,7 @@ class ExcelParserTest {
     @Test
     void parseClientExcelFileTest() throws IOException {
 
-        String excelFilePath = "src/main/resources/static/excel/sample.xlsx";
+        String excelFilePath = "src/main/resources/static/file/sample.xlsx";
         Path path = Paths.get(excelFilePath);
         String originalFileName = "sample.xlsx";
         String contentType = "application/vnd.ms-excel"; // 파일 타입에 맞게 적절히 변경
