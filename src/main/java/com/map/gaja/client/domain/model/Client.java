@@ -57,11 +57,15 @@ public class Client extends BaseTimeEntity {
         this.clientImage = clientImage;
     }
 
-    public void updateWithoutImage(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
+    public void updateWithoutImage(String name, String phoneNumber, ClientAddress address, ClientLocation location) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
-        updateGroup(group);
+        removeAndUpdateGroup(group);
+    }
+
+    public void updateGroup(Group group) {
+        this.group = group;
     }
 
     public void removeGroup() {
@@ -74,7 +78,7 @@ public class Client extends BaseTimeEntity {
         group.increaseClientCount(1);
     }
 
-    private void updateGroup(Group group) {
+    private void removeAndUpdateGroup(Group group) {
         removeGroup();
         setGroup(group);
     }

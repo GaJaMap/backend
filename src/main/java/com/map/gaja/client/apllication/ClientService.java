@@ -1,10 +1,13 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.domain.service.ClientGroupService;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.domain.service.IncreasingClientService;
+import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
@@ -14,6 +17,7 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
+import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +34,10 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 public class ClientService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
+    private final GroupQueryRepository groupQueryRepository;
+
     private final ClientQueryRepository clientQueryRepository;
+    private final IncreasingClientService increasingClientService;
 
     /**
      * 이미지 없는 고객 등록
@@ -82,7 +89,10 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        updateFieldWithoutImage(existingClient, updateRequest);
+        if (isUpdatedGroup(updateRequest, existingClient)) {
+            updateClientGroup(existingClient, updateRequest);
+        }
+        updateClientField(existingClient, updateRequest);
     }
 
     /**
@@ -99,9 +109,12 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        updateFieldWithoutImage(existingClient, updateRequest);
-        ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
+        if (isUpdatedGroup(updateRequest, existingClient)) {
+            updateClientGroup(existingClient, updateRequest);
+        }
+        updateClientField(existingClient, updateRequest);
 
+        ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
         existingClient.removeClientImage();
         existingClient.updateImage(clientImage);
     }
@@ -113,12 +126,30 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        updateFieldWithoutImage(existingClient, updateRequest);
+        if (isUpdatedGroup(updateRequest, existingClient)) {
+            updateClientGroup(existingClient, updateRequest);
+        }
+        updateClientField(existingClient, updateRequest);
         existingClient.removeClientImage();
     }
 
-    private void updateFieldWithoutImage(Client existingClient, NewClientRequest updateRequest) {
-        Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
+
+    /**
+     * Client의 기존 그룹을 새로운 그룹으로 변경
+     */
+    private void updateClientGroup(Client existingClient, NewClientRequest updateRequest) {
+        Group existingGroup = existingClient.getGroup();
+        Group updatedGroup = groupQueryRepository.findGroupWithUser(updateRequest.getGroupId())
+                .orElseThrow(GroupNotFoundException::new);
+        Authority userAuth = updatedGroup.getUser().getAuthority();
+
+        existingGroup.decreaseClientCount(1);
+        existingClient.updateGroup(updatedGroup);
+        increasingClientService.increase(updatedGroup, userAuth, 1);
+    }
+
+    private void updateClientField(Client existingClient, NewClientRequest updateRequest) {
+//        Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
         ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
         ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
 
@@ -126,22 +157,16 @@ public class ClientService {
                 updateRequest.getClientName(),
                 updateRequest.getPhoneNumber(),
                 updatedAddress,
-                updatedLocation,
-                updatedGroup
+                updatedLocation
+//                updatedGroup
         );
     }
 
+    /**
+     * Request 정보에 Group이 기존 Group에서 변경됐니?
+     */
     private static boolean isUpdatedGroup(NewClientRequest updateRequest, Client existingClient) {
         return existingClient.getGroup().getId() != updateRequest.getGroupId();
-    }
-
-    private Group getUpdatedGroup(NewClientRequest updateRequest, Client existingClient) {
-        if (isUpdatedGroup(updateRequest, existingClient)) {
-            return groupRepository.findById(updateRequest.getGroupId())
-                    .orElseThrow(GroupNotFoundException::new);
-        } else {
-            return existingClient.getGroup();
-        }
     }
 
     public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
