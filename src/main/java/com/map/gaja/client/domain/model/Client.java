@@ -28,7 +28,7 @@ public class Client extends BaseTimeEntity {
     private ClientLocation location;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
