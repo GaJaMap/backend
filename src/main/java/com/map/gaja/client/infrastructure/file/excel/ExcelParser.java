@@ -67,6 +67,10 @@ public class ExcelParser {
                 clientData.setAddress(address);
                 clientData.setAddressDetail(addressDetail);
 
+                if (rowIdx == lastRowIdx && isEmptyCell(name) && isEmptyCell(phoneNumber) && isEmptyCell(address) && isEmptyCell(addressDetail)) {
+                    break;
+                }
+
                 if (invalidateName(name)
                         || invalidatePhoneNumber(phoneNumber)
                         || invalidateAddress(address)
@@ -85,6 +89,10 @@ public class ExcelParser {
 
         locationGetter.settingLocation(dataList);
         return dataList;
+    }
+
+    private boolean isEmptyCell(String name) {
+        return name == null || name.length() == 0;
     }
 
     private static String getCellDataOrNull(Cell cell) {
@@ -106,20 +114,20 @@ public class ExcelParser {
     }
 
     private boolean invalidateAddressDetail(String addressDetailString) {
-        return addressDetailString == null || addressDetailString.length() > DETAIL_LENGTH_LIMIT;
+        return isEmptyCell(addressDetailString) || addressDetailString.length() > DETAIL_LENGTH_LIMIT;
     }
 
     private boolean invalidateAddress(String addressString) {
-        return addressString == null
+        return isEmptyCell(addressString)
                 || addressString.length() > ADDRESS_LENGTH_MAX_LIMIT
                 || addressString.length() < ADDRESS_LENGTH_MIN_LIMIT;
     }
 
     private boolean invalidatePhoneNumber(String phoneNumber) {
-        return phoneNumber == null || !Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber);
+        return isEmptyCell(phoneNumber) || !Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber);
     }
 
     private boolean invalidateName(String name) {
-        return name == null || name.length() > NAME_LENGTH_LIMIT;
+        return isEmptyCell(name) || name.length() > NAME_LENGTH_LIMIT;
     }
 }
