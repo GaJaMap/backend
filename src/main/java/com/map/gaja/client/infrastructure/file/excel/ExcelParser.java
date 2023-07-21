@@ -28,6 +28,7 @@ public class ExcelParser {
     private static final int ADDRESS_DATA_CELL_INDEX = 2;
     private static final int ADDRESS_DETAIL_DATA_CELL_INDEX = 3;
 
+    private static final int APP_TO_EXCEL_IDX = 1;
 
     private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
     private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
@@ -49,8 +50,9 @@ public class ExcelParser {
             String extension = FilenameUtils.getExtension(excel.getOriginalFilename());
             Workbook workbook = getWorkBook(extension, excelStream);
             Sheet worksheet = workbook.getSheetAt(0);
-            for (int i = DATA_START_ROW_INDEX; i < worksheet.getPhysicalNumberOfRows(); i++) {
-                Row row = worksheet.getRow(i);
+            final int lastRowIdx = worksheet.getPhysicalNumberOfRows();
+            for (int rowIdx = DATA_START_ROW_INDEX; rowIdx < lastRowIdx; rowIdx++) {
+                Row row = worksheet.getRow(rowIdx);
 
                 ClientExcelData clientData = new ClientExcelData();
 
@@ -59,6 +61,7 @@ public class ExcelParser {
                 String address = getCellDataOrNull(row.getCell(ADDRESS_DATA_CELL_INDEX));
                 String addressDetail = getCellDataOrNull(row.getCell(ADDRESS_DETAIL_DATA_CELL_INDEX));
 
+                clientData.setRowIdx(rowIdx+ APP_TO_EXCEL_IDX);
                 clientData.setName(name);
                 clientData.setPhoneNumber(phoneNumber);
                 clientData.setAddress(address);
