@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientExcelData {
+    private int rowIdx;
     private String name;
     private String phoneNumber;
     private String address;

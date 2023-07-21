@@ -1,6 +1,7 @@
 package com.map.gaja.client.presentation.web;
 
 import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
@@ -8,6 +9,7 @@ import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
+import com.map.gaja.global.exception.BusinessException;
 import com.map.gaja.global.log.TimeCheckLog;
 
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -19,10 +21,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @TimeCheckLog
@@ -55,7 +59,7 @@ public class WebClientController {
 
     @PostMapping("/api/clients/file")
     @ResponseBody
-    public ResponseEntity<Void> clientUpload(
+    public ResponseEntity<Integer> clientUpload(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
@@ -65,8 +69,21 @@ public class WebClientController {
         groupAccessVerifyService.verifyGroupAccess(excelRequest.getGroupId(), loginEmail);
 
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelRequest.getExcelFile());
-        clientService.saveClientExcelData(groupId, clientExcelData);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        List<Integer> failRowIdx = new ArrayList<>();
+        clientExcelData.forEach(clientData -> {
+            if (!clientData.getIsValid()) {
+                failRowIdx.add(clientData.getRowIdx());
+            }
+        });
+
+
+        if (!failRowIdx.isEmpty()) {
+            throw new InvalidClientRowDataException(clientExcelData.size(), failRowIdx);
+        }
+
+        clientService.saveClientExcelData(groupId, clientExcelData);
+        int successDataSize = clientExcelData.size();
+        return new ResponseEntity<>(successDataSize, HttpStatus.OK);
     }
 }
