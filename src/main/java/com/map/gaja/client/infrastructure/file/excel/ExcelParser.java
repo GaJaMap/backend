@@ -30,9 +30,10 @@ public class ExcelParser {
 
 
     private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
-    private static final int ADDRESS_LENGTH_LIMIT = 50;
+    private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
+    private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
     private static final int DETAIL_LENGTH_LIMIT = 20;
-    private static final int NAME_LENGTH_LIMIT = 15;
+    private static final int NAME_LENGTH_LIMIT = 20;
 
     static class MockLocationGetter {
         public void settingLocation(List<ClientExcelData> clientData) {
@@ -106,7 +107,9 @@ public class ExcelParser {
     }
 
     private boolean invalidateAddress(String addressString) {
-        return addressString == null || addressString.length() > ADDRESS_LENGTH_LIMIT;
+        return addressString == null
+                || addressString.length() > ADDRESS_LENGTH_MAX_LIMIT
+                || addressString.length() < ADDRESS_LENGTH_MIN_LIMIT;
     }
 
     private boolean invalidatePhoneNumber(String phoneNumber) {
