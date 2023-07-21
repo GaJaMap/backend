@@ -40,7 +40,7 @@ class ClientQueryRepositoryTest {
     User user;
     Group group1, group2;
     List<Client> group1ClientList, group2ClientList;
-    double radius = 1000000;
+    int radius = 1000000;
 
     @BeforeEach
     void before() {

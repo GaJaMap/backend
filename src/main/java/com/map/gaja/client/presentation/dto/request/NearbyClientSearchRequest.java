@@ -16,7 +16,7 @@ public class NearbyClientSearchRequest {
     private LocationDto location; // 위도 경도
     @Range(min = 3000, max = 5000, message = "지원하는 검색 반경은 3000m 이상 5000m 이하입니다.")
     @Schema(description = "검색 반경(M - 미터)", example = "3000")
-    private Double radius; // 반경(미터)
+    private Integer radius; // 반경(미터)
 
 
     public NearbyClientSearchRequest() {
