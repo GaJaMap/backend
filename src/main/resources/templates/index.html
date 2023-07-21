@@ -25,11 +25,28 @@
               processData: false,
               contentType: false,
               success: function(response) {
-                // 리다이렉트 URL이 포함된 응답 처리
+                // Ajax 요청이 성공하면 성공 상태 표시
+                $("#status-image").fadeOut(500, function() {
+                  // 이미지 사라짐
+                  $(this).attr("src", "/image/ok.png"); // 성공 이미지 URL로 변경
+                }).fadeIn(500); // 이미지 나타남
+                $("#status-message").fadeOut(500, function() {
+                  // 메시지 사라짐
+                  $(this).text("고객 정보 등록에 성공하였습니다. 앱에서 확인해주세요!"); // 성공 메시지로 변경
+                }).fadeIn(500); // 메시지 나타남
+                console.log(response);
               },
               error: function(xhr, status, error) {
-                // 오류가 발생하면 오류 메시지를 표시하거나 다른 처리를 수행합니다.
-                console.log("Error: " + error);
+                // Ajax 요청이 실패하면 실패 상태 표시
+                $("#status-image").fadeOut(500, function() {
+                  // 이미지 사라짐
+                  $(this).attr("src", "/image/fail.png"); // 실패 이미지 URL로 변경
+                }).fadeIn(500); // 이미지 나타남
+                $("#status-message").fadeOut(500, function() {
+                  // 메시지 사라짐
+                  $(this).html(xhr.responseJSON.message); // 실패 메시지로 변경
+                }).fadeIn(500); // 메시지 나타남
+                console.log(xhr);
               }
             });
           });
@@ -75,21 +92,7 @@
                                     <input type="submit" name="make_payment" class="next action-button" value="완료"/>
                                 </fieldset>
                                 <fieldset>
-                                    <div class="form-card">
-                                        <h2 class="fs-title text-center">등록 완료 !</h2>
-                                        <br><br>
-                                        <div class="row justify-content-center">
-                                            <div class="col-3">
-                                                <img src="https://img.icons8.com/color/96/000000/ok--v2.png" class="fit-image">
-                                            </div>
-                                        </div>
-                                        <br><br>
-                                        <div class="row justify-content-center">
-                                            <div class="col-7 text-center">
-                                                <h5>고객 정보가 등록되었습니다. 앱으로 확인해주세요!</h5>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div id="upload-success" th:replace="fragments/upload-status :: fragment-upload-status">등록 결과 공간</div>
                                 </fieldset>
                             </form>
                         </div>
