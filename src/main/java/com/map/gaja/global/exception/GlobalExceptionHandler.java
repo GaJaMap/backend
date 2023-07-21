@@ -1,5 +1,6 @@
 package com.map.gaja.global.exception;
 
+import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,16 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ExceptionDto> handleBusinessError(BusinessException e){
+        return ResponseEntity
+                .status(e.getStatus())
+                .body(new ExceptionDto(e.getMessage()));
+    }
+
+    /**
+     * 웹 예외 공동 처리
+     */
+    @ExceptionHandler(InvalidClientRowDataException.class)
+    public ResponseEntity<ExceptionDto> handleWebError(InvalidClientRowDataException e){
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ExceptionDto(e.getMessage()));
