@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 public class AddressDto {
     @Size(min = 10, max = 40)
     @Schema(description = "도로명 또는 지번 주소", example = "서울특별시 중구 세종대로 110")
-    private String address;
+    private String mainAddress;
     @Size(max = 20, message = "주소 요소는 30자 이하로 입력해주세요.")
     @Schema(description = "상세주소", example = "2층 205호")
     private String detail; // 상세주소
