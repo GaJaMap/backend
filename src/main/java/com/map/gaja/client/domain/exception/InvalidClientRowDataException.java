@@ -10,18 +10,24 @@ import java.util.List;
  */
 @Getter
 public class InvalidClientRowDataException extends RuntimeException {
-    private String message = "명시되어있는 제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br>" +
-            "%d의 데이터 중 %d의 데이터가 성공했습니다. <br><br>" +
+    private String message = "실패/성공 : %d / %d <br>" +
+            "제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br><br>" +
             "다음 줄의 데이터가 잘못되었습니다. <br>";
     private final HttpStatus status = HttpStatus.BAD_REQUEST;
 
     public InvalidClientRowDataException(int totalSize, List<Integer> failRowIdx) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(message, totalSize, failRowIdx.size()));
-        sb.append("{");
-        failRowIdx.forEach(idx -> sb.append(idx + ", "));
-        sb.append("}");
+        StringBuilder resultMessageBuilder = new StringBuilder();
+        resultMessageBuilder.append(String.format(message, failRowIdx.size(), totalSize));
+        resultMessageBuilder.append("{ ");
+        resultMessageBuilder.append(getFailIdxListString(failRowIdx));
+        resultMessageBuilder.append(" }");
 
-        message = sb.toString();
+        message = resultMessageBuilder.toString();
+    }
+
+    private String getFailIdxListString(List<Integer> failRowIdx) {
+        StringBuilder failListString = new StringBuilder();
+        failRowIdx.forEach(idx -> failListString.append(idx + ", "));
+        return failListString.toString().substring(0, failListString.length() - 2);
     }
 }
