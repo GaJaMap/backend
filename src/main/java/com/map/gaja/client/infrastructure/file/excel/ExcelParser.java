@@ -50,7 +50,6 @@ public class ExcelParser {
             String extension = FilenameUtils.getExtension(excel.getOriginalFilename());
             Workbook workbook = getWorkBook(extension, excelStream);
             Sheet worksheet = workbook.getSheetAt(0);
-            final int lastRowIdx = worksheet.getPhysicalNumberOfRows();
             for (int rowIdx = DATA_START_ROW_INDEX; rowIdx < lastRowIdx; rowIdx++) {
                 Row row = worksheet.getRow(rowIdx);
 
@@ -67,7 +66,7 @@ public class ExcelParser {
                 clientData.setAddress(address);
                 clientData.setAddressDetail(addressDetail);
 
-                if (rowIdx == lastRowIdx && isEmptyCell(name) && isEmptyCell(phoneNumber) && isEmptyCell(address) && isEmptyCell(addressDetail)) {
+                if (isEmptyCell(name) && isEmptyCell(phoneNumber) && isEmptyCell(address) && isEmptyCell(addressDetail)) {
                     break;
                 }
 
