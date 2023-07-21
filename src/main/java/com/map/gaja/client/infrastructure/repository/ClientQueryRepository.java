@@ -109,6 +109,10 @@ public class ClientQueryRepository {
     }
 
     private BooleanExpression isClientInRadius(NearbyClientSearchRequest locationSearchCond) {
+        if (locationSearchCond.getRadius() == null) {
+            return null;
+        }
+
         LocationDto currentLocation = locationSearchCond.getLocation();
         return getCalcDistanceWithNativeSQL(currentLocation)
                 .loe(locationSearchCond.getRadius());
