@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * Client 상세보기 Data
  */
@@ -40,13 +42,5 @@ public class ClientDetailResponse {
     @Schema(description = "현재 위치에서 떨어진 거리(M - 미터)", example = "2398")
     private Double distance; // km 기준
 
-    public ClientDetailResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, AddressDto address, LocationDto location, StoredFileDto image) {
-        this.clientId = clientId;
-        this.groupInfo = groupInfo;
-        this.clientName = clientName;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.location = location;
-        this.image = image;
-    }
+    private LocalDateTime createdAt;
 }

@@ -46,7 +46,8 @@ public class ClientConvertor {
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
                 image,
-                null
+                null,
+                client.getCreatedAt()
         );
     }
 

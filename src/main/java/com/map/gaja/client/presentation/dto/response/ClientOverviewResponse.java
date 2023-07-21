@@ -7,6 +7,8 @@ import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * 하나의 등록된 사용자 정보
  */
@@ -30,8 +32,9 @@ public class ClientOverviewResponse {
     private StoredFileDto image;
     @Schema(description = "현재 위치에서 떨어진 거리(M - 미터)", example = "2398")
     private Double distance; // km 기준
+    private LocalDateTime createdAt;
 
-    public ClientOverviewResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, AddressDto address, LocationDto location, StoredFileDto image) {
+    public ClientOverviewResponse(Long clientId, GroupInfoDto groupInfo, String clientName, String phoneNumber, AddressDto address, LocationDto location, StoredFileDto image, LocalDateTime createdAt) {
         this.clientId = clientId;
         this.groupInfo = groupInfo;
         this.clientName = clientName;
@@ -39,5 +42,6 @@ public class ClientOverviewResponse {
         this.address = address;
         this.location = location;
         this.image = image;
+        this.createdAt = createdAt;
     }
 }
