@@ -120,7 +120,7 @@ public class ClientConvertor {
     }
 
     protected static ClientAddress dtoToVo(AddressDto address) {
-        return new ClientAddress(address.getAddress(), address.getDetail());
+        return new ClientAddress(address.getMainAddress(), address.getDetail());
     }
 
     protected static LocationDto voToDto(ClientLocation location) {

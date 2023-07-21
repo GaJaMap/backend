@@ -48,8 +48,8 @@ public class NewClientRequest {
     private Boolean isBasicImage;
 
     @JsonIgnore
-    public void setAddress(String address) {
-        this.address.setAddress(address);
+    public void setMainAddress(String mainAddress) {
+        this.address.setMainAddress(mainAddress);
     }
     @JsonIgnore
     public void setDetail(String detail) {
