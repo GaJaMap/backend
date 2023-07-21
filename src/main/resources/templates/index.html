@@ -32,7 +32,7 @@
                 }).fadeIn(500); // 이미지 나타남
                 $("#status-message").fadeOut(500, function() {
                   // 메시지 사라짐
-                  $(this).text("고객 정보 등록에 성공하였습니다. 앱에서 확인해주세요!"); // 성공 메시지로 변경
+                  $(this).html("<span style='color: green'>" + response + "</span> 고객 정보 등록에 성공하였습니다. 앱에서 확인해주세요!"); // 성공 메시지로 변경
                 }).fadeIn(500); // 메시지 나타남
                 console.log(response);
               },

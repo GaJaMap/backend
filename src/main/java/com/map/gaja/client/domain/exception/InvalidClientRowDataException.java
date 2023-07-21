@@ -10,7 +10,7 @@ import java.util.List;
  */
 @Getter
 public class InvalidClientRowDataException extends RuntimeException {
-    private String message = "실패/성공 : %d / %d <br>" +
+    private String message = "실패/성공 : <span style='color: red'>%d</span> / <span style='color: green'>%d</span> <br>" +
             "제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br><br>" +
             "다음 줄의 데이터가 잘못되었습니다. <br>";
     private final HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -18,9 +18,9 @@ public class InvalidClientRowDataException extends RuntimeException {
     public InvalidClientRowDataException(int totalSize, List<Integer> failRowIdx) {
         StringBuilder resultMessageBuilder = new StringBuilder();
         resultMessageBuilder.append(String.format(message, failRowIdx.size(), totalSize));
-        resultMessageBuilder.append("{ ");
+        resultMessageBuilder.append("<span style='color: red'>{ ");
         resultMessageBuilder.append(getFailIdxListString(failRowIdx));
-        resultMessageBuilder.append(" }");
+        resultMessageBuilder.append(" }</span>");
 
         message = resultMessageBuilder.toString();
     }
