@@ -50,7 +50,7 @@ public class ExcelParser {
             String extension = FilenameUtils.getExtension(excel.getOriginalFilename());
             Workbook workbook = getWorkBook(extension, excelStream);
             Sheet worksheet = workbook.getSheetAt(0);
-            for (int rowIdx = DATA_START_ROW_INDEX; rowIdx < lastRowIdx; rowIdx++) {
+            for (int rowIdx = DATA_START_ROW_INDEX; rowIdx < worksheet.getPhysicalNumberOfRows(); rowIdx++) {
                 Row row = worksheet.getRow(rowIdx);
 
                 ClientExcelData clientData = new ClientExcelData();
