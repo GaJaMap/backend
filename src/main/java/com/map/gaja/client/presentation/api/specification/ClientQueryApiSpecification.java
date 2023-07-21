@@ -21,7 +21,8 @@ import javax.validation.Valid;
 
 public interface ClientQueryApiSpecification {
     @Operation(summary = "전체 고객 대상 반경 검색",
-            description = "현재 사용자 위치에서 전체 고객들을 대상으로 반경 검색 - 가장 가까운 순으로 정렬",
+            description = "현재 사용자 위치에서 전체 고객들을 대상으로 반경 검색 - 가장 가까운 순으로 정렬 <br>" +
+                    "만약 radius를 파라미터로 주지 않는다면, 고객의 위치 정보에 대해 반경으로 필터링을 하지 않고 모든 고객의 정보와 현재 위치에서 각각의 고객까지의 거리(distance)를 반환합니다.",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
                     @Parameter(name = "wordCond", description = "조회할 고객 이름"),
