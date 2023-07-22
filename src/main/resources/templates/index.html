@@ -39,12 +39,21 @@
                 $("#status-image").fadeOut(500, function() {
                   $(this).attr("src", "/image/fail.png");
                 }).fadeIn(500);
+
+                if(status != 400) {
+                    const failMessage = xhr.responseJSON.message;
+                    $("#status-message").fadeOut(500, function() {
+                      $(this).html(failMessage);
+                    }).fadeIn(500);
+                    return;
+                }
+
                 $("#status-message").fadeOut(500, function() {
                     const result = xhr.responseJSON;
                     const failSize = result.failRowIdx.length;
                     const totalSize = result.totalSize;
                     const failIdxList = result.failRowIdx;
-                    const resultMessage = "실패/성공 : <span style='color: red'> " + failSize + "</span> / <span style='color: blue'>" + totalSize + "</span> <br>" +
+                    const resultMessage = "<span style='color: red'> " + failSize + "</span> / <span style='color: blue'>" + totalSize + "</span> <br>" +
                     "제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br><br>" +
                     "다음 줄의 데이터가 잘못되었습니다. <br>" +
                     "<span style='color: red'>{ " + failIdxList + " }<span>"
