@@ -6,6 +6,7 @@ import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
+import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
@@ -79,7 +80,7 @@ public class WebClientController {
 
 
         if (!failRowIdx.isEmpty()) {
-            throw new InvalidClientRowDataException(clientExcelData.size(), failRowIdx);
+            throw new InvalidClientRowDataException(new InvalidExcelDataResponse(clientExcelData.size(), failRowIdx));
         }
 
         clientService.saveClientExcelData(groupId, clientExcelData);
