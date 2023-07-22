@@ -2,6 +2,7 @@ package com.map.gaja.client.infrastructure.file.excel;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
 public class ExcelParser {
     private static MockLocationGetter locationGetter = new MockLocationGetter();
 
+    private static final int MAXIMUM_EXCEL_ROW_DATA = 200;
     private static final int DATA_START_ROW_INDEX = 1;
     private static final int NAME_DATA_CELL_INDEX = 0;
     private static final int PHONE_NUMBER_DATA_CELL_INDEX = 1;
@@ -44,6 +46,14 @@ public class ExcelParser {
         }
     }
 
+    @AllArgsConstructor
+    static class RowData {
+        public String name;
+        public String phoneNumber;
+        public String address;
+        public String addressDetail;
+    }
+
     public List<ClientExcelData> parseClientExcelFile(MultipartFile excel) {
         List<ClientExcelData> dataList = new ArrayList<>();
         try (InputStream excelStream = excel.getInputStream()){
@@ -53,27 +63,18 @@ public class ExcelParser {
             for (int rowIdx = DATA_START_ROW_INDEX; rowIdx < worksheet.getPhysicalNumberOfRows(); rowIdx++) {
                 Row row = worksheet.getRow(rowIdx);
 
+                RowData rowData = getRowData(row);
                 ClientExcelData clientData = new ClientExcelData();
+                setDataNormalField(clientData, rowIdx, rowData);
 
-                String name = getCellDataOrNull(row.getCell(NAME_DATA_CELL_INDEX));
-                String phoneNumber = getCellDataOrNull(row.getCell(PHONE_NUMBER_DATA_CELL_INDEX));
-                String address = getCellDataOrNull(row.getCell(ADDRESS_DATA_CELL_INDEX));
-                String addressDetail = getCellDataOrNull(row.getCell(ADDRESS_DETAIL_DATA_CELL_INDEX));
-
-                clientData.setRowIdx(rowIdx+ APP_TO_EXCEL_IDX);
-                clientData.setName(name);
-                clientData.setPhoneNumber(phoneNumber);
-                clientData.setAddress(address);
-                clientData.setAddressDetail(addressDetail);
-
-                if (isEmptyCell(name) && isEmptyCell(phoneNumber) && isEmptyCell(address) && isEmptyCell(addressDetail)) {
+                if (isEmptyRow(rowData.name, rowData.phoneNumber, rowData.address, rowData.addressDetail)) {
                     break;
                 }
 
-                if (invalidateName(name)
-                        || invalidatePhoneNumber(phoneNumber)
-                        || invalidateAddress(address)
-                        || invalidateAddressDetail(addressDetail)) {
+                if (invalidateName(rowData.name)
+                        || invalidatePhoneNumber(rowData.phoneNumber)
+                        || invalidateAddress(rowData.address)
+                        || invalidateAddressDetail(rowData.addressDetail)) {
                     clientData.setIsValid(false);
                 }
                 else {
@@ -88,6 +89,26 @@ public class ExcelParser {
 
         locationGetter.settingLocation(dataList);
         return dataList;
+    }
+
+    private void setDataNormalField(ClientExcelData clientData, int rowIdx, RowData rowData) {
+        clientData.setRowIdx(rowIdx+ APP_TO_EXCEL_IDX);
+        clientData.setName(rowData.name);
+        clientData.setPhoneNumber(rowData.phoneNumber);
+        clientData.setAddress(rowData.address);
+        clientData.setAddressDetail(rowData.addressDetail);
+    }
+
+    private RowData getRowData(Row row) {
+        String name = getCellDataOrNull(row.getCell(NAME_DATA_CELL_INDEX));
+        String phoneNumber = getCellDataOrNull(row.getCell(PHONE_NUMBER_DATA_CELL_INDEX));
+        String address = getCellDataOrNull(row.getCell(ADDRESS_DATA_CELL_INDEX));
+        String addressDetail = getCellDataOrNull(row.getCell(ADDRESS_DETAIL_DATA_CELL_INDEX));
+        return new RowData(name, phoneNumber, address, addressDetail);
+    }
+
+    private boolean isEmptyRow(String name, String phoneNumber, String address, String addressDetail) {
+        return isEmptyCell(name) && isEmptyCell(phoneNumber) && isEmptyCell(address) && isEmptyCell(addressDetail);
     }
 
     private boolean isEmptyCell(String name) {
