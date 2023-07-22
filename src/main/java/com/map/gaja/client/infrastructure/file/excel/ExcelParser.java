@@ -1,14 +1,13 @@
 package com.map.gaja.client.infrastructure.file.excel;
 
+import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,30 +59,34 @@ public class ExcelParser {
             String extension = FilenameUtils.getExtension(excel.getOriginalFilename());
             Workbook workbook = getWorkBook(extension, excelStream);
             Sheet worksheet = workbook.getSheetAt(0);
-            for (int rowIdx = DATA_START_ROW_INDEX; rowIdx < worksheet.getPhysicalNumberOfRows(); rowIdx++) {
-                Row row = worksheet.getRow(rowIdx);
+            int endRow = Math.min(DATA_START_ROW_INDEX + MAXIMUM_EXCEL_ROW_DATA, worksheet.getLastRowNum());
+        for (int rowIdx = DATA_START_ROW_INDEX; rowIdx <= endRow; rowIdx++) {
+            Row row = worksheet.getRow(rowIdx);
 
-                RowData rowData = getRowData(row);
-                ClientExcelData clientData = new ClientExcelData();
-                setDataNormalField(clientData, rowIdx, rowData);
-
-                if (isEmptyRow(rowData.name, rowData.phoneNumber, rowData.address, rowData.addressDetail)) {
-                    break;
-                }
-
-                if (invalidateName(rowData.name)
-                        || invalidatePhoneNumber(rowData.phoneNumber)
-                        || invalidateAddress(rowData.address)
-                        || invalidateAddressDetail(rowData.addressDetail)) {
-                    clientData.setIsValid(false);
-                }
-                else {
-                    clientData.setIsValid(true);
-                }
-
-                dataList.add(clientData);
+            if (row == null || row.getLastCellNum() == -1) {
+                break; // 사용한 적 없는 ROW
             }
-        } catch (IOException e) {
+
+            RowData rowData = getRowData(row);
+            ClientExcelData clientData = new ClientExcelData();
+            if (isEmptyRowData(rowData)) {
+                break; // 데이터가 전부 지워져 있는 ROW
+            }
+            setDataNormalField(clientData, rowIdx, rowData);
+
+            if (invalidateName(rowData.name)
+                    || invalidatePhoneNumber(rowData.phoneNumber)
+                    || invalidateAddress(rowData.address)
+                    || invalidateAddressDetail(rowData.addressDetail)) {
+                clientData.setIsValid(false);
+            }
+            else {
+                clientData.setIsValid(true);
+            }
+
+            dataList.add(clientData);
+        }
+    } catch (IOException e) {
             throw new InvalidFileException(e);
         }
 
@@ -107,8 +110,8 @@ public class ExcelParser {
         return new RowData(name, phoneNumber, address, addressDetail);
     }
 
-    private boolean isEmptyRow(String name, String phoneNumber, String address, String addressDetail) {
-        return isEmptyCell(name) && isEmptyCell(phoneNumber) && isEmptyCell(address) && isEmptyCell(addressDetail);
+    private boolean isEmptyRowData(RowData rowData) {
+        return isEmptyCell(rowData.name) && isEmptyCell(rowData.phoneNumber) && isEmptyCell(rowData.address) && isEmptyCell(rowData.addressDetail);
     }
 
     private boolean isEmptyCell(String name) {
@@ -116,7 +119,7 @@ public class ExcelParser {
     }
 
     private static String getCellDataOrNull(Cell cell) {
-        if (cell == null) {
+        if (cell == null || !cell.getCellType().equals(CellType.STRING)) {
             return null;
         }
 
