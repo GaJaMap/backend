@@ -40,7 +40,7 @@
                   $(this).attr("src", "/image/fail.png");
                 }).fadeIn(500);
 
-                if(status != 400) {
+                if(xhr.status != 400) {
                     const failMessage = xhr.responseJSON.message;
                     $("#status-message").fadeOut(500, function() {
                       $(this).html(failMessage);
@@ -59,7 +59,6 @@
                     "<span style='color: red'>{ " + failIdxList + " }<span>"
                   $(this).html(resultMessage);
                 }).fadeIn(500);
-                // console.log(xhr);
               }
             });
           });
