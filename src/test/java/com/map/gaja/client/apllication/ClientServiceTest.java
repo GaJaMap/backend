@@ -1,6 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
@@ -34,6 +35,8 @@ class ClientServiceTest {
     @Mock
     private ClientRepository clientRepository;
     @Mock
+    private ClientBulkRepository clientBulkRepository;
+    @Mock
     private GroupRepository groupRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
@@ -58,6 +61,7 @@ class ClientServiceTest {
     void beforeEach() {
         clientService = new ClientService(
                 clientRepository,
+                clientBulkRepository,
                 groupRepository,
                 groupQueryRepository,
                 clientQueryRepository,
