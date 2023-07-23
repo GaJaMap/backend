@@ -7,10 +7,8 @@ import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -48,8 +46,8 @@ class ClientBulkRepositoryTest {
     }
 
 //    @Test
-    void batchInsert() {
-        repository.insertClientWithGroup(group, clientList);
+    void saveClientWithGroup() {
+        repository.saveClientWithGroup(group, clientList);
     }
 
     private Group createGroup(String groupName, User user) {

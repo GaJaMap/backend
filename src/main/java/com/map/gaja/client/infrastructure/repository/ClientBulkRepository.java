@@ -21,7 +21,7 @@ public class ClientBulkRepository {
      * @param group 고객 리스트가 들어갈 그룹
      * @param newClient 새로 생성된 고객들
      */
-    public void insertClientWithGroup(Group group, List<Client> newClient) {
+    public void saveClientWithGroup(Group group, List<Client> newClient) {
         group.increaseClientCount(newClient.size());
 
         final String insertSQL = "INSERT INTO " +
