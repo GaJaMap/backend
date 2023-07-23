@@ -2,6 +2,7 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.map.gaja.client.apllication.ClientConvertor.*;
 
@@ -32,6 +32,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final ClientBulkRepository clientBulkRepository;
     private final GroupRepository groupRepository;
     private final GroupQueryRepository groupQueryRepository;
 
@@ -186,10 +187,10 @@ public class ClientService {
     }
 
     /**
-     * 파싱한 엑셀 데이터 저장
-     * @return 저장된 Client ID 리스트
+     * 파싱한 엑셀 데이터 저장.
+     * JPA와 관계없이 저장하기 때문에 ID를 반환하지 않음.
      */
-    public List<Long> saveClientExcelData(Long groupId, List<ClientExcelData> excelData) {
+    public void saveClientExcelData(Long groupId, List<ClientExcelData> excelData) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(GroupNotFoundException::new);
 
@@ -198,9 +199,7 @@ public class ClientService {
             savedClient.add(dtoToEntity(clientData, group));
         });
 
-        clientRepository.saveAll(savedClient);
-
-        return savedClient.stream().map(Client::getId).collect(Collectors.toList());
+        clientBulkRepository.saveClientWithGroup(group, savedClient);
     }
 
     /**

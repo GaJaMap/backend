@@ -34,6 +34,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
+	// bulk 쿼리를 위한 jdbc
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
 	// aop 설정
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
