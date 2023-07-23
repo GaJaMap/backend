@@ -6,6 +6,7 @@ import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
+import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
@@ -15,7 +16,12 @@ import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -57,6 +63,23 @@ public class WebClientController {
         return "index";
     }
 
+    @GetMapping("/api/clients/file/sample")
+    @ResponseBody
+    public ResponseEntity<Resource> downloadSampleExcel() {
+        // 엑셀 템플릿 파일 다운로드
+        Resource resource = new ClassPathResource("/static/file/sample.xlsx");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "sample.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(resource);
+    }
+
+
+
     @PostMapping("/api/clients/file")
     @ResponseBody
     public ResponseEntity<Integer> clientUpload(
@@ -79,7 +102,7 @@ public class WebClientController {
 
 
         if (!failRowIdx.isEmpty()) {
-            throw new InvalidClientRowDataException(clientExcelData.size(), failRowIdx);
+            throw new InvalidClientRowDataException(new InvalidExcelDataResponse(clientExcelData.size(), failRowIdx));
         }
 
         clientService.saveClientExcelData(groupId, clientExcelData);

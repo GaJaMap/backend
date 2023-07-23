@@ -21,7 +21,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     /**
-     * 비즈니스 관련 예외 공동 처리
+     * API 비즈니스 관련 예외 공동 처리
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ExceptionDto> handleBusinessError(BusinessException e){
@@ -33,11 +33,11 @@ public class GlobalExceptionHandler {
     /**
      * 웹 예외 공동 처리
      */
-    @ExceptionHandler(InvalidClientRowDataException.class)
-    public ResponseEntity<ExceptionDto> handleWebError(InvalidClientRowDataException e){
+    @ExceptionHandler(WebException.class)
+    public ResponseEntity<Object> handleWebError(WebException e){
         return ResponseEntity
                 .status(e.getStatus())
-                .body(new ExceptionDto(e.getMessage()));
+                .body(e.getBody());
     }
 
     @ExceptionHandler(Exception.class)

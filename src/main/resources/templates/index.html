@@ -27,26 +27,52 @@
               success: function(response) {
                 // Ajax 요청이 성공하면 성공 상태 표시
                 $("#status-image").fadeOut(500, function() {
-                  // 이미지 사라짐
-                  $(this).attr("src", "/image/ok.png"); // 성공 이미지 URL로 변경
-                }).fadeIn(500); // 이미지 나타남
+                  $(this).attr("src", "/image/ok.png");
+                }).fadeIn(500);
                 $("#status-message").fadeOut(500, function() {
-                  // 메시지 사라짐
-                  $(this).html("<span style='color: green'>" + response + "</span> 고객 정보 등록에 성공하였습니다. 앱에서 확인해주세요!"); // 성공 메시지로 변경
-                }).fadeIn(500); // 메시지 나타남
-                console.log(response);
+                  $(this).html("<span style='color: green'>" + response + "</span> 명의 고객 정보 등록에 성공하였습니다. 앱에서 확인해주세요!"); // 성공 메시지로 변경
+                }).fadeIn(500);
+                // console.log(response);
               },
               error: function(xhr, status, error) {
                 // Ajax 요청이 실패하면 실패 상태 표시
                 $("#status-image").fadeOut(500, function() {
-                  // 이미지 사라짐
-                  $(this).attr("src", "/image/fail.png"); // 실패 이미지 URL로 변경
-                }).fadeIn(500); // 이미지 나타남
+                  $(this).attr("src", "/image/fail.png");
+                }).fadeIn(500);
+
+
+                let failMessage;
+                if(xhr.status == 400) {
+                    const result = xhr.responseJSON;
+                    const failSize = result.failRowIdx.length;
+                    const totalSize = result.totalSize;
+                    const failIdxList = result.failRowIdx;
+                    failMessage = "<span style='color: red'> " + failSize + "</span> / <span style='color: blue'>" + totalSize + "</span> <br>" +
+                    "제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br><br>" +
+                    "다음 줄의 데이터가 잘못되었습니다. <br>" +
+                    "<span style='color: red'>{ " + failIdxList + " }<span>"
+                }
+                else if(xhr.status == 401 || xhr.status == 403) {
+                    if(xhr.responseJSON == null || xhr.responseJSON.message == null) {
+                        failMessage = "접근 권한 또는 로그인 정보 만료 문제입니다.<br>로그인을 다시 진행한 후 시도해주세요.";
+                    }
+                    else {
+                        failMessage = xhr.responseJSON.message;
+                    }
+                }
+                else {
+                    if(xhr.responseJSON == null || xhr.responseJSON.message == null) {
+                        failMessage = "알 수 없는 오류로 실패하였습니다.<br> 관리자에게 문의해주세요.";
+                    }
+                    else {
+                        failMessage = xhr.responseJSON.message;
+                    }
+                }
+
                 $("#status-message").fadeOut(500, function() {
-                  // 메시지 사라짐
-                  $(this).html(xhr.responseJSON.message); // 실패 메시지로 변경
-                }).fadeIn(500); // 메시지 나타남
-                console.log(xhr);
+                    $(this).html(failMessage);
+                }).fadeIn(500);
+                return;
               }
             });
           });
