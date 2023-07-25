@@ -1,6 +1,7 @@
 package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
@@ -13,6 +14,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
@@ -75,6 +77,7 @@ public class ClientQueryRepository {
 
     /**
      * 그룹을 패치 조인 해서 Client 검색
+     *
      * @param clientId
      * @return
      */
@@ -91,6 +94,7 @@ public class ClientQueryRepository {
 
     /**
      * Group 내에 있는 Client 조회
+     *
      * @param groupId
      * @return
      */
@@ -140,6 +144,7 @@ public class ClientQueryRepository {
 
     /**
      * 해당 그룹이 클라이언트를 가지고 있는지 확인
+     *
      * @param groupId
      * @param clientId
      * @return 가지고 있다면 true
@@ -158,6 +163,7 @@ public class ClientQueryRepository {
 
     /**
      * 해당 그룹이 클라이언트를 가지고 있지 않은지 확인
+     *
      * @param groupId
      * @param clientId
      * @return 가지고 있지 않다면 true
@@ -168,8 +174,9 @@ public class ClientQueryRepository {
 
     /**
      * loginEmail User가 가지고 있는 "삭제되지 않은 그룹"의 Client 전체 검색.
+     *
      * @param loginEmail 로그인한 이메일
-     * @param nameCond 이름 검색 조건
+     * @param nameCond   이름 검색 조건
      * @return
      */
     public List<ClientOverviewResponse> findActiveClientByEmail(String loginEmail, @Nullable String nameCond) {
@@ -215,7 +222,18 @@ public class ClientQueryRepository {
     }
 
     /**
-     *
+     * 삭제할 Client 이미지 경로 페이징 조회
+     */
+    public List<ClientImage> findImagePathsToDelete(long page, long size) {
+        return query
+                .selectFrom(clientImage)
+                .where(clientImage.isDeleted.isTrue())
+                .offset(page)
+                .limit(size + 1)
+                .fetch();
+    }
+
+    /**
      * groupId 내에 있는 Client들 중에 clientIds와 매칭되는 Client의 개수를 반환
      */
     public long findMatchingClientCountInGroup(long groupId, List<Long> clientIds) {
