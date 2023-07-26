@@ -1,9 +1,7 @@
 package com.map.gaja.client.infrastructure.file.excel;
 
-import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
-import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -74,10 +72,7 @@ public class ExcelParser {
                 }
                 setDataNormalField(clientData, rowIdx, rowData);
 
-                if (invalidateName(rowData.name)
-                        || invalidatePhoneNumber(rowData.phoneNumber)
-                        || invalidateAddress(rowData.address)
-                        || invalidateAddressDetail(rowData.addressDetail)) {
+                if (isInvalidRowData(rowData)) {
                     clientData.setIsValid(false);
                 }
                 else {
@@ -92,6 +87,13 @@ public class ExcelParser {
 
         locationGetter.settingLocation(dataList);
         return dataList;
+    }
+
+    private boolean isInvalidRowData(RowData rowData) {
+        return invalidateName(rowData.name)
+                || invalidatePhoneNumber(rowData.phoneNumber)
+                || invalidateAddress(rowData.address)
+                || invalidateAddressDetail(rowData.addressDetail);
     }
 
     private void setDataNormalField(ClientExcelData clientData, int rowIdx, RowData rowData) {
