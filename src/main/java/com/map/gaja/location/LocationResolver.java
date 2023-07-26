@@ -3,6 +3,7 @@ package com.map.gaja.location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.location.exception.NotExcelUploadException;
@@ -44,6 +45,9 @@ public class LocationResolver {
 
                 if (responseEntity.getStatusCode().is2xxSuccessful()) {
                     LocationDto location = parseLocation(responseEntity.getBody());
+                    if (isLocationOutOfKorea(location)) {
+                        throw new LocationOutsideKoreaException();
+                    }
                     data.setLocation(location);
                 } else {
                     // 200번대 외 상태코드는 현재 카카오 서비스를 사용할 수 없다고 볼 수 있음.
@@ -54,6 +58,19 @@ public class LocationResolver {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 카카오 API 호출 최소화를 위해 여기서 검증을 한다.
+     * 해외 주소를 넣으면 null이 나오는 것 같은데 혹시 모르니까 검사한다.
+     */
+    private boolean isLocationOutOfKorea(LocationDto location) {
+        if (location.getLongitude() == null && location.getLatitude() == null) {
+            return false;
+        }
+
+        return 33d > location.getLatitude() || location.getLatitude() > 38d
+                || 124d > location.getLongitude() || location.getLongitude() > 132d;
     }
 
     private HttpHeaders createHeaders() {

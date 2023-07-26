@@ -43,14 +43,20 @@
 
                 let failMessage;
                 if(xhr.status == 400) {
-                    const result = xhr.responseJSON;
-                    const failSize = result.failRowIdx.length;
-                    const totalSize = result.totalSize;
-                    const failIdxList = result.failRowIdx;
-                    failMessage = "<span style='color: red'> " + failSize + "</span> / <span style='color: blue'>" + totalSize + "</span> <br>" +
-                    "제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br><br>" +
-                    "다음 줄의 데이터가 잘못되었습니다. <br>" +
-                    "<span style='color: red'>{ " + failIdxList + " }<span>"
+                    if(xhr.responseJSON == null || xhr.responseJSON.message == null) {
+                        const result = xhr.responseJSON;
+                        const failSize = result.failRowIdx.length;
+                        const totalSize = result.totalSize;
+                        const failIdxList = result.failRowIdx;
+                        failMessage = "<span style='color: red'> " + failSize + "</span> / <span style='color: blue'>" + totalSize + "</span> <br>" +
+                        "제약조건을 준수해서 엑셀 데이터를 작성해주세요. <br><br>" +
+                        "다음 줄의 데이터가 잘못되었습니다. <br>" +
+                        "<span style='color: red'>{ " + failIdxList + " }<span>";
+                    }
+                    else {
+                        failMessage = xhr.responseJSON.message;
+                    }
+
                 }
                 else if(xhr.status == 401 || xhr.status == 403) {
                     if(xhr.responseJSON == null || xhr.responseJSON.message == null) {
