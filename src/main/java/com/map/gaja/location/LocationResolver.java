@@ -50,7 +50,6 @@ public class LocationResolver {
                 if (responseEntity.getStatusCode().is2xxSuccessful()) {
                     LocationDto location = parseLocation(responseEntity.getBody());
                     if (isLocationOutOfKorea(location)) {
-                        System.out.println("???");
                         throw new LocationOutsideKoreaException();
                     }
                     data.setLocation(location);
