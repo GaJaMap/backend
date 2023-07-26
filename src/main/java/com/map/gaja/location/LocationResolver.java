@@ -81,10 +81,9 @@ public class LocationResolver {
             double x = documentNode.get("x").asDouble();
             double y = documentNode.get("y").asDouble();
 
-            return new LocationDto(x, y);
+            return new LocationDto(y, x);
         }
 
         return new LocationDto();
-
     }
 }
