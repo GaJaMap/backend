@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 @Repository
@@ -22,8 +23,6 @@ public class ClientBulkRepository {
      * @param newClient 새로 생성된 고객들
      */
     public void saveClientWithGroup(Group group, List<Client> newClient) {
-        group.increaseClientCount(newClient.size());
-
         final String insertSQL = "INSERT INTO " +
                 "client (name, phone_number, address, detail, latitude, longitude, group_id, created_at, updated_at) " +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
@@ -34,11 +33,27 @@ public class ClientBulkRepository {
                 Client client = newClient.get(i);
                 ps.setString(1, client.getName());
                 ps.setString(2, client.getPhoneNumber());
-                ps.setString(3, client.getAddress().getAddress());
-                ps.setString(4, client.getAddress().getDetail());
-                ps.setDouble(5, client.getLocation().getLatitude());
-                ps.setDouble(6, client.getLocation().getLongitude());
+                setAddressOrSetNull(ps, 3, client.getAddress() == null ? null : client.getAddress().getAddress());
+                setAddressOrSetNull(ps, 4, client.getAddress() == null ? null : client.getAddress().getDetail());
+                setLocationOrSetNull(ps, 5, client.getLocation() == null ? null : client.getLocation().getLatitude());
+                setLocationOrSetNull(ps, 6, client.getLocation() == null ? null : client.getLocation().getLongitude());
                 ps.setLong(7, group.getId());
+            }
+
+            private void setAddressOrSetNull(PreparedStatement ps, int index, String value) throws SQLException {
+                if (value != null) {
+                    ps.setString(index, value);
+                } else {
+                    ps.setNull(index, Types.VARCHAR);
+                }
+            }
+
+            private void setLocationOrSetNull(PreparedStatement ps, int index, Double value) throws SQLException {
+                if (value != null) {
+                    ps.setDouble(index, value);
+                } else {
+                    ps.setNull(index, Types.DOUBLE);
+                }
             }
 
             @Override

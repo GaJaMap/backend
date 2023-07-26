@@ -117,11 +117,13 @@ public class ClientConvertor {
     }
 
     protected static ClientLocation dtoToVo(LocationDto location) {
-        return new ClientLocation(location.getLatitude(), location.getLongitude());
+        return (location == null) ? new ClientLocation() :
+                new ClientLocation(location.getLatitude(), location.getLongitude());
     }
 
     protected static ClientAddress dtoToVo(AddressDto address) {
-        return new ClientAddress(address.getMainAddress(), address.getDetail());
+        return (address == null) ? new ClientAddress() :
+                new ClientAddress(address.getMainAddress(), address.getDetail());
     }
 
     protected static LocationDto voToDto(ClientLocation location) {

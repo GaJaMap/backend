@@ -38,6 +38,10 @@ public class LocationResolver {
             HttpHeaders headers = createHeaders();
 
             for (ClientExcelData data : addresses) {
+                if (data.getAddress() == null) {
+                    continue;
+                }
+
                 URI uri = createUri(data.getAddress());
 
                 RequestEntity<Void> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
@@ -46,6 +50,7 @@ public class LocationResolver {
                 if (responseEntity.getStatusCode().is2xxSuccessful()) {
                     LocationDto location = parseLocation(responseEntity.getBody());
                     if (isLocationOutOfKorea(location)) {
+                        System.out.println("???");
                         throw new LocationOutsideKoreaException();
                     }
                     data.setLocation(location);
