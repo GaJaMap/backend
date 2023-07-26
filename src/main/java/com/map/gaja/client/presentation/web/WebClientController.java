@@ -14,6 +14,7 @@ import com.map.gaja.global.log.TimeCheckLog;
 
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
+import com.map.gaja.location.LocationResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -42,6 +43,7 @@ public class WebClientController {
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final ClientService clientService;
     private final GroupService groupService;
+    private final LocationResolver locationResolver;
 
     @GetMapping("/")
     public String clientFileUpload(
@@ -91,7 +93,15 @@ public class WebClientController {
         groupAccessVerifyService.verifyGroupAccess(groupId, loginEmail);
 
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelFile);
+        validateClientData(clientExcelData);
+        locationResolver.convertCoordinate(clientExcelData);
 
+        clientService.saveClientExcelData(groupId, clientExcelData);
+        int successDataSize = clientExcelData.size();
+        return new ResponseEntity<>(successDataSize, HttpStatus.OK);
+    }
+
+    private void validateClientData(List<ClientExcelData> clientExcelData) {
         List<Integer> failRowIdx = new ArrayList<>();
         clientExcelData.forEach(clientData -> {
             if (!clientData.getIsValid()) {
@@ -99,13 +109,8 @@ public class WebClientController {
             }
         });
 
-
         if (!failRowIdx.isEmpty()) {
             throw new InvalidClientRowDataException(new InvalidExcelDataResponse(clientExcelData.size(), failRowIdx));
         }
-
-        clientService.saveClientExcelData(groupId, clientExcelData);
-        int successDataSize = clientExcelData.size();
-        return new ResponseEntity<>(successDataSize, HttpStatus.OK);
     }
 }
