@@ -60,6 +60,8 @@ public class LocationResolver {
                 }
             }
 
+        } catch (LocationOutsideKoreaException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
