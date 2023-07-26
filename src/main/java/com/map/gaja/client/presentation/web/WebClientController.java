@@ -10,7 +10,6 @@ import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.global.exception.BusinessException;
 import com.map.gaja.global.log.TimeCheckLog;
 
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -18,7 +17,6 @@ import com.map.gaja.group.application.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,10 +25,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,16 +80,17 @@ public class WebClientController {
 
     @PostMapping("/api/clients/file")
     @ResponseBody
-    public ResponseEntity<Integer> clientUpload(
+    public ResponseEntity<Integer> saveExcelFileData(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
-        FileValidator.verifyFile(excelRequest.getExcelFile());
-
         Long groupId = excelRequest.getGroupId();
-        groupAccessVerifyService.verifyGroupAccess(excelRequest.getGroupId(), loginEmail);
+        MultipartFile excelFile = excelRequest.getExcelFile();
+        FileValidator.verifyFile(excelFile);
 
-        List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelRequest.getExcelFile());
+        groupAccessVerifyService.verifyGroupAccess(groupId, loginEmail);
+
+        List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelFile);
 
         List<Integer> failRowIdx = new ArrayList<>();
         clientExcelData.forEach(clientData -> {
