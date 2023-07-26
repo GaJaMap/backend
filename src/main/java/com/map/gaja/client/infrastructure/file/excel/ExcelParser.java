@@ -18,8 +18,6 @@ import java.util.regex.Pattern;
 
 @Component
 public class ExcelParser {
-    private static MockLocationGetter locationGetter = new MockLocationGetter();
-
     private static final int MAXIMUM_EXCEL_ROW_DATA = 200;
     private static final int DATA_START_ROW_INDEX = 1;
     private static final int NAME_DATA_CELL_INDEX = 0;
@@ -34,14 +32,6 @@ public class ExcelParser {
     private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
     private static final int DETAIL_LENGTH_LIMIT = 20;
     private static final int NAME_LENGTH_LIMIT = 20;
-
-    static class MockLocationGetter {
-        public void settingLocation(List<ClientExcelData> clientData) {
-            clientData.forEach((cd) -> {
-                cd.setLocation(new LocationDto(37.51, 127.023));
-            });
-        }
-    }
 
     @AllArgsConstructor
     static class RowData {
@@ -85,7 +75,6 @@ public class ExcelParser {
             throw new InvalidFileException(e);
         }
 
-        locationGetter.settingLocation(dataList);
         return dataList;
     }
 
