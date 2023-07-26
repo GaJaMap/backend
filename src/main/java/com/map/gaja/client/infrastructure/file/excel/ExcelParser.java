@@ -114,8 +114,8 @@ public class ExcelParser {
         return isEmptyCell(rowData.name) && isEmptyCell(rowData.phoneNumber) && isEmptyCell(rowData.address) && isEmptyCell(rowData.addressDetail);
     }
 
-    private boolean isEmptyCell(String name) {
-        return name == null || name.length() == 0;
+    private boolean isEmptyCell(String cellData) {
+        return cellData == null || cellData.length() == 0;
     }
 
     private static String getCellDataOrNull(Cell cell) {
@@ -137,13 +137,13 @@ public class ExcelParser {
     }
 
     private boolean invalidateAddressDetail(String addressDetailString) {
-        return isEmptyCell(addressDetailString) || addressDetailString.length() > DETAIL_LENGTH_LIMIT;
+        return addressDetailString != null && addressDetailString.length() > DETAIL_LENGTH_LIMIT;
     }
 
     private boolean invalidateAddress(String addressString) {
-        return isEmptyCell(addressString)
-                || addressString.length() > ADDRESS_LENGTH_MAX_LIMIT
-                || addressString.length() < ADDRESS_LENGTH_MIN_LIMIT;
+        return addressString != null
+                && (addressString.length() > ADDRESS_LENGTH_MAX_LIMIT
+                        || addressString.length() < ADDRESS_LENGTH_MIN_LIMIT);
     }
 
     private boolean invalidatePhoneNumber(String phoneNumber) {
