@@ -55,38 +55,38 @@ public class ExcelParser {
 
     public List<ClientExcelData> parseClientExcelFile(MultipartFile excel) {
         List<ClientExcelData> dataList = new ArrayList<>();
-        try (InputStream excelStream = excel.getInputStream()){
+        try (InputStream excelStream = excel.getInputStream()) {
             String extension = FilenameUtils.getExtension(excel.getOriginalFilename());
             Workbook workbook = getWorkBook(extension, excelStream);
             Sheet worksheet = workbook.getSheetAt(0);
             int endRow = Math.min(DATA_START_ROW_INDEX + MAXIMUM_EXCEL_ROW_DATA, worksheet.getLastRowNum());
-        for (int rowIdx = DATA_START_ROW_INDEX; rowIdx <= endRow; rowIdx++) {
-            Row row = worksheet.getRow(rowIdx);
+            for (int rowIdx = DATA_START_ROW_INDEX; rowIdx <= endRow; rowIdx++) {
+                Row row = worksheet.getRow(rowIdx);
 
-            if (row == null || row.getLastCellNum() == -1) {
-                break; // 사용한 적 없는 ROW
-            }
+                if (row == null || row.getLastCellNum() == -1) {
+                    break; // 사용한 적 없는 ROW
+                }
 
-            RowData rowData = getRowData(row);
-            ClientExcelData clientData = new ClientExcelData();
-            if (isEmptyRowData(rowData)) {
-                break; // 데이터가 전부 지워져 있는 ROW
-            }
-            setDataNormalField(clientData, rowIdx, rowData);
+                RowData rowData = getRowData(row);
+                ClientExcelData clientData = new ClientExcelData();
+                if (isEmptyRowData(rowData)) {
+                    break; // 데이터가 전부 지워져 있는 ROW
+                }
+                setDataNormalField(clientData, rowIdx, rowData);
 
-            if (invalidateName(rowData.name)
-                    || invalidatePhoneNumber(rowData.phoneNumber)
-                    || invalidateAddress(rowData.address)
-                    || invalidateAddressDetail(rowData.addressDetail)) {
-                clientData.setIsValid(false);
-            }
-            else {
-                clientData.setIsValid(true);
-            }
+                if (invalidateName(rowData.name)
+                        || invalidatePhoneNumber(rowData.phoneNumber)
+                        || invalidateAddress(rowData.address)
+                        || invalidateAddressDetail(rowData.addressDetail)) {
+                    clientData.setIsValid(false);
+                }
+                else {
+                    clientData.setIsValid(true);
+                }
 
-            dataList.add(clientData);
-        }
-    } catch (IOException e) {
+                dataList.add(clientData);
+            }
+        } catch (IOException e) {
             throw new InvalidFileException(e);
         }
 
