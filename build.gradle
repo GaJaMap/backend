@@ -10,6 +10,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.11'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // querydsl 설정
+	id "com.gorylenko.gradle-git-properties" version "2.4.1" // git 모니터링을 위한 플러그인 추가
 }
 
 group = 'com.map'
@@ -33,6 +34,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+
+	// 모니터링 설정
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스 마이크로 미터 구현체 추가
 
 	// bulk 쿼리를 위한 jdbc
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'

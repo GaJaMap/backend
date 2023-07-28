@@ -3,6 +3,7 @@ package com.map.gaja.global.config;
 import com.map.gaja.oauth2.application.Oauth2UserService;
 import com.map.gaja.oauth2.handler.Oauth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,12 +17,18 @@ public class SecurityConfig {
     private final Oauth2UserService oauth2UserService;
     private final Oauth2SuccessHandler oauth2SuccessHandler;
 
+    @Value("${management.endpoints.web.base-path}")
+    private String monitoringEndPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        String monitoringPath = monitoringEndPoint+"/**";
+
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
                         .antMatchers("/api/user/login",
+                                monitoringPath,
                                 "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
                         ).permitAll()
                         .anyRequest().authenticated())
