@@ -37,6 +37,7 @@ dependencies {
 
 	// 모니터링 설정
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스 마이크로 미터 구현체 추가
 
 	// bulk 쿼리를 위한 jdbc
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
