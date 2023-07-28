@@ -171,19 +171,17 @@ public class ClientService {
         return existingClient.getGroup().getId() != updateRequest.getGroupId();
     }
 
-    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
+    public void saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
         Group group = groupQueryRepository.findGroupWithUser(bulkRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
 
-        List<Long> savedIdList = new ArrayList<>();
+        List<Client> savedClient = new ArrayList<>();
         bulkRequest.getClients().forEach((clientRequest) -> {
-            Client client = dtoToEntity(clientRequest, group);
-            clientRepository.save(client);
-            savedIdList.add(client.getId());
+            savedClient.add(dtoToEntity(clientRequest, group));
         });
-        increasingClientService.increase(group, group.getUser().getAuthority(), savedIdList.size());
 
-        return savedIdList;
+        clientBulkRepository.saveClientWithGroup(group, savedClient);
+        increasingClientService.increase(group, group.getUser().getAuthority(), savedClient.size());
     }
 
     /**

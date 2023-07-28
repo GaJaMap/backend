@@ -104,7 +104,7 @@ public interface ClientCommandApiSpecification {
                     @ApiResponse(responseCode = "422", description = "사용자에게 요청 그룹이 없거나, 그룹에 요청 고객이 없음 <br> 또는 그룹 내에 사용자 수보다 많은 사용자를 등록할 수 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
     @PostMapping("/clients/bulk")
-    public ResponseEntity<List<Long>> addSimpleBulkClient(
+    public ResponseEntity<Void> addSimpleBulkClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
     );
