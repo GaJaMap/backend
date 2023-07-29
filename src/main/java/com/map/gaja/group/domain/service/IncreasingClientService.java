@@ -14,7 +14,7 @@ public class IncreasingClientService {
             return;
         }
 
-        throw new ClientLimitExceededException(authority.name(), group.getClientCount());
+        throw new ClientLimitExceededException(authority.name(), authority.getClientLimitCount());
     }
 
     private boolean isCreateClient(int clientLimitCount, int currentClientCount, int increaseInClient) {
