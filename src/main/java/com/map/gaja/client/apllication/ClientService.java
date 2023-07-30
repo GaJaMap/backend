@@ -180,8 +180,8 @@ public class ClientService {
             savedClient.add(dtoToEntity(clientRequest, group));
         });
 
-        clientBulkRepository.saveClientWithGroup(group, savedClient);
         increasingClientService.increase(group, group.getUser().getAuthority(), savedClient.size());
+        clientBulkRepository.saveClientWithGroup(group, savedClient);
     }
 
     /**
