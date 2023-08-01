@@ -144,4 +144,27 @@ class GroupRepositoryTest {
         //then
         assertEquals(5, result);
     }
+
+    @Test
+    @DisplayName("isDeleted true인 group들 전부 삭제")
+    void deleteMarkedGroups() {
+        //given
+        User user = new User("test");
+        userRepository.save(user);
+
+        for(int i=0;i<5;i++){
+            Group group = new Group(user.getEmail(), user); //삭제된 그룹
+            group.remove();
+            groupRepository.save(group);
+        }
+
+        Group group = new Group(user.getEmail(), user); //삭제안된 그룹
+        groupRepository.save(group);
+
+        //when
+        int result = groupRepository.deleteMarkedGroups();
+
+        //then
+        assertEquals(5, result);
+    }
 }
