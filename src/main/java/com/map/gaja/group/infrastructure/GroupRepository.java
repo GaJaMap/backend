@@ -28,4 +28,11 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Modifying
     @Query("UPDATE Group g SET g.isDeleted = true WHERE g.user.id IN (SELECT u.id FROM User u WHERE u.active = false)")
     int deleteByWithdrawalUser();
+
+    /**
+     * isDeleted true인 group들 전부 삭제
+     */
+    @Modifying
+    @Query(value = "DELETE FROM Group g WHERE g.isDeleted = true")
+    int deleteMarkedGroups();
 }
