@@ -57,7 +57,7 @@ public class ClientController implements ClientCommandApiSpecification {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/group/{groupId}/clients/bulk")
+    @PostMapping("/group/{groupId}/clients/bulk-delete")
     public ResponseEntity<Void> deleteBulkClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
