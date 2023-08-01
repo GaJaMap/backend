@@ -15,7 +15,7 @@
 
     <!-- 클래스 별 로그 파일 분리 -->
     <appender name="ImageDeletionTask" class="ch.qos.logback.core.FileAppender"> <!-- 파일에 로그 출력 -->
-        <file>/logs/ImageDeletionTask.log</file>
+        <file>logs/ImageDeletionTask.log</file>
         <append>true</append>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
