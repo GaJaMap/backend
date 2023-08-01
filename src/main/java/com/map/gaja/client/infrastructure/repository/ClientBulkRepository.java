@@ -34,15 +34,15 @@ public class ClientBulkRepository {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 Client client = newClient.get(i);
                 ps.setString(1, client.getName());
-                ps.setString(2, client.getPhoneNumber());
-                setAddressOrSetNull(ps, 3, client.getAddress() == null ? null : client.getAddress().getAddress());
-                setAddressOrSetNull(ps, 4, client.getAddress() == null ? null : client.getAddress().getDetail());
-                setLocationOrSetNull(ps, 5, client.getLocation() == null ? null : client.getLocation().getLatitude());
-                setLocationOrSetNull(ps, 6, client.getLocation() == null ? null : client.getLocation().getLongitude());
+                setStringOrSetNull(ps, 2, client.getPhoneNumber() == null ? null : client.getPhoneNumber());
+                setStringOrSetNull(ps, 3, client.getAddress() == null ? null : client.getAddress().getAddress());
+                setStringOrSetNull(ps, 4, client.getAddress() == null ? null : client.getAddress().getDetail());
+                setDoubleOrSetNull(ps, 5, client.getLocation() == null ? null : client.getLocation().getLatitude());
+                setDoubleOrSetNull(ps, 6, client.getLocation() == null ? null : client.getLocation().getLongitude());
                 ps.setLong(7, group.getId());
             }
 
-            private void setAddressOrSetNull(PreparedStatement ps, int index, String value) throws SQLException {
+            private void setStringOrSetNull(PreparedStatement ps, int index, String value) throws SQLException {
                 if (value != null) {
                     ps.setString(index, value);
                 } else {
@@ -50,7 +50,7 @@ public class ClientBulkRepository {
                 }
             }
 
-            private void setLocationOrSetNull(PreparedStatement ps, int index, Double value) throws SQLException {
+            private void setDoubleOrSetNull(PreparedStatement ps, int index, Double value) throws SQLException {
                 if (value != null) {
                     ps.setDouble(index, value);
                 } else {
