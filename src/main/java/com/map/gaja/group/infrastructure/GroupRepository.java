@@ -24,4 +24,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query("SELECT g FROM Group g INNER JOIN g.user WHERE g.id = :groupId AND g.user.email = :email AND g.isDeleted = false") // 임시로 만듦
     Optional<Group> findByIdAndUserEmail(@Param(value = "groupId") Long groupId, @Param(value = "email") String email);
+
+    @Modifying
+    @Query("UPDATE Group g SET g.isDeleted = true WHERE g.user.id IN (SELECT u.id FROM User u WHERE u.active = false)")
+    int deleteByWithdrawalUser();
 }
