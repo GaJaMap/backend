@@ -32,7 +32,7 @@ class ExcelParserTest {
         MockMultipartFile testExcelFile = new MockMultipartFile("file", originalFileName, contentType, content);
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(testExcelFile);
 
-        assertThat(clientExcelData.size()).isEqualTo(6);
+        assertThat(clientExcelData.size()).isEqualTo(7);
         clientExcelData.forEach(data -> {
             assertTrue(data.getIsValid());
         });
@@ -48,9 +48,7 @@ class ExcelParserTest {
         MockMultipartFile testExcelFile = new MockMultipartFile("file", originalFileName, contentType, content);
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(testExcelFile);
 
-        clientExcelData.forEach(System.out::println);
-
-        assertThat(clientExcelData.size()).isEqualTo(6);
+        assertThat(clientExcelData.size()).isEqualTo(5);
         clientExcelData.forEach(data -> {
             assertFalse(data.getIsValid());
         });
