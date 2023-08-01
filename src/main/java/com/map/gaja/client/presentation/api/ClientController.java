@@ -131,14 +131,14 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PostMapping("/clients/bulk")
-    public ResponseEntity<List<Long>> addSimpleBulkClient(
+    public ResponseEntity<Void> addSimpleBulkClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
     ) {
         // 단순한 Client 정보 등록
         groupAccessVerifyService.verifyGroupAccess(clientBulkRequest.getGroupId(), loginEmail);
-        List<Long> body = clientService.saveSimpleClientList(clientBulkRequest);
-        return new ResponseEntity<>(body, HttpStatus.CREATED);
+        clientService.saveSimpleClientList(clientBulkRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/clients")
