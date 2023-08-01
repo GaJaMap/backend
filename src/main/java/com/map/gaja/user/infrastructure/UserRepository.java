@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    /**
+     * active가 활성화된 유저의 이메일 조회
+     */
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.active = true")
     Optional<User> findByEmail(@Param(value = "email") String email);
 
