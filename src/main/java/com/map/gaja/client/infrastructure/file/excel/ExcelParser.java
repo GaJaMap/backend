@@ -138,7 +138,7 @@ public class ExcelParser {
     }
 
     private boolean invalidatePhoneNumber(String phoneNumber) {
-        return isEmptyCell(phoneNumber) || !Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber);
+        return phoneNumber != null && !Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber);
     }
 
     private boolean invalidateName(String name) {
