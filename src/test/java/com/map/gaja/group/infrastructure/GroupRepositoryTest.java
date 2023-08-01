@@ -116,4 +116,32 @@ class GroupRepositoryTest {
 
         assertEquals(group, result);
     }
+
+    @Test
+    @DisplayName("회원 탈퇴한 유저들 그룹 필드인 isDeleted true로 업데이트")
+    void deleteByWithdrawalUser() {
+        //given
+        User user = new User("test");
+        userRepository.save(user);
+
+        for(int i=0;i<5;i++){
+            User u = User.builder()
+                    .email("test"+i)
+                    .groupCount(0)
+                    .authority(Authority.FREE)
+                    .lastLoginDate(LocalDateTime.now())
+                    .active(false)
+                    .build();
+            userRepository.save(u);
+
+            Group group = new Group(u.getEmail(), u);
+            groupRepository.save(group);
+        }
+
+        //when
+        int result = groupRepository.deleteByWithdrawalUser();
+
+        //then
+        assertEquals(5, result);
+    }
 }
