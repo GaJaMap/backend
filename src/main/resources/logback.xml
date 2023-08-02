@@ -2,7 +2,7 @@
 <configuration status="info">
 
     <!-- 날짜 / 스레드명 / 로깅레벨 / 로그 최대 글자수(36) / 메소드명:줄 / 로그메시지 -->
-    <property name="LOG_PATTERN" value = "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%method:%line - %msg%n"></property>
+    <property name="LOG_PATTERN" value = "%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}.%method:%line) - %yellow(%msg%n)"></property>
 
     <!-- appender는 로그를 어떤 방식으로 넣을 것인지 설정 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender"> <!-- 콘솔에 로그 출력 -->
