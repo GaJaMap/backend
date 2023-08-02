@@ -32,4 +32,11 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query("DELETE FROM Client c " +
             "WHERE c.id IN :clientIds")
     void deleteClientsInClientIds(List<Long> clientIds);
+
+    /**
+     * 삭제된 그룹에 속한 클라이언트 전부 삭제
+     */
+    @Modifying
+    @Query(value = "DELETE c FROM client c INNER JOIN group_set g ON c.group_id=g.group_id WHERE g.is_deleted = true", nativeQuery = true)
+    int deleteClientsInDeletedGroup();
 }

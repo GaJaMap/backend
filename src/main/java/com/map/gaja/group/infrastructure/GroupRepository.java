@@ -12,16 +12,40 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
+    /**
+     * group 페이징 조회
+     */
     @Query("SELECT g.id as groupId, g.name as groupName, g.clientCount as clientCount FROM Group g WHERE g.user.id = :userId AND g.isDeleted = false")
     Slice<GroupInfo> findGroupByUserId(@Param(value = "userId") Long userId, Pageable pageable);
 
+    /**
+     * groupId와 userId 값을 가진 삭제할 그룹을  isDeleted 필드 true로 변경
+     */
     @Modifying
     @Query("UPDATE Group g SET g.isDeleted = true WHERE g.id = :groupId AND g.user.id = :userId")
     int deleteByIdAndUserId(@Param(value = "groupId") Long groupId, @Param(value = "userId") Long userId);
 
+    /**
+     * groupId와 userId 값을 가진 삭제되지 않은 그룹 조회
+     */
     @Query("SELECT g FROM Group g WHERE g.id = :groupId AND g.user.id = :userId AND g.isDeleted = false")
     Optional<Group> findByIdAndUserId(@Param(value = "groupId") Long groupId, @Param(value = "userId") Long userId);
 
-    @Query("SELECT g FROM Group g INNER JOIN g.user WHERE g.id = :groupId AND g.user.email = :email AND g.isDeleted = false") // 임시로 만듦
+    @Query("SELECT g FROM Group g INNER JOIN g.user WHERE g.id = :groupId AND g.user.email = :email AND g.isDeleted = false")
+        // 임시로 만듦
     Optional<Group> findByIdAndUserEmail(@Param(value = "groupId") Long groupId, @Param(value = "email") String email);
+
+    /**
+     * 회원탈퇴한 유저의 그룹 isDeleted true로 변경
+     */
+    @Modifying
+    @Query("UPDATE Group g SET g.isDeleted = true WHERE g.user.id IN (SELECT u.id FROM User u WHERE u.active = false)")
+    int deleteByWithdrawalUser();
+
+    /**
+     * isDeleted true인 group들 전부 삭제
+     */
+    @Modifying
+    @Query(value = "DELETE FROM Group g WHERE g.isDeleted = true")
+    int deleteMarkedGroups();
 }
