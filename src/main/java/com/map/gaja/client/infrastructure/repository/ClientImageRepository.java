@@ -12,7 +12,7 @@ public interface ClientImageRepository extends JpaRepository<ClientImage, Long> 
     /**
      * 파라미터로 받은 클라이언트 이미지 아이디로 클라이언트 이미지 삭제
      */
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Modifying(clearAutomatically = true)
     @Query("DELETE FROM ClientImage ci " +
             "WHERE ci.id IN :ids")
     void deleteClientImagesInIds(@Param(value = "ids") List<Long> ids);
