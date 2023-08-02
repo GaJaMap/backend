@@ -11,6 +11,88 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // querydsl 설정
 	id "com.gorylenko.gradle-git-properties" version "2.4.1" // git 모니터링을 위한 플러그인 추가
+	id 'jacoco' // 테스트 커버리지 측정 설정
+}
+
+// 테스트 커버리지 측정 설정
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.enabled true
+		xml.enabled false
+		csv.enabled false
+	}
+
+	def Qdomains = []
+	for (qPattern in '**/QA'..'**/QZ') {
+		Qdomains.add(qPattern + '*')
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, excludes: [
+							"**/*Application*",
+							"**/*Config*",
+							"**/*Dto*",
+							"**/*Request*",
+							"**/*Response*",
+							"**/*Interceptor*",
+							"**/*Exception*"
+					] + Qdomains)
+				})
+		)
+	}
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+
+jacocoTestCoverageVerification {
+	def Qdomains = []
+	for (qPattern in '*.QA'..'*.QZ') {
+		Qdomains.add(qPattern + '*')
+	}
+
+	violationRules {
+		rule {
+			element = 'CLASS'
+			enabled = true
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+
+			excludes = [
+					"**.*Application*",
+					"**.*Config*",
+					"**.*Dto*",
+					"**.*Request*",
+					"**.*Response*",
+					"**.*Interceptor*",
+					"**.*Exception*"
+			] + Qdomains
+		}
+	}
+}
+
+task testCoverage(type: Test) {
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	dependsOn(':test',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
 
 group = 'com.map'
