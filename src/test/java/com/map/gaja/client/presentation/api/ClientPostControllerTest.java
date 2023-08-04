@@ -1,12 +1,16 @@
 package com.map.gaja.client.presentation.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
@@ -35,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -61,13 +66,15 @@ public class ClientPostControllerTest {
 
     private ObjectMapper om;
 
+    static Long groupId = 1L;
+
+
     @BeforeEach
     void beforeEach() {
         om = new ObjectMapper();
     }
 
     static class ClientRequestCreator {
-        static Long groupId = 1L;
         static String imageFilePath = "src/test/resources/static/file/test-image.png";
 
         static NewClientRequest createValidNewRequest() {
@@ -193,6 +200,24 @@ public class ClientPostControllerTest {
 
     @Test
     @DisplayName("다수 고객 등록")
-    void addSimpleBulkClient() {
+    void addSimpleBulkClient() throws Exception {
+        String testUrl = "/api/clients/bulk";
+        List<SimpleNewClientRequest> clientsRequest = List.of(
+                new SimpleNewClientRequest("aaa", "010-1111-2222"),
+                new SimpleNewClientRequest("aaa", "010-1111-2222")
+        );
+
+        SimpleClientBulkRequest request = new SimpleClientBulkRequest(groupId, clientsRequest);
+        String jsonBody = om.writeValueAsString(request);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(testUrl, groupId)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody)
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+
+        mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated());
+        verify(clientService, times(1)).saveSimpleClientList(request);
+
     }
 }
