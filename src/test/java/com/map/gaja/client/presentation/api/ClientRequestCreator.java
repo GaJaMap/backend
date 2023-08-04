@@ -28,6 +28,13 @@ public class ClientRequestCreator {
                 new LocationDto(34d,127d), null, true);
     }
 
+    public static NewClientRequest createValidNewRequestWithImage(Long groupId) {
+        return new NewClientRequest("테스트", groupId,
+                "010-1111-2222",
+                new AddressDto("서울특별시 중구 세종대로 110", "1동 100호"),
+                new LocationDto(34d,127d), null, false);
+    }
+
     /**
      * 이미지랑 같이 POST 요청
      */
