@@ -10,9 +10,11 @@ import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
+import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.exception.ValidationErrorInfo;
 import com.map.gaja.group.application.GroupAccessVerifyService;
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -128,61 +130,8 @@ class ClientControllerTest {
                     new LocationDto(34d,127d), null, true);
         }
 
-        static MockHttpServletRequestBuilder createValidRequestWithoutImage(String testUrl) {
-            NewClientRequest request = ClientRequestCreator.createValidNewRequest();
-            MockHttpServletRequestBuilder mockRequest = createRequestWithoutImage(testUrl);
-            setNormalField(mockRequest, request);
-            return mockRequest
-                    .param("isBasicImage", String.valueOf(true));
-        }
-
-        static MockHttpServletRequestBuilder createValidRequestWithImage(String testUrl) throws IOException {
-            NewClientRequest request = ClientRequestCreator.createValidNewRequest();
-
-            MockHttpServletRequestBuilder mockRequest = createRequestWithImage(testUrl);
-            setNormalField(mockRequest, request);
-            return mockRequest
-                    .param("isBasicImage", String.valueOf(false));
-        }
-
         /**
-         * POST로 고객을 등록한다.
-         * 기본 이미지가 아닌데 - 이미지 파일이 안들어왔다.
-         */
-        static MockHttpServletRequestBuilder createInvalidBasicImageRequest(String testUrl) throws IOException {
-            NewClientRequest request = ClientRequestCreator.createValidNewRequest();
-
-            MockHttpServletRequestBuilder mockRequest = createRequestWithoutImage(testUrl);
-            setNormalField(mockRequest, request);
-            return mockRequest
-                    .param("isBasicImage", String.valueOf(false));
-        }
-
-        /**
-         * POST로 고객을 등록한다.
-         * 기본 이미지인데 - 이미지 파일이 들어왔다.
-         */
-        static MockHttpServletRequestBuilder createInvalidBasicImageRequestWithImage(String testUrl) throws IOException {
-            NewClientRequest request = ClientRequestCreator.createValidNewRequest();
-            MockHttpServletRequestBuilder mockRequest = createRequestWithImage(testUrl);
-            setNormalField(mockRequest, request);
-            return mockRequest
-                    .param("isBasicImage", String.valueOf(true));
-        }
-
-        private static void setNormalField(MockHttpServletRequestBuilder mockRequest, NewClientRequest request) {
-            mockRequest
-                    .param("clientName", request.getClientName())
-                    .param("phoneNumber", request.getPhoneNumber())
-                    .param("groupId", String.valueOf(request.getGroupId()))
-                    .param("mainAddress", request.getAddress().getMainAddress())
-                    .param("detail", request.getAddress().getDetail())
-                    .param("latitude", String.valueOf(request.getLocation().getLatitude()))
-                    .param("longitude", String.valueOf(request.getLocation().getLongitude()));
-        }
-
-        /**
-         * 이미지와 함께 요청
+         * 이미지랑 같이 요청
          */
         private static MockHttpServletRequestBuilder createRequestWithImage(String testUrl) throws IOException {
             return MockMvcRequestBuilders.multipart(testUrl)
@@ -206,33 +155,60 @@ class ClientControllerTest {
             Path path = Paths.get(imageFilePath);
             return Files.readAllBytes(path);
         }
-
     }
 
     @Test
     @DisplayName("이미지 없이 고객 등록")
     void addClientWithoutImageTest() throws Exception {
         String testUrl = "/api/clients";
-        MockHttpServletRequestBuilder requestBuilder = ClientRequestCreator.createValidRequestWithoutImage(testUrl);
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest();
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createRequestWithoutImage(testUrl);
+        setNormalField(mockRequest, request);
+        mockRequest.param("isBasicImage", String.valueOf(true));
 
-        mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated());
+        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
     @DisplayName("이미지와 함께 고객 등록")
     void addClientWithImageTest() throws Exception {
         String testUrl = "/api/clients";
-        MockHttpServletRequestBuilder requestBuilder = ClientRequestCreator.createValidRequestWithImage(testUrl);
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest();
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createRequestWithImage(testUrl);
+        setNormalField(mockRequest, request);
+        mockRequest.param("isBasicImage", String.valueOf(false));
 
-        mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated());
+        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
+        verify(clientService, times(1)).saveClientWithImage(any(), any());
+    }
+
+    @Test
+    @DisplayName("이미지와 함께 고객 저장 중 오류 발생")
+    void addClientWithImageExceptionTest() throws Exception {
+        String testUrl = "/api/clients";
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest();
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createRequestWithImage(testUrl);
+        setNormalField(mockRequest, request);
+        mockRequest.param("isBasicImage", String.valueOf(false));
+        StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
+        when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
+        when(clientService.saveClientWithImage(any(), any())).thenThrow(new GroupNotFoundException());
+
+        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
+        verify(clientService, times(1)).saveClientWithImage(any(), any());
+        verify(fileService, times(1)).removeFile(savedS3TestFile.getFilePath());
     }
 
     @Test
     @DisplayName("고객이 Basic-Image를 사용하는데 이미지가 들어옴")
     void addClientWithImageFailTest() throws Exception {
         String testUrl = "/api/clients";
-        MockHttpServletRequestBuilder requestBuilder = ClientRequestCreator.createInvalidBasicImageRequestWithImage(testUrl);
-        MockHttpServletResponse response = mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest();
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createRequestWithImage(testUrl);
+        setNormalField(mockRequest, request);
+        mockRequest.param("isBasicImage", String.valueOf(true));
+
+        MockHttpServletResponse response = mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
 
         List<ValidationErrorInfo> validationErrorInfoList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
         Assertions.assertThat(validationErrorInfoList.size()).isEqualTo(1);
@@ -244,13 +220,28 @@ class ClientControllerTest {
     @DisplayName("고객이 Basic-Image를 사용하지 않는데 이미지가 없음")
     void addClientWithoutImageFailTest() throws Exception {
         String testUrl = "/api/clients";
-        MockHttpServletRequestBuilder requestBuilder = ClientRequestCreator.createInvalidBasicImageRequest(testUrl);
-        MockHttpServletResponse response = mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest();
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createRequestWithoutImage(testUrl);
+        setNormalField(mockRequest, request);
+        mockRequest.param("isBasicImage", String.valueOf(false));
+
+        MockHttpServletResponse response = mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
 
         List<ValidationErrorInfo> validationErrorInfoList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
         Assertions.assertThat(validationErrorInfoList.size()).isEqualTo(1);
         Assertions.assertThat(validationErrorInfoList.get(0).getCode()).isNull();
         System.out.println(validationErrorInfoList.get(0));
+    }
+
+    private void setNormalField(MockHttpServletRequestBuilder mockRequest, NewClientRequest request) {
+        mockRequest
+                .param("clientName", request.getClientName())
+                .param("phoneNumber", request.getPhoneNumber())
+                .param("groupId", String.valueOf(request.getGroupId()))
+                .param("mainAddress", request.getAddress().getMainAddress())
+                .param("detail", request.getAddress().getDetail())
+                .param("latitude", String.valueOf(request.getLocation().getLatitude()))
+                .param("longitude", String.valueOf(request.getLocation().getLongitude()));
     }
 
     @Test
