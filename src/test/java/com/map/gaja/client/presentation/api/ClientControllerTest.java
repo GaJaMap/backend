@@ -110,7 +110,5 @@ class ClientControllerTest {
         Assertions.assertThat(validationErrorInfo.getCode()).isEqualTo("Size");
     }
 
-    @Test
-    void updateClient() {
-    }
+
 }
