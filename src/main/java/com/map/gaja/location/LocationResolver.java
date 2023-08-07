@@ -40,6 +40,8 @@ public class LocationResolver {
                 .baseUrl(KAKAO_URL)
                 .defaultHeader("Authorization", "KakaoAK " + KAKAO_KEY)
                 .build();
+
+        Hooks.onErrorDropped(throwable -> {});
     }
 
     /**
