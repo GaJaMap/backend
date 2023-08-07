@@ -14,8 +14,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Hooks;
 
+import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -29,6 +32,15 @@ public class LocationResolver {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper;
     private static final String KAKAO_URL = "https://dapi.kakao.com/v2/local/search/address.json";
+    private WebClient webClient;
+
+    @PostConstruct
+    private void init() {
+        webClient = WebClient.builder()
+                .baseUrl(KAKAO_URL)
+                .defaultHeader("Authorization", "KakaoAK " + KAKAO_KEY)
+                .build();
+    }
 
     /**
      * 도로명 주소를 위도 경도로 변환
