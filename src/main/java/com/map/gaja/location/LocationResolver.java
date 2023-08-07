@@ -10,13 +10,16 @@ import com.map.gaja.location.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
@@ -79,6 +82,40 @@ public class LocationResolver {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 비동기 통신으로 도로명 주소를 위경도로 변환
+     */
+    public Mono<Void> convertToCoordinatesAsync(List<ClientExcelData> addresses) {
+        return Flux.fromIterable(addresses)
+                .filter(data -> data.getAddress() != null)
+                .flatMap(data -> { //비동기로 실행
+                    URI uri = createUri(data.getAddress());
+                    return callGeoApi(data, uri);
+                }, 2) //2개씩 병렬처리
+                .then();
+    }
+
+    private Publisher<?> callGeoApi(ClientExcelData data, URI uri) {
+        return webClient.get()
+                .uri(uri)
+                .retrieve() //비동기 통신
+                .toEntity(String.class) //응답 결과를 String으로 받고 ResponseEntity 객체로 래핑하여 반환받음.
+                .map(responseEntity -> {
+                    if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                        LocationDto location = parseLocation(responseEntity.getBody());
+
+                        if (isLocationOutOfKorea(location)) {
+                            throw new LocationOutsideKoreaException();
+                        }
+
+                        data.setLocation(location);
+                        return Mono.empty();
+                    } else { //200번대가 아니라면 api통신에 문제가 있음.
+                        throw new NotExcelUploadException();
+                    }
+                });
     }
 
     /**
