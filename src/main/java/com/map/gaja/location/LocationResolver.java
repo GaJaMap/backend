@@ -9,6 +9,7 @@ import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.location.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class LocationResolver {
     @Value("${kakao.key}")
     private String KAKAO_KEY;
@@ -36,7 +38,6 @@ public class LocationResolver {
     public void convertCoordinate(List<ClientExcelData> addresses) {
         try {
             HttpHeaders headers = createHeaders();
-
             for (ClientExcelData data : addresses) {
                 if (data.getAddress() == null) {
                     continue;
@@ -95,16 +96,20 @@ public class LocationResolver {
                 .toUri();
     }
 
-    private LocationDto parseLocation(String result) throws JsonProcessingException {
-        JsonNode jsonNode = mapper.readTree(result);
+    private LocationDto parseLocation(String result) {
+        try {
+            JsonNode jsonNode = mapper.readTree(result);
 
-        JsonNode documentsNode = jsonNode.get("documents");
-        if (documentsNode.isArray() && documentsNode.size() > 0) {
-            JsonNode documentNode = documentsNode.get(0);
-            double x = documentNode.get("x").asDouble();
-            double y = documentNode.get("y").asDouble();
+            JsonNode documentsNode = jsonNode.get("documents");
+            if (documentsNode.isArray() && documentsNode.size() > 0) {
+                JsonNode documentNode = documentsNode.get(0);
+                double x = documentNode.get("x").asDouble();
+                double y = documentNode.get("y").asDouble();
 
-            return new LocationDto(y, x);
+                return new LocationDto(y, x);
+            }
+        } catch(JsonProcessingException e){
+            throw new NotExcelUploadException(e);
         }
 
         return new LocationDto();
