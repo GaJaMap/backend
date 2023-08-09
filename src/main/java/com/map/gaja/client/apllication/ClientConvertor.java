@@ -128,7 +128,7 @@ public class ClientConvertor {
 
     protected static LocationDto voToDto(ClientLocation location) {
         return (location == null) ? new LocationDto() :
-                new LocationDto(location.getLatitude(), location.getLongitude());
+                new LocationDto(location.getLocation().getY(), location.getLocation().getX());
     }
 
     protected static AddressDto voToDto(ClientAddress address) {
