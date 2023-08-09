@@ -9,24 +9,43 @@ import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.location.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
+import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class LocationResolver {
     @Value("${kakao.key}")
     private String KAKAO_KEY;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper;
     private static final String KAKAO_URL = "https://dapi.kakao.com/v2/local/search/address.json";
+    private WebClient webClient;
+
+    @PostConstruct
+    private void init() {
+        webClient = WebClient.builder()
+                .baseUrl(KAKAO_URL)
+                .defaultHeader("Authorization", "KakaoAK " + KAKAO_KEY)
+                .build();
+
+        Hooks.onErrorDropped(throwable -> {});
+    }
 
     /**
      * 도로명 주소를 위도 경도로 변환
@@ -36,7 +55,6 @@ public class LocationResolver {
     public void convertCoordinate(List<ClientExcelData> addresses) {
         try {
             HttpHeaders headers = createHeaders();
-
             for (ClientExcelData data : addresses) {
                 if (data.getAddress() == null) {
                     continue;
@@ -64,6 +82,40 @@ public class LocationResolver {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 비동기 통신으로 도로명 주소를 위경도로 변환
+     */
+    public Mono<Void> convertToCoordinatesAsync(List<ClientExcelData> addresses) {
+        return Flux.fromIterable(addresses)
+                .filter(data -> data.getAddress() != null)
+                .flatMap(data -> { //비동기로 실행
+                    URI uri = createUri(data.getAddress());
+                    return callGeoApi(data, uri);
+                }, 2) //2개씩 병렬처리
+                .then();
+    }
+
+    private Publisher<?> callGeoApi(ClientExcelData data, URI uri) {
+        return webClient.get()
+                .uri(uri)
+                .retrieve() //비동기 통신
+                .toEntity(String.class) //응답 결과를 String으로 받고 ResponseEntity 객체로 래핑하여 반환받음.
+                .map(responseEntity -> {
+                    if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                        LocationDto location = parseLocation(responseEntity.getBody());
+
+                        if (isLocationOutOfKorea(location)) {
+                            throw new LocationOutsideKoreaException();
+                        }
+
+                        data.setLocation(location);
+                        return Mono.empty();
+                    } else { //200번대가 아니라면 api통신에 문제가 있음.
+                        throw new NotExcelUploadException();
+                    }
+                });
     }
 
     /**
@@ -95,16 +147,20 @@ public class LocationResolver {
                 .toUri();
     }
 
-    private LocationDto parseLocation(String result) throws JsonProcessingException {
-        JsonNode jsonNode = mapper.readTree(result);
+    private LocationDto parseLocation(String result) {
+        try {
+            JsonNode jsonNode = mapper.readTree(result);
 
-        JsonNode documentsNode = jsonNode.get("documents");
-        if (documentsNode.isArray() && documentsNode.size() > 0) {
-            JsonNode documentNode = documentsNode.get(0);
-            double x = documentNode.get("x").asDouble();
-            double y = documentNode.get("y").asDouble();
+            JsonNode documentsNode = jsonNode.get("documents");
+            if (documentsNode.isArray() && documentsNode.size() > 0) {
+                JsonNode documentNode = documentsNode.get(0);
+                double x = documentNode.get("x").asDouble();
+                double y = documentNode.get("y").asDouble();
 
-            return new LocationDto(y, x);
+                return new LocationDto(y, x);
+            }
+        } catch(JsonProcessingException e){
+            throw new NotExcelUploadException(e);
         }
 
         return new LocationDto();
