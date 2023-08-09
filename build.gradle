@@ -117,6 +117,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
+	// 하이버네이트 공간 검색 특화
+	implementation 'org.hibernate:hibernate-spatial'
+	implementation 'com.querydsl:querydsl-spatial'
+
 	// 모니터링 설정
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스 마이크로 미터 구현체 추가
