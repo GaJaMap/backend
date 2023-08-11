@@ -1,8 +1,9 @@
 package com.map.gaja.client.infrastructure.repository.querydsl.sql;
 
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.spatial.locationtech.jts.JTSPointPath;
+import org.locationtech.jts.geom.Point;
 
 public interface NativeSqlCreator {
-    NumberExpression<Double> createCalcDistanceSQL(Double longitudeCond, Double latitudeCond, NumberPath<Double> dbLongitude, NumberPath<Double> dbLatitude);
+    NumberExpression<Double> createCalcDistanceSQL(Point constant, JTSPointPath location);
 }

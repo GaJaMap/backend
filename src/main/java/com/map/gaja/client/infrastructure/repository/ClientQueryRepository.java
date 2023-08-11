@@ -2,6 +2,7 @@ package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
@@ -58,7 +59,7 @@ public class ClientQueryRepository {
                                 client.name,
                                 client.phoneNumber,
                                 Projections.constructor(AddressDto.class, client.address.address, client.address.detail),
-                                Projections.constructor(LocationDto.class, client.location.latitude, client.location.longitude),
+                                Projections.constructor(LocationDto.class, client.location.location),
                                 Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName),
                                 getCalcDistanceWithNativeSQL(locationSearchCond.getLocation()),
                                 client.createdAt
@@ -124,10 +125,8 @@ public class ClientQueryRepository {
     }
 
     private NumberExpression<Double> getCalcDistanceWithNativeSQL(LocationDto currentLocation) {
-        return mysqlNativeSQLCreator.createCalcDistanceSQL(
-                currentLocation.getLongitude(), currentLocation.getLatitude(),
-                client.location.longitude, client.location.latitude
-        );
+        ClientLocation clientLocation = new ClientLocation(currentLocation.getLatitude(), currentLocation.getLongitude());
+        return mysqlNativeSQLCreator.createCalcDistanceSQL(clientLocation.getLocation(), client.location.location);
     }
 
     private BooleanExpression nameContains(String nameCond) {
@@ -188,7 +187,7 @@ public class ClientQueryRepository {
                                 client.name,
                                 client.phoneNumber,
                                 Projections.constructor(AddressDto.class, client.address.address, client.address.detail),
-                                Projections.constructor(LocationDto.class, client.location.latitude, client.location.longitude),
+                                Projections.constructor(LocationDto.class, client.location.location),
                                 Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName),
                                 client.createdAt
                         )
