@@ -212,6 +212,8 @@ class ClientServiceTest {
         NewClientRequest changedRequest = new NewClientRequest();
         changedRequest.setClientName(changedName);
         changedRequest.setGroupId(changedGroupId);
+        changedRequest.setLatitude(35d);
+        changedRequest.setLongitude(127d);
         return changedRequest;
     }
 }
