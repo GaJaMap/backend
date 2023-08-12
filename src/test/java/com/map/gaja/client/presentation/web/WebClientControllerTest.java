@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,6 +80,7 @@ class WebClientControllerTest {
         }
         int successSize = successList.size();
         when(excelParser.parseClientExcelFile(any())).thenReturn(successList);
+        when(locationResolver.convertToCoordinatesAsync(successList)).thenReturn(Mono.empty());
         /*
             doAnswer(invocation -> {
                 List<ClientExcelData> data = invocation.getArgument(0);
@@ -96,13 +98,8 @@ class WebClientControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")))
                 .param("groupId", String.valueOf(groupId));
 
-        mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(result -> {
-                    String jsonResponse = result.getResponse().getContentAsString();
-                    int successDataSizeResult = Integer.parseInt(jsonResponse);
-
-                    assertThat(successDataSizeResult).isEqualTo(successSize);
-                });
+        mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk());
+        verify(clientService, times(1)).saveClientExcelData(groupId, successList);
     }
 
     @Test
