@@ -4,6 +4,7 @@ import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
+import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
 import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
@@ -114,6 +115,29 @@ class GroupServiceTest {
         })
         .isInstanceOf(GroupNotFoundException.class);
 
+    }
+
+    @Test
+    @DisplayName("그룹명 변경 실패")
+    void updateGroupNameFail() {
+        String email = "test@gmail.com";
+        User user = User.builder()
+                .id(1L)
+                .email(email)
+                .groupCount(0)
+                .active(true)
+                .authority(Authority.FREE)
+                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+        GroupUpdateRequest request = new GroupUpdateRequest("test");
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(groupRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> {
+            groupService.updateName(email, 1L, request);
+        })
+                .isInstanceOf(GroupNotFoundException.class);
     }
 
 }
