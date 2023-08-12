@@ -69,4 +69,27 @@ class GroupServiceTest {
         assertEquals(1, user.getGroupCount());
     }
 
+    @Test
+    @DisplayName("그룹 삭제 성공")
+    void deleteGroupSuccess() {
+        String email="test@gmail.com";
+        User user = User.builder()
+                .id(1L)
+                .email(email)
+                .groupCount(1)
+                .active(true)
+                .authority(Authority.FREE)
+                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(1);
+
+        groupService.delete(email, 1L);
+
+        assertEquals(0, user.getGroupCount());
+
+
+    }
+
 }
