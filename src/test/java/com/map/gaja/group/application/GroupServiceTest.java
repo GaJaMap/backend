@@ -140,4 +140,26 @@ class GroupServiceTest {
                 .isInstanceOf(GroupNotFoundException.class);
     }
 
+    @Test
+    @DisplayName("그룹명 변경 성공")
+    void updateGroupNameSuccess() {
+        String email = "test@gmail.com";
+        User user = User.builder()
+                .id(1L)
+                .email(email)
+                .groupCount(0)
+                .active(true)
+                .authority(Authority.FREE)
+                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+        GroupUpdateRequest request = new GroupUpdateRequest("test");
+        Group group = new Group("name", user);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(groupRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(group));
+
+        groupService.updateName(email, 1L, request);
+        assertEquals(request.getName(), group.getName());
+    }
+
 }
