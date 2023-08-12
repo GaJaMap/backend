@@ -1,5 +1,6 @@
 package com.map.gaja.group.application;
 
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
@@ -38,7 +39,7 @@ class GroupServiceTest {
     @Test
     @DisplayName("등급 제한으로 그룹 생성 실패")
     void createGroupFail() {
-        String email="test@gmail.com";
+        String email = "test@gmail.com";
         GroupCreateRequest groupCreateRequest = new GroupCreateRequest("bundle");
         User user = User.builder()
                 .id(1L)
@@ -50,13 +51,13 @@ class GroupServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(()-> groupService.create(email, groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
+        assertThatThrownBy(() -> groupService.create(email, groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
     }
 
     @Test
     @DisplayName("그룹 생성 성공")
     void createGroupSuccess() {
-        String email="test@gmail.com";
+        String email = "test@gmail.com";
         GroupCreateRequest groupCreateRequest = new GroupCreateRequest("group");
         User user = new User(email);
 
@@ -72,7 +73,7 @@ class GroupServiceTest {
     @Test
     @DisplayName("그룹 삭제 성공")
     void deleteGroupSuccess() {
-        String email="test@gmail.com";
+        String email = "test@gmail.com";
         User user = User.builder()
                 .id(1L)
                 .email(email)
@@ -89,6 +90,29 @@ class GroupServiceTest {
 
         assertEquals(0, user.getGroupCount());
 
+
+    }
+
+    @Test
+    @DisplayName("그룹 삭제 실패")
+    void deleteGroupFail() {
+        String email = "test@gmail.com";
+        User user = User.builder()
+                .id(1L)
+                .email(email)
+                .groupCount(0)
+                .active(true)
+                .authority(Authority.FREE)
+                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(0);
+
+        assertThatThrownBy(() -> {
+            groupService.delete(email, 1L);
+        })
+        .isInstanceOf(GroupNotFoundException.class);
 
     }
 
