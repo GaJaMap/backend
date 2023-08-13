@@ -1,10 +1,12 @@
 package com.map.gaja.client.presentation.web;
 
+import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
+import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
@@ -93,10 +95,10 @@ public class WebClientController {
         MultipartFile excelFile = excelRequest.getExcelFile();
         FileValidator.verifyFile(excelFile);
 
-        groupAccessVerifyService.verifyGroupAccess(groupId, loginEmail);
-
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelFile);
         validateClientData(clientExcelData);
+
+        groupAccessVerifyService.verifyClientInsertAccess(groupId, loginEmail, clientExcelData.size());
 
         Mono<Void> mono = locationResolver.convertToCoordinatesAsync(clientExcelData);
 
