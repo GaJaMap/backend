@@ -17,7 +17,7 @@ public class IncreasingClientService {
         throw new ClientLimitExceededException(authority.name(), authority.getClientLimitCount());
     }
 
-    private boolean isCreateClient(int clientLimitCount, int currentClientCount, int increaseInClient) {
+    public boolean isCreateClient(int clientLimitCount, int currentClientCount, int increaseInClient) {
         if (clientLimitCount >= (currentClientCount + increaseInClient)) {
             return true;
         }
