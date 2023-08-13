@@ -31,8 +31,7 @@ class ClientQueryRepositoryTest {
     @Autowired
     ClientQueryRepository clientQueryRepository;
 
-    @Autowired
-    ClientRepository clientRepository;
+    @Autowired ClientRepository clientRepository;
 
     @Autowired
     EntityManager em;
@@ -54,18 +53,18 @@ class ClientQueryRepositoryTest {
 
         group1ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            String sig = i+""+i;
             Client client = createClient(i, 0.003, group1);
             group1ClientList.add(client);
         }
-        clientRepository.saveAll(group1ClientList);
 
         group2ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Client client = createClient(i, 0.005, group2);
             group2ClientList.add(client);
         }
+        clientRepository.saveAll(group1ClientList);
         clientRepository.saveAll(group2ClientList);
+
         em.flush();
         em.clear();
     }
@@ -131,8 +130,6 @@ class ClientQueryRepositoryTest {
         String nameKeyword = "사용자";
         Long groupId1 = group1.getId();
         Long groupId2 = group2.getId();
-        System.out.println("groupId1 = " + groupId1);
-        System.out.println("groupId2 = " + groupId2);
         String groupName1 = group1.getName();
         String groupName2 = group2.getName();
         NearbyClientSearchRequest request = new NearbyClientSearchRequest(new LocationDto(35.006, 125.006), radius);
@@ -144,7 +141,6 @@ class ClientQueryRepositoryTest {
 
         assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
         result.forEach((client) -> {
-            System.out.println("client = " + client.getGroupInfo().getGroupId());
             assertThat(client.getClientName()).contains(nameKeyword);
             assertThat(client.getDistance()).isLessThan(radius);
             assertThat(client.getGroupInfo().getGroupId()).isIn(groupId1, groupId2);

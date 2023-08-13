@@ -26,8 +26,9 @@ public class ClientBulkRepository {
      */
     public void saveClientWithGroup(Group group, List<Client> newClient) {
         final String insertSQL = "INSERT INTO " +
-                "client (name, phone_number, address, detail, latitude, longitude, group_id, created_at, updated_at) " +
-                "VALUES(?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+                "client (name, phone_number, address, detail, location, group_id, created_at, updated_at) " +
+                "VALUES(?, ?, ?, ?, ST_GeomFromText(?, 4326), ?, NOW(), NOW())";
+
 
         template.batchUpdate(insertSQL, new BatchPreparedStatementSetter() {
             @Override
@@ -37,9 +38,11 @@ public class ClientBulkRepository {
                 setStringOrSetNull(ps, 2, client.getPhoneNumber() == null ? null : client.getPhoneNumber());
                 setStringOrSetNull(ps, 3, client.getAddress() == null ? null : client.getAddress().getAddress());
                 setStringOrSetNull(ps, 4, client.getAddress() == null ? null : client.getAddress().getDetail());
-                setDoubleOrSetNull(ps, 5, client.getLocation() == null ? null : client.getLocation().getLatitude());
-                setDoubleOrSetNull(ps, 6, client.getLocation() == null ? null : client.getLocation().getLongitude());
-                ps.setLong(7, group.getId());
+                setStringOrSetNull(ps, 5, client.getLocation() == null || client.getLocation().getLocation() == null ? null
+                        : "POINT(" + client.getLocation().getLocation().getY() +" " + client.getLocation().getLocation().getX()+")");
+//                ps.setNull(5, Types.VARCHAR);
+//                ps.setString(5, "POINT(" + client.getLocation().getLocation().getY() +" " + client.getLocation().getLocation().getX()+")"); // null 허용해야함
+                ps.setLong(6, group.getId());
             }
 
             private void setStringOrSetNull(PreparedStatement ps, int index, String value) throws SQLException {
@@ -47,14 +50,6 @@ public class ClientBulkRepository {
                     ps.setString(index, value);
                 } else {
                     ps.setNull(index, Types.VARCHAR);
-                }
-            }
-
-            private void setDoubleOrSetNull(PreparedStatement ps, int index, Double value) throws SQLException {
-                if (value != null) {
-                    ps.setDouble(index, value);
-                } else {
-                    ps.setNull(index, Types.DOUBLE);
                 }
             }
 
