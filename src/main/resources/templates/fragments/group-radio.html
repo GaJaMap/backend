@@ -25,7 +25,7 @@
       그룹을 클릭해서 선택해주세요.
     </div>
     <div style="cursor:pointer" class="list-group-item list-group-item-action" onclick="selectItem(this)" th:each="group: ${groupList}"  th:value="${group.groupId}">
-      <span th:text="${group.groupName}">그룹명</span>
+      <span th:text="|${group.groupName} (${group.clientCount})|">그룹명 (그룹 내 고객 수)</span>
     </div>
   </div>
   <input type="hidden" name="groupId" id="groupId">

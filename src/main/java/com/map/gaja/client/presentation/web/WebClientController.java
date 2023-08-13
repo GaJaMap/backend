@@ -7,7 +7,7 @@ import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
-import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
+import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.log.TimeCheckLog;
@@ -61,7 +61,7 @@ public class WebClientController {
 
         String email = authentication.getName(); //이메일
 
-        List<GroupInfoDto> activeGroupInfo = groupService.findActiveGroupInfo(email);
+        List<GroupDetailDto> activeGroupInfo = groupService.findActiveGroupInfo(email);
         model.addAttribute("groupList", activeGroupInfo);
 
         return "index";

@@ -1,5 +1,6 @@
 package com.map.gaja.group.infrastructure;
 
+import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.querydsl.core.types.Projections;
@@ -63,8 +64,8 @@ public class GroupQueryRepository {
      * @param userEmail 로그인한 Email
      * @return 가지고 있는 그룹의 ID List
      */
-    public List<GroupInfoDto> findActiveGroupInfo(String userEmail) {
-        return query.select(Projections.constructor(GroupInfoDto.class, group.id, group.name))
+    public List<GroupDetailDto> findActiveGroupInfo(String userEmail) {
+        return query.select(Projections.constructor(GroupDetailDto.class, group.id, group.name, group.clientCount))
                 .from(group)
                 .join(group.user, user).on(user.email.eq(userEmail))
                 .where(group.isDeleted.eq(Boolean.FALSE))
