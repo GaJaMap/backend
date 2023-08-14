@@ -1,6 +1,6 @@
 package com.map.gaja.group.application;
 
-import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
+import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
@@ -62,7 +62,7 @@ public class GroupService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<GroupInfoDto> findActiveGroupInfo(String email) {
+    public List<GroupDetailDto> findActiveGroupInfo(String email) {
         return groupQueryRepository.findActiveGroupInfo(email);
     }
 
