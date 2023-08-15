@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
 
@@ -41,7 +42,10 @@ public class UserService {
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
-        return new LoginResponse(user.getReferenceGroupId(), user.getAuthority().name());
+        return new LoginResponse(email,
+                user.getAuthority().name(),
+                user.getLastLoginDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        );
     }
 
     public void withdrawal(String email) {
