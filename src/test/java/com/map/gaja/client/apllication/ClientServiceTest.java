@@ -2,6 +2,7 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
+import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
@@ -217,6 +218,50 @@ class ClientServiceTest {
         clientService.saveSimpleClientList(bulkRequest);
 
         assertThat(group.getClientCount()).isEqualTo(beforeClientCount + clients.size());
+    }
+
+    @Test
+    @DisplayName("파싱한 엑셀 데이터 저장 테스트")
+    void saveClientExcelDataTest() {
+        List<ClientExcelData> excelData = createExcelDataSize3();
+        long beforeClientCount = group.getClientCount();
+        when(groupQueryRepository.findGroupWithUser(group.getId()))
+                .thenReturn(Optional.ofNullable(group));
+
+        clientService.saveClientExcelData(group.getId(), excelData);
+
+        assertThat(group.getClientCount()).isEqualTo(beforeClientCount + excelData.size());
+    }
+
+    @Test
+    @DisplayName("그룹 내의 특정 고객 제거")
+    void deleteBulkClientTest() {
+        int beforeClientSize = 4;
+        Group size4Group = TestEntityCreator.createGroup(user, 1L, "Test Group", beforeClientSize);
+        when(groupRepository.findById(size4Group.getId()))
+                .thenReturn(Optional.ofNullable(size4Group));
+        List<Long> size3ClientIds = getSize3ClientIds();
+        int deletedClientSize = size3ClientIds.size();
+
+        clientService.deleteBulkClient(size4Group.getId(), new ArrayList<>());
+
+        assertThat(group.getClientCount()).isEqualTo(beforeClientSize - deletedClientSize);
+    }
+
+    private static List<Long> getSize3ClientIds() {
+        List<Long> size3ClientIds = new ArrayList<>();
+        size3ClientIds.add(1L);
+        size3ClientIds.add(2L);
+        size3ClientIds.add(3L);
+        return size3ClientIds;
+    }
+
+    private static List<ClientExcelData> createExcelDataSize3() {
+        List<ClientExcelData> excelData = new ArrayList<>();
+        excelData.add(new ClientExcelData(1, "Test Excel 1", null, null, null, null, true));
+        excelData.add(new ClientExcelData(2, "Test Excel 2", null, null, null, null, true));
+        excelData.add(new ClientExcelData(3, "Test Excel 3", null, null, null, null, true));
+        return excelData;
     }
 
 
