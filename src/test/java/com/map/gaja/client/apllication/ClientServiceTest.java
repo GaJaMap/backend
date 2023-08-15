@@ -183,6 +183,26 @@ class ClientServiceTest {
         assertThat(savedImage.getIsDeleted()).isTrue();
     }
 
+    @Test
+    @DisplayName("이미지와 함께 Client 저장 테스트")
+    void saveClientWithImageTest() {
+        NewClientRequest request = createChangeRequest(group.getId(), "New Name");
+        StoredFileDto storedFileDto = new StoredFileDto(clientImage.getSavedPath(), clientImage.getOriginalName());
+        int beforeClientCount = group.getClientCount();
+        when(groupQueryRepository.findGroupWithUser(group.getId()))
+                .thenReturn(Optional.ofNullable(group));
+        when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
+            Client savedClient = invocation.getArgument(0);
+            ReflectionTestUtils.setField(savedClient, "id", clientId);
+            return savedClient;
+        });
+
+        long result = clientService.saveClientWithImage(request, storedFileDto);
+
+        assertThat(group.getClientCount()).isEqualTo(beforeClientCount + 1);
+        assertThat(result).isEqualTo(clientId);
+    }
+
     private static NewClientRequest createChangeRequest(Long changedGroupId, String changedName) {
         NewClientRequest changedRequest = new NewClientRequest();
         changedRequest.setClientName(changedName);
