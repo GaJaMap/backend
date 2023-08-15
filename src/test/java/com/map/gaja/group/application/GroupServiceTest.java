@@ -5,6 +5,7 @@ import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
+import com.map.gaja.group.presentation.dto.response.GroupInfo;
 import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
@@ -162,7 +163,7 @@ class GroupServiceTest {
     }
 
     @Test
-    @DisplayName("전체 그룹 조회")
+    @DisplayName("사용자가 최근에 참조한 그룹이 전체인 경우")
     void findWholeGroup() {
         String email = "test@gmail.com";
         User user = new User(email);
@@ -172,4 +173,18 @@ class GroupServiceTest {
         assertEquals(null, groupService.findGroup(email));
     }
 
+    @Test
+    @DisplayName("사용자가 최근에 참조한 그룹이 특정 그룹일 경우")
+    void findReferenceGroup() {
+        String email = "test@gmail.com";
+        User user = new User(email);
+        user.accessGroup(1L);
+        GroupInfo mockGroupInfo = mock(GroupInfo.class);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(groupRepository.findGroupInfoById(any())).thenReturn(mockGroupInfo);
+        groupService.findGroup(email);
+
+        verify(groupRepository, times(1)).findGroupInfoById(any());
+    }
 }
