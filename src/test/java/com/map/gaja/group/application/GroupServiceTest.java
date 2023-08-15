@@ -21,7 +21,6 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -113,7 +112,7 @@ class GroupServiceTest {
         assertThatThrownBy(() -> {
             groupService.delete(email, 1L);
         })
-        .isInstanceOf(GroupNotFoundException.class);
+                .isInstanceOf(GroupNotFoundException.class);
 
     }
 
@@ -160,6 +159,17 @@ class GroupServiceTest {
 
         groupService.updateName(email, 1L, request);
         assertEquals(request.getName(), group.getName());
+    }
+
+    @Test
+    @DisplayName("전체 그룹 조회")
+    void findWholeGroup() {
+        String email = "test@gmail.com";
+        User user = new User(email);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        assertEquals(null, groupService.findGroup(email));
     }
 
 }
