@@ -3,14 +3,14 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.domain.model.ClientAddress;
-import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -23,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -201,6 +203,29 @@ class ClientServiceTest {
 
         assertThat(group.getClientCount()).isEqualTo(beforeClientCount + 1);
         assertThat(result).isEqualTo(clientId);
+    }
+
+    @Test
+    @DisplayName("단순 이름, 전화번호 저장 테스트")
+    void saveSimpleClientListTest() {
+        List<SimpleNewClientRequest> clients = createSimpleClientRequestSize3();
+        long beforeClientCount = group.getClientCount();
+        when(groupQueryRepository.findGroupWithUser(group.getId()))
+                .thenReturn(Optional.ofNullable(group));
+
+        SimpleClientBulkRequest bulkRequest = new SimpleClientBulkRequest(group.getId(), clients);
+        clientService.saveSimpleClientList(bulkRequest);
+
+        assertThat(group.getClientCount()).isEqualTo(beforeClientCount + clients.size());
+    }
+
+
+    private static List<SimpleNewClientRequest> createSimpleClientRequestSize3() {
+        List<SimpleNewClientRequest> clients = new ArrayList<>();
+        clients.add(new SimpleNewClientRequest("Test 1", "010-1111-222"));
+        clients.add(new SimpleNewClientRequest("Test 1", null));
+        clients.add(new SimpleNewClientRequest("Test 1", "010-1111-222"));
+        return clients;
     }
 
     private static NewClientRequest createChangeRequest(Long changedGroupId, String changedName) {
