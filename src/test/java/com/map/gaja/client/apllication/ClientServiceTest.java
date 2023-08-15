@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
@@ -68,10 +69,10 @@ class ClientServiceTest {
                 increasingClientService
         );
 
-        user = new User(email);
-        group = createGroup(user, groupId, 1);
-        clientImage = createClientImageImage();
-        existingClient = createClientWithImage(existingName, group, clientImage);
+        user = TestEntityCreator.createUser(email);
+        group = TestEntityCreator.createGroup(user, groupId, "Test Group", 1);
+        clientImage = TestEntityCreator.createMockImage("Test Image");
+        existingClient = TestEntityCreator.createClientWithImage(existingName, group, clientImage);
     }
 
     @Test
@@ -100,7 +101,8 @@ class ClientServiceTest {
     @DisplayName("이미지를 제외한 Client 업데이트 테스트")
     public void updateClientTest() throws Exception {
         // given
-        Group changedGroup = createGroup(user, changedGroupId, 0);
+        Group changedGroup = TestEntityCreator.createGroup(user, changedGroupId, "Changed Group",0);
+
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
@@ -157,10 +159,6 @@ class ClientServiceTest {
         assertThat(existingClient.getClientImage()).isNull();
     }
 
-    private static ClientImage createClientImageImage() {
-        return new ClientImage("aaa", "bbb");
-    }
-
     @Test
     @DisplayName("Client 삭제 테스트")
     void deleteClientTest() {
@@ -175,37 +173,14 @@ class ClientServiceTest {
     @Test
     @DisplayName("Client-Image 삭제 테스트")
     void deleteClientWithImageTest() {
-        ClientImage image = createClientImageImage();
-        Client client = createClientWithImage(existingName, group, image);
-
+        ClientImage savedImage = existingClient.getClientImage();
         when(clientQueryRepository.findClientWithGroup(anyLong()))
-                .thenReturn(Optional.ofNullable(client));
+                .thenReturn(Optional.ofNullable(existingClient));
 
         clientService.deleteClient(clientId);
 
         assertThat(group.getClientCount()).isEqualTo(0);
-        assertThat(image.getIsDeleted()).isTrue();
-    }
-
-    private static Group createGroup(User user, Long groupId, Integer clientCount) {
-        return Group.builder()
-                .user(user)
-                .id(groupId).clientCount(clientCount)
-                .build();
-    }
-
-    private static Client createClient(String existingName, Group existingGroup) {
-        return new Client(
-                existingName, "test",
-                new ClientAddress(), new ClientLocation(),
-                existingGroup, createClientImageImage());
-    }
-
-    private static Client createClientWithImage(String existingName, Group existingGroup, ClientImage existingImage) {
-        return new Client(
-                existingName, "test",
-                new ClientAddress(), new ClientLocation(),
-                existingGroup, existingImage);
+        assertThat(savedImage.getIsDeleted()).isTrue();
     }
 
     private static NewClientRequest createChangeRequest(Long changedGroupId, String changedName) {
