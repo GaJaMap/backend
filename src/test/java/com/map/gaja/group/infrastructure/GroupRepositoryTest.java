@@ -167,4 +167,24 @@ class GroupRepositoryTest {
         //then
         assertEquals(5, result);
     }
+
+    @Test
+    @DisplayName("사용자가 최근에 참조한 그룹 정보 조회")
+    void findGroupInfo() {
+        //given
+        User user = new User("test");
+        userRepository.save(user);
+
+        Group group = new Group("name", user);
+        groupRepository.save(group);
+        user.accessGroup(group.getId());
+
+        //when
+        GroupInfo groupInfo = groupRepository.findGroupInfoById(group.getId());
+
+        //then
+        assertEquals(group.getId(), groupInfo.getGroupId());
+        assertEquals("name", groupInfo.getGroupName());
+        assertEquals(0, groupInfo.getClientCount());
+    }
 }
