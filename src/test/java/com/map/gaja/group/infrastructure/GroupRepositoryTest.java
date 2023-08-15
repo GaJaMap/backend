@@ -187,4 +187,18 @@ class GroupRepositoryTest {
         assertEquals("name", groupInfo.getGroupName());
         assertEquals(0, groupInfo.getClientCount());
     }
+
+    @Test
+    @DisplayName("사용자가 최근에 참조한 그룹 정보 조회 null 테스트")
+    void findGroupInfoNull() {
+        //given
+        User user = new User("test");
+        userRepository.save(user);
+
+        //when
+        GroupInfo groupInfo = groupRepository.findGroupInfoById(0L);
+
+        //then
+        assertEquals(null, groupInfo);
+    }
 }
