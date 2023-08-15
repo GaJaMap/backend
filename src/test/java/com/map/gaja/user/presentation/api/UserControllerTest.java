@@ -59,4 +59,40 @@ class UserControllerTest {
         verify(clientQueryService, times(1)).findAllClient(email, null);
     }
 
+    @Test
+    @DisplayName("사용자가 최근에 참조한 특정 그룹 조회")
+    void findGroup() throws Exception {
+        String email = "test@gmail.com";
+        GroupInfo groupInfo = new GroupInfo() {
+            @Override
+            public Long getGroupId() {
+                return null;
+            }
+
+            @Override
+            public String getGroupName() {
+                return null;
+            }
+
+            @Override
+            public Integer getClientCount() {
+                return null;
+            }
+        };
+        when(groupService.findGroup(email)).thenReturn(groupInfo);
+
+        ClientListResponse clientListResponse = new ClientListResponse();
+        when(clientQueryService.findAllClientsInGroup(groupInfo.getGroupId(), null)).thenReturn(clientListResponse);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/user/auto-login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+
+        mvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(clientQueryService, times(1)).findAllClientsInGroup(groupInfo.getGroupId(), null);
+    }
+
 }
