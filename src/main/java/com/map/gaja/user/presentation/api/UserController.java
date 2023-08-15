@@ -48,6 +48,7 @@ public class UserController implements UserApiSpecification {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Override
     @GetMapping("/auto-login")
     public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "name") String email) {
         GroupInfo groupInfo = groupService.findGroup(email);

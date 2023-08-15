@@ -3,6 +3,7 @@ package com.map.gaja.user.presentation.api.specification;
 import com.map.gaja.global.exception.ExceptionDto;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 
+import com.map.gaja.user.presentation.dto.response.AutoLoginResponse;
 import com.map.gaja.user.presentation.dto.response.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -48,5 +49,17 @@ public interface UserApiSpecification {
             }
     )
     ResponseEntity<Void> withdrawal(@Parameter(hidden = true) String email, HttpSession session);
+
+    @Operation(summary = "앱 자동로그인 처리(앱 실행할 때마다 요청)",
+            parameters = {
+                    @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "사용자가 최근에 참조한 그룹정보와, 그룹에 속한 고객들 응답"),
+                    @ApiResponse(responseCode = "403", description = "권한이 없음(세션이 만료되었거나 로그인처리가 안된 사용자)", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+            }
+    )
+    ResponseEntity<AutoLoginResponse> autoLogin(@Parameter(hidden = true) String email);
 
 }
