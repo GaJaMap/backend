@@ -189,7 +189,7 @@ public class ClientService {
      * JPA와 관계없이 저장하기 때문에 ID를 반환하지 않음.
      */
     public void saveClientExcelData(Long groupId, List<ClientExcelData> excelData) {
-        Group group = groupRepository.findById(groupId)
+        Group group = groupQueryRepository.findGroupWithUser(groupId)
                 .orElseThrow(GroupNotFoundException::new);
 
         List<Client> savedClient = new ArrayList<>();
