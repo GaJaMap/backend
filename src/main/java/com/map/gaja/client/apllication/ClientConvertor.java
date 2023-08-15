@@ -117,7 +117,7 @@ public class ClientConvertor {
     }
 
     protected static ClientLocation dtoToVo(LocationDto location) {
-        return (location == null) ? new ClientLocation() :
+        return (location == null || location.getLongitude() == null || location.getLatitude() == null) ? new ClientLocation() :
                 new ClientLocation(location.getLatitude(), location.getLongitude());
     }
 

@@ -16,6 +16,7 @@ import com.map.gaja.global.log.TimeCheckLog;
 
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.location.LocationResolver;
 import com.map.gaja.location.exception.TooManyRequestException;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +93,10 @@ public class WebClientController {
             ClientExcelRequest excelRequest
     ) {
         Long groupId = excelRequest.getGroupId();
+        if (groupId == null) {
+            throw new GroupNotFoundException();
+        }
+
         MultipartFile excelFile = excelRequest.getExcelFile();
         FileValidator.verifyFile(excelFile);
 

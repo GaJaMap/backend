@@ -20,12 +20,16 @@
     }
   </script>
 
-  <div class="list-group mt-3">
-    <div class="list-group-item list-group-item-action disabled bg-light" tabindex="-1">
-      그룹을 클릭해서 선택해주세요.
+  <div class="list-group mt-3" style="max-height: 250px;">
+    <div style="position: sticky; top: 0; background-color: white; z-index: 1;">
+      <div class="list-group-item list-group-item-action disabled bg-light" tabindex="-1">
+        그룹을 클릭해서 선택해주세요.
+      </div>
     </div>
-    <div style="cursor:pointer" class="list-group-item list-group-item-action" onclick="selectItem(this)" th:each="group: ${groupList}"  th:value="${group.groupId}">
-      <span th:text="|${group.groupName} (${group.clientCount})|">그룹명 (그룹 내 고객 수)</span>
+    <div style="cursor:pointer; overflow-y: scroll;">
+      <div class="list-group-item list-group-item-action" onclick="selectItem(this)" th:each="group: ${groupList}" th:value="${group.groupId}">
+        <span th:text="|${group.groupName} (${group.clientCount})|">그룹명 (그룹 내 고객 수)</span>
+      </div>
     </div>
   </div>
   <input type="hidden" name="groupId" id="groupId">
