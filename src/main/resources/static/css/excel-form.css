@@ -179,7 +179,8 @@
 
  #progressbar #payment:before {
      font-family: FontAwesome;
-     content: "\f09d";
+     content: "\f15c";
+
  }
 
  #progressbar #confirm:before {
