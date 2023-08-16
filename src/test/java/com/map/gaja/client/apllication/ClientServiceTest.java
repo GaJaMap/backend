@@ -58,6 +58,7 @@ class ClientServiceTest {
 
     User user;
     Group group;
+    Group changedGroup;
     Client existingClient;
     ClientImage clientImage;
 
@@ -73,7 +74,8 @@ class ClientServiceTest {
         );
 
         user = TestEntityCreator.createUser(email);
-        group = TestEntityCreator.createGroup(user, groupId, "Test Group", 1);
+        group = TestEntityCreator.createGroup(user, groupId, "Test Group1", 1);
+        changedGroup = TestEntityCreator.createGroup(user, groupId, "Test Group2", 0);
         clientImage = TestEntityCreator.createMockImage("Test Image");
         existingClient = TestEntityCreator.createClientWithImage(existingName, group, clientImage);
     }
@@ -160,6 +162,32 @@ class ClientServiceTest {
         assertThat(existingClient.getGroup().getId()).isEqualTo(group.getId());
         assertThat(clientImage.getIsDeleted()).isTrue();
         assertThat(existingClient.getClientImage()).isNull();
+    }
+
+    @Test
+    @DisplayName("Client Basic Image로 업데이트 + 그룹 변경")
+    public void updateClientWithBasicImage2Test() throws Exception {
+        // given
+        NewClientRequest changedRequest = createChangeRequest(changedGroupId, existingName);
+
+        when(clientQueryRepository.findClientWithGroup(existingClientId))
+                .thenReturn(Optional.ofNullable(existingClient));
+        when(groupQueryRepository.findGroupWithUser(changedGroupId))
+                .thenReturn(Optional.ofNullable(changedGroup));
+
+        int existingGroupClientCount = group.getClientCount();
+        int changedGroupClientCount = changedGroup.getClientCount();
+
+        // when
+        clientService.updateClientWithBasicImage(existingClientId, changedRequest);
+
+        // then
+        assertThat(existingClient.getGroup().getId()).isEqualTo(group.getId());
+        assertThat(clientImage.getIsDeleted()).isTrue();
+        assertThat(existingClient.getClientImage()).isNull();
+
+        assertThat(group.getClientCount()).isEqualTo(existingGroupClientCount - 1);
+        assertThat(changedGroup.getClientCount()).isEqualTo(changedGroupClientCount + 1);
     }
 
     @Test
