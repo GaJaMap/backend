@@ -1,16 +1,12 @@
 package com.map.gaja.global.exception;
 
-import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
@@ -55,10 +51,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<CommonErrorResponse> validationErrorHandle(BindException e) {
-        List<ValidationErrorInfo> body = new ArrayList<>();
+        List<ValidationErrorResponse> body = new ArrayList<>();
         e.getAllErrors().stream().forEach(
                 error -> body.add(
-                        new ValidationErrorInfo(error.getCode(), error.getObjectName(),error.getDefaultMessage())
+                        new ValidationErrorResponse(error.getCode(), error.getObjectName(),error.getDefaultMessage())
                 )
         );
 

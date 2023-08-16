@@ -5,12 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidationErrorInfo {
+public class ValidationErrorResponse {
     @Schema(description = "Null이 허용되지 않았는데 null로 들어오면 NotNull, 전화번호 패턴이 안 맞으면 Pattern", example = "NotNull")
     private String code;
     @Schema(description = "에러가 발생한 객체명", example = "newClientRequest")
