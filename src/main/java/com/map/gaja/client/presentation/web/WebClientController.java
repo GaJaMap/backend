@@ -51,6 +51,7 @@ public class WebClientController {
     private final ClientService clientService;
     private final GroupService groupService;
     private final LocationResolver locationResolver;
+    private final FileValidator fileValidator;
 
     @GetMapping("/")
     public String clientFileUpload(
@@ -98,7 +99,7 @@ public class WebClientController {
         }
 
         MultipartFile excelFile = excelRequest.getExcelFile();
-        FileValidator.verifyFile(excelFile);
+        fileValidator.verifyFile(excelFile);
 
         List<ClientExcelData> clientExcelData = excelParser.parseClientExcelFile(excelFile);
         validateClientData(clientExcelData);

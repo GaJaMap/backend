@@ -3,6 +3,7 @@ package com.map.gaja.client.infrastructure.file;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Slf4j
+@Component
 public class FileValidator {
     private static final List<String> allowedFileTypes = List.of(
             "application/x-tika-ooxml", // .xlsx, .pptx, .docx
@@ -22,7 +24,7 @@ public class FileValidator {
             "image/jpg"
     );
 
-    public static boolean isAllowedImageType(MultipartFile file) {
+    public boolean isAllowedImageType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
@@ -36,7 +38,7 @@ public class FileValidator {
         }
     }
 
-    public static boolean isAllowedFileType(MultipartFile file) {
+    public boolean isAllowedFileType(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             Tika tika = new Tika();
             String mimeType = tika.detect(inputStream);
@@ -50,7 +52,7 @@ public class FileValidator {
         }
     }
 
-    public static void verifyFile(MultipartFile file) {
+    public void verifyFile(MultipartFile file) {
         if (!isAllowedFileType(file)) {
             throw new FileNotAllowedException();
         }
