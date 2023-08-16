@@ -1,6 +1,6 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
@@ -90,7 +90,7 @@ public class ClientConvertor {
         );
     }
 
-    protected static Client dtoToEntity(ClientExcelData clientData, Group group) {
+    protected static Client dtoToEntity(ClientExcelDto clientData, Group group) {
         ClientAddress address = new ClientAddress(clientData.getAddress(), clientData.getAddressDetail());
         ClientLocation location = dtoToVo(clientData.getLocation());
         return new Client(

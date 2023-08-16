@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.location.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
@@ -52,10 +52,10 @@ public class LocationResolver {
      *
      * @param addresses 엑셀에서 추룰한 고객 정보
      */
-    public void convertCoordinate(List<ClientExcelData> addresses) {
+    public void convertCoordinate(List<ClientExcelDto> addresses) {
         try {
             HttpHeaders headers = createHeaders();
-            for (ClientExcelData data : addresses) {
+            for (ClientExcelDto data : addresses) {
                 if (data.getAddress() == null) {
                     continue;
                 }
@@ -87,7 +87,7 @@ public class LocationResolver {
     /**
      * 비동기 통신으로 도로명 주소를 위경도로 변환
      */
-    public Mono<Void> convertToCoordinatesAsync(List<ClientExcelData> addresses) {
+    public Mono<Void> convertToCoordinatesAsync(List<ClientExcelDto> addresses) {
         return Flux.fromIterable(addresses)
                 .filter(data -> data.getAddress() != null)
                 .flatMap(data -> { //비동기로 실행
@@ -97,7 +97,7 @@ public class LocationResolver {
                 .then();
     }
 
-    private Publisher<?> callGeoApi(ClientExcelData data, URI uri) {
+    private Publisher<?> callGeoApi(ClientExcelDto data, URI uri) {
         return webClient.get()
                 .uri(uri)
                 .retrieve() //비동기 통신

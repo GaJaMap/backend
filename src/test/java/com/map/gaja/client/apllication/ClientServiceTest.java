@@ -2,7 +2,7 @@ package com.map.gaja.client.apllication;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
@@ -251,7 +251,7 @@ class ClientServiceTest {
     @Test
     @DisplayName("파싱한 엑셀 데이터 저장 테스트")
     void saveClientExcelDataTest() {
-        List<ClientExcelData> excelData = createExcelDataSize3();
+        List<ClientExcelDto> excelData = createExcelDataSize3();
         long beforeClientCount = existingGroup.getClientCount();
         when(groupQueryRepository.findGroupWithUser(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
@@ -284,11 +284,11 @@ class ClientServiceTest {
         return size3ClientIds;
     }
 
-    private static List<ClientExcelData> createExcelDataSize3() {
-        List<ClientExcelData> excelData = new ArrayList<>();
-        excelData.add(new ClientExcelData(1, "Test Excel 1", null, null, null, null, true));
-        excelData.add(new ClientExcelData(2, "Test Excel 2", null, null, null, null, true));
-        excelData.add(new ClientExcelData(3, "Test Excel 3", null, null, null, null, true));
+    private static List<ClientExcelDto> createExcelDataSize3() {
+        List<ClientExcelDto> excelData = new ArrayList<>();
+        excelData.add(new ClientExcelDto(1, "Test Excel 1", null, null, null, null, true));
+        excelData.add(new ClientExcelDto(2, "Test Excel 2", null, null, null, null, true));
+        excelData.add(new ClientExcelDto(3, "Test Excel 3", null, null, null, null, true));
         return excelData;
     }
 
