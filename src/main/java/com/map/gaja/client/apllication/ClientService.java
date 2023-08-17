@@ -1,7 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
@@ -188,7 +188,7 @@ public class ClientService {
      * 파싱한 엑셀 데이터 저장.
      * JPA와 관계없이 저장하기 때문에 ID를 반환하지 않음.
      */
-    public void saveClientExcelData(Long groupId, List<ClientExcelData> excelData) {
+    public void saveClientExcelData(Long groupId, List<ClientExcelDto> excelData) {
         Group group = groupQueryRepository.findGroupWithUser(groupId)
                 .orElseThrow(GroupNotFoundException::new);
 

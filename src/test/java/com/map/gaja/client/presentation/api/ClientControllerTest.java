@@ -9,7 +9,7 @@ import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.global.exception.ValidationErrorInfo;
+import com.map.gaja.global.exception.ValidationErrorResponse;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,9 +108,9 @@ class ClientControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
 
         MockHttpServletResponse response = mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
-        List<ValidationErrorInfo> validationErrorInfoList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
-        ValidationErrorInfo validationErrorInfo = validationErrorInfoList.get(0);
-        Assertions.assertThat(validationErrorInfo.getCode()).isEqualTo("Size");
+        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
+        ValidationErrorResponse validationErrorResponse = validationErrorResponseList.get(0);
+        Assertions.assertThat(validationErrorResponse.getCode()).isEqualTo("Size");
     }
 
 

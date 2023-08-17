@@ -12,7 +12,7 @@ import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkReque
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.global.exception.ValidationErrorInfo;
+import com.map.gaja.global.exception.ValidationErrorResponse;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import org.assertj.core.api.Assertions;
@@ -123,10 +123,10 @@ public class ClientPostControllerTest {
 
         MockHttpServletResponse response = mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
 
-        List<ValidationErrorInfo> validationErrorInfoList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
-        Assertions.assertThat(validationErrorInfoList.size()).isEqualTo(1);
-        Assertions.assertThat(validationErrorInfoList.get(0).getCode()).isNull();
-        System.out.println(validationErrorInfoList.get(0));
+        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
+        Assertions.assertThat(validationErrorResponseList.size()).isEqualTo(1);
+        Assertions.assertThat(validationErrorResponseList.get(0).getCode()).isNull();
+        System.out.println(validationErrorResponseList.get(0));
     }
 
     @Test
@@ -140,10 +140,10 @@ public class ClientPostControllerTest {
 
         MockHttpServletResponse response = mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
 
-        List<ValidationErrorInfo> validationErrorInfoList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
-        Assertions.assertThat(validationErrorInfoList.size()).isEqualTo(1);
-        Assertions.assertThat(validationErrorInfoList.get(0).getCode()).isNull();
-        System.out.println(validationErrorInfoList.get(0));
+        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
+        Assertions.assertThat(validationErrorResponseList.size()).isEqualTo(1);
+        Assertions.assertThat(validationErrorResponseList.get(0).getCode()).isNull();
+        System.out.println(validationErrorResponseList.get(0));
     }
 
     @Test
