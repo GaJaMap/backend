@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.PrincipalDetails;
@@ -49,6 +50,8 @@ class ClientControllerTest {
     GroupAccessVerifyService groupAccessVerifyService;
     @MockBean
     S3FileService fileService;
+    @MockBean
+    FileValidator fileValidator;
 
     Long groupId = 1L;
     Long clientId = 1L;

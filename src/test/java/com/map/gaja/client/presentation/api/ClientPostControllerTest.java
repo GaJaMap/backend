@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
@@ -53,6 +54,8 @@ public class ClientPostControllerTest {
     GroupAccessVerifyService groupAccessVerifyService;
     @MockBean
     S3FileService fileService;
+    @MockBean
+    FileValidator fileValidator;
 
     private ObjectMapper om;
 
@@ -85,6 +88,7 @@ public class ClientPostControllerTest {
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
+        when(fileValidator.isAllowedImageType(any())).thenReturn(true);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
         verify(clientService, times(1)).saveClientWithImage(any(), any());
@@ -101,6 +105,7 @@ public class ClientPostControllerTest {
         StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
         when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
         when(clientService.saveClientWithImage(any(), any())).thenThrow(new GroupNotFoundException());
+        when(fileValidator.isAllowedImageType(any())).thenReturn(true);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).saveClientWithImage(any(), any());

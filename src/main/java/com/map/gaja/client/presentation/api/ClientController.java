@@ -41,6 +41,7 @@ public class ClientController implements ClientCommandApiSpecification {
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
+    private final FileValidator fileValidator;
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
     public ResponseEntity<Void> deleteClient(
@@ -184,7 +185,7 @@ public class ClientController implements ClientCommandApiSpecification {
         }
 
         // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
-        if (isNotEmptyFile(clientImage) && !FileValidator.isAllowedImageType(clientImage)) {
+        if (isNotEmptyFile(clientImage) && !fileValidator.isAllowedImageType(clientImage)) {
             throw new FileNotAllowedException();
         }
     }
@@ -206,7 +207,7 @@ public class ClientController implements ClientCommandApiSpecification {
         }
 
         // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
-        if (isNotEmptyFile(clientImage) && !FileValidator.isAllowedImageType(clientImage)) {
+        if (isNotEmptyFile(clientImage) && !fileValidator.isAllowedImageType(clientImage)) {
             throw new FileNotAllowedException();
         }
     }
