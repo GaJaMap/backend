@@ -120,8 +120,11 @@ public class ClientQueryRepository {
         }
 
         LocationDto currentLocation = locationSearchCond.getLocation();
-        return getCalcDistanceWithNativeSQL(currentLocation)
-                .loe(locationSearchCond.getRadius());
+        ClientLocation tempLocation = new ClientLocation(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+        return mysqlNativeSQLCreator
+                .createRadiusSearchSQL(tempLocation.getLocation(), client.location.location, locationSearchCond.getRadius())
+                .eq(true);
     }
 
     private NumberExpression<Double> getCalcDistanceWithNativeSQL(LocationDto currentLocation) {
