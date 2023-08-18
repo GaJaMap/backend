@@ -3,7 +3,7 @@ package com.map.gaja.client.presentation.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
