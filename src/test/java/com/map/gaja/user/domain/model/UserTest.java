@@ -23,4 +23,16 @@ class UserTest {
         assertNotEquals(user.getLastLoginDate(), beforeDate);
     }
 
+    @Test
+    @DisplayName("날짜가 같으면 최근 접속일 update 실패")
+    void updateLastLoginDateFail() {
+        LocalDateTime beforeDate = LocalDateTime.now();
+        User user = User.builder()
+                .lastLoginDate(beforeDate)
+                .build();
+
+        user.updateLastLoginDate();
+
+        assertEquals(user.getLastLoginDate(), beforeDate);
+    }
 }
