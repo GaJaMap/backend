@@ -89,25 +89,4 @@ public class GroupService {
         group.updateName(request.getName());
     }
 
-    /**
-     * 사용자가 최근에 참조한 그룹 조회
-     * 최근 참조 그룹 아이디가 NULL이면 전체 조회, NULL이 아니라면 특정 그룹 조회
-     */
-    public GroupInfo findGroup(String email) {
-        User user = findExistingUser(userRepository, email);
-
-        if (isWholeGroup(user.getReferenceGroupId())) {
-            return null;
-        }
-
-        GroupInfo groupInfo = groupRepository.findGroupInfoById(user.getReferenceGroupId());
-        return groupInfo;
-    }
-
-    private boolean isWholeGroup(Long referenceGroupId) {
-        if (referenceGroupId == null) {
-            return true;
-        }
-        return false;
-    }
 }
