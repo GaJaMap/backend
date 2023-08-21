@@ -5,6 +5,7 @@ import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -65,6 +66,24 @@ public class User extends BaseTimeEntity {
 
     public void decreaseGroupCount() {
         groupCount--;
+    }
+
+    /**
+     * hour, min, sec을 제외한 yyyy-MM-dd 날짜가 다르면 최근 접속 일을 update
+     */
+    public void updateLastLoginDate() {
+        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        if (isDifferentDate(currentDateTime)) {
+            this.lastLoginDate = currentDateTime;
+        }
+    }
+
+    private boolean isDifferentDate(LocalDateTime currentDateTime) {
+        if (!lastLoginDate.toLocalDate().isEqual(currentDateTime.toLocalDate())) {
+            return true;
+        }
+        return false;
     }
 
 }

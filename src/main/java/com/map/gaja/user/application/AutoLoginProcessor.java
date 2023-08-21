@@ -9,6 +9,7 @@ import com.map.gaja.user.infrastructure.UserRepository;
 import com.map.gaja.user.presentation.dto.response.AutoLoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
 
@@ -24,8 +25,10 @@ public class AutoLoginProcessor {
      * @param email 사용자 이메일
      * @return 최근에 참조한 그룹정보와 그 그룹에 속한 클라이언트
      */
+    @Transactional
     public AutoLoginResponse process(String email) {
         User user = findExistingUser(userRepository, email);
+        user.updateLastLoginDate(); //최근 접속일 update
 
         Long referenceGroupId = user.getReferenceGroupId();
         GroupInfo groupInfo = null;
