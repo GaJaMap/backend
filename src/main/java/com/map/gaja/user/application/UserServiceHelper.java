@@ -6,7 +6,7 @@ import com.map.gaja.user.infrastructure.UserRepository;
 
 public final class UserServiceHelper {
     public static User findExistingUser(UserRepository userRepository, String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndActive(email)
                 .orElseThrow(() -> {
                     throw new UserNotFoundException();
                 });

@@ -2,6 +2,7 @@ package com.map.gaja.oauth2.application;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.authentication.SessionHandler;
+import com.map.gaja.user.application.UserServiceHelper;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,7 @@ public class Oauth2UserService implements OAuth2UserService<OAuth2UserRequest, O
 
         String email = (String) ((Map) attributes.get("kakao_account")).get("email");
 
-        User user = userRepository.findByEmail(email)
-                .orElse(new User(email));
+        User user = UserServiceHelper.findExistingUser(userRepository, email);
         userRepository.save(user);
 
         sessionHandler.deduplicate(email); //중복 세션 제거

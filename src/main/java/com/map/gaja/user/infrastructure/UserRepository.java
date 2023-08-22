@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * active가 활성화된 유저의 이메일 조회
      */
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.active = true")
-    Optional<User> findByEmail(@Param(value = "email") String email);
+    Optional<User> findByEmailAndActive(@Param(value = "email") String email);
 
     /**
      * 회원탈퇴한 user 전부 삭제

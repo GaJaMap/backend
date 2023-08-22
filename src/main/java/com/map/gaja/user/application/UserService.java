@@ -3,7 +3,6 @@ package com.map.gaja.user.application;
 import com.map.gaja.global.authentication.AuthenticationHandler;
 import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.exception.UserNotFoundException;
-import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.Oauth2Client;
 import com.map.gaja.user.infrastructure.UserRepository;
@@ -13,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
@@ -36,7 +33,7 @@ public class UserService {
 
         sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndActive(email)
                 .orElse(new User(email));
         userRepository.save(user);
 
