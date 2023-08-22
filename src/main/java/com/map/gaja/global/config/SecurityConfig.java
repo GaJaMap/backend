@@ -1,6 +1,7 @@
 package com.map.gaja.global.config;
 
 import com.map.gaja.oauth2.application.Oauth2UserService;
+import com.map.gaja.oauth2.handler.Oauth2FailureHandler;
 import com.map.gaja.oauth2.handler.Oauth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 public class SecurityConfig {
     private final Oauth2UserService oauth2UserService;
     private final Oauth2SuccessHandler oauth2SuccessHandler;
+    private final Oauth2FailureHandler oauth2FailureHandler;
 
     @Value("${management.endpoints.web.base-path}")
     private String monitoringEndPoint;
@@ -38,6 +40,7 @@ public class SecurityConfig {
                     .userInfoEndpoint().userService(oauth2UserService) //oauth2 로그인 후 처리 로직
                 .and()
                 .successHandler(oauth2SuccessHandler) //웹에서 oauth2 로그인 성공할 경우
+                .failureHandler(oauth2FailureHandler) //웹에서 oauth2 로그인 실패할 경우(회원탈퇴 유저가 로그인하면 예외)
                 .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(new Http403ForbiddenEntryPoint()); //인증되지 없을 경우 로그인 창으로 이동하는데 앱에서는 403으로 응답해주기 위해서 403으로 통일함
