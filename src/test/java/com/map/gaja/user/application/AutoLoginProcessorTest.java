@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +38,7 @@ class AutoLoginProcessorTest {
         User user = new User(email);
         ClientListResponse clientListResponse = new ClientListResponse();
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
         when(clientQueryService.findAllClient(email, null)).thenReturn(clientListResponse);
         autoLoginProcessor.process(email);
 
@@ -71,7 +70,7 @@ class AutoLoginProcessorTest {
             }
         };
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
         when(groupRepository.findGroupInfoById(user.getReferenceGroupId())).thenReturn(groupInfo);
         when(clientQueryService.findAllClientsInGroup(groupInfo.getGroupId(), null)).thenReturn(clientListResponse);
         autoLoginProcessor.process(email);

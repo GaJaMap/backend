@@ -26,7 +26,7 @@ public class WebUserLoginController {
     public String loginSuccess(String loginEmail) {
         // 임시 로그인
         System.out.println(loginEmail);
-        User user = userRepository.findByEmail(loginEmail).get();
+        User user = userRepository.findByEmailAndActive(loginEmail).get();
 
         authenticationHandler.saveContext(loginEmail, user.getAuthority().toString());
         return "redirect:/";

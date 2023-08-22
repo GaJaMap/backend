@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
+import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class GroupService {
 
     @Transactional
     public Long create(String email, GroupCreateRequest request) {
-        User user = findExistingUser(userRepository, email);
+        User user = findByEmailAndActive(userRepository, email);
 
         user.checkCreateGroupPermission();
 
@@ -49,7 +49,7 @@ public class GroupService {
 
     @Transactional(readOnly = true)
     public GroupResponse findGroups(String email, Pageable pageable) {
-        User user = findExistingUser(userRepository, email);
+        User user = findByEmailAndActive(userRepository, email);
 
         Slice<GroupInfo> groupInfos = groupRepository.findGroupByUserId(user.getId(), pageable);
 
@@ -69,7 +69,7 @@ public class GroupService {
 
     @Transactional
     public void delete(String email, Long groupId) {
-        User user = findExistingUser(userRepository, email);
+        User user = findByEmailAndActive(userRepository, email);
 
         int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, user.getId());
 
@@ -82,7 +82,7 @@ public class GroupService {
 
     @Transactional
     public void updateName(String email, Long groupId, GroupUpdateRequest request) {
-        User user = findExistingUser(userRepository, email);
+        User user = findByEmailAndActive(userRepository, email);
 
         Group group = groupRepository.findByIdAndUserId(groupId, user.getId())
                 .orElseThrow(GroupNotFoundException::new);
