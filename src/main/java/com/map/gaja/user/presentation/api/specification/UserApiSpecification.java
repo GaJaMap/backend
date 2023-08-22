@@ -23,7 +23,8 @@ public interface UserApiSpecification {
             description = "카카오 액세스토큰을 이용한 로그인",
             responses = {
                     @ApiResponse(responseCode = "200", headers = {@Header(name = "Set-Cookie", description = "인증 토큰 ex) JSESSIONID =1231231232d", schema = @Schema(implementation = String.class))}, content = @Content(schema = @Schema(implementation = LoginResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    @ApiResponse(responseCode = "410", description = "회원 탈퇴를 처리하고 있는 유저입니다. (최대 하루 소요)", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             }
     )
     ResponseEntity<LoginResponse> login(LoginRequest request);
