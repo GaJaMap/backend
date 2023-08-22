@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 
+import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
 import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
 
 @Service
@@ -31,11 +32,9 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-        sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
+        User user = findByEmail(userRepository, email);
 
-        User user = userRepository.findByEmailAndActive(email)
-                .orElse(new User(email));
-        userRepository.save(user);
+        sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
