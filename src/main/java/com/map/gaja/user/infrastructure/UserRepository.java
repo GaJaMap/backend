@@ -21,4 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query(value = "DELETE FROM User u WHERE u.active = false")
     int deleteWithdrawnUsers();
+
+    /**
+     * 이메일로 유저 조회
+     */
+    User findByEmail(String email);
 }
