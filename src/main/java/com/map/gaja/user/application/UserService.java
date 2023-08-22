@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.format.DateTimeFormatter;
 
 import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
-import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
+import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public void withdrawal(String email) {
-        User user = findExistingUser(userRepository, email);
+        User user = findByEmailAndActive(userRepository, email);
 
         user.withdrawal();
     }

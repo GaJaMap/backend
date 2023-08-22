@@ -6,7 +6,10 @@ import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 
 public final class UserServiceHelper {
-    public static User findExistingUser(UserRepository userRepository, String email) {
+    /**
+     * 회은 탈퇴 안 한 유저 조회
+     */
+    public static User findByEmailAndActive(UserRepository userRepository, String email) {
         return userRepository.findByEmailAndActive(email)
                 .orElseThrow(() -> {
                     throw new UserNotFoundException();

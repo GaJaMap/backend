@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.map.gaja.user.application.UserServiceHelper.findExistingUser;
+import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class AutoLoginProcessor {
      */
     @Transactional
     public AutoLoginResponse process(String email) {
-        User user = findExistingUser(userRepository, email);
+        User user = findByEmailAndActive(userRepository, email);
         user.updateLastLoginDate(); //최근 접속일 update
 
         Long referenceGroupId = user.getReferenceGroupId();
