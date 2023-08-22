@@ -34,5 +34,15 @@ class UserServiceHelperTest {
 
     }
 
+    @Test
+    @DisplayName("신규 유저가 로그인할 경우")
+    void newUserLogin() {
+        String email = "test@gmail.com";
+
+        when(userRepository.findByEmail(email)).thenReturn(null);
+        UserServiceHelper.findByEmail(userRepository, email);
+
+        verify(userRepository, times(1)).save(any());
+    }
 
 }
