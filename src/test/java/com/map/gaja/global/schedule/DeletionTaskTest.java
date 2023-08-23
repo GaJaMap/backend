@@ -20,9 +20,9 @@
 //
 //@SpringBootTest
 //@Transactional
-//class ImageDeletionTaskTest {
+//class DeletionTaskTest {
 //    @Autowired
-//    ImageDeletionTask imageDeletionTask;
+//    DeletionTask deletionTask;
 //
 //    @Autowired
 //    EntityManager em;
@@ -63,6 +63,6 @@
 //        em.flush();
 //        em.clear();
 //
-//        assertDoesNotThrow(() -> imageDeletionTask.execute());
+//        assertDoesNotThrow(() -> deletionTask.execute());
 //    }
 //}
