@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ImageDeletionTask {
+public class DeletionTask {
     private static final long LIMIT_SIZE = 1000L;
     private final S3FileService s3FileService;
     private final ClientQueryRepository clientQueryRepository;
