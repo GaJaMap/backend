@@ -53,5 +53,5 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      * 사용자가 최근에 참조한 그룹 정보 조회
      */
     @Query("SELECT g.id as groupId, g.name as groupName, g.clientCount as clientCount FROM Group g WHERE g.id = :groupId AND g.isDeleted = false")
-    GroupInfo findGroupInfoById(@Param(value = "groupId") Long groupId);
+    Optional<GroupInfo> findGroupInfoById(@Param(value = "groupId") Long groupId);
 }

@@ -180,7 +180,7 @@ class GroupRepositoryTest {
         user.accessGroup(group.getId());
 
         //when
-        GroupInfo groupInfo = groupRepository.findGroupInfoById(group.getId());
+        GroupInfo groupInfo = groupRepository.findGroupInfoById(group.getId()).get();
 
         //then
         assertEquals(group.getId(), groupInfo.getGroupId());
@@ -196,7 +196,7 @@ class GroupRepositoryTest {
         userRepository.save(user);
 
         //when
-        GroupInfo groupInfo = groupRepository.findGroupInfoById(0L);
+        GroupInfo groupInfo = groupRepository.findGroupInfoById(0L).get();
 
         //then
         assertEquals(null, groupInfo);

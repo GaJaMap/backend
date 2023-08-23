@@ -71,7 +71,7 @@ class AutoLoginProcessorTest {
         };
 
         when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
-        when(groupRepository.findGroupInfoById(user.getReferenceGroupId())).thenReturn(groupInfo);
+        when(groupRepository.findGroupInfoById(user.getReferenceGroupId()).get()).thenReturn(groupInfo);
         when(clientQueryService.findAllClientsInGroup(groupInfo.getGroupId(), null)).thenReturn(clientListResponse);
         autoLoginProcessor.process(email);
 
