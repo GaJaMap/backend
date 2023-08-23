@@ -34,7 +34,6 @@ public class DeletionTask {
      * 회원탈퇴, 그룹 삭제, 클라이언트 삭제를 처리하기 위한 스케줄링
      * */
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // 초 분 시 => 한국 시간 매일 새벽 3시에 작업 수행
-    @Transactional
     public void execute() {
         long startTime = System.nanoTime();
 
@@ -70,6 +69,7 @@ public class DeletionTask {
         return true;
     }
 
+    @Transactional
     private int deleteClientImages() {
         int deletedImageCount = 0;
 

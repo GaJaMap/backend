@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -40,6 +41,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      */
     @Modifying
     @Query("UPDATE Group g SET g.isDeleted = true WHERE g.user.id IN (SELECT u.id FROM User u WHERE u.active = false)")
+    @Transactional
     int deleteByWithdrawalUser();
 
     /**
@@ -47,6 +49,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      */
     @Modifying
     @Query(value = "DELETE FROM Group g WHERE g.isDeleted = true")
+    @Transactional
     int deleteMarkedGroups();
 
     /**
