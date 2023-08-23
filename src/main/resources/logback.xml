@@ -24,7 +24,7 @@
 
 
     <!-- 분리된 로그 파일 로그 설정 -->
-    <logger name="com.map.gaja.global.schedule.ImageDeletionTask" level="DEBUG" additivity="false">
+    <logger name="com.map.gaja.global.schedule.DeletionTask" level="DEBUG" additivity="false">
         <appender-ref ref="ImageDeletionTask" />
     </logger>
 

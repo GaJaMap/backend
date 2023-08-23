@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,5 +39,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
      */
     @Modifying
     @Query(value = "DELETE c FROM client c INNER JOIN group_set g ON c.group_id=g.group_id WHERE g.is_deleted = true", nativeQuery = true)
+    @Transactional
     int deleteClientsInDeletedGroup();
 }
