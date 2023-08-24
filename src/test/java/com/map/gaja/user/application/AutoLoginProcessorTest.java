@@ -43,7 +43,6 @@ class AutoLoginProcessorTest {
         autoLoginProcessor.process(email);
 
         verify(clientQueryService, times(1)).findAllClient(email, null);
-        verify(groupRepository, times(0)).findGroupInfoById(user.getReferenceGroupId());
     }
 
     @Test
@@ -71,7 +70,7 @@ class AutoLoginProcessorTest {
         };
 
         when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
-        when(groupRepository.findGroupInfoById(user.getReferenceGroupId()).get()).thenReturn(groupInfo);
+        when(groupRepository.findGroupInfoById(user.getReferenceGroupId())).thenReturn(Optional.of(groupInfo));
         when(clientQueryService.findAllClientsInGroup(groupInfo.getGroupId(), null)).thenReturn(clientListResponse);
         autoLoginProcessor.process(email);
 

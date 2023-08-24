@@ -195,10 +195,7 @@ class GroupRepositoryTest {
         User user = new User("test");
         userRepository.save(user);
 
-        //when
-        GroupInfo groupInfo = groupRepository.findGroupInfoById(0L).get();
-
         //then
-        assertEquals(null, groupInfo);
+        assertEquals(false, groupRepository.findGroupInfoById(0L).isPresent());
     }
 }
