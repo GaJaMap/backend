@@ -26,6 +26,12 @@ public class LocationDto {
 
     @JsonIgnore
     public LocationDto(Point location) {
+        if (location == null) {
+            latitude = null;
+            longitude = null;
+            return;
+        }
+
         latitude = location.getY();
         longitude = location.getX();
     }
