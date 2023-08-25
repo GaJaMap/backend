@@ -65,14 +65,16 @@ public class ClientQueryService {
             String loginEmail,
             @Nullable String nameCond
     ) {
-        User user = userRepository.findByEmail(loginEmail);
-        user.accessGroup(null);
+        accessAllClient(loginEmail);
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
         return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 
+    @Transactional
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        accessAllClient(loginEmail);
+
         List<Long> groupIdList = groupQueryRepository.findActiveGroupId(loginEmail);
         if (groupIdList.size() == 0) {
             throw new GroupNotFoundException();
@@ -80,5 +82,10 @@ public class ClientQueryService {
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
+    }
+
+    private void accessAllClient(String loginEmail) {
+        User user = userRepository.findByEmail(loginEmail);
+        user.accessGroup(null);
     }
 }
