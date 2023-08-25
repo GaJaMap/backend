@@ -11,6 +11,8 @@ import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
+import com.map.gaja.user.domain.model.User;
+import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ import static com.map.gaja.client.apllication.ClientConvertor.*;
 public class ClientQueryService {
     private final ClientQueryRepository clientQueryRepository;
     private final GroupQueryRepository groupQueryRepository;
+    private final UserRepository userRepository;
     private final S3UrlGenerator s3UrlGenerator;
 
     public ClientDetailResponse findClient(Long clientId) {
@@ -57,15 +60,21 @@ public class ClientQueryService {
         return clientQueryRepository.findClientImageFilePath(clientId);
     }
 
+    @Transactional
     public ClientListResponse findAllClient(
             String loginEmail,
             @Nullable String nameCond
     ) {
+        accessAllClient(loginEmail);
+
         List<ClientOverviewResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
         return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
     }
 
+    @Transactional
     public ClientListResponse findClientByConditions(String loginEmail, NearbyClientSearchRequest locationSearchCond, String wordCond) {
+        accessAllClient(loginEmail);
+
         List<Long> groupIdList = groupQueryRepository.findActiveGroupId(loginEmail);
         if (groupIdList.size() == 0) {
             throw new GroupNotFoundException();
@@ -73,5 +82,10 @@ public class ClientQueryService {
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
         return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
+    }
+
+    private void accessAllClient(String loginEmail) {
+        User user = userRepository.findByEmail(loginEmail);
+        user.accessGroup(null);
     }
 }
