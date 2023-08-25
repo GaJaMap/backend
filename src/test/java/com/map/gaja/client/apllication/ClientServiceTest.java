@@ -6,6 +6,7 @@ import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
@@ -95,10 +96,10 @@ class ClientServiceTest {
         });
 
         // when
-        Long result = clientService.saveClient(changedRequest);
+        ClientOverviewResponse result = clientService.saveClient(changedRequest);
 
         // then
-        assertThat(result).isEqualTo(clientId);
+        assertThat(result.getClientId()).isEqualTo(clientId);
         assertThat(existingGroup.getClientCount()).isEqualTo(clientCount + 1);
     }
 
@@ -228,10 +229,10 @@ class ClientServiceTest {
             return savedClient;
         });
 
-        long result = clientService.saveClientWithImage(request, storedFileDto);
+        ClientOverviewResponse result = clientService.saveClientWithImage(request, storedFileDto);
 
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + 1);
-        assertThat(result).isEqualTo(clientId);
+        assertThat(result.getClientId()).isEqualTo(clientId);
     }
 
     @Test
