@@ -4,6 +4,7 @@ import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
@@ -44,28 +45,29 @@ public class ClientService {
      * @param clientRequest 고객 등록 요청 정보
      * @return 만들어진 고객 ID
      */
-    public Long saveClient(NewClientRequest clientRequest) {
+    public ClientOverviewResponse saveClient(NewClientRequest clientRequest) {
         Group group = groupQueryRepository.findGroupWithUser(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
         increasingClientService.increase(group, group.getUser().getAuthority(), 1);
-        return client.getId();
+        return entityToOverviewDto(client);
     }
 
     /**
      * 이미지와 함께 고객 등록
+     *
      * @param clientRequest 고객 등록 요청 정보
      * @param storedFileDto S3에 저장된 이미지 저장 정보
      * @return 만들어진 고객 ID
      */
-    public Long saveClientWithImage(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
+    public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
         Group group = groupQueryRepository.findGroupWithUser(clientRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
         Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
         increasingClientService.increase(group, group.getUser().getAuthority(), 1);
-        return client.getId();
+        return entityToOverviewDto(client);
     }
 
     public void deleteClient(long clientId) {
