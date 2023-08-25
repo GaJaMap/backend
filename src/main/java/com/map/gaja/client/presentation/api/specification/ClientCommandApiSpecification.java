@@ -4,6 +4,7 @@ import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.exception.ExceptionDto;
 import com.map.gaja.global.exception.ValidationErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,7 +85,7 @@ public interface ClientCommandApiSpecification {
                     @ApiResponse(responseCode = "422", description = "사용자에게 요청 그룹이 없거나, 그룹에 요청 고객이 없음 <br> 또는 그룹 내에 사용자 수보다 많은 사용자를 등록할 수 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류로 이미지 저장 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
-    ResponseEntity<Long> addClient(
+    ResponseEntity<ClientOverviewResponse> addClient(
             @Schema(hidden = true) @AuthenticationPrincipal String loginEmail,
             @Valid @ModelAttribute NewClientRequest clientRequest,
             @Schema(hidden = true) BindingResult bindingResult

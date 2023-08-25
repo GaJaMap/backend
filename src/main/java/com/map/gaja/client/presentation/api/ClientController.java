@@ -7,6 +7,7 @@ import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecif
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @TimeCheckLog
@@ -143,7 +143,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<Long> addClient(
+    public ResponseEntity<ClientOverviewResponse> addClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @ModelAttribute NewClientRequest clientRequest,
             BindingResult bindingResult
@@ -152,14 +152,14 @@ public class ClientController implements ClientCommandApiSpecification {
         validateNewClientRequestFields(clientRequest, bindingResult);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
-        Long id;
+        ClientOverviewResponse response;
         if (isNotEmptyFile(clientRequest.getClientImage())) {
-            id = saveClientWithImage(loginEmail, clientRequest);
+            response = saveClientWithImage(loginEmail, clientRequest);
         } else {
-            id = clientService.saveClient(clientRequest);
+            response = clientService.saveClient(clientRequest);
         }
 
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
@@ -212,7 +212,7 @@ public class ClientController implements ClientCommandApiSpecification {
         }
     }
 
-    private Long saveClientWithImage(String loginEmail, NewClientRequest client) {
+    private ClientOverviewResponse saveClientWithImage(String loginEmail, NewClientRequest client) {
         StoredFileDto storedFileDto = fileService.storeFile(loginEmail, client.getClientImage());
         try {
             return clientService.saveClientWithImage(client, storedFileDto);

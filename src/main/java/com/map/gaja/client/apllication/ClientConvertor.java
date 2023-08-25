@@ -60,7 +60,7 @@ public class ClientConvertor {
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
                 getStoredFileDto(client.getClientImage()),
-                null
+                client.getCreatedAt()
         );
     }
 
