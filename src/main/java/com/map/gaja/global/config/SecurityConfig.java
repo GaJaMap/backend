@@ -24,11 +24,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        String monitoringPath = monitoringEndPoint+"/**";
+        String monitoringPath = monitoringEndPoint + "/**";
 
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
+                        .antMatchers("/api/group/**/clients/nearby", "/api/clients/nearby").hasAuthority("VIP")
                         .antMatchers("/api/user/login",
                                 monitoringPath,
                                 "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
@@ -37,13 +38,13 @@ public class SecurityConfig {
                 .csrf().disable()
                 .formLogin().disable()
                 .oauth2Login()
-                    .userInfoEndpoint().userService(oauth2UserService) //oauth2 로그인 후 처리 로직
+                .userInfoEndpoint().userService(oauth2UserService) //oauth2 로그인 후 처리 로직
                 .and()
                 .successHandler(oauth2SuccessHandler) //웹에서 oauth2 로그인 성공할 경우
                 .failureHandler(oauth2FailureHandler) //웹에서 oauth2 로그인 실패할 경우(회원탈퇴 유저가 로그인하면 예외)
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(new Http403ForbiddenEntryPoint()); //인증되지 없을 경우 로그인 창으로 이동하는데 앱에서는 403으로 응답해주기 위해서 403으로 통일함
+                .authenticationEntryPoint(new Http403ForbiddenEntryPoint()); //인증되지 없을 경우 로그인 창으로 이동하는데 앱에서는 403으로 응답해주기 위해서 403으로 통일함
 
         return http.build();
     }
