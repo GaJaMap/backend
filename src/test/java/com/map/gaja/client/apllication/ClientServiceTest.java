@@ -67,7 +67,6 @@ class ClientServiceTest {
     Group changedGroup;
     Client existingClient;
     ClientImage clientImage;
-    String s3Prefix = "my.s3.url/";
 
     @BeforeEach
     void beforeEach() {
@@ -77,8 +76,7 @@ class ClientServiceTest {
                 groupRepository,
                 groupQueryRepository,
                 clientQueryRepository,
-                increasingClientService,
-                s3UrlGenerator
+                increasingClientService
         );
 
         user = TestEntityCreator.createUser(email);
@@ -143,7 +141,6 @@ class ClientServiceTest {
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
-        when(s3UrlGenerator.getS3Url()).thenReturn(s3Prefix);
 
         // when
         ClientOverviewResponse response = clientService.updateClientWithNewImage(existingClientId, changedRequest, updatedImageFile);
@@ -153,7 +150,7 @@ class ClientServiceTest {
 
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
         assertThat(response.getImage().getOriginalFileName()).isSameAs(updatedImageFile.getOriginalFileName());
-        assertThat(response.getImage().getFilePath()).isEqualTo(s3Prefix.concat(updatedImageFilePath));
+        assertThat(response.getImage().getFilePath()).isEqualTo(updatedImageFilePath);
     }
 
     @Test
