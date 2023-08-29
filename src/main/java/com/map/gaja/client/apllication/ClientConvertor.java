@@ -1,7 +1,6 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
-import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
@@ -25,7 +24,7 @@ import java.util.List;
  * Request -> Entity 또는 Entity -> Response 컨버터
  */
 public class ClientConvertor {
-    protected static ClientListResponse entityToDto(List<Client> clients, S3UrlGenerator s3UrlGenerator) {
+    protected static ClientListResponse entityToDto(List<Client> clients) {
         List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
@@ -33,7 +32,7 @@ public class ClientConvertor {
             responseClients.add(clientResponse);
         });
 
-        return new ClientListResponse(responseClients, s3UrlGenerator.getS3Url());
+        return new ClientListResponse(responseClients);
     }
 
     protected static ClientOverviewResponse entityToOverviewDto(Client client) {
@@ -50,8 +49,8 @@ public class ClientConvertor {
     }
 
 
-    protected static ClientDetailResponse entityToDetailDto(Client client, S3UrlGenerator s3UrlGenerator) {
-        StoredFileDto image = getStoredFileUrlDto(client.getClientImage(), s3UrlGenerator);
+    protected static ClientDetailResponse entityToDetailDto(Client client) {
+        StoredFileDto image = getStoredFileUrlDto(client.getClientImage());
         return new ClientDetailResponse(
                 client.getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
@@ -138,13 +137,12 @@ public class ClientConvertor {
     }
 
 
-    private static StoredFileDto getStoredFileUrlDto(ClientImage clientImage, S3UrlGenerator s3UrlGenerator) {
+    private static StoredFileDto getStoredFileUrlDto(ClientImage clientImage) {
         if (clientImage == null) {
             return new StoredFileDto();
         }
         else {
-            String imageUrl = s3UrlGenerator.getS3Url() + clientImage.getSavedPath();
-            return new StoredFileDto(imageUrl, clientImage.getOriginalName());
+            return new StoredFileDto(clientImage.getSavedPath(), clientImage.getOriginalName());
         }
     }
 
