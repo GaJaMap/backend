@@ -30,17 +30,16 @@ public class ClientQueryService {
     private final ClientQueryRepository clientQueryRepository;
     private final GroupQueryRepository groupQueryRepository;
     private final UserRepository userRepository;
-    private final S3UrlGenerator s3UrlGenerator;
 
     public ClientDetailResponse findClient(Long clientId) {
         Client client = clientQueryRepository.findClientWithGroup(clientId)
                 .orElseThrow(() -> new ClientNotFoundException());
-        return entityToDetailDto(client, s3UrlGenerator);
+        return entityToDetailDto(client);
     }
 
     public ClientListResponse findAllClientsInGroup(Long groupId, @Nullable String wordCond) {
         List<Client> clients = clientQueryRepository.findByGroup_Id(groupId, wordCond);
-        return entityToDto(clients, s3UrlGenerator);
+        return entityToDto(clients);
     }
 
     public ClientListResponse findClientByConditions(Long groupId, NearbyClientSearchRequest locationSearchCond, String wordCond) {
@@ -48,7 +47,7 @@ public class ClientQueryService {
         groupIdList.add(groupId);
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
+        return new ClientListResponse(clientList);
     }
 
     public StoredFileDto findClientImage(Long clientId) {
@@ -68,7 +67,7 @@ public class ClientQueryService {
         accessAllClient(loginEmail);
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findActiveClientByEmail(loginEmail, nameCond);
-        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
+        return new ClientListResponse(clientList);
     }
 
     @Transactional
@@ -81,7 +80,7 @@ public class ClientQueryService {
         }
 
         List<ClientOverviewResponse> clientList = clientQueryRepository.findClientByConditions(groupIdList, locationSearchCond, wordCond);
-        return new ClientListResponse(clientList, s3UrlGenerator.getS3Url());
+        return new ClientListResponse(clientList);
     }
 
     private void accessAllClient(String loginEmail) {
