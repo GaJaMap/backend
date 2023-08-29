@@ -3,7 +3,6 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
-import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
@@ -39,9 +38,6 @@ class ClientQueryServiceTest {
     private ClientQueryRepository repository;
 
     @Mock
-    private S3UrlGenerator s3UrlGenerator;
-
-    @Mock
     private UserRepository userRepository;
 
     @Mock
@@ -64,10 +60,8 @@ class ClientQueryServiceTest {
         when(findClient.getLocation()).thenReturn(new ClientLocation());
         when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
 
-        String urlPrefix = "s3.aaa.bbb/";
         String savedPath = "testImage";
         when(findClient.getClientImage()).thenReturn(new ClientImage("testImage", savedPath));
-        when(s3UrlGenerator.getS3Url()).thenReturn(urlPrefix);
 
         //when
         ClientDetailResponse response = clientQueryService.findClient(searchId);
@@ -75,7 +69,7 @@ class ClientQueryServiceTest {
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
         assertThat(response.getClientName()).isEqualTo(searchName);
-        assertThat(response.getImage().getFilePath()).isEqualTo(urlPrefix + savedPath);
+        assertThat(response.getImage().getFilePath()).isEqualTo(savedPath);
     }
 
     @Test
@@ -107,7 +101,7 @@ class ClientQueryServiceTest {
             clientList.add(TestEntityCreator.createClient(i, testGroup1));
             clientList.add(TestEntityCreator.createClient(i, testGroup2));
         }
-        List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList, s3UrlGenerator).getClients();
+        List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList).getClients();
 
         when(userRepository.findByEmail(testEmail)).thenReturn(testUser);
         when(repository.findActiveClientByEmail(testEmail, null)).thenReturn(testList);
@@ -139,7 +133,7 @@ class ClientQueryServiceTest {
             clientList.add(TestEntityCreator.createClient(i, testGroup1));
             clientList.add(TestEntityCreator.createClient(i, testGroup2));
         }
-        List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList, s3UrlGenerator).getClients();
+        List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList).getClients();
 
         when(userRepository.findByEmail(testEmail)).thenReturn(testUser);
         when(groupQueryRepository.findActiveGroupId(testEmail)).thenReturn(groupIdList);
