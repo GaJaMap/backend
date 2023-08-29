@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
-                        .antMatchers("/api/group/**/clients/nearby", "/api/clients/nearby").hasAuthority("VIP")
+                        .antMatchers("/api/**/nearby").hasAuthority("VIP")
                         .antMatchers("/api/user/login",
                                 monitoringPath,
                                 "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
