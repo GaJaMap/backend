@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientIdsRequest {
-    @Size(min = 2, message = "요청 시 id의 개수는 무조건 2개 이상")
+    @Size(min = 1, message = "요청 시 id의 개수는 무조건 1개 이상")
     @Schema(description = "고객 ID 리스트", example = "100")
     private List<Long> clientIds;
 }
