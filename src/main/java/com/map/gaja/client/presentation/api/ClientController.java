@@ -7,6 +7,7 @@ import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecif
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -74,7 +75,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<Void> updateClient(
+    public ResponseEntity<ClientOverviewResponse> updateClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
@@ -87,28 +88,28 @@ public class ClientController implements ClientCommandApiSpecification {
         verifyUpdateClientRequest(accessCheck, clientRequest);
 
         MultipartFile clientImage = clientRequest.getClientImage();
+        ClientOverviewResponse response;
         if (clientRequest.getIsBasicImage()) {
             // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
-            clientService.updateClientWithBasicImage(clientId, clientRequest);
+            response = clientService.updateClientWithBasicImage(clientId, clientRequest);
         } else if (isEmptyFile(clientImage)) {
             // 저장되어 있는 기존 이미지를 사용한다.
-            // 만약 저장되어 있는 이미지가 없다면 오류를 보내줘야 하나? 쿼리가 하나 더 날아간다.
-            clientService.updateClientWithoutImage(clientId, clientRequest);
+            response = clientService.updateClientWithoutImage(clientId, clientRequest);
         } else {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            updateClientWithNewImage(loginEmail, clientId, clientRequest);
+            response = updateClientWithNewImage(loginEmail, clientId, clientRequest);
         }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * 이미지와 함께 고객 업데이트
      */
-    private void updateClientWithNewImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
+    private ClientOverviewResponse updateClientWithNewImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
         StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
         try {
-            clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
+            return clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
         } catch(Exception e) {
             log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
             fileService.removeFile(newFileDto.getFilePath());
