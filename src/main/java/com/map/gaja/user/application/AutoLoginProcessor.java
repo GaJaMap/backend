@@ -1,6 +1,7 @@
 package com.map.gaja.user.application;
 
 import com.map.gaja.client.apllication.ClientQueryService;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
@@ -19,6 +20,7 @@ public class AutoLoginProcessor {
     private final GroupRepository groupRepository;
     private final ClientQueryService clientQueryService;
     private final UserRepository userRepository;
+    private final S3UrlGenerator s3UrlGenerator;
 
     /**
      * 앱 실행 시 자동로그인에 대한 응답으로 사용자 최근 접속일도 처리.
@@ -43,7 +45,7 @@ public class AutoLoginProcessor {
             clientListResponse = clientQueryService.findAllClientsInGroup(groupInfo.getGroupId(), null);
         }
 
-        AutoLoginResponse response = new AutoLoginResponse(clientListResponse, groupInfo);
+        AutoLoginResponse response = new AutoLoginResponse(clientListResponse, s3UrlGenerator.getS3Url(), groupInfo);
         return response;
     }
 
