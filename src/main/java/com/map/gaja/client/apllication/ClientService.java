@@ -3,7 +3,9 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
@@ -39,6 +41,7 @@ public class ClientService {
 
     private final ClientQueryRepository clientQueryRepository;
     private final IncreasingClientService increasingClientService;
+
 
     /**
      * 이미지 없는 고객 등록
@@ -86,7 +89,7 @@ public class ClientService {
      * @param existingClientId 기존 고객 ID
      * @param updateRequest 고객 업데이트 요청 정보
      */
-    public void updateClientWithoutImage(
+    public ClientOverviewResponse updateClientWithoutImage(
             Long existingClientId,
             NewClientRequest updateRequest
     ) {
@@ -97,6 +100,8 @@ public class ClientService {
             updateClientGroup(existingClient, updateRequest);
         }
         updateClientField(existingClient, updateRequest);
+
+        return entityToOverviewDto(existingClient);
     }
 
     /**
@@ -105,7 +110,7 @@ public class ClientService {
      * @param updateRequest 고객 업데이트 요청 정보
      * @param updatedFileDto 고객 이미지 업데이트 정보
      */
-    public void updateClientWithNewImage(
+    public ClientOverviewResponse updateClientWithNewImage(
             Long existingClientId,
             NewClientRequest updateRequest,
             StoredFileDto updatedFileDto
@@ -121,12 +126,14 @@ public class ClientService {
         ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
         existingClient.removeClientImage();
         existingClient.updateImage(clientImage);
+
+        return entityToOverviewDto(existingClient);
     }
 
     /**
      * 기본 이미지(null)를 사용하는 고객으로 업데이트
      */
-    public void updateClientWithBasicImage(Long existingClientId, NewClientRequest updateRequest) {
+    public ClientOverviewResponse updateClientWithBasicImage(Long existingClientId, NewClientRequest updateRequest) {
         Client existingClient = clientQueryRepository.findClientWithGroup(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
@@ -135,6 +142,8 @@ public class ClientService {
         }
         updateClientField(existingClient, updateRequest);
         existingClient.removeClientImage();
+
+        return entityToOverviewDto(existingClient);
     }
 
 

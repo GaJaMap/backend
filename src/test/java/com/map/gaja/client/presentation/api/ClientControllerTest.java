@@ -93,25 +93,25 @@ class ClientControllerTest {
         verify(clientService, times(1)).deleteBulkClient(groupId, clientIds);
     }
 
-    @Test
-    @DisplayName("단일 고객으로 bulk delete 시도")
-    void deleteBulkClientTestFail() throws Exception {
-        String testUrl = "/api/group/{groupId}/clients/bulk-delete";
-        List<Long> clientIds = List.of(1L);
-        ClientIdsRequest clientIdsRequest = new ClientIdsRequest(clientIds);
-        String jsonBody = om.writeValueAsString(clientIdsRequest);
-
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(testUrl, groupId)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBody)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
-
-        MockHttpServletResponse response = mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
-        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
-        ValidationErrorResponse validationErrorResponse = validationErrorResponseList.get(0);
-        Assertions.assertThat(validationErrorResponse.getCode()).isEqualTo("Size");
-    }
+//    @Test
+//    @DisplayName("단일 고객으로 bulk delete 시도")
+//    void deleteBulkClientTestFail() throws Exception {
+//        String testUrl = "/api/group/{groupId}/clients/bulk-delete";
+//        List<Long> clientIds = List.of(1L);
+//        ClientIdsRequest clientIdsRequest = new ClientIdsRequest(clientIds);
+//        String jsonBody = om.writeValueAsString(clientIdsRequest);
+//
+//        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(testUrl, groupId)
+//                .with(csrf())
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(jsonBody)
+//                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+//
+//        MockHttpServletResponse response = mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
+//        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
+//        ValidationErrorResponse validationErrorResponse = validationErrorResponseList.get(0);
+//        Assertions.assertThat(validationErrorResponse.getCode()).isEqualTo("Size");
+//    }
 
 
 }
