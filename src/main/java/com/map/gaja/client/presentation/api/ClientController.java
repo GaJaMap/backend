@@ -38,7 +38,6 @@ import javax.validation.Valid;
 public class ClientController implements ClientCommandApiSpecification {
 
     private final ClientService clientService;
-    private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
@@ -143,6 +142,12 @@ public class ClientController implements ClientCommandApiSpecification {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * ClientOverview를 반환하는 이유는
+     * 모바일에서 고객 등록 시에 바로 지도페이지로 넘어가기 때문에
+     * 반환받은 ClientOverview를 바로 리스트에 넣어서 사용해야 하기 때문이다.
+     * 저장된 프로필 이미지의 S3의 파일 경로와 생성된 고객 ID만 넘겨도 충분한가?
+     */
     @PostMapping("/clients")
     public ResponseEntity<ClientOverviewResponse> addClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
