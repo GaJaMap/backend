@@ -4,8 +4,10 @@ import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.model.Group;
@@ -28,6 +30,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,6 +51,8 @@ class ClientServiceTest {
     @Mock
     GroupQueryRepository groupQueryRepository;
     IncreasingClientService increasingClientService = new IncreasingClientService();
+    @Mock
+    S3UrlGenerator s3UrlGenerator;
 
     Long clientId = 1L;
     Long groupId = 1L;
@@ -117,11 +122,11 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        clientService.updateClientWithoutImage(existingClientId, changedRequest);
+        ClientOverviewResponse response = clientService.updateClientWithoutImage(existingClientId, changedRequest);
 
         // then
-        assertThat(existingClient.getName()).isEqualTo(changedName);
-        assertThat(existingClient.getGroup().getId()).isEqualTo(changedGroupId);
+        assertThat(response.getClientName()).isEqualTo(changedName);
+        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroupId);
         assertThat(changedGroup.getClientCount()).isEqualTo(1);
         assertThat(existingGroup.getClientCount()).isEqualTo(0);
     }
@@ -130,21 +135,22 @@ class ClientServiceTest {
     @DisplayName("Client 이미지 업데이트 테스트")
     public void updateClientImageTest() throws Exception {
         // given
-        StoredFileDto updatedImageFile = new StoredFileDto("ccc", "ddd");
+        String updatedImageFilePath = UUID.randomUUID().toString();
+        StoredFileDto updatedImageFile = new StoredFileDto(updatedImageFilePath, "ddd");
         NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
 
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        clientService.updateClientWithNewImage(existingClientId, changedRequest, updatedImageFile);
+        ClientOverviewResponse response = clientService.updateClientWithNewImage(existingClientId, changedRequest, updatedImageFile);
 
         // then
-        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
-        assertThat(existingClient.getClientImage().getOriginalName()).isSameAs(updatedImageFile.getOriginalFileName());
-        assertThat(existingClient.getClientImage().getSavedPath()).isSameAs(updatedImageFile.getFilePath());
-        assertThat(clientImage.getIsDeleted()).isTrue();
-        assertThat(existingClient.getClientImage().getIsDeleted()).isFalse();
+        assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
+
+        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
+        assertThat(response.getImage().getOriginalFileName()).isSameAs(updatedImageFile.getOriginalFileName());
+        assertThat(response.getImage().getFilePath()).isEqualTo(updatedImageFilePath);
     }
 
     @Test
@@ -152,17 +158,17 @@ class ClientServiceTest {
     public void updateClientWithBasicImageTest() throws Exception {
         // given
         NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
-
         when(clientQueryRepository.findClientWithGroup(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        clientService.updateClientWithBasicImage(existingClientId, changedRequest);
+        ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, changedRequest);
 
         // then
-        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
-        assertThat(clientImage.getIsDeleted()).isTrue();
-        assertThat(existingClient.getClientImage()).isNull();
+        assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
+
+        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
+        assertThat(response.getImage().getFilePath()).isNull();
     }
 
     @Test
@@ -180,12 +186,12 @@ class ClientServiceTest {
         int changedGroupClientCount = changedGroup.getClientCount();
 
         // when
-        clientService.updateClientWithBasicImage(existingClientId, changedRequest);
+        ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, changedRequest);
 
         // then
-        assertThat(existingClient.getGroup().getId()).isEqualTo(existingGroup.getId());
         assertThat(clientImage.getIsDeleted()).isTrue();
-        assertThat(existingClient.getClientImage()).isNull();
+        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
+        assertThat(response.getImage().getFilePath()).isNull();
 
         assertThat(existingGroup.getClientCount()).isEqualTo(existingGroupClientCount - 1);
         assertThat(changedGroup.getClientCount()).isEqualTo(changedGroupClientCount + 1);

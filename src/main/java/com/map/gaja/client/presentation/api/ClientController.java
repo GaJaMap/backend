@@ -7,6 +7,7 @@ import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecif
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -37,7 +38,6 @@ import javax.validation.Valid;
 public class ClientController implements ClientCommandApiSpecification {
 
     private final ClientService clientService;
-    private final ClientQueryService clientQueryService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
@@ -74,7 +74,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
-    public ResponseEntity<Void> updateClient(
+    public ResponseEntity<ClientOverviewResponse> updateClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
             @PathVariable Long clientId,
@@ -87,28 +87,28 @@ public class ClientController implements ClientCommandApiSpecification {
         verifyUpdateClientRequest(accessCheck, clientRequest);
 
         MultipartFile clientImage = clientRequest.getClientImage();
+        ClientOverviewResponse response;
         if (clientRequest.getIsBasicImage()) {
             // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
-            clientService.updateClientWithBasicImage(clientId, clientRequest);
+            response = clientService.updateClientWithBasicImage(clientId, clientRequest);
         } else if (isEmptyFile(clientImage)) {
             // 저장되어 있는 기존 이미지를 사용한다.
-            // 만약 저장되어 있는 이미지가 없다면 오류를 보내줘야 하나? 쿼리가 하나 더 날아간다.
-            clientService.updateClientWithoutImage(clientId, clientRequest);
+            response = clientService.updateClientWithoutImage(clientId, clientRequest);
         } else {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            updateClientWithNewImage(loginEmail, clientId, clientRequest);
+            response = updateClientWithNewImage(loginEmail, clientId, clientRequest);
         }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
      * 이미지와 함께 고객 업데이트
      */
-    private void updateClientWithNewImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
+    private ClientOverviewResponse updateClientWithNewImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
         StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
         try {
-            clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
+            return clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
         } catch(Exception e) {
             log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
             fileService.removeFile(newFileDto.getFilePath());
@@ -142,6 +142,12 @@ public class ClientController implements ClientCommandApiSpecification {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * ClientOverview를 반환하는 이유는
+     * 모바일에서 고객 등록 시에 바로 지도페이지로 넘어가기 때문에
+     * 반환받은 ClientOverview를 바로 리스트에 넣어서 사용해야 하기 때문이다.
+     * 저장된 프로필 이미지의 S3의 파일 경로와 생성된 고객 ID만 넘겨도 충분한가?
+     */
     @PostMapping("/clients")
     public ResponseEntity<ClientOverviewResponse> addClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,

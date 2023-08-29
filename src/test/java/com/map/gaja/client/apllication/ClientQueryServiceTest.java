@@ -107,8 +107,7 @@ class ClientQueryServiceTest {
             clientList.add(TestEntityCreator.createClient(i, testGroup1));
             clientList.add(TestEntityCreator.createClient(i, testGroup2));
         }
-        List<ClientOverviewResponse> testList = clientList.stream().map(ClientConvertor::entityToOverviewDto)
-                .collect(Collectors.toList());
+        List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList, s3UrlGenerator).getClients();
 
         when(userRepository.findByEmail(testEmail)).thenReturn(testUser);
         when(repository.findActiveClientByEmail(testEmail, null)).thenReturn(testList);
@@ -140,8 +139,7 @@ class ClientQueryServiceTest {
             clientList.add(TestEntityCreator.createClient(i, testGroup1));
             clientList.add(TestEntityCreator.createClient(i, testGroup2));
         }
-        List<ClientOverviewResponse> testList = clientList.stream().map(ClientConvertor::entityToOverviewDto)
-                .collect(Collectors.toList());
+        List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList, s3UrlGenerator).getClients();
 
         when(userRepository.findByEmail(testEmail)).thenReturn(testUser);
         when(groupQueryRepository.findActiveGroupId(testEmail)).thenReturn(groupIdList);

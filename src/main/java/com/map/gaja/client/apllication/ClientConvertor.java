@@ -36,6 +36,20 @@ public class ClientConvertor {
         return new ClientListResponse(responseClients, s3UrlGenerator.getS3Url());
     }
 
+    protected static ClientOverviewResponse entityToOverviewDto(Client client) {
+        return new ClientOverviewResponse(
+                client.getId(),
+                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
+                client.getName(),
+                client.getPhoneNumber(),
+                voToDto(client.getAddress()),
+                voToDto(client.getLocation()),
+                getStoredFileDto(client.getClientImage()),
+                client.getCreatedAt()
+        );
+    }
+
+
     protected static ClientDetailResponse entityToDetailDto(Client client, S3UrlGenerator s3UrlGenerator) {
         StoredFileDto image = getStoredFileUrlDto(client.getClientImage(), s3UrlGenerator);
         return new ClientDetailResponse(
@@ -47,19 +61,6 @@ public class ClientConvertor {
                 voToDto(client.getLocation()),
                 image,
                 null,
-                client.getCreatedAt()
-        );
-    }
-
-    protected static ClientOverviewResponse entityToOverviewDto(Client client) {
-        return new ClientOverviewResponse(
-                client.getId(),
-                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
-                client.getName(),
-                client.getPhoneNumber(),
-                voToDto(client.getAddress()),
-                voToDto(client.getLocation()),
-                getStoredFileDto(client.getClientImage()),
                 client.getCreatedAt()
         );
     }
