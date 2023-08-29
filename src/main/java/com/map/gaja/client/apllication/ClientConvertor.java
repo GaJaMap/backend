@@ -29,14 +29,14 @@ public class ClientConvertor {
         List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
-            ClientOverviewResponse clientResponse = entityToMultiOverviewDto(client);
+            ClientOverviewResponse clientResponse = entityToOverviewDto(client);
             responseClients.add(clientResponse);
         });
 
         return new ClientListResponse(responseClients, s3UrlGenerator.getS3Url());
     }
 
-    private static ClientOverviewResponse entityToMultiOverviewDto(Client client) {
+    protected static ClientOverviewResponse entityToOverviewDto(Client client) {
         return new ClientOverviewResponse(
                 client.getId(),
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
@@ -61,19 +61,6 @@ public class ClientConvertor {
                 voToDto(client.getLocation()),
                 image,
                 null,
-                client.getCreatedAt()
-        );
-    }
-
-    protected static ClientOverviewResponse entityToSingleOverviewDto(Client client, S3UrlGenerator s3UrlGenerator) {
-        return new ClientOverviewResponse(
-                client.getId(),
-                new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
-                client.getName(),
-                client.getPhoneNumber(),
-                voToDto(client.getAddress()),
-                voToDto(client.getLocation()),
-                getStoredFileUrlDto(client.getClientImage(), s3UrlGenerator),
                 client.getCreatedAt()
         );
     }

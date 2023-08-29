@@ -41,7 +41,6 @@ public class ClientService {
 
     private final ClientQueryRepository clientQueryRepository;
     private final IncreasingClientService increasingClientService;
-    private final S3UrlGenerator s3UrlGenerator;
 
 
     /**
@@ -55,7 +54,7 @@ public class ClientService {
         Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
         increasingClientService.increase(group, group.getUser().getAuthority(), 1);
-        return entityToSingleOverviewDto(client, s3UrlGenerator);
+        return entityToOverviewDto(client);
     }
 
     /**
@@ -71,7 +70,7 @@ public class ClientService {
         Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
         increasingClientService.increase(group, group.getUser().getAuthority(), 1);
-        return entityToSingleOverviewDto(client, s3UrlGenerator);
+        return entityToOverviewDto(client);
     }
 
     public void deleteClient(long clientId) {
@@ -102,7 +101,7 @@ public class ClientService {
         }
         updateClientField(existingClient, updateRequest);
 
-        return entityToSingleOverviewDto(existingClient, s3UrlGenerator);
+        return entityToOverviewDto(existingClient);
     }
 
     /**
@@ -128,7 +127,7 @@ public class ClientService {
         existingClient.removeClientImage();
         existingClient.updateImage(clientImage);
 
-        return entityToSingleOverviewDto(existingClient, s3UrlGenerator);
+        return entityToOverviewDto(existingClient);
     }
 
     /**
@@ -144,7 +143,7 @@ public class ClientService {
         updateClientField(existingClient, updateRequest);
         existingClient.removeClientImage();
 
-        return entityToSingleOverviewDto(existingClient, s3UrlGenerator);
+        return entityToOverviewDto(existingClient);
     }
 
 
