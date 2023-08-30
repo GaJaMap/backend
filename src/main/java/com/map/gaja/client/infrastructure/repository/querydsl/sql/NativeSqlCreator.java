@@ -6,6 +6,6 @@ import com.querydsl.spatial.locationtech.jts.JTSPointPath;
 import org.locationtech.jts.geom.Point;
 
 public interface NativeSqlCreator {
-    NumberExpression<Double> createCalcDistanceSQL(Point constant, JTSPointPath location);
-    BooleanExpression createRadiusSearchSQL(Point currentLocation, JTSPointPath dbLocation, int distance);
+    NumberExpression<Double> createDistanceCalculationExpression(Point constant, JTSPointPath location);
+    BooleanExpression createRadiusSearchExpression(Point currentLocation, JTSPointPath dbLocation, int distance);
 }
