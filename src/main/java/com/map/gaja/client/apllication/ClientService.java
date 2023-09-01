@@ -3,9 +3,7 @@ package com.map.gaja.client.apllication;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
-import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.map.gaja.client.apllication.ClientConvertor.*;
 
@@ -182,7 +181,7 @@ public class ClientService {
         return existingClient.getGroup().getId() != updateRequest.getGroupId();
     }
 
-    public void saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
+    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
         Group group = groupQueryRepository.findGroupWithUser(bulkRequest.getGroupId())
                 .orElseThrow(() -> new GroupNotFoundException());
 
@@ -192,7 +191,16 @@ public class ClientService {
         });
 
         increasingClientService.increase(group, group.getUser().getAuthority(), savedClient.size());
-        clientBulkRepository.saveClientWithGroup(group, savedClient);
+        clientRepository.saveAll(savedClient);
+        return savedClient.stream().mapToLong(Client::getId).boxed()
+                .collect(Collectors.toList());
+
+        /*
+         * 모바일의 빠른 진행을 위해 ID를 반환하도록 수정
+         * 만약 모바일에서 새로고침 기능이 완성된다면 해당 코드를 사용하고
+         * 반환타입을 void로 수정할 것
+         */
+        // clientBulkRepository.saveClientWithGroup(group, savedClient);
     }
 
     /**
