@@ -1,13 +1,11 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -30,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Timed("client.modify")
 @Slf4j
@@ -134,14 +133,14 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PostMapping("/clients/bulk")
-    public ResponseEntity<Void> addSimpleBulkClient(
+    public ResponseEntity<List<Long>> addSimpleBulkClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @RequestBody SimpleClientBulkRequest clientBulkRequest
     ) {
         // 단순한 Client 정보 등록
         groupAccessVerifyService.verifyGroupAccess(clientBulkRequest.getGroupId(), loginEmail);
-        clientService.saveSimpleClientList(clientBulkRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        List<Long> response = clientService.saveSimpleClientList(clientBulkRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
