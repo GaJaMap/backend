@@ -248,6 +248,14 @@ class ClientServiceTest {
         long beforeClientCount = existingGroup.getClientCount();
         when(groupQueryRepository.findGroupWithUser(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
+        when(clientRepository.saveAll(any())).thenAnswer(invocation -> {
+            List<Client> savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
+            long tempId = 1;
+            for (Client client : savedClient) {
+                ReflectionTestUtils.setField(client, "id", tempId++);
+            }
+            return savedClient;
+        });
 
         SimpleClientBulkRequest bulkRequest = new SimpleClientBulkRequest(existingGroup.getId(), clients);
         clientService.saveSimpleClientList(bulkRequest);
