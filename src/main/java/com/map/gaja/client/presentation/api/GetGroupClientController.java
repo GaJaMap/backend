@@ -9,6 +9,8 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import javax.validation.Valid;
  * ReadOnly Client 컨트롤러
  */
 @TimeCheckLog
+@Timed("client.search")
 @RestController
 @RequiredArgsConstructor
 public class GetGroupClientController implements GroupClientQueryApiSpecification {

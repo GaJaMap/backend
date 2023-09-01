@@ -5,6 +5,7 @@ import com.map.gaja.client.presentation.api.specification.ClientQueryApiSpecific
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.global.log.TimeCheckLog;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Timed("client.search")
 @TimeCheckLog
 @RestController
 @RequiredArgsConstructor
