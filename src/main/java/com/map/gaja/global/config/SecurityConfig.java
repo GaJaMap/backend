@@ -1,5 +1,6 @@
 package com.map.gaja.global.config;
 
+import com.map.gaja.global.filter.RemoveAnonymousAuthenticationFilter;
 import com.map.gaja.oauth2.application.Oauth2UserService;
 import com.map.gaja.oauth2.handler.Oauth2FailureHandler;
 import com.map.gaja.oauth2.handler.Oauth2SuccessHandler;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @EnableWebSecurity
@@ -37,6 +39,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated())
                 .csrf().disable()
+                .addFilterBefore(new RemoveAnonymousAuthenticationFilter(), AnonymousAuthenticationFilter.class)
                 .formLogin().disable()
                 .oauth2Login()
                 .userInfoEndpoint().userService(oauth2UserService) //oauth2 로그인 후 처리 로직
