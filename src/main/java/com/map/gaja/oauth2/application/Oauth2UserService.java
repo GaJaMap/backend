@@ -36,7 +36,7 @@ public class Oauth2UserService implements OAuth2UserService<OAuth2UserRequest, O
             throw new OAuth2AuthenticationException(""); //Oauth2AuthenticationException으로 변환해줘야지 Oauth2FailureHandler가 예외를 잡을 수 있다.
         }
 
-        sessionHandler.deduplicate(email); //중복 세션 제거
+        sessionHandler.deduplicate(email, "WEB"); //중복 세션 제거
 
         return new PrincipalDetails(user.getEmail(), user.getAuthority().name(), attributes);
 

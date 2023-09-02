@@ -1,6 +1,5 @@
 package com.map.gaja.global.authentication;
 
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -9,17 +8,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class PrincipalDetails implements UserDetails, OAuth2User {
+public class PrincipalDetails extends SessionDetails implements UserDetails, OAuth2User {
     private String email;
     private String authority;
     private Map<String, Object> attributes;
 
     public PrincipalDetails(String email, String authority) {
+        super("APP");
         this.email = email;
         this.authority = authority;
     }
 
     public PrincipalDetails(String email, String authority, Map<String, Object> attributes) {
+        super("WEB");
         this.email = email;
         this.authority = authority;
         this.attributes = attributes;

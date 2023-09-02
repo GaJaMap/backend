@@ -34,7 +34,7 @@ public class UserService {
 
         User user = findByEmail(userRepository, email);
 
-        sessionHandler.deduplicate(email); //중복로그인 처리 최대 2개까지
+        sessionHandler.deduplicate(email, "APP"); //중복로그인 처리 최대 2개까지
 
         authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
