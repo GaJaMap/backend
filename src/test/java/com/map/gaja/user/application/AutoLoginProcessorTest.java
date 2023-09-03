@@ -1,6 +1,7 @@
 package com.map.gaja.user.application;
 
 import com.map.gaja.client.apllication.ClientQueryService;
+import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
@@ -30,6 +31,9 @@ class AutoLoginProcessorTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    S3UrlGenerator s3UrlGenerator;
 
     @Test
     @DisplayName("사용자가 최근에 참조한 전체 그룹 조회")
