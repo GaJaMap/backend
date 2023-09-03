@@ -6,12 +6,9 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.session.jdbc.JdbcIndexedSessionRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -23,14 +20,13 @@ public class SessionHandler {
     @Transactional
     public void deduplicate(String email, String platformType) {
         //해당 이메일에 속한 세션 모두 가져오기
-        Map<String, ? extends Session> sessions = findByIndexNameSessionRepository.findByIndexNameAndIndexValue(JdbcIndexedSessionRepository.PRINCIPAL_NAME_INDEX_NAME, email);
+        Map<String, ? extends Session> sessions = findByIndexNameSessionRepository.findByPrincipalName(email);
 
         if (sessions.isEmpty()) {
             return;
         }
 
-        List<? extends Session> sessionList = new ArrayList<>(sessions.values());
-        for (Session session : sessionList) {
+        for (Session session : sessions.values()) {
             PrincipalDetails principalDetails = extractPrincipalDetails(session);
 
             // 같은 플랫폼(웹 or 앱)에서 로그인을 한 적이 있다면 중복로그인
