@@ -1,11 +1,11 @@
-package com.map.gaja.client.presentation;
+package com.map.gaja.client.infrastructure;
 
+import com.map.gaja.client.infrastructure.ClientRequestValidator;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.AddressDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

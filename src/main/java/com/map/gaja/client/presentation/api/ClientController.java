@@ -1,13 +1,10 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.infrastructure.file.FileValidator;
-import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
-import com.map.gaja.client.presentation.ClientRequestValidator;
+import com.map.gaja.client.infrastructure.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
-import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -25,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
