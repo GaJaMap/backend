@@ -1,4 +1,4 @@
-package com.map.gaja.client.infrastructure;
+package com.map.gaja.client.apllication.validator;
 
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;

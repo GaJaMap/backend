@@ -5,7 +5,7 @@ import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.infrastructure.ClientRequestValidator;
+import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;

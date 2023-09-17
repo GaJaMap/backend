@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.infrastructure.ClientRequestValidator;
+import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;

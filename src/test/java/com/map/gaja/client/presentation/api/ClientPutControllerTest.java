@@ -6,7 +6,7 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.infrastructure.ClientRequestValidator;
+import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.application.GroupAccessVerifyService;
