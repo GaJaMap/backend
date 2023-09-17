@@ -5,12 +5,11 @@ import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
-import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.application.GroupAccessVerifyService;
-import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class ClientPutControllerTest {
     S3FileService fileService;
 
     @MockBean
-    FileValidator fileValidator;
+    ClientRequestValidator clientRequestValidator;
     final String testUri = "/api/group/{groupId}/clients/{clientId}";
 
 
@@ -70,7 +69,6 @@ public class ClientPutControllerTest {
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPutRequestWithImage(testUri, groupId, clientId);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
-        when(fileValidator.isAllowedImageType(any())).thenReturn(true);
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isOk());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
     }
@@ -86,7 +84,6 @@ public class ClientPutControllerTest {
 
         StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
         when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
-        when(fileValidator.isAllowedImageType(any())).thenReturn(true);
         doThrow(new ClientNotFoundException()).when(clientService).updateClientWithNewImage(any(),any(), any());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());

@@ -1,17 +1,14 @@
 package com.map.gaja.client.presentation.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientAccessVerifyService;
 import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
-import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.global.exception.ValidationErrorResponse;
 import com.map.gaja.group.application.GroupAccessVerifyService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -51,7 +47,7 @@ class ClientControllerTest {
     @MockBean
     S3FileService fileService;
     @MockBean
-    FileValidator fileValidator;
+    ClientRequestValidator clientRequestValidator;
 
     Long groupId = 1L;
     Long clientId = 1L;

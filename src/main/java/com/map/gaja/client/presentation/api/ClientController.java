@@ -1,7 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.infrastructure.file.FileValidator;
-import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
+import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
@@ -23,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,7 +40,8 @@ public class ClientController implements ClientCommandApiSpecification {
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
-    private final FileValidator fileValidator;
+    private final ClientRequestValidator clientRequestValidator;
+
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
     public ResponseEntity<Void> deleteClient(
@@ -82,7 +81,7 @@ public class ClientController implements ClientCommandApiSpecification {
             @Valid @ModelAttribute NewClientRequest clientRequest,
             BindingResult bindingResult
     ) throws BindException {
-        validateUpdateClientRequestFields(clientRequest, bindingResult);
+        clientRequestValidator.validateUpdateClientRequestFields(clientRequest, bindingResult);
 
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         verifyUpdateClientRequest(accessCheck, clientRequest);
@@ -119,17 +118,11 @@ public class ClientController implements ClientCommandApiSpecification {
 
     private void verifyUpdateClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
         clientAccessVerifyService.verifyClientAccess(accessCheck);
+
+        // Group이 변경되었다면 해당 그룹에 대한 검증도 해야함.
         if (accessCheck.getGroupId() != clientRequest.getGroupId()) {
             groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), accessCheck.getUserEmail());
         }
-    }
-
-    private boolean isNotEmptyFile(MultipartFile newImage) {
-        return newImage != null && !newImage.isEmpty();
-    }
-
-    private boolean isEmptyFile(MultipartFile newImage) {
-        return newImage == null || newImage.isEmpty();
     }
 
     @PostMapping("/clients/bulk")
@@ -156,67 +149,17 @@ public class ClientController implements ClientCommandApiSpecification {
             BindingResult bindingResult
     ) throws BindException {
         // 거래처 등록 - 단건 등록
-        validateNewClientRequestFields(clientRequest, bindingResult);
+        clientRequestValidator.validateNewClientRequestFields(clientRequest, bindingResult);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
         ClientOverviewResponse response;
-        if (isNotEmptyFile(clientRequest.getClientImage())) {
-            response = saveClientWithImage(loginEmail, clientRequest);
-        } else {
+        if (isEmptyFile(clientRequest.getClientImage())) {
             response = clientService.saveClient(clientRequest);
+        } else {
+            response = saveClientWithImage(loginEmail, clientRequest);
         }
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    /**
-     * 고객 등록시에 clientRequest Global 에러 검증
-     */
-    private void validateNewClientRequestFields(NewClientRequest clientRequest, BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
-        }
-
-        MultipartFile clientImage = clientRequest.getClientImage();
-
-        // 기본 이미지라면 이미지는 없어야 한다.
-        if (clientRequest.getIsBasicImage() && isNotEmptyFile(clientImage)) {
-            bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image를 사용 중이기 때문에 이미지 파일을 받을 수 없습니다."));
-            throw new BindException(bindingResult);
-        }
-
-        // POST 요청시에는 기본 이미지가 아니라면 이미지가 필수로 있어야 한다.
-        if (!clientRequest.getIsBasicImage() && isEmptyFile(clientImage)) {
-            bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image가 아니라면 이미지 파일이 있어야 합니다."));
-            throw new BindException(bindingResult);
-        }
-
-        // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
-        if (isNotEmptyFile(clientImage) && !fileValidator.isAllowedImageType(clientImage)) {
-            throw new FileNotAllowedException();
-        }
-    }
-
-    /**
-     * 고객 업데이트 시에 clientRequest Global 에러 검증
-     */
-    private void validateUpdateClientRequestFields(NewClientRequest clientRequest, BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
-        }
-
-        MultipartFile clientImage = clientRequest.getClientImage();
-
-        // 기본 이미지라면 이미지는 없어야 한다.
-        if (clientRequest.getIsBasicImage() && isNotEmptyFile(clientImage)) {
-            bindingResult.addError(new ObjectError("newClientRequest", "사용자가 Basic Image를 사용 중이기 때문에 이미지 파일을 받을 수 없습니다."));
-            throw new BindException(bindingResult);
-        }
-
-        // 파일이 있다면 서버에서 지원하는지 확인해야 한다.
-        if (isNotEmptyFile(clientImage) && !fileValidator.isAllowedImageType(clientImage)) {
-            throw new FileNotAllowedException();
-        }
     }
 
     private ClientOverviewResponse saveClientWithImage(String loginEmail, NewClientRequest client) {
@@ -228,5 +171,9 @@ public class ClientController implements ClientCommandApiSpecification {
             fileService.removeFile(storedFileDto.getFilePath());
             throw e;
         }
+    }
+
+    private boolean isEmptyFile(MultipartFile newImage) {
+        return newImage == null || newImage.isEmpty();
     }
 }
