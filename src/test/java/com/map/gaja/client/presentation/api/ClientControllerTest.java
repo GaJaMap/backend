@@ -7,6 +7,7 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.presentation.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.exception.ValidationErrorResponse;
@@ -51,7 +52,7 @@ class ClientControllerTest {
     @MockBean
     S3FileService fileService;
     @MockBean
-    FileValidator fileValidator;
+    ClientRequestValidator clientRequestValidator;
 
     Long groupId = 1L;
     Long clientId = 1L;

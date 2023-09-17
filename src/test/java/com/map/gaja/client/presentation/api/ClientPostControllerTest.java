@@ -7,6 +7,7 @@ import com.map.gaja.client.apllication.ClientQueryService;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
+import com.map.gaja.client.presentation.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
@@ -55,7 +56,7 @@ public class ClientPostControllerTest {
     @MockBean
     S3FileService fileService;
     @MockBean
-    FileValidator fileValidator;
+    ClientRequestValidator clientRequestValidator;
 
     private ObjectMapper om;
 
@@ -88,7 +89,6 @@ public class ClientPostControllerTest {
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
-        when(fileValidator.isAllowedImageType(any())).thenReturn(true);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
         verify(clientService, times(1)).saveClientWithImage(any(), any());
@@ -105,45 +105,10 @@ public class ClientPostControllerTest {
         StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
         when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
         when(clientService.saveClientWithImage(any(), any())).thenThrow(new GroupNotFoundException());
-        when(fileValidator.isAllowedImageType(any())).thenReturn(true);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).saveClientWithImage(any(), any());
         verify(fileService, times(1)).removeFile(savedS3TestFile.getFilePath());
-    }
-
-    @Test
-    @DisplayName("고객이 Basic-Image를 사용하는데 이미지가 들어옴")
-    void addClientWithImageFailTest() throws Exception {
-        String testUrl = "/api/clients";
-        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
-        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
-        ClientRequestCreator.setNormalField(mockRequest, request);
-        mockRequest.param("isBasicImage", String.valueOf(true));
-
-        MockHttpServletResponse response = mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
-
-        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
-        Assertions.assertThat(validationErrorResponseList.size()).isEqualTo(1);
-        Assertions.assertThat(validationErrorResponseList.get(0).getCode()).isNull();
-        System.out.println(validationErrorResponseList.get(0));
-    }
-
-    @Test
-    @DisplayName("고객이 Basic-Image를 사용하지 않는데 이미지가 없음")
-    void addClientWithoutImageFailTest() throws Exception {
-        String testUrl = "/api/clients";
-        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
-        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithoutImage(testUrl);
-        ClientRequestCreator.setNormalField(mockRequest, request);
-        mockRequest.param("isBasicImage", String.valueOf(false));
-
-        MockHttpServletResponse response = mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn().getResponse();
-
-        List<ValidationErrorResponse> validationErrorResponseList = om.readValue(response.getContentAsByteArray(), new TypeReference<>() {});
-        Assertions.assertThat(validationErrorResponseList.size()).isEqualTo(1);
-        Assertions.assertThat(validationErrorResponseList.get(0).getCode()).isNull();
-        System.out.println(validationErrorResponseList.get(0));
     }
 
     @Test
