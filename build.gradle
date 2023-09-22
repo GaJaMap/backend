@@ -147,6 +147,7 @@ dependencies {
 	// Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
 	// 엑셀 파싱
 	implementation group: 'org.apache.poi', name: 'poi', version: '5.2.2'
