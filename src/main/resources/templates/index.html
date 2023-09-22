@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>가자맵 엑셀 추가</title>
@@ -99,6 +99,9 @@
                 <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
                     <h2 class="mt-3"><strong>(가자맵 로고) 엑셀로 사용자 등록하기</strong></h2>
                     <p>모든 단계를 완료하면 사용자가 등록됩니다!</p>
+
+                    <div sec:authorize="hasAuthority('VIP')"> <a href="/admin/temp">관리자 페이지 이동</a></div>
+
                     <div class="row">
                         <div class="col-md-12 mx-0">
                             <form id="msform" action="/api/clients/file" method="post" enctype="multipart/form-data">
@@ -130,6 +133,7 @@
                     </div>
                 </div>
             </div>
+
             <div style="margin-top:40px; text-align:center">
                 <span style="color: gray;">아이콘 출처:</span> <a href="https://icons8.com/" target="_blank" style="color: gray;">icons8.com</a>
             </div>

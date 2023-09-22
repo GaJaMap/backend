@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/header :: header"/>
+<body>
+
+<div class="container">
+
+    <div th:replace="admin/fragments/bodyHeader :: bodyHeader"/>
+
+    <div>
+        <div>
+            <form th:object="${orderSearch}" class="d-inline-flex">
+                <div class="form-group mb-2">
+                    <input type="text" th:field="*{memberName}" class="form-control" placeholder="작성자"/>
+                </div>
+                <div class="form-group mx-sm-1 mb-2">
+                    <select th:field="*{inquiryStatus}" class="form-control">
+                        <option value="">문의상태</option>
+                        <option th:each="status : ${T(com.map.gaja.temp.InquiryStatus).values()}"
+                                th:value="${status}"
+                                th:text="${status}">option
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group mx-sm-1 mb-2">
+                    <select th:field="*{inquiryCategory}" class="form-control">
+                        <option value="">카테고리</option>
+                        <option th:each="status : ${T(com.map.gaja.temp.InquiryCategory).values()}"
+                                th:value="${status}"
+                                th:text="${status}">option
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">검색</button>
+            </form>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>분류</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>일시</th>
+                <th>상태</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="inquiry : ${inquiryList}">
+                <td th:text="${inquiry.id}"></td>
+                <td th:text="${inquiry.category}"></td>
+                <td><a th:text="${inquiry.title}" th:href="|/admin/inquiry/${inquiry.id}|"></a></td>
+                <td><a th:text="${inquiry.email}" th:href="|/admin/user/${inquiry.email}|"></a></td>
+                <td th:text="${#temporals.format(inquiry.inquiryTime, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${inquiry.status}"></td>
+
+<!--                <td>-->
+<!--                    <a th:if="${inquiry.status.name() == 'ORDER'}" href="#" th:href="'javascript:cancel('+${inquiry.id}+')'"-->
+<!--                       class="btn btn-danger">CANCEL</a>-->
+<!--                </td>-->
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="admin/fragments/footer :: footer"/>
+
+</div> <!-- /container -->
+
+</body>
+<script>
+    function cancel(id) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/orders/" + id + "/cancel");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</html>
