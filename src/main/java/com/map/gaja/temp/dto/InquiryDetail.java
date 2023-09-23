@@ -19,4 +19,6 @@ public class InquiryDetail {
     private InquiryCategory category;
     private InquiryStatus status;
     private LocalDateTime inquiryTime;
+
+    private String answer;
 }

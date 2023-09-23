@@ -57,11 +57,13 @@ public class InquiryController {
         model.addAttribute("inquiry", new InquiryDetail(1,
                 "test1@email.com",
                 "2번 결제됐어요!",
-                "결제를 1번 했는데 돈이 2번 나갔어요. 로그 살펴봐주세요.",
+                "결제를 1번 했는데 돈이 2번 나갔어요. 알아봐주세요.",
                 InquiryCategory.PAYMENT,
                 InquiryStatus.UNSOLVED,
-                LocalDateTime.now())
+                LocalDateTime.now(),
+                "로그를 살펴보니 2번 결제된 것이 확인되어 환불해드렸습니다.")
         );
+
         return "admin/inquiry/inquiryDetail";
     }
 }

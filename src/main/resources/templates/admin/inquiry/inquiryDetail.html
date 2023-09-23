@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/header :: header" />
+<style>
+  #admin {
+    font-family: FontAwesome;
+       content: "\f023";
+  }
+</style>
+<body>
+<!--
+https://mdbootstrap.com/docs/standard/extended/comments/#section-3
+-->
+
+<div class="container">
+  <div th:replace="admin/fragments/bodyHeader :: bodyHeader"/>
+
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div>
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-start align-items-center">
+<!--              <img class="rounded-circle shadow-1-strong me-3"-->
+<!--                   style=-->
+<!--                   src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"-->
+<!--                   height="60" />-->
+              <div>
+                <h6 class="fw-bold text-primary mb-1">
+                  <a th:href="|/admin/user/${inquiry.email}|" th:text="${inquiry.email}">이메일</a>
+                </h6>
+                <p class="text-muted small mb-0">
+                  <span th:text="${inquiry.category}">카테고리</span> - <span th:text="${inquiry.status}">상태</span>
+                </p>
+              </div>
+            </div>
+
+            <p class="mt-3 mb-4 pb-2" th:text="${inquiry.content}">
+              문의 내용
+            </p>
+
+            <div class="small d-flex justify-content-end">
+              <p class="text-muted small mb-0"
+                 th:text="${#temporals.format(inquiry.inquiryTime, 'yyyy-MM-dd HH:mm ')}">
+                날짜
+              </p>
+            </div>
+          </div>
+
+          <!-- 답변 내용 - POST /admin/inquiry/{inquiryId}/answer 여기로 답변 등록할 것이다.-->
+          <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+            <div class="d-flex flex-start w-100">
+<!--              <img class="rounded-circle shadow-1-strong me-3"-->
+<!--                   src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="40"-->
+<!--                   height="40" />-->
+              <div class="form-outline w-100">
+                <textarea class="form-control" id="answer" rows="4"
+                          th:text="${inquiry.answer}"
+                          placeholder="관리자의 답변을 등록해주세요!"
+                          style="background: #fff;"></textarea>
+              </div>
+            </div>
+            <div class="float-end mt-2 pt-1">
+              <button type="button" class="btn btn-primary btn-sm">등록 | 수정</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br/>
+  <div th:replace="admin/fragments/footer :: footer" />
+
+</div> <!-- /container -->
+
+</body>
+</html>
