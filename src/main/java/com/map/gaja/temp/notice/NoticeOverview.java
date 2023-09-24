@@ -12,6 +12,5 @@ import java.time.LocalDateTime;
 public class NoticeOverview {
     private Long id;
     private String title;
-    private Boolean emergency;
     private LocalDateTime noticeTime;
 }

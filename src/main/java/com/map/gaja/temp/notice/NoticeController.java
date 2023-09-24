@@ -26,9 +26,9 @@ public class NoticeController {
     @GetMapping
     public String tempNotice(Model model) {
         List<NoticeOverview> list = new ArrayList<>();
-        list.add(new NoticeOverview(1L, "10월 업데이트 예정 내용", false, LocalDateTime.now()));
-        list.add(new NoticeOverview(2L, "중복 결제 관련 긴급공지", true, LocalDateTime.now()));
-        list.add(new NoticeOverview(3L, "9/23 정기 점검", false, LocalDateTime.now()));
+        list.add(new NoticeOverview(1L, "10월 업데이트 예정 내용", LocalDateTime.now()));
+        list.add(new NoticeOverview(2L, "중복 결제 관련 공지", LocalDateTime.now()));
+        list.add(new NoticeOverview(3L, "9/23 정기 점검", LocalDateTime.now()));
 
         model.addAttribute("noticeList", list);
         return "admin/notice/noticeList";
