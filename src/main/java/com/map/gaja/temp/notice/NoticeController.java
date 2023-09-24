@@ -7,10 +7,7 @@ import com.map.gaja.temp.dto.InquiryDetail;
 import com.map.gaja.temp.dto.InquiryInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,5 +35,27 @@ public class NoticeController {
     public String tempNoticeDetail(@PathVariable Long noticeId, Model model) {
         model.addAttribute("notice", new NoticeDetail(noticeId, "10월 업데이트 예정 내용", "이것저것 해봅니다.", LocalDateTime.now()));
         return "admin/notice/noticeDetail";
+    }
+
+    @GetMapping("/add")
+    public String addFrom(Model model) {
+        model.addAttribute("notice", new NoticeDetail());
+        return "admin/notice/addForm";
+    }
+
+    @GetMapping("/{noticeId}/edit")
+    public String editForm(@PathVariable Long noticeId, Model model) {
+        model.addAttribute("notice", new NoticeDetail());
+        return "admin/notice/editForm";
+    }
+
+    @PostMapping("/add")
+    public String addNotice(@ModelAttribute NoticeDetail noticeDetail, Model model) {
+        return "redirect:/admin/notice";
+    }
+
+    @PostMapping("/{noticeId}/delete")
+    public String deleteNotice(@PathVariable Long noticeId, Model model) {
+        return "redirect:/admin/notice";
     }
 }

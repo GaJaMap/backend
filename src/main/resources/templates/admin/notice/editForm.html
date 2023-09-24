@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/header :: header" />
+<body>
+<!--
+https://mdbootstrap.com/docs/standard/extended/comments/#section-3
+-->
+
+<div class="container">
+  <div th:replace="admin/fragments/bodyHeader :: bodyHeader"/>
+
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div>
+        <div class="card">
+          <form action="/admin/notice/add" th:object="${notice}" method="POST">
+            <div class="card">
+              <div class="form-outline w-100">
+                <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력해주세요">
+                <textarea class="form-control" th:field="*{content}" rows="10"
+                          placeholder="공지를 등록해주세요!"
+                          style="background: #fff;">
+                </textarea>
+              </div>
+
+              <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+                <div class="float-end mt-2 pt-1">
+                  <button type="submit" class="btn btn-primary btn-sm">공지 수정</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br/>
+  <div th:replace="admin/fragments/footer :: footer" />
+
+</div> <!-- /container -->
+
+</body>
+</html>

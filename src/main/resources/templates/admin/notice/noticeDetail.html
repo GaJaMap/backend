@@ -1,12 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="admin/fragments/header :: header" />
-<style>
-  #admin {
-    font-family: FontAwesome;
-       content: "\f023";
-  }
-</style>
 <body>
 <!--
 https://mdbootstrap.com/docs/standard/extended/comments/#section-3
@@ -20,6 +14,14 @@ https://mdbootstrap.com/docs/standard/extended/comments/#section-3
       <div>
         <div class="card">
           <div class="card-body">
+            <div class="d-flex flex-start align-items-center">
+              <div>
+                <h6 class="fw-bold text-primary mb-1" th:text="${notice.title}">
+                  제목
+                </h6>
+              </div>
+            </div>
+
             <p class="mt-3 mb-4 pb-2" th:text="${notice.content}">
               공지 내용
             </p>
@@ -30,14 +32,15 @@ https://mdbootstrap.com/docs/standard/extended/comments/#section-3
                 날짜
               </p>
             </div>
+
           </div>
 
-          <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
-            <div class="float-end mt-2 pt-1">
-              <button type="button" class="btn btn-primary btn-sm">공지 수정</button>
-              <button type="button" class="btn btn-danger btn-sm">공지 삭제</button>
+            <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+              <div class="float-end mt-2 pt-1">
+                <a class="btn btn-primary btn-sm" th:href="|/admin/notice/${notice.id}/edit|">공지 수정</a>
+                <a class="btn btn-danger btn-sm" th:href="|/admin/notice/|">공지 삭제</a>
+              </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
