@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/header :: header"/>
+<body>
+
+<div class="container">
+
+    <div th:replace="admin/fragments/bodyHeader :: bodyHeader"/>
+
+    <div>
+        <form class="d-inline-flex">
+            <div class="form-group mx-sm-1 mb-2">
+                <input type="text" class="form-control" placeholder="제목"/>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">검색</button>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>추천수</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>일시</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="suggestion : ${suggestionList}">
+                <td th:text="${suggestion.id}"></td>
+                <td th:text="${suggestion.recommendedCount}"></td>
+                <td><a th:text="${suggestion.title}" th:href="|/admin/suggestion/${suggestion.id}|"></a></td>
+                <td><a th:text="${suggestion.email}" th:href="|/admin/user/${suggestion.email}|"></a></td>
+                <td th:text="${#temporals.format(suggestion.suggestionTime, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="admin/fragments/footer :: footer"/>
+
+</div> <!-- /container -->
+
+</body>
+<script>
+    function cancel(id) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/orders/" + id + "/cancel");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</html>
