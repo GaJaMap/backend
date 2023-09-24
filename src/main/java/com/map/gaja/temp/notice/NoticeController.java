@@ -33,4 +33,10 @@ public class NoticeController {
         model.addAttribute("noticeList", list);
         return "admin/notice/noticeList";
     }
+
+    @GetMapping("/{noticeId}")
+    public String tempNoticeDetail(@PathVariable Long noticeId, Model model) {
+        model.addAttribute("notice", new NoticeDetail(noticeId, "10월 업데이트 예정 내용", "이것저것 해봅니다.", LocalDateTime.now()));
+        return "admin/notice/noticeDetail";
+    }
 }
