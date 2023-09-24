@@ -30,7 +30,9 @@ https://mdbootstrap.com/docs/standard/extended/comments/#section-3
                   <a th:href="|/admin/user/${inquiry.email}|" th:text="${inquiry.email}">이메일</a>
                 </h6>
                 <p class="text-muted small mb-0">
-                  <span th:text="${inquiry.category}">카테고리</span> - <span th:text="${inquiry.status}">상태</span>
+                  <span th:text="${inquiry.category}">카테고리</span> -
+                    <span th:text="${inquiry.status}">상태</span> -
+                    <span th:text="${inquiry.title}">제목</span>
                 </p>
               </div>
             </div>
