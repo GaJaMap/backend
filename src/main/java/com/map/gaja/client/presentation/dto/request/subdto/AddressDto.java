@@ -11,10 +11,11 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDto {
-    @Size(min = 10, max = 40)
+    @Size(max = 40, message = "주소 요소는 40자 이하로 입력해주세요.")
     @Schema(description = "도로명 또는 지번 주소", example = "서울특별시 중구 세종대로 110")
     private String mainAddress;
-    @Size(max = 20, message = "주소 요소는 30자 이하로 입력해주세요.")
+
+    @Size(max = 20, message = "주소 요소는 20자 이하로 입력해주세요.")
     @Schema(description = "상세주소", example = "2층 205호")
     private String detail; // 상세주소
 }
