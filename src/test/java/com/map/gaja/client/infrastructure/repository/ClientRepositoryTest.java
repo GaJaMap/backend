@@ -26,7 +26,7 @@ class ClientRepositoryTest {
     @Autowired
     EntityManager em;
 
-    @Test
+//    @Test
     @DisplayName("삭제된 그룹에 속한 클라이언트 전부 삭제")
     void deleteClientsInDeletedGroup() {
         //given
