@@ -39,12 +39,23 @@ https://mdbootstrap.com/docs/standard/extended/comments/#section-3
               문의 내용
             </p>
 
-            <div class="small d-flex justify-content-end">
-              <p class="text-muted small mb-0"
+              <div class="small d-flex justify-content-end">
+
+              </div>
+
+              <div class="small d-flex justify-content-between">
+                <div class="small d-flex justify-content-start">
+                    <div>
+                        <a href="#!">
+                            <i class="fas fa-thumbs-up me-1" th:text="| ${suggestion.recommendedCount} Likes|"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="text-muted small mb-0"
                  th:text="${#temporals.format(suggestion.suggestionTime, 'yyyy-MM-dd HH:mm ')}">
-                날짜
-              </p>
-            </div>
+                    날짜
+                </div>
+              </div>
           </div>
 
           <!-- 답변 내용 - POST /admin/suggestion/{suggestionId}/answer 여기로 답변 등록할 것이다.-->
