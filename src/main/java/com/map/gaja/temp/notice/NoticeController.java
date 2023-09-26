@@ -1,10 +1,5 @@
 package com.map.gaja.temp.notice;
 
-import com.map.gaja.temp.domain.InquiryCategory;
-import com.map.gaja.temp.domain.InquirySearch;
-import com.map.gaja.temp.domain.InquiryStatus;
-import com.map.gaja.temp.dto.InquiryDetail;
-import com.map.gaja.temp.dto.InquiryInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +40,7 @@ public class NoticeController {
 
     @GetMapping("/{noticeId}/edit")
     public String editForm(@PathVariable Long noticeId, Model model) {
-        model.addAttribute("notice", new NoticeDetail());
+        model.addAttribute("notice", new NoticeDetail(noticeId, "10월 업데이트 예정 내용", "이것저것 해봅니다.", LocalDateTime.now()));
         return "admin/notice/editForm";
     }
 

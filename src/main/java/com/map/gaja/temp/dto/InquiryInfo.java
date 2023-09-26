@@ -1,7 +1,7 @@
 package com.map.gaja.temp.dto;
 
-import com.map.gaja.temp.domain.InquiryCategory;
-import com.map.gaja.temp.domain.InquiryStatus;
+import com.map.gaja.temp.inquiry.InquiryCategory;
+import com.map.gaja.temp.inquiry.InquiryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

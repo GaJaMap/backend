@@ -1,4 +1,4 @@
-package com.map.gaja.temp.domain;
+package com.map.gaja.temp.inquiry;
 
 import lombok.Getter;
 import lombok.Setter;

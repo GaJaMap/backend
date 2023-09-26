@@ -16,7 +16,7 @@
                 <div class="form-group mx-sm-1 mb-2">
                     <select th:field="*{inquiryStatus}" class="form-control">
                         <option value="">문의상태</option>
-                        <option th:each="status : ${T(com.map.gaja.temp.domain.InquiryStatus).values()}"
+                        <option th:each="status : ${T(com.map.gaja.temp.inquiry.InquiryStatus).values()}"
                                 th:value="${status}"
                                 th:text="${status}">option
                         </option>
@@ -25,7 +25,7 @@
                 <div class="form-group mx-sm-1 mb-2">
                     <select th:field="*{inquiryCategory}" class="form-control">
                         <option value="">카테고리</option>
-                        <option th:each="status : ${T(com.map.gaja.temp.domain.InquiryCategory).values()}"
+                        <option th:each="status : ${T(com.map.gaja.temp.inquiry.InquiryCategory).values()}"
                                 th:value="${status}"
                                 th:text="${status}">option
                         </option>

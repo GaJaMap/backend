@@ -1,8 +1,8 @@
-package com.map.gaja.temp;
+package com.map.gaja.temp.inquiry;
 
-import com.map.gaja.temp.domain.InquiryCategory;
-import com.map.gaja.temp.domain.InquirySearch;
-import com.map.gaja.temp.domain.InquiryStatus;
+import com.map.gaja.temp.inquiry.InquiryCategory;
+import com.map.gaja.temp.inquiry.InquirySearch;
+import com.map.gaja.temp.inquiry.InquiryStatus;
 import com.map.gaja.temp.dto.InquiryDetail;
 import com.map.gaja.temp.dto.InquiryInfo;
 import org.springframework.stereotype.Controller;
