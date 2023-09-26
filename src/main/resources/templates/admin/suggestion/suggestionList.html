@@ -31,7 +31,7 @@
                 <td th:text="${suggestion.id}"></td>
                 <td th:text="${suggestion.recommendedCount}"></td>
                 <td><a th:text="${suggestion.title}" th:href="|/admin/suggestion/${suggestion.id}|"></a></td>
-                <td><a th:text="${suggestion.email}" th:href="|/admin/user/${suggestion.email}|"></a></td>
+                <td><a th:text="${suggestion.email}" th:href="|/admin/users?email=${suggestion.email}|"></a></td>
                 <td th:text="${#temporals.format(suggestion.suggestionTime, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
             </tbody>

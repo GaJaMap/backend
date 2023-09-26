@@ -52,7 +52,7 @@
                 <td th:text="${inquiry.id}"></td>
                 <td th:text="${inquiry.category}"></td>
                 <td><a th:text="${inquiry.title}" th:href="|/admin/inquiry/${inquiry.id}|"></a></td>
-                <td><a th:text="${inquiry.email}" th:href="|/admin/user/${inquiry.email}|"></a></td>
+                <td><a th:text="${inquiry.email}" th:href="|/admin/users?email=${inquiry.email}|"></a></td>
                 <td th:text="${#temporals.format(inquiry.inquiryTime, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${inquiry.status}"></td>
 

@@ -27,7 +27,7 @@ https://mdbootstrap.com/docs/standard/extended/comments/#section-3
 <!--                   height="60" />-->
               <div>
                 <h6 class="fw-bold text-primary mb-1">
-                  <a th:href="|/admin/user/${inquiry.email}|" th:text="${inquiry.email}">이메일</a>
+                  <a th:href="|/admin/users?email=${inquiry.email}|" th:text="${inquiry.email}">이메일</a>
                 </h6>
                 <p class="text-muted small mb-0">
                   <span th:text="${inquiry.category}">카테고리</span> -
