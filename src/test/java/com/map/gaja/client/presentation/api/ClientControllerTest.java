@@ -65,7 +65,7 @@ class ClientControllerTest {
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete(testUrl, groupId, clientId)
                 .with(csrf())
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isNoContent());
         verify(clientService, times(1)).deleteClient(clientId);
@@ -83,7 +83,7 @@ class ClientControllerTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isNoContent());
         verify(clientService, times(1)).deleteBulkClient(groupId, clientIds);

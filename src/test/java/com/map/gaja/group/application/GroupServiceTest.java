@@ -130,11 +130,10 @@ class GroupServiceTest {
                 .build();
         GroupUpdateRequest request = new GroupUpdateRequest("test");
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
         when(groupRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> {
-            groupService.updateName(email, 1L, request);
+            groupService.updateName(user.getId(), 1L, request);
         })
                 .isInstanceOf(GroupNotFoundException.class);
     }
@@ -154,10 +153,9 @@ class GroupServiceTest {
         GroupUpdateRequest request = new GroupUpdateRequest("test");
         Group group = new Group("name", user);
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
         when(groupRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(group));
 
-        groupService.updateName(email, 1L, request);
+        groupService.updateName(user.getId(), 1L, request);
         assertEquals(request.getName(), group.getName());
     }
 }
