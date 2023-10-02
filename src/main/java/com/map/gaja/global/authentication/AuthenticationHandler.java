@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticationHandler {
-    public void saveContext(String email, String authority) {
-        UserDetails userDetails = new PrincipalDetails(email, authority);
+    public void saveContext(Long userId, String email, String authority) {
+        UserDetails userDetails = new PrincipalDetails(userId, email, authority);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
         SecurityContextHolder.setContext(context);
