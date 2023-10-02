@@ -48,10 +48,8 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public GroupResponse findGroups(String email, Pageable pageable) {
-        User user = findByEmailAndActive(userRepository, email);
-
-        Slice<GroupInfo> groupInfos = groupRepository.findGroupByUserId(user.getId(), pageable);
+    public GroupResponse findGroups(Long userId, Pageable pageable) {
+        Slice<GroupInfo> groupInfos = groupRepository.findGroupByUserId(userId, pageable);
 
         return new GroupResponse(groupInfos.hasNext(), groupInfos.getContent());
     }
@@ -81,10 +79,8 @@ public class GroupService {
     }
 
     @Transactional
-    public void updateName(String email, Long groupId, GroupUpdateRequest request) {
-        User user = findByEmailAndActive(userRepository, email);
-
-        Group group = groupRepository.findByIdAndUserId(groupId, user.getId())
+    public void updateName(Long userId, Long groupId, GroupUpdateRequest request) {
+        Group group = groupRepository.findByIdAndUserId(groupId, userId)
                 .orElseThrow(GroupNotFoundException::new);
         group.updateName(request.getName());
     }
