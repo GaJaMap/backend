@@ -36,7 +36,7 @@ public class UserService {
 
         sessionHandler.deduplicate(email, "APP"); //중복로그인 처리 최대 2개까지
 
-        authenticationHandler.saveContext(email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
+        authenticationHandler.saveContext(user.getId(), email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
         return new LoginResponse(email,
                 user.getAuthority().name(),

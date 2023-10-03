@@ -28,7 +28,7 @@ public class WebUserLoginController {
         System.out.println(loginEmail);
         User user = userRepository.findByEmailAndActive(loginEmail).get();
 
-        authenticationHandler.saveContext(loginEmail, user.getAuthority().toString());
+        authenticationHandler.saveContext(user.getId(), loginEmail, user.getAuthority().toString());
         return "redirect:/";
     }
 }

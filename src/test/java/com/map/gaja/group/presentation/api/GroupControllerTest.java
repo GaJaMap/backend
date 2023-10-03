@@ -50,7 +50,7 @@ class GroupControllerTest {
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/group")
                 .with(csrf())
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")))
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestToString);
 

@@ -43,7 +43,7 @@ public class ClientRequestCreator {
                 .file("clientImage", getImage())
                 .with(csrf())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
     }
 
     /**
@@ -53,7 +53,7 @@ public class ClientRequestCreator {
         return MockMvcRequestBuilders.post(testUrl)
                 .with(csrf())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
     }
 
     /**
@@ -64,7 +64,7 @@ public class ClientRequestCreator {
                 .file("clientImage", getImage())
                 .with(csrf())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
     }
 
     /**
@@ -74,7 +74,7 @@ public class ClientRequestCreator {
         return MockMvcRequestBuilders.put(testUrl, groupId, clientId)
                 .with(csrf())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")));
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
     }
 
     public static void setNormalField(MockHttpServletRequestBuilder mockRequest, NewClientRequest request) {
