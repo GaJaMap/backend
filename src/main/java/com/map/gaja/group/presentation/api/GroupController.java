@@ -37,7 +37,7 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @GetMapping
-    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal(expression = "userId") Long userId, @PageableDefault Pageable pageable) {
+    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal(expression = "userId") Long userId, @PageableDefault(size = 100) Pageable pageable) {
         GroupResponse response = groupService.findGroups(userId, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
