@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.apllication.aop.ClientImageAuth;
+import com.map.gaja.client.apllication.aop.ClientImageAuthChecking;
 import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
@@ -75,7 +75,7 @@ public class ClientController implements ClientCommandApiSpecification {
     }
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
-    @ClientImageAuth
+    @ClientImageAuthChecking
     public ResponseEntity<ClientOverviewResponse> updateClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @PathVariable Long groupId,
@@ -145,7 +145,7 @@ public class ClientController implements ClientCommandApiSpecification {
      * 저장된 프로필 이미지의 S3의 파일 경로와 생성된 고객 ID만 넘겨도 충분한가?
      */
     @PostMapping("/clients")
-    @ClientImageAuth
+    @ClientImageAuthChecking
     public ResponseEntity<ClientOverviewResponse> addClient(
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             @Valid @ModelAttribute NewClientRequest clientRequest,

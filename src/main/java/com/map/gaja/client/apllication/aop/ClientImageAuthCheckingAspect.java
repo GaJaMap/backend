@@ -18,7 +18,7 @@ import java.util.Iterator;
 @Aspect
 @RequiredArgsConstructor
 @Component
-public class ClientImageAuthAspect {
+public class ClientImageAuthCheckingAspect {
 
     private final CurrentSecurityUserGetter userGetter;
 

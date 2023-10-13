@@ -5,7 +5,6 @@ import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.user.domain.model.Authority;
 import org.aspectj.lang.JoinPoint;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,13 +19,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ClientImageAuthAspectTest {
+class ClientImageAuthCheckingAspectTest {
 
     @Mock
     private CurrentSecurityUserGetter userGetter;
 
     @InjectMocks
-    private ClientImageAuthAspect clientImageAuthAspect;
+    private ClientImageAuthCheckingAspect clientImageAuthCheckingAspect;
 
     private PrincipalDetails mockFreeUser;
     private PrincipalDetails mockVipUser;
@@ -47,7 +46,7 @@ class ClientImageAuthAspectTest {
         Object[] args = {clientRequest};
         Mockito.when(joinPoint.getArgs()).thenReturn(args);
 
-        clientImageAuthAspect.checkAuthority(joinPoint);
+        clientImageAuthCheckingAspect.checkAuthority(joinPoint);
     }
 
     @Test
@@ -60,7 +59,7 @@ class ClientImageAuthAspectTest {
         Object[] args = {clientRequest};
         Mockito.when(joinPoint.getArgs()).thenReturn(args);
 
-        clientImageAuthAspect.checkAuthority(joinPoint);
+        clientImageAuthCheckingAspect.checkAuthority(joinPoint);
     }
 
     @Test
@@ -74,7 +73,7 @@ class ClientImageAuthAspectTest {
         Mockito.when(joinPoint.getArgs()).thenReturn(args);
 
         assertThrows(RuntimeException.class,
-                () -> clientImageAuthAspect.checkAuthority(joinPoint));
+                () -> clientImageAuthCheckingAspect.checkAuthority(joinPoint));
     }
 
 }
