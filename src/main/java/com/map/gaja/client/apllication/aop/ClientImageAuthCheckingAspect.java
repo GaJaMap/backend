@@ -3,6 +3,7 @@ package com.map.gaja.client.apllication.aop;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
+import com.map.gaja.user.domain.exception.ImageUploadPermissionException;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class ClientImageAuthCheckingAspect {
 
         PrincipalDetails detail = userGetter.getCurrentUser();
         if (isFreeAuth(detail) && isImageUpdatingRequest(clientRequest)) {
-            throw new RuntimeException("커스텀 예외 필요");
+            throw new ImageUploadPermissionException(Authority.FREE.toString());
         }
     }
 
