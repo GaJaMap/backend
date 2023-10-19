@@ -31,9 +31,7 @@ public class ClientImageAuthCheckingAspect {
         }
 
         PrincipalDetails detail = userGetter.getCurrentUser();
-        System.out.println(isFreeAuth(detail));
-        System.out.println(isImageUpdateRequest(clientRequest));
-        if (isFreeAuth(detail) && isImageUpdateRequest(clientRequest)) {
+        if (isFreeAuth(detail) && isImageUpdatingRequest(clientRequest)) {
             throw new RuntimeException("커스텀 예외 필요");
         }
     }
@@ -49,8 +47,8 @@ public class ClientImageAuthCheckingAspect {
         return clientRequest;
     }
 
-    private boolean isImageUpdateRequest(NewClientRequest clientRequest) {
-        return clientRequest != null && !clientRequest.getIsBasicImage();
+    private boolean isImageUpdatingRequest(NewClientRequest clientRequest) {
+        return !clientRequest.getIsBasicImage();
     }
 
     private boolean isFreeAuth(PrincipalDetails detail) {
