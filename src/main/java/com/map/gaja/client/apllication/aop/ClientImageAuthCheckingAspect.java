@@ -23,8 +23,8 @@ public class ClientImageAuthCheckingAspect {
 
     private final CurrentSecurityUserGetter userGetter;
 
-    @Before("@within(com.map.gaja.client.apllication.aop.ClientImageAuth) " +
-            "|| @annotation(com.map.gaja.client.apllication.aop.ClientImageAuth)")
+    @Before("@within(com.map.gaja.client.apllication.aop.ClientImageAuthChecking) " +
+            "|| @annotation(com.map.gaja.client.apllication.aop.ClientImageAuthChecking)")
     public void checkAuthority(JoinPoint jp) throws Exception {
         NewClientRequest clientRequest = getClientRequestArgs(jp.getArgs());
         if (clientRequest == null) {
