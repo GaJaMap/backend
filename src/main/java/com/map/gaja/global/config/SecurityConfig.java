@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .antMatchers("/api/user/login",
                                 monitoringPath,
-                                "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
+                                "/policy/**", "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
                         ).permitAll()
                         .anyRequest().authenticated())
                 .csrf().disable()
