@@ -58,7 +58,7 @@ class ImageAuthCheckingAspectTest {
         NewClientRequest clientRequest = new NewClientRequest();
         clientRequest.setIsBasicImage(true);
         Object[] args = {clientRequest};
-        Mockito.when(joinPoint.getArgs()).thenReturn(args);
+        when(joinPoint.getArgs()).thenReturn(args);
 
         imageAuthCheckingAspect.checkAuthority(joinPoint);
     }
@@ -83,7 +83,7 @@ class ImageAuthCheckingAspectTest {
         NewClientRequest clientRequest = new NewClientRequest();
         clientRequest.setIsBasicImage(false);
         Object[] args = {clientRequest};
-        Mockito.when(joinPoint.getArgs()).thenReturn(args);
+        when(joinPoint.getArgs()).thenReturn(args);
 
         assertThrows(ImageUploadPermissionException.class,
                 () -> imageAuthCheckingAspect.checkAuthority(joinPoint));
