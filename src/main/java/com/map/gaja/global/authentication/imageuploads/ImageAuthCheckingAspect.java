@@ -1,8 +1,8 @@
 package com.map.gaja.global.authentication.imageuploads;
 
-import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
+import com.map.gaja.global.authentication.imageuploads.checkers.ImageUploadRequestChecker;
 import com.map.gaja.user.domain.exception.ImageUploadPermissionException;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
+import java.util.List;
 
 @Slf4j
 @Aspect
@@ -22,35 +23,26 @@ import java.util.Iterator;
 public class ImageAuthCheckingAspect {
 
     private final CurrentSecurityUserGetter userGetter;
+    private final List<ImageUploadRequestChecker> requestCheckers;
 
     @Before("@within(com.map.gaja.global.authentication.imageuploads.ImageAuthChecking) " +
             "|| @annotation(com.map.gaja.global.authentication.imageuploads.ImageAuthChecking)")
     public void checkAuthority(JoinPoint jp) throws Exception {
-        NewClientRequest clientRequest = getClientRequestArgs(jp.getArgs());
-        if (clientRequest == null) {
-            return;
-        }
-
         PrincipalDetails detail = userGetter.getCurrentUser();
-        if (isFreeAuth(detail) && isImageUpdatingRequest(clientRequest)) {
+        if (isFreeAuth(detail) && isImageUploadingRequest(jp.getArgs())) {
             throw new ImageUploadPermissionException(Authority.FREE.toString());
         }
     }
 
-    private NewClientRequest getClientRequestArgs(Object[] args) {
-        NewClientRequest clientRequest = null;
-        for (Object arg : args) {
-            if (arg instanceof NewClientRequest) {
-                clientRequest = (NewClientRequest) arg;
-                break;
-            }
+    private boolean isImageUploadingRequest(Object[] args) {
+        for (ImageUploadRequestChecker requestChecker : requestCheckers) {
+            if(requestChecker.isSupported(args))
+                return requestChecker.isImageUploadingRequest(args);
         }
-        return clientRequest;
+
+        return false;
     }
 
-    private boolean isImageUpdatingRequest(NewClientRequest clientRequest) {
-        return !clientRequest.getIsBasicImage();
-    }
 
     private boolean isFreeAuth(PrincipalDetails detail) {
         Iterator<? extends GrantedAuthority> iterator = detail.getAuthorities().iterator();
