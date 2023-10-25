@@ -3,7 +3,7 @@ package com.map.gaja.global.authentication.imageuploads;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.global.authentication.imageuploads.ImageAuthCheckingAspect;
+import com.map.gaja.global.authentication.imageuploads.checkers.ImageUploadRequestChecker;
 import com.map.gaja.user.domain.exception.ImageUploadPermissionException;
 import com.map.gaja.user.domain.model.Authority;
 import org.aspectj.lang.JoinPoint;
@@ -16,6 +16,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,6 +28,11 @@ class ImageAuthCheckingAspectTest {
 
     @Mock
     private CurrentSecurityUserGetter userGetter;
+
+    @Mock
+    private ImageUploadRequestChecker mockChecker;
+    @Mock
+    private List<ImageUploadRequestChecker> requestCheckers;
 
     @InjectMocks
     private ImageAuthCheckingAspect imageAuthCheckingAspect;
@@ -41,7 +49,11 @@ class ImageAuthCheckingAspectTest {
     @Test
     @DisplayName("기본 이미지를 사용하는 Free User")
     void testFreeUser() throws Exception {
+        when(requestCheckers.iterator()).thenReturn(Arrays.asList(mockChecker).iterator());
         when(userGetter.getCurrentUser()).thenReturn(mockFreeUser);
+        when(mockChecker.isSupported(Mockito.any())).thenReturn(true);
+        when(mockChecker.isImageUploadingRequest(Mockito.any())).thenReturn(false);
+
         JoinPoint joinPoint = mock(JoinPoint.class);
         NewClientRequest clientRequest = new NewClientRequest();
         clientRequest.setIsBasicImage(true);
@@ -56,18 +68,17 @@ class ImageAuthCheckingAspectTest {
     void testVipUser() throws Exception {
         when(userGetter.getCurrentUser()).thenReturn(mockVipUser);
         JoinPoint joinPoint = mock(JoinPoint.class);
-        NewClientRequest clientRequest = new NewClientRequest();
-        clientRequest.setIsBasicImage(false);
-        Object[] args = {clientRequest};
-        Mockito.when(joinPoint.getArgs()).thenReturn(args);
-
         imageAuthCheckingAspect.checkAuthority(joinPoint);
     }
 
     @Test
     @DisplayName("추가 이미지를 사용하는 Free User")
     void testFreeUserUsingImage() throws Exception {
+        when(requestCheckers.iterator()).thenReturn(Arrays.asList(mockChecker).iterator());
         when(userGetter.getCurrentUser()).thenReturn(mockFreeUser);
+        when(mockChecker.isSupported(Mockito.any())).thenReturn(true);
+        when(mockChecker.isImageUploadingRequest(Mockito.any())).thenReturn(true);
+
         JoinPoint joinPoint = mock(JoinPoint.class);
         NewClientRequest clientRequest = new NewClientRequest();
         clientRequest.setIsBasicImage(false);
