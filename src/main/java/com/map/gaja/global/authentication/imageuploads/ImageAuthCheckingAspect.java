@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * ImageAuthChecking 어노테이션의 AOP 구현체
+ */
 @Slf4j
 @Aspect
 @RequiredArgsConstructor
@@ -25,15 +28,24 @@ public class ImageAuthCheckingAspect {
     private final CurrentSecurityUserGetter userGetter;
     private final List<ImageUploadRequestChecker> requestCheckers;
 
+
+    /**
+     * 사용자가 Free 등급으로 이미지 업로드 요청을 한다면 ImageUploadPermissionException.class 를 발생시킴.
+     * @param jp
+     */
     @Before("@within(com.map.gaja.global.authentication.imageuploads.ImageAuthChecking) " +
             "|| @annotation(com.map.gaja.global.authentication.imageuploads.ImageAuthChecking)")
-    public void checkAuthority(JoinPoint jp) throws Exception {
+    public void checkAuthority(JoinPoint jp) {
         PrincipalDetails detail = userGetter.getCurrentUser();
         if (isFreeAuth(detail) && isImageUploadingRequest(jp.getArgs())) {
             throw new ImageUploadPermissionException(Authority.FREE.toString());
         }
     }
 
+    /**
+     * @param args JoinPoint로 가져온 파라미터 Object 배열
+     * @return 이미지 업로드 요청이 맞는가?
+     */
     private boolean isImageUploadingRequest(Object[] args) {
         for (ImageUploadRequestChecker requestChecker : requestCheckers) {
             if(requestChecker.isSupported(args))
@@ -43,7 +55,10 @@ public class ImageAuthCheckingAspect {
         return false;
     }
 
-
+    /**
+     * @param detail 현재 사용자 세션 정보
+     * @return Free 등급의 사용자인가?
+     */
     private boolean isFreeAuth(PrincipalDetails detail) {
         Iterator<? extends GrantedAuthority> iterator = detail.getAuthorities().iterator();
         while (iterator.hasNext()) {
