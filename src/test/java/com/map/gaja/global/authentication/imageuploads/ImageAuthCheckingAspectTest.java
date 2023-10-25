@@ -1,8 +1,9 @@
-package com.map.gaja.client.apllication.aop;
+package com.map.gaja.global.authentication.imageuploads;
 
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
+import com.map.gaja.global.authentication.imageuploads.ImageAuthCheckingAspect;
 import com.map.gaja.user.domain.exception.ImageUploadPermissionException;
 import com.map.gaja.user.domain.model.Authority;
 import org.aspectj.lang.JoinPoint;
@@ -20,13 +21,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ClientImageAuthCheckingAspectTest {
+class ImageAuthCheckingAspectTest {
 
     @Mock
     private CurrentSecurityUserGetter userGetter;
 
     @InjectMocks
-    private ClientImageAuthCheckingAspect clientImageAuthCheckingAspect;
+    private ImageAuthCheckingAspect imageAuthCheckingAspect;
 
     private PrincipalDetails mockFreeUser;
     private PrincipalDetails mockVipUser;
@@ -47,7 +48,7 @@ class ClientImageAuthCheckingAspectTest {
         Object[] args = {clientRequest};
         Mockito.when(joinPoint.getArgs()).thenReturn(args);
 
-        clientImageAuthCheckingAspect.checkAuthority(joinPoint);
+        imageAuthCheckingAspect.checkAuthority(joinPoint);
     }
 
     @Test
@@ -60,7 +61,7 @@ class ClientImageAuthCheckingAspectTest {
         Object[] args = {clientRequest};
         Mockito.when(joinPoint.getArgs()).thenReturn(args);
 
-        clientImageAuthCheckingAspect.checkAuthority(joinPoint);
+        imageAuthCheckingAspect.checkAuthority(joinPoint);
     }
 
     @Test
@@ -74,7 +75,7 @@ class ClientImageAuthCheckingAspectTest {
         Mockito.when(joinPoint.getArgs()).thenReturn(args);
 
         assertThrows(ImageUploadPermissionException.class,
-                () -> clientImageAuthCheckingAspect.checkAuthority(joinPoint));
+                () -> imageAuthCheckingAspect.checkAuthority(joinPoint));
     }
 
 }

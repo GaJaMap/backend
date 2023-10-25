@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication.aop;
+package com.map.gaja.global.authentication.imageuploads;
 
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
@@ -19,12 +19,12 @@ import java.util.Iterator;
 @Aspect
 @RequiredArgsConstructor
 @Component
-public class ClientImageAuthCheckingAspect {
+public class ImageAuthCheckingAspect {
 
     private final CurrentSecurityUserGetter userGetter;
 
-    @Before("@within(com.map.gaja.client.apllication.aop.ClientImageAuthChecking) " +
-            "|| @annotation(com.map.gaja.client.apllication.aop.ClientImageAuthChecking)")
+    @Before("@within(com.map.gaja.global.authentication.imageuploads.ImageAuthChecking) " +
+            "|| @annotation(com.map.gaja.global.authentication.imageuploads.ImageAuthChecking)")
     public void checkAuthority(JoinPoint jp) throws Exception {
         NewClientRequest clientRequest = getClientRequestArgs(jp.getArgs());
         if (clientRequest == null) {
