@@ -29,7 +29,7 @@ public class ExcelParser {
     private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
     private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
     private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
-    private static final int DETAIL_LENGTH_LIMIT = 20;
+    private static final int DETAIL_LENGTH_LIMIT = 40;
     private static final int NAME_LENGTH_LIMIT = 20;
 
     @AllArgsConstructor
