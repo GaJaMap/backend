@@ -26,7 +26,7 @@ public class ExcelParser {
 
     private static final int APP_TO_EXCEL_IDX = 1;
 
-    private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
+    private static final String PHONE_NUMBER_PATTERN = "^[0-9]{7,12}$";
     private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
     private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
     private static final int DETAIL_LENGTH_LIMIT = 40;
@@ -113,7 +113,7 @@ public class ExcelParser {
             return null;
         }
 
-        return cell.getStringCellValue();
+        return cell.getStringCellValue().replace("-", "");
     }
 
     private Workbook getWorkBook(String extension, InputStream excelStream) throws IOException {
