@@ -1,4 +1,4 @@
-package com.map.gaja.oauth2.application;
+package com.map.gaja.global.oauth2.application;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.authentication.SessionHandler;

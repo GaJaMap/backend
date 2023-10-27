@@ -1,9 +1,9 @@
 package com.map.gaja.global.config;
 
 import com.map.gaja.global.filter.RemoveAnonymousAuthenticationFilter;
-import com.map.gaja.oauth2.application.Oauth2UserService;
-import com.map.gaja.oauth2.handler.Oauth2FailureHandler;
-import com.map.gaja.oauth2.handler.Oauth2SuccessHandler;
+import com.map.gaja.global.oauth2.application.Oauth2UserService;
+import com.map.gaja.global.oauth2.handler.Oauth2FailureHandler;
+import com.map.gaja.global.oauth2.handler.Oauth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
