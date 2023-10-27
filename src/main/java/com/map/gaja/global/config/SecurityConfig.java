@@ -32,6 +32,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
+                        .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/swagger").hasAuthority("ADMIN")
                         .antMatchers("/api/user/login",
                                 monitoringPath,
                                 "/policy/**", "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
@@ -53,28 +54,4 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web
-                .ignoring()
-                .antMatchers(getPathInSwagger());
-    }
-
-    private String[] getPathInSwagger() {
-        return new String[]{
-                "/swagger",
-                "/swagger-ui/index.html",
-                "/swagger-ui/swagger-ui.css",
-                "/swagger-ui/index.css",
-                "/swagger-ui/swagger-ui-bundle.js",
-                "/swagger-ui/swagger-ui-standalone-preset.js",
-                "/swagger-ui/swagger-initializer.js",
-                "/v3/api-docs/swagger-config",
-                "/swagger-ui/favicon-32x32.png",
-                "/v3/api-docs/user-api",
-                "/v3/api-docs/group-api",
-                "/v3/api-docs/client-api",
-                "/favicon.ico"
-        };
-    }
 }
