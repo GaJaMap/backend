@@ -37,12 +37,18 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
+    /**
+     * 간단 bulk 연산용 - 카카오, 전화번호부로 등록
+     */
     public Client(String name, String phoneNumber, Group group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateGroup(group);
     }
 
+    /**
+     * 이미지 없는 고객 등록
+     */
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -51,6 +57,9 @@ public class Client extends BaseTimeEntity {
         this.clientImage = null;
     }
 
+    /**
+     * 이미지와 함께 고객 등록
+     */
     public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
         this.name = name;
         this.phoneNumber = phoneNumber;
