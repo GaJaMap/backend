@@ -15,6 +15,7 @@ public class ClientExcelDto {
     private String address;
     private String addressDetail;
     private LocationDto location;
+    private String memo;
     private Boolean isValid;
 
     public void setLocation(LocationDto location) {

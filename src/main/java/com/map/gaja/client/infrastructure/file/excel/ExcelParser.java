@@ -45,6 +45,7 @@ public class ExcelParser {
         public String phoneNumber;
         public String address;
         public String addressDetail;
+        public String memo;
     }
 
     public List<ClientExcelDto> parseClientExcelFile(MultipartFile excel) {
@@ -88,7 +89,8 @@ public class ExcelParser {
         return invalidateName(rowData.name)
                 || invalidatePhoneNumber(rowData.phoneNumber)
                 || invalidateAddress(rowData.address)
-                || invalidateAddressDetail(rowData.addressDetail);
+                || invalidateAddressDetail(rowData.addressDetail)
+                || invalidateMemo(rowData.memo);
     }
 
     private void setDataNormalField(ClientExcelDto clientData, int rowIdx, RowData rowData) {
@@ -97,14 +99,16 @@ public class ExcelParser {
         clientData.setPhoneNumber(rowData.phoneNumber);
         clientData.setAddress(rowData.address);
         clientData.setAddressDetail(rowData.addressDetail);
+        clientData.setMemo(rowData.memo);
     }
 
     private RowData getRowData(Row row) {
-        String name = getCellDataOrNull(row.getCell(NAME_DATA_CELL_INDEX));
-        String phoneNumber = getCellDataOrNull(row.getCell(PHONE_NUMBER_DATA_CELL_INDEX));
-        String address = getCellDataOrNull(row.getCell(ADDRESS_DATA_CELL_INDEX));
-        String addressDetail = getCellDataOrNull(row.getCell(ADDRESS_DETAIL_DATA_CELL_INDEX));
-        return new RowData(name, phoneNumber, address, addressDetail);
+        String name = getCellDataOrNull(row.getCell(CellIndexConst.NAME));
+        String phoneNumber = getCellDataOrNull(row.getCell(CellIndexConst.PHONE_NUMBER));
+        String address = getCellDataOrNull(row.getCell(CellIndexConst.ADDRESS));
+        String addressDetail = getCellDataOrNull(row.getCell(CellIndexConst.ADDRESS_DETAIL));
+        String memo = getCellDataOrNull(row.getCell(CellIndexConst.MEMO));
+        return new RowData(name, phoneNumber, address, addressDetail, memo);
     }
 
     private boolean isEmptyRowData(RowData rowData) {
@@ -133,21 +137,25 @@ public class ExcelParser {
         }
     }
 
+    private boolean invalidateMemo(String memo) {
+        return memo != null && memo.length() > ValidConst.MEMO_LENGTH_LIMIT;
+    }
+
     private boolean invalidateAddressDetail(String addressDetailString) {
-        return addressDetailString != null && addressDetailString.length() > DETAIL_LENGTH_LIMIT;
+        return addressDetailString != null && addressDetailString.length() > ValidConst.DETAIL_LENGTH_LIMIT;
     }
 
     private boolean invalidateAddress(String addressString) {
         return addressString != null
-                && (addressString.length() > ADDRESS_LENGTH_MAX_LIMIT
-                        || addressString.length() < ADDRESS_LENGTH_MIN_LIMIT);
+                && (addressString.length() > ValidConst.ADDRESS_LENGTH_MAX_LIMIT
+                        || addressString.length() < ValidConst.ADDRESS_LENGTH_MIN_LIMIT);
     }
 
     private boolean invalidatePhoneNumber(String phoneNumber) {
-        return phoneNumber != null && !Pattern.matches(PHONE_NUMBER_PATTERN, phoneNumber);
+        return phoneNumber != null && !Pattern.matches(ValidConst.PHONE_NUMBER_PATTERN, phoneNumber);
     }
 
     private boolean invalidateName(String name) {
-        return isEmptyCell(name) || name.length() > NAME_LENGTH_LIMIT;
+        return isEmptyCell(name) || name.length() > ValidConst.NAME_LENGTH_LIMIT;
     }
 }
