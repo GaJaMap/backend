@@ -56,7 +56,7 @@ public class ClientConvertor {
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
                 client.getName(),
                 client.getPhoneNumber(),
-                null,
+                client.getMemo(),
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
                 image,
@@ -77,6 +77,7 @@ public class ClientConvertor {
         return new Client(
                 request.getClientName(),
                 request.getPhoneNumber(),
+                request.getMemo(),
                 dtoToVo(address),
                 dtoToVo(location),
                 group
@@ -97,6 +98,7 @@ public class ClientConvertor {
         return new Client(
                 clientData.getName(),
                 clientData.getPhoneNumber(),
+                null, // 변경 예정
                 address,
                 location,
                 group
@@ -110,6 +112,7 @@ public class ClientConvertor {
         return new Client(
                 request.getClientName(),
                 request.getPhoneNumber(),
+                request.getMemo(),
                 dtoToVo(address),
                 dtoToVo(location),
                 group,

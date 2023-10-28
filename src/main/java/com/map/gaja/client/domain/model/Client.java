@@ -49,9 +49,10 @@ public class Client extends BaseTimeEntity {
     /**
      * 이미지 없는 고객 등록
      */
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
+    public Client(String name, String phoneNumber, String memo, ClientAddress address, ClientLocation location, Group group) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.memo = memo;
         updateLocation(location, address);
         updateGroup(group);
         this.clientImage = null;
@@ -60,30 +61,24 @@ public class Client extends BaseTimeEntity {
     /**
      * 이미지와 함께 고객 등록
      */
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
+    public Client(String name, String phoneNumber, String memo, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.memo = memo;
         updateLocation(location, address);
         updateGroup(group);
         this.clientImage = clientImage;
     }
 
-    public void updateClientField(String name, String phoneNumber, ClientAddress address, ClientLocation location) {
-        updateName(name);
-        updatePhoneNumber(phoneNumber);
+    public void updateClientField(String name, String phoneNumber, String memo, ClientAddress address, ClientLocation location) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.memo = memo;
         updateLocation(location, address);
     }
 
     public void updateGroup(Group group) {
         this.group = group;
-    }
-
-    private void updateName(String name) {
-        this.name = name;
-    }
-
-    private void updatePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     private void updateLocation(ClientLocation location, ClientAddress address) {

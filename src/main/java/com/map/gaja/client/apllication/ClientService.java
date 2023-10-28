@@ -160,16 +160,15 @@ public class ClientService {
     }
 
     private void updateClientField(Client existingClient, NewClientRequest updateRequest) {
-//        Group updatedGroup = getUpdatedGroup(updateRequest, existingClient);
         ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
         ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
 
         existingClient.updateClientField(
                 updateRequest.getClientName(),
                 updateRequest.getPhoneNumber(),
+                updateRequest.getMemo(),
                 updatedAddress,
                 updatedLocation
-//                updatedGroup
         );
     }
 
