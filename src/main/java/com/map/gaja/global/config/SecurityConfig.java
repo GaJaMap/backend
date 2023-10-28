@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
-                        .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/swagger").hasAuthority("ADMIN")
+                        .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger").hasAuthority("ADMIN")
                         .antMatchers("/api/user/login",
                                 monitoringPath,
                                 "/policy/**", "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
