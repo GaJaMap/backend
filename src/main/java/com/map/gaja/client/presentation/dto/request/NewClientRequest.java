@@ -32,6 +32,10 @@ public class NewClientRequest {
     @Schema(description = "전화번호", example = "010-1111-2222")
     private String phoneNumber;
 
+    @Size(max = 200, message = "메모는 200자 이하여야 합니다.")
+    @Schema(description = "개인적인 사용자의 메모", example = "55세, 기업인, 창업주 이병철의 손자이자 홍진기의 외손자")
+    private String memo;
+
     @Valid
     private AddressDto address = new AddressDto();
 

@@ -30,6 +30,9 @@ public class ClientDetailResponse {
     @Schema(description = "고객 전화번호", example = "010-3333-4444")
     private String phoneNumber;
 
+    @Schema(description = "개인적인 사용자의 메모", example = "55세, 기업인, 창업주 이병철의 손자이자 홍진기의 외손자")
+    private String memo;
+
     @Schema(description = "고객 주소")
     private AddressDto address;
 

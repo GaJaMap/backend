@@ -56,6 +56,7 @@ public class ClientConvertor {
                 new GroupInfoDto(client.getGroup().getId(), client.getGroup().getName()),
                 client.getName(),
                 client.getPhoneNumber(),
+                null,
                 voToDto(client.getAddress()),
                 voToDto(client.getLocation()),
                 image,
