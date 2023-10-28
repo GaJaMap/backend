@@ -122,9 +122,8 @@ public class ClientService {
         }
         updateClientField(existingClient, updateRequest);
 
-        ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
-        existingClient.removeClientImage();
-        existingClient.updateImage(clientImage);
+        ClientImage newImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
+        existingClient.updateImage(newImage);
 
         return entityToOverviewDto(existingClient);
     }
