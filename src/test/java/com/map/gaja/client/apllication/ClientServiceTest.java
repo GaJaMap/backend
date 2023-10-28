@@ -301,9 +301,9 @@ class ClientServiceTest {
 
     private static List<ClientExcelDto> createExcelDataSize3() {
         List<ClientExcelDto> excelData = new ArrayList<>();
-        excelData.add(new ClientExcelDto(1, "Test Excel 1", null, null, null, null, true));
-        excelData.add(new ClientExcelDto(2, "Test Excel 2", null, null, null, null, true));
-        excelData.add(new ClientExcelDto(3, "Test Excel 3", null, null, null, null, true));
+        excelData.add(new ClientExcelDto(1, "Test Excel 1", null, null, null, null, null, true));
+        excelData.add(new ClientExcelDto(2, "Test Excel 2", null, null, null, null, null, true));
+        excelData.add(new ClientExcelDto(3, "Test Excel 3", null, null, null, null, null, true));
         return excelData;
     }
 

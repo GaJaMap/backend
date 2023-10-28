@@ -136,11 +136,11 @@ class WebClientControllerTest {
     }
 
     private static ClientExcelDto createValidClientExcelData(int i) {
-        return new ClientExcelDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), true);
+        return new ClientExcelDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), "테스트 메모", true);
     }
 
     private static ClientExcelDto createInvalidClientExcelData(int i) {
-        return new ClientExcelDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), false);
+        return new ClientExcelDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), "테스트 메모", false);
     }
 
     private MockMultipartFile getMockFile() throws IOException {
