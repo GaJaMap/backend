@@ -98,7 +98,7 @@ public class ClientConvertor {
         return new Client(
                 clientData.getName(),
                 clientData.getPhoneNumber(),
-                null, // 변경 예정
+                clientData.getMemo(),
                 address,
                 location,
                 group
