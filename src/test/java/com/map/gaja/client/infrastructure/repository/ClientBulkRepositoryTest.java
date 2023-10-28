@@ -1,5 +1,6 @@
 package com.map.gaja.client.infrastructure.repository;
 
+import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
 import com.map.gaja.client.domain.model.ClientLocation;
@@ -40,7 +41,7 @@ class ClientBulkRepositoryTest {
 
         clientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = createClient(i, 0.003, group);
+            Client client = TestEntityCreator.createClient(i, 0.003, group);
             clientList.add(client);
         }
     }
@@ -58,16 +59,6 @@ class ClientBulkRepositoryTest {
                 .isDeleted(false)
                 .build();
         return createdGroup;
-    }
-
-    private Client createClient(int sigIdx, double pointSig, Group group) {
-        String sig = sigIdx+""+sigIdx;
-        String name = "사용자 " + sig;
-        String phoneNumber = "010-1111-" + sig;
-        ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
-        ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        Client client = new Client(name, phoneNumber, address, location, group);
-        return client;
     }
 
     private User createUser() {

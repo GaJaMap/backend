@@ -137,7 +137,7 @@ class ClientRequestValidatorTest {
 
     private static NewClientRequest createNormalRequest() {
         return new NewClientRequest(
-                "test", 1L, "010-0000-0000",
+                "test", 1L, "010-0000-0000", "test Memo",
                 new AddressDto(), new LocationDto(),
                 null, null
         );

@@ -11,19 +11,22 @@ import java.util.UUID;
 
 public class TestEntityCreator {
     public static Client createClient(int sigIdx, Group group) {
-        String sig = sigIdx+""+sigIdx;
-        double pointSig = 0.003;
+        return createClient(sigIdx, 0, group);
+    }
 
+    public static Client createClient(int sigIdx, double pointSig, Group group) {
+        String sig = sigIdx+""+sigIdx;
         String name = "사용자 " + sig;
         String phoneNumber = "010-1111-" + sig;
+        String memo = "Test Memo";
         ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
         ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        return new Client(name, phoneNumber, address, location, group);
+        return new Client(name, phoneNumber, memo, address, location, group);
     }
 
     public static Client createClientWithImage(String clientName, Group existingGroup, ClientImage existingImage) {
         return new Client(
-                clientName, null,
+                clientName, null, null,
                 new ClientAddress("Test Main Address", "Test Detail Address"),
                 new ClientLocation(35d, 125d),
                 existingGroup, existingImage

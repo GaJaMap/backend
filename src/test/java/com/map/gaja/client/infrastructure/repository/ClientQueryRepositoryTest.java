@@ -1,5 +1,6 @@
 package com.map.gaja.client.infrastructure.repository;
 
+import com.map.gaja.TestEntityCreator;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
@@ -53,13 +54,13 @@ class ClientQueryRepositoryTest {
 
         group1ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = createClient(i, 0.003, group1);
+            Client client = TestEntityCreator.createClient(i, 0.003, group1);
             group1ClientList.add(client);
         }
 
         group2ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = createClient(i, 0.005, group2);
+            Client client = TestEntityCreator.createClient(i, 0.005, group2);
             group2ClientList.add(client);
         }
         clientRepository.saveAll(group1ClientList);
@@ -67,16 +68,6 @@ class ClientQueryRepositoryTest {
 
         em.flush();
         em.clear();
-    }
-
-    private Client createClient(int sigIdx, double pointSig, Group group) {
-        String sig = sigIdx+""+sigIdx;
-        String name = "사용자 " + sig;
-        String phoneNumber = "010-1111-" + sig;
-        ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
-        ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        Client client = new Client(name, phoneNumber, address, location, group);
-        return client;
     }
 
     private Group createGroup(String groupName) {

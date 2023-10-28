@@ -1,5 +1,6 @@
 package com.map.gaja.client.apllication;
 
+import com.map.gaja.TestEntityCreator;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
@@ -42,7 +43,7 @@ class ClientAccessCheckServiceTest {
         em.persist(user);
         group = createGroup();
         em.persist(group);
-        client = createClient();
+        client = TestEntityCreator.createClient(1, group);
         em.persist(client);
     }
 
@@ -62,15 +63,6 @@ class ClientAccessCheckServiceTest {
                 .clientCount(0)
                 .isDeleted(false)
                 .build();
-    }
-
-    Client createClient() {
-        String sig = "1";
-        String name = "사용자 " + sig;
-        String phoneNumber = "010-1111-" + sig;
-        ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
-        ClientLocation location = new ClientLocation(35d, 125.0d);
-        return new Client(name, phoneNumber, address, location, group);
     }
 
     @Test

@@ -23,14 +23,14 @@ public class ClientRequestCreator {
 
     public static NewClientRequest createValidNewRequest(Long groupId) {
         return new NewClientRequest("테스트", groupId,
-                "010-1111-2222",
+                "010-1111-2222", "test Memo",
                 new AddressDto("서울특별시 중구 세종대로 110", "1동 100호"),
                 new LocationDto(34d,127d), null, true);
     }
 
     public static NewClientRequest createValidNewRequestWithImage(Long groupId) {
         return new NewClientRequest("테스트", groupId,
-                "010-1111-2222",
+                "010-1111-2222", "test Memo",
                 new AddressDto("서울특별시 중구 세종대로 110", "1동 100호"),
                 new LocationDto(34d,127d), null, false);
     }
@@ -81,6 +81,7 @@ public class ClientRequestCreator {
         mockRequest
                 .param("clientName", request.getClientName())
                 .param("phoneNumber", request.getPhoneNumber())
+                .param("memo", request.getMemo())
                 .param("groupId", String.valueOf(request.getGroupId()))
                 .param("mainAddress", request.getAddress().getMainAddress())
                 .param("detail", request.getAddress().getDetail())

@@ -24,7 +24,7 @@ class ClientImageUploadRequestCheckerTest {
     @Test
     @DisplayName("지원 O, 이미지 업로드 요청 O")
     void test2() {
-        NewClientRequest newClientRequest = new NewClientRequest("test", 1L, "010-1111-2222", mockAddress, mockLocation, null, false);
+        NewClientRequest newClientRequest = new NewClientRequest("test", 1L, "010-1111-2222", "test Memo", mockAddress, mockLocation, null, false);
         Object[] args ={newClientRequest, "sample", new Object()};
         boolean supported = requestChecker.isSupported(args);
         boolean isImageUploadingRequest = requestChecker.isImageUploadingRequest(args);
@@ -35,7 +35,7 @@ class ClientImageUploadRequestCheckerTest {
     @Test
     @DisplayName("지원 O, 이미지 업로드 요청 X")
     void test3() {
-        NewClientRequest newClientRequest = new NewClientRequest("test", 1L, "010-1111-2222", mockAddress, mockLocation, null, true);
+        NewClientRequest newClientRequest = new NewClientRequest("test", 1L, "010-1111-2222", "test Memo", mockAddress, mockLocation, null, true);
         Object[] args ={newClientRequest, "sample", new Object()};
         boolean supported = requestChecker.isSupported(args);
         boolean isImageUploadingRequest = requestChecker.isImageUploadingRequest(args);
