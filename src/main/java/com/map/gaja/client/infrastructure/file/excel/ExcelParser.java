@@ -19,18 +19,25 @@ import java.util.regex.Pattern;
 public class ExcelParser {
     private static final int MAXIMUM_EXCEL_ROW_DATA = 200;
     private static final int DATA_START_ROW_INDEX = 1;
-    private static final int NAME_DATA_CELL_INDEX = 0;
-    private static final int PHONE_NUMBER_DATA_CELL_INDEX = 1;
-    private static final int ADDRESS_DATA_CELL_INDEX = 2;
-    private static final int ADDRESS_DETAIL_DATA_CELL_INDEX = 3;
-
     private static final int APP_TO_EXCEL_IDX = 1;
 
-    private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
-    private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
-    private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
-    private static final int DETAIL_LENGTH_LIMIT = 20;
-    private static final int NAME_LENGTH_LIMIT = 20;
+
+    private static class CellIndexConst {
+        private static final int NAME = 0;
+        private static final int PHONE_NUMBER = 1;
+        private static final int ADDRESS = 2;
+        private static final int ADDRESS_DETAIL = 3;
+        private static final int MEMO = 4;
+    }
+
+    private static class ValidConst {
+        private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
+        private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
+        private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
+        private static final int DETAIL_LENGTH_LIMIT = 20;
+        private static final int NAME_LENGTH_LIMIT = 20;
+        private static final int MEMO_LENGTH_LIMIT = 200;
+    }
 
     @AllArgsConstructor
     static class RowData {
