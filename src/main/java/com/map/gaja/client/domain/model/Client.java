@@ -20,6 +20,9 @@ public class Client extends BaseTimeEntity {
 
     private String phoneNumber;
 
+    @Column(columnDefinition = "TEXT")
+    private String memo;
+
     @Embedded
     private ClientAddress address;
 
