@@ -56,15 +56,4 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web
-                .httpFirewall(defaultHttpFirewall()); // 더블 슬래쉬 요청 허용
-    }
-
-    @Bean
-    public HttpFirewall defaultHttpFirewall() {
-        return new DefaultHttpFirewall();
-    }
-
 }
