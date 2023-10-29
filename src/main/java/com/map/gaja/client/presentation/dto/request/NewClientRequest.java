@@ -29,7 +29,7 @@ public class NewClientRequest {
     private Long groupId;
 
     @Pattern(regexp = "^[0-9]{7,12}$", message = "전화번호 형식 오류입니다. 하이픈(-)이 없고, 길이 7이상 12 이하의 숫자 문자열")
-    @Schema(description = "전화번호", example = "010-1111-2222")
+    @Schema(description = "전화번호", example = "01011112222")
     private String phoneNumber;
 
     @Valid
