@@ -47,6 +47,7 @@ class ExcelParserTest {
 
         assertThat(clientExcelData.size()).isEqualTo(5);
         clientExcelData.forEach(data -> {
+            System.out.println(data);
             assertFalse(data.getIsValid());
         });
     }
