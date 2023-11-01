@@ -216,7 +216,7 @@ public class ClientService {
             savedClient.add(dtoToEntity(clientData, group));
         });
 
-        increasingClientService.increase(group, group.getUser().getAuthority(), savedClient.size());
+        increasingClientService.increase(group, authority.get(0), savedClient.size());
         clientBulkRepository.saveClientWithGroup(group, savedClient);
     }
 
