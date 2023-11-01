@@ -7,9 +7,9 @@ import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
+import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
@@ -18,6 +18,7 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +53,7 @@ class ClientServiceTest {
     GroupQueryRepository groupQueryRepository;
     IncreasingClientService increasingClientService = new IncreasingClientService();
     @Mock
-    S3UrlGenerator s3UrlGenerator;
+    CurrentSecurityUserGetter securityUserGetter;
 
     Long clientId = 1L;
     Long groupId = 1L;
@@ -76,7 +77,8 @@ class ClientServiceTest {
                 groupRepository,
                 groupQueryRepository,
                 clientQueryRepository,
-                increasingClientService
+                increasingClientService,
+                securityUserGetter
         );
 
         user = TestEntityCreator.createUser(email);
@@ -271,7 +273,8 @@ class ClientServiceTest {
         when(groupQueryRepository.findGroupWithUser(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
 
-        clientService.saveClientExcelData(existingGroup.getId(), excelData);
+
+        clientService.saveClientExcelData(existingGroup.getId(), excelData, List.of(Authority.FREE));
 
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + excelData.size());
     }
