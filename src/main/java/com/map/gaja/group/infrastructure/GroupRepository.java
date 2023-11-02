@@ -65,6 +65,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      * 비관적 락은 건 Group 조회
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT g FROM Group g WHERE g.id = :groupId")
+    @Query("SELECT g FROM Group g WHERE g.id = :groupId AND g.isDeleted = false")
     Optional<Group> findGroupByIdForUpdate(@Param(value = "groupId") Long groupId);
 }

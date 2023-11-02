@@ -52,7 +52,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query("SELECT c FROM Client c " +
             "JOIN FETCH c.group g " +
             "LEFT JOIN FETCH c.clientImage ci " +
-            "WHERE c.id = :clientId")
+            "WHERE c.id = :clientId AND g.isDeleted = false")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Client> findClientWithGroupForUpdate(long clientId);
 }
