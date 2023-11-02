@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class ExcelParser {
-    private static final int MAXIMUM_EXCEL_ROW_DATA = 200;
+    private static final int MAXIMUM_EXCEL_ROW_DATA = 1000;
     private static final int DATA_START_ROW_INDEX = 1;
     private static final int NAME_DATA_CELL_INDEX = 0;
     private static final int PHONE_NUMBER_DATA_CELL_INDEX = 1;
