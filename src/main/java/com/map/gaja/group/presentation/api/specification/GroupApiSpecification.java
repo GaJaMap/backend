@@ -22,7 +22,7 @@ public interface GroupApiSpecification {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
     ResponseEntity<Long> create(
-            @Schema(hidden = true) String email,
+            @Schema(hidden = true) Long userId,
             GroupCreateRequest request
     );
 
@@ -47,7 +47,7 @@ public interface GroupApiSpecification {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "422", description = "존재하지 않은 그룹이거나 사용자의 그룹이 아닙니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
-    ResponseEntity<Void> delete(@Parameter(hidden = true) String email, Long groupId);
+    ResponseEntity<Void> delete(@Parameter(hidden = true) Long userId, Long groupId);
 
     @Operation(summary = "그룹 수정",
             parameters = {

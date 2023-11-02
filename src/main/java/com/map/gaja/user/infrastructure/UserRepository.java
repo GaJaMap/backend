@@ -35,6 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * CUD를 위한 유저 lock 조회
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT u FROM User u WHERE u.email = :email AND u.active = true")
-    Optional<User> findByEmailAndActiveWithLock(@Param(value = "email") String email);
+    @Query("SELECT u FROM User u WHERE u.id = :userId AND u.active = true")
+    Optional<User> findByEmailAndActiveWithLock(@Param(value = "userId") Long userId);
 }

@@ -27,10 +27,10 @@ public class GroupController implements GroupApiSpecification {
     @Override
     @PostMapping
     public ResponseEntity<Long> create(
-            @AuthenticationPrincipal(expression = "name") String email,
+            @AuthenticationPrincipal(expression = "userId") Long userId,
             @Valid @RequestBody GroupCreateRequest request
     ) {
-        Long groupId = groupService.create(email, request);
+        Long groupId = groupService.create(userId, request);
 
         return new ResponseEntity<>(groupId, HttpStatus.CREATED);
     }
@@ -45,8 +45,8 @@ public class GroupController implements GroupApiSpecification {
 
     @Override
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal(expression = "name") String email, @PathVariable Long groupId) {
-        groupService.delete(email, groupId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal(expression = "userId") Long userId, @PathVariable Long groupId) {
+        groupService.delete(userId, groupId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
