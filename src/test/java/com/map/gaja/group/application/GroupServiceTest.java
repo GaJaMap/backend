@@ -49,9 +49,9 @@ class GroupServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> groupService.create(email, groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
+        assertThatThrownBy(() -> groupService.create(user.getId(), groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
     }
 
     @Test
@@ -61,10 +61,10 @@ class GroupServiceTest {
         GroupCreateRequest groupCreateRequest = new GroupCreateRequest("group");
         User user = new User(email);
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupRepository.save(any())).thenReturn(new Group("group", user));
 
-        Long groupId = groupService.create(email, groupCreateRequest);
+        Long groupId = groupService.create(user.getId(), groupCreateRequest);
 
         verify(groupRepository, times(1)).save(any());
         assertEquals(1, user.getGroupCount());
@@ -83,10 +83,10 @@ class GroupServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(1);
 
-        groupService.delete(email, 1L);
+        groupService.delete(user.getId(), 1L);
 
         assertEquals(0, user.getGroupCount());
 
@@ -106,11 +106,11 @@ class GroupServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(0);
 
         assertThatThrownBy(() -> {
-            groupService.delete(email, 1L);
+            groupService.delete(user.getId(), 1L);
         })
                 .isInstanceOf(GroupNotFoundException.class);
 
