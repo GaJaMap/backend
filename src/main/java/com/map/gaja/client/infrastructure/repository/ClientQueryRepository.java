@@ -94,6 +94,19 @@ public class ClientQueryRepository {
     }
 
     /**
+     * Client - ClientImage 패치조인
+     */
+    public Optional<Client> findClientWithImage(long clientId) {
+        Client result = query
+                .selectFrom(client)
+                .leftJoin(client.clientImage, clientImage)
+                .where(client.id.eq(clientId))
+                .fetchJoin().fetchOne();
+
+        return Optional.ofNullable(result);
+    }
+
+    /**
      * Group 내에 있는 Client 조회
      *
      * @param groupId

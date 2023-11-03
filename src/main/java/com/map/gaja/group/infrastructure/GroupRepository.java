@@ -5,11 +5,13 @@ import com.map.gaja.group.presentation.dto.response.GroupInfo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
@@ -57,4 +59,12 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      */
     @Query("SELECT g.id as groupId, g.name as groupName, g.clientCount as clientCount FROM Group g WHERE g.id = :groupId AND g.isDeleted = false")
     Optional<GroupInfo> findGroupInfoById(@Param(value = "groupId") Long groupId);
+
+    /**
+     * Client C(R)UD시에 Group.clientCount 동시성 문제를 해결하기 위해
+     * 비관적 락은 건 Group 조회
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT g FROM Group g WHERE g.id = :groupId AND g.isDeleted = false")
+    Optional<Group> findGroupByIdForUpdate(@Param(value = "groupId") Long groupId);
 }

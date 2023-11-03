@@ -2,12 +2,15 @@ package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
@@ -41,4 +44,15 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query(value = "DELETE FROM client c USING group_set g WHERE g.is_deleted = true", nativeQuery = true)
     @Transactional
     int deleteClientsInDeletedGroup();
+
+    /**
+     * Client C(R)UD시에 Group.clientCount 동시성 문제를 해결하기 위해
+     * Client와 관련된 Group, ClientImage를 비관적 락을 걸어서 조회
+     */
+    @Query("SELECT c FROM Client c " +
+            "JOIN FETCH c.group g " +
+            "LEFT JOIN FETCH c.clientImage ci " +
+            "WHERE c.id = :clientId AND g.isDeleted = false")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Client> findClientWithGroupForUpdate(long clientId);
 }

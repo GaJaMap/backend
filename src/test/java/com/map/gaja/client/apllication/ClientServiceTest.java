@@ -4,12 +4,11 @@ import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
-import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
+import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
@@ -18,6 +17,7 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,11 +48,9 @@ class ClientServiceTest {
     private GroupRepository groupRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
-    @Mock
-    GroupQueryRepository groupQueryRepository;
     IncreasingClientService increasingClientService = new IncreasingClientService();
     @Mock
-    S3UrlGenerator s3UrlGenerator;
+    CurrentSecurityUserGetter securityUserGetter;
 
     Long clientId = 1L;
     Long groupId = 1L;
@@ -74,9 +72,9 @@ class ClientServiceTest {
                 clientRepository,
                 clientBulkRepository,
                 groupRepository,
-                groupQueryRepository,
                 clientQueryRepository,
-                increasingClientService
+                increasingClientService,
+                securityUserGetter
         );
 
         user = TestEntityCreator.createUser(email);
@@ -93,7 +91,8 @@ class ClientServiceTest {
         Integer clientCount = 1;
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
-        when(groupQueryRepository.findGroupWithUser(any())).thenReturn(Optional.ofNullable(existingGroup));
+        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(groupRepository.findGroupByIdForUpdate(any())).thenReturn(Optional.ofNullable(existingGroup));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
             Client savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
             ReflectionTestUtils.setField(savedClient, "id", clientId);
@@ -116,9 +115,12 @@ class ClientServiceTest {
 
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
-        when(clientQueryRepository.findClientWithGroup(anyLong()))
+        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(clientRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
-        when(groupQueryRepository.findGroupWithUser(anyLong()))
+        when(groupRepository.findGroupByIdForUpdate(existingClient.getGroup().getId()))
+                .thenReturn(Optional.ofNullable(existingGroup));
+        when(groupRepository.findGroupByIdForUpdate(changedGroupId))
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
@@ -139,7 +141,7 @@ class ClientServiceTest {
         StoredFileDto updatedImageFile = new StoredFileDto(updatedImageFilePath, "ddd");
         NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
 
-        when(clientQueryRepository.findClientWithGroup(anyLong()))
+        when(clientQueryRepository.findClientWithImage(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
@@ -158,7 +160,7 @@ class ClientServiceTest {
     public void updateClientWithBasicImageTest() throws Exception {
         // given
         NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
-        when(clientQueryRepository.findClientWithGroup(anyLong()))
+        when(clientQueryRepository.findClientWithImage(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
@@ -177,9 +179,13 @@ class ClientServiceTest {
         // given
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, existingName);
 
-        when(clientQueryRepository.findClientWithGroup(existingClientId))
+        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(clientQueryRepository.findClientWithImage(existingClientId))
                 .thenReturn(Optional.ofNullable(existingClient));
-        when(groupQueryRepository.findGroupWithUser(changedGroupId))
+
+        when(groupRepository.findGroupByIdForUpdate(existingClient.getGroup().getId()))
+                .thenReturn(Optional.ofNullable(existingGroup));
+        when(groupRepository.findGroupByIdForUpdate(changedGroupId))
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         int existingGroupClientCount = existingGroup.getClientCount();
@@ -200,7 +206,7 @@ class ClientServiceTest {
     @Test
     @DisplayName("Client 삭제 테스트")
     void deleteClientTest() {
-        when(clientQueryRepository.findClientWithGroup(anyLong()))
+        when(clientRepository.findClientWithGroupForUpdate(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         clientService.deleteClient(clientId);
@@ -212,7 +218,7 @@ class ClientServiceTest {
     @DisplayName("Client-Image 삭제 테스트")
     void deleteClientWithImageTest() {
         ClientImage savedImage = existingClient.getClientImage();
-        when(clientQueryRepository.findClientWithGroup(anyLong()))
+        when(clientRepository.findClientWithGroupForUpdate(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         clientService.deleteClient(clientId);
@@ -227,7 +233,9 @@ class ClientServiceTest {
         NewClientRequest request = createChangeRequest(existingGroup.getId(), "New Name");
         StoredFileDto storedFileDto = new StoredFileDto(clientImage.getSavedPath(), clientImage.getOriginalName());
         int beforeClientCount = existingGroup.getClientCount();
-        when(groupQueryRepository.findGroupWithUser(existingGroup.getId()))
+
+        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
             Client savedClient = invocation.getArgument(0);
@@ -246,7 +254,9 @@ class ClientServiceTest {
     void saveSimpleClientListTest() {
         List<SimpleNewClientRequest> clients = createSimpleClientRequestSize3();
         long beforeClientCount = existingGroup.getClientCount();
-        when(groupQueryRepository.findGroupWithUser(existingGroup.getId()))
+
+        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
         when(clientRepository.saveAll(any())).thenAnswer(invocation -> {
             List<Client> savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
@@ -268,10 +278,11 @@ class ClientServiceTest {
     void saveClientExcelDataTest() {
         List<ClientExcelDto> excelData = createExcelDataSize3();
         long beforeClientCount = existingGroup.getClientCount();
-        when(groupQueryRepository.findGroupWithUser(existingGroup.getId()))
+        when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
 
-        clientService.saveClientExcelData(existingGroup.getId(), excelData);
+
+        clientService.saveClientExcelData(existingGroup.getId(), excelData, List.of(Authority.FREE));
 
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + excelData.size());
     }
@@ -281,7 +292,7 @@ class ClientServiceTest {
     void deleteBulkClientTest() {
         int beforeClientSize = 4;
         Group size4Group = TestEntityCreator.createGroup(user, 1L, "Test Group", beforeClientSize);
-        when(groupRepository.findById(size4Group.getId()))
+        when(groupRepository.findGroupByIdForUpdate(size4Group.getId()))
                 .thenReturn(Optional.ofNullable(size4Group));
         List<Long> size3ClientIds = getSize3ClientIds();
         int deletedClientSize = size3ClientIds.size();
