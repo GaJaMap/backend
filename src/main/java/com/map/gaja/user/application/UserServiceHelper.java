@@ -37,7 +37,7 @@ public final class UserServiceHelper {
      * Lock과 함께 유저 조회
      */
     public static User findByEmailAndActiveWithLock(UserRepository userRepository, Long userId) {
-        return userRepository.findByEmailAndActiveWithLock(userId)
+        return userRepository.findByEmailAndActiveForUpdate(userId)
                 .orElseThrow(() -> {
                     throw new UserNotFoundException();
                 });

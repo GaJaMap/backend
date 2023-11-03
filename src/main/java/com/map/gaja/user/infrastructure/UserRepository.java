@@ -36,5 +36,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT u FROM User u WHERE u.id = :userId AND u.active = true")
-    Optional<User> findByEmailAndActiveWithLock(@Param(value = "userId") Long userId);
+    Optional<User> findByEmailAndActiveForUpdate(@Param(value = "userId") Long userId);
 }

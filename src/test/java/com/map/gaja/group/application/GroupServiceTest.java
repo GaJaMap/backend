@@ -49,7 +49,7 @@ class GroupServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        when(userRepository.findByEmailAndActiveWithLock(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
 
         assertThatThrownBy(() -> groupService.create(user.getId(), groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
     }
@@ -61,7 +61,7 @@ class GroupServiceTest {
         GroupCreateRequest groupCreateRequest = new GroupCreateRequest("group");
         User user = new User(email);
 
-        when(userRepository.findByEmailAndActiveWithLock(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupRepository.save(any())).thenReturn(new Group("group", user));
 
         Long groupId = groupService.create(user.getId(), groupCreateRequest);
@@ -83,7 +83,7 @@ class GroupServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        when(userRepository.findByEmailAndActiveWithLock(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(1);
 
         groupService.delete(user.getId(), 1L);
@@ -106,7 +106,7 @@ class GroupServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        when(userRepository.findByEmailAndActiveWithLock(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(0);
 
         assertThatThrownBy(() -> {
