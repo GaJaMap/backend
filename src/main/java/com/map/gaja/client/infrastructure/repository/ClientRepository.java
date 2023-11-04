@@ -41,7 +41,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
      * 삭제된 그룹에 속한 클라이언트 전부 삭제
      */
     @Modifying
-    @Query(value = "DELETE FROM client c USING group_set g WHERE g.is_deleted = true", nativeQuery = true)
+    @Query(value = "DELETE FROM client c USING group_set g WHERE c.group_id = g.group_id AND g.is_deleted = true", nativeQuery = true)
     @Transactional
     int deleteClientsInDeletedGroup();
 
