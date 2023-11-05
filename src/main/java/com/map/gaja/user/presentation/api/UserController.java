@@ -38,15 +38,15 @@ public class UserController implements UserApiSpecification {
 
     @Override
     @DeleteMapping
-    public ResponseEntity<Void> withdrawal(@AuthenticationPrincipal(expression = "name") String email, HttpSession session) {
-        userService.withdrawal(email);
+    public ResponseEntity<Void> withdrawal(@AuthenticationPrincipal(expression = "userId") Long userId, HttpSession session) {
+        userService.withdrawal(userId);
         session.invalidate();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/auto-login")
-    public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "name") String email) {
+    public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "email") String email) {
         AutoLoginResponse response = autoLoginProcessor.process(email);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

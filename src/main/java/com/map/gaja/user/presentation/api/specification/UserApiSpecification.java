@@ -49,7 +49,7 @@ public interface UserApiSpecification {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             }
     )
-    ResponseEntity<Void> withdrawal(@Parameter(hidden = true) String email, HttpSession session);
+    ResponseEntity<Void> withdrawal(@Parameter(hidden = true) Long userId, HttpSession session);
 
     @Operation(summary = "앱 자동로그인 처리(앱 실행할 때마다 요청)",
             parameters = {
