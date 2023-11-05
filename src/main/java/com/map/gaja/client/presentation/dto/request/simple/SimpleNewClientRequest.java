@@ -18,7 +18,7 @@ public class SimpleNewClientRequest {
     @Schema(description = "고객 이름", example = "홍길동")
     private String clientName;
 
-    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "전화번호 형식 오류입니다.")
-    @Schema(description = "전화번호", example = "010-1111-2222")
+    @Pattern(regexp = "^[0-9]{7,12}$", message = "전화번호 형식 오류입니다. 하이픈(-)이 없고, 길이 7이상 12 이하의 숫자 문자열")
+    @Schema(description = "전화번호", example = "01011112222")
     private String phoneNumber;
 }

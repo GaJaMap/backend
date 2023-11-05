@@ -84,7 +84,7 @@ public class ClientPutControllerTest {
 
         StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
         when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
-        doThrow(new ClientNotFoundException()).when(clientService).updateClientWithNewImage(any(),any(), any());
+        doThrow(new ClientNotFoundException()).when(clientService).updateClientWithNewImage(any(), any(),any());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());

@@ -16,8 +16,7 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientLocation {
-    @Column(columnDefinition = "GEOMETRY SRID 4326") // MySQL
-//    @Column(columnDefinition = "geometry(Point, 4326)") // PostgreSQL
+    @Column(columnDefinition = "geometry(Point, 4326)") // PostgreSQL
     private Point location;
 
     public ClientLocation(double latitude, double longitude) {

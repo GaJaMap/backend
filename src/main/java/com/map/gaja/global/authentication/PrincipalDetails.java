@@ -13,14 +13,14 @@ public class PrincipalDetails extends SessionDetails implements UserDetails, OAu
     private String authority;
     private Map<String, Object> attributes;
 
-    public PrincipalDetails(String email, String authority) {
-        super("APP");
+    public PrincipalDetails(Long userId, String email, String authority) {
+        super(userId, "APP");
         this.email = email;
         this.authority = authority;
     }
 
-    public PrincipalDetails(String email, String authority, Map<String, Object> attributes) {
-        super("WEB");
+    public PrincipalDetails(Long userId, String email, String authority, Map<String, Object> attributes) {
+        super(userId, "WEB");
         this.email = email;
         this.authority = authority;
         this.attributes = attributes;

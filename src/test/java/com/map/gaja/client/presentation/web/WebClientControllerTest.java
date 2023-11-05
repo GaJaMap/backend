@@ -7,10 +7,12 @@ import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
+import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.location.LocationResolver;
+import com.map.gaja.user.domain.model.Authority;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,6 +67,9 @@ class WebClientControllerTest {
     @MockBean
     FileValidator fileValidator;
 
+    @MockBean
+    CurrentSecurityUserGetter userGetter;
+
     @Autowired
     ObjectMapper om;
 
@@ -85,6 +90,7 @@ class WebClientControllerTest {
         int successSize = successList.size();
         when(excelParser.parseClientExcelFile(any())).thenReturn(successList);
         when(locationResolver.convertToCoordinatesAsync(successList)).thenReturn(Mono.empty());
+        when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         /*
             doAnswer(invocation -> {
                 List<ClientExcelData> data = invocation.getArgument(0);
@@ -99,11 +105,11 @@ class WebClientControllerTest {
                 .file("excelFile", mockFile.getBytes())
                 .with(csrf())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")))
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")))
                 .param("groupId", String.valueOf(groupId));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientService, times(1)).saveClientExcelData(groupId, successList);
+        verify(clientService, times(1)).saveClientExcelData(groupId, successList, List.of(Authority.FREE));
     }
 
     @Test
@@ -117,12 +123,13 @@ class WebClientControllerTest {
         failList.add(createInvalidClientExcelData(failIdx1));
         failList.add(createInvalidClientExcelData(failIdx2));
         when(excelParser.parseClientExcelFile(any())).thenReturn(failList);
+        when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.multipart(testUrl)
                 .file("excelFile", mockFile.getBytes())
                 .with(csrf())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails("test@gmail.com", "FREE")))
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")))
                 .param("groupId", String.valueOf(groupId));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest())

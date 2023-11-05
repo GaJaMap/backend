@@ -22,13 +22,13 @@ public class WebUserLoginController {
         return "login";
     }
 
-    @PostMapping("/testLogin")
-    public String loginSuccess(String loginEmail) {
-        // 임시 로그인
-        System.out.println(loginEmail);
-        User user = userRepository.findByEmailAndActive(loginEmail).get();
-
-        authenticationHandler.saveContext(loginEmail, user.getAuthority().toString());
-        return "redirect:/";
-    }
+//    @PostMapping("/testLogin")
+//    public String loginSuccess(String loginEmail) {
+//        // 임시 로그인
+//        System.out.println(loginEmail);
+//        User user = userRepository.findByEmailAndActive(loginEmail).get();
+//
+//        authenticationHandler.saveContext(user.getId(), loginEmail, user.getAuthority().toString());
+//        return "redirect:/";
+//    }
 }

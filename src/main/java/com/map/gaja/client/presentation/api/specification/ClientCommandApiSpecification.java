@@ -62,6 +62,7 @@ public interface ClientCommandApiSpecification {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientOverviewResponse.class))),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ValidationErrorResponse.class)))),
+                    @ApiResponse(responseCode = "403", description = "Free 등급 사용자 이미지 업로드 제한", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "415", description = "서버에서 지원하지 않는 파일 형식", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "422", description = "사용자에게 요청 그룹이 없거나, 그룹에 요청 고객이 없음 <br> 또는 그룹 내에 사용자 수보다 많은 사용자를 제거할 수 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류로 이미지 저장 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
@@ -82,6 +83,7 @@ public interface ClientCommandApiSpecification {
             responses = {
                     @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = ClientOverviewResponse.class))),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ValidationErrorResponse.class)))),
+                    @ApiResponse(responseCode = "403", description = "그룹 제한 고객 수 초과 or Free 등급 사용자 이미지 업로드 제한", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "415", description = "서버에서 지원하지 않는 파일 형식", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "422", description = "사용자에게 요청 그룹이 없거나, 그룹에 요청 고객이 없음 <br> 또는 그룹 내에 사용자 수보다 많은 사용자를 등록할 수 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류로 이미지 저장 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))

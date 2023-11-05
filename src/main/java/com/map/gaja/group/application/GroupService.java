@@ -20,19 +20,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
+import static com.map.gaja.user.application.UserServiceHelper.*;
 
 @Service
 @RequiredArgsConstructor
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-    private final ClientRepository clientRepository;
     private final GroupQueryRepository groupQueryRepository;
 
     @Transactional
-    public Long create(String email, GroupCreateRequest request) {
-        User user = findByEmailAndActive(userRepository, email);
+    public Long create(Long userId, GroupCreateRequest request) {
+        User user = findByEmailAndActiveWithLock(userRepository, userId);
 
         user.checkCreateGroupPermission();
 
@@ -48,10 +47,8 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public GroupResponse findGroups(String email, Pageable pageable) {
-        User user = findByEmailAndActive(userRepository, email);
-
-        Slice<GroupInfo> groupInfos = groupRepository.findGroupByUserId(user.getId(), pageable);
+    public GroupResponse findGroups(Long userId, Pageable pageable) {
+        Slice<GroupInfo> groupInfos = groupRepository.findGroupByUserId(userId, pageable);
 
         return new GroupResponse(groupInfos.hasNext(), groupInfos.getContent());
     }
@@ -68,12 +65,12 @@ public class GroupService {
     }
 
     @Transactional
-    public void delete(String email, Long groupId) {
-        User user = findByEmailAndActive(userRepository, email);
+    public void delete(Long userId, Long groupId) {
+        User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, user.getId());
+        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, userId);
 
-        if (deletedGroupCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
+        if (deletedGroupCount == 0) { //삭제된 그룹이 없다면 존재하지 않은 그룹이거나 userId가 다른 그룹일 가능성이 있음
             throw new GroupNotFoundException();
         }
 
@@ -81,10 +78,8 @@ public class GroupService {
     }
 
     @Transactional
-    public void updateName(String email, Long groupId, GroupUpdateRequest request) {
-        User user = findByEmailAndActive(userRepository, email);
-
-        Group group = groupRepository.findByIdAndUserId(groupId, user.getId())
+    public void updateName(Long userId, Long groupId, GroupUpdateRequest request) {
+        Group group = groupRepository.findByIdAndUserId(groupId, userId)
                 .orElseThrow(GroupNotFoundException::new);
         group.updateName(request.getName());
     }

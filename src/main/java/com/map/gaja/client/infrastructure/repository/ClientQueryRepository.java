@@ -32,7 +32,7 @@ import static com.map.gaja.user.domain.model.QUser.*;
 @RequiredArgsConstructor
 public class ClientQueryRepository {
     private final JPAQueryFactory query;
-    private final NativeSqlCreator mysqlNativeSQLCreator;
+    private final NativeSqlCreator nativeSQLCreator;
 
     /**
      * 반경 검색 동적 쿼리
@@ -94,6 +94,19 @@ public class ClientQueryRepository {
     }
 
     /**
+     * Client - ClientImage 패치조인
+     */
+    public Optional<Client> findClientWithImage(long clientId) {
+        Client result = query
+                .selectFrom(client)
+                .leftJoin(client.clientImage, clientImage)
+                .where(client.id.eq(clientId))
+                .fetchJoin().fetchOne();
+
+        return Optional.ofNullable(result);
+    }
+
+    /**
      * Group 내에 있는 Client 조회
      *
      * @param groupId
@@ -120,13 +133,16 @@ public class ClientQueryRepository {
         }
 
         LocationDto currentLocation = locationSearchCond.getLocation();
-        return getCalcDistanceWithNativeSQL(currentLocation)
-                .loe(locationSearchCond.getRadius());
+        ClientLocation tempLocation = new ClientLocation(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+        return nativeSQLCreator
+                .createRadiusSearchExpression(tempLocation.getLocation(), client.location.location, locationSearchCond.getRadius())
+                .eq(true);
     }
 
     private NumberExpression<Double> getCalcDistanceWithNativeSQL(LocationDto currentLocation) {
         ClientLocation clientLocation = new ClientLocation(currentLocation.getLatitude(), currentLocation.getLongitude());
-        return mysqlNativeSQLCreator.createCalcDistanceSQL(clientLocation.getLocation(), client.location.location);
+        return nativeSQLCreator.createDistanceCalculationExpression(clientLocation.getLocation(), client.location.location);
     }
 
     private BooleanExpression nameContains(String nameCond) {

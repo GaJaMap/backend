@@ -17,19 +17,20 @@ import java.util.regex.Pattern;
 
 @Component
 public class ExcelParser {
-    private static final int MAXIMUM_EXCEL_ROW_DATA = 200;
-    private static final int DATA_START_ROW_INDEX = 1;
-    private static final int NAME_DATA_CELL_INDEX = 0;
-    private static final int PHONE_NUMBER_DATA_CELL_INDEX = 1;
-    private static final int ADDRESS_DATA_CELL_INDEX = 2;
-    private static final int ADDRESS_DETAIL_DATA_CELL_INDEX = 3;
+    private static final int MAXIMUM_EXCEL_ROW_DATA = 1000;
+    private static final int DATA_START_ROW_INDEX = 2;
+    private static final int DATA_START_CELL_INDEX = 1;
+    private static final int NAME_DATA_CELL_INDEX = 0 + DATA_START_CELL_INDEX;
+    private static final int PHONE_NUMBER_DATA_CELL_INDEX = 1 + DATA_START_CELL_INDEX;
+    private static final int ADDRESS_DATA_CELL_INDEX = 2 + DATA_START_CELL_INDEX;
+    private static final int ADDRESS_DETAIL_DATA_CELL_INDEX = 3 + DATA_START_CELL_INDEX;
 
-    private static final int APP_TO_EXCEL_IDX = 1;
+    private static final int APP_TO_EXCEL_IDX = -1;
 
-    private static final String PHONE_NUMBER_PATTERN = "^\\d{2,3}-\\d{3,4}-\\d{4}$";
+    private static final String PHONE_NUMBER_PATTERN = "^[0-9]{7,12}$";
     private static final int ADDRESS_LENGTH_MIN_LIMIT = 10;
     private static final int ADDRESS_LENGTH_MAX_LIMIT = 40;
-    private static final int DETAIL_LENGTH_LIMIT = 20;
+    private static final int DETAIL_LENGTH_LIMIT = 40;
     private static final int NAME_LENGTH_LIMIT = 20;
 
     @AllArgsConstructor
@@ -113,7 +114,7 @@ public class ExcelParser {
             return null;
         }
 
-        return cell.getStringCellValue();
+        return cell.getStringCellValue().replace("-", "");
     }
 
     private Workbook getWorkBook(String extension, InputStream excelStream) throws IOException {

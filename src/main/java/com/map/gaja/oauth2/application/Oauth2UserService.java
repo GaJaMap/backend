@@ -38,7 +38,7 @@ public class Oauth2UserService implements OAuth2UserService<OAuth2UserRequest, O
 
         sessionHandler.deduplicate(email, "WEB"); //중복 세션 제거
 
-        return new PrincipalDetails(user.getEmail(), user.getAuthority().name(), attributes);
+        return new PrincipalDetails(user.getId(), user.getEmail(), user.getAuthority().name(), attributes);
 
     }
 

@@ -27,37 +27,37 @@ public class GroupController implements GroupApiSpecification {
     @Override
     @PostMapping
     public ResponseEntity<Long> create(
-            @AuthenticationPrincipal(expression = "name") String email,
+            @AuthenticationPrincipal(expression = "userId") Long userId,
             @Valid @RequestBody GroupCreateRequest request
     ) {
-        Long groupId = groupService.create(email, request);
+        Long groupId = groupService.create(userId, request);
 
         return new ResponseEntity<>(groupId, HttpStatus.CREATED);
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal(expression = "name") String email, @PageableDefault Pageable pageable) {
-        GroupResponse response = groupService.findGroups(email, pageable);
+    public ResponseEntity<GroupResponse> read(@AuthenticationPrincipal(expression = "userId") Long userId, @PageableDefault(size = 100) Pageable pageable) {
+        GroupResponse response = groupService.findGroups(userId, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal(expression = "name") String email, @PathVariable Long groupId) {
-        groupService.delete(email, groupId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal(expression = "userId") Long userId, @PathVariable Long groupId) {
+        groupService.delete(userId, groupId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     @PutMapping("/{groupId}")
     public ResponseEntity<Void> update(
-            @AuthenticationPrincipal(expression = "name") String email,
+            @AuthenticationPrincipal(expression = "userId") Long userId,
             @PathVariable Long groupId,
             @Valid @RequestBody GroupUpdateRequest request
     ) {
-        groupService.updateName(email, groupId, request);
+        groupService.updateName(userId, groupId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
