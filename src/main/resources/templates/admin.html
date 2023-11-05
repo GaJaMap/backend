@@ -1,0 +1,32 @@
+ <!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/header :: header">
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+<div class="container">
+
+    <div th:replace="admin/fragments/bodyHeader :: bodyHeader" />
+
+    <div class="jumbotron">
+        <h1>가자맵 관리자</h1>
+        <p class="lead">관리자 기능</p>
+        <p>
+            <a class="btn btn-lg btn-secondary" href="/admin/inquiry">문의 조회</a>
+            <a class="btn btn-lg btn-secondary" href="/admin/suggestion">제안 조회</a>
+        </p>
+        <p>
+            <a class="btn btn-lg btn-dark" href="/admin/notice">공지 조회</a>
+            <a class="btn btn-lg btn-dark" href="/admin/notice/add">공지 작성</a>
+        </p>
+    </div>
+
+    <div th:replace="admin/fragments/footer :: footer" />
+
+</div> <!-- /container -->
+
+</body>
+</html>

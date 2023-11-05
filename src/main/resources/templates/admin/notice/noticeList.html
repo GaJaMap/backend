@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/header :: header"/>
+<body>
+
+<div class="container">
+
+    <div th:replace="admin/fragments/bodyHeader :: bodyHeader"/>
+
+    <div>
+        <div>
+            <form class="d-inline-flex">
+                <div class="form-group mx-sm-1 mb-2">
+                    <input type="text" class="form-control" placeholder="제목"/>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">검색</button>
+                <button type="button" class="btn btn-secondary mx-sm-2 mb-2"
+                        onclick="location.href='/admin/notice/add'">
+                    공지 작성
+                </button>
+
+            </form>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>제목</th>
+                <th>일시</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="notice : ${noticeList}">
+                <td th:text="${notice.id}"></td>
+                <td><a th:text="${notice.title}" th:href="|/admin/notice/${notice.id}|" ></a></td>
+                <td th:text="${#temporals.format(notice.noticeTime, 'yyyy-MM-dd HH:mm')}"></td>
+
+<!--                <td>-->
+<!--                    <a th:if="${notice.status.name() == 'ORDER'}" href="#" th:href="'javascript:cancel('+${notice.id}+')'"-->
+<!--                       class="btn btn-danger">CANCEL</a>-->
+<!--                </td>-->
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="admin/fragments/footer :: footer"/>
+
+</div> <!-- /container -->
+
+</body>
+<script>
+    function cancel(id) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/orders/" + id + "/cancel");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</html>

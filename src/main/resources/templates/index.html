@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>가자맵 엑셀 추가</title>
@@ -103,6 +103,9 @@
                         <strong>엑셀로 사용자 등록하기</strong>
                     </h2>
                     <p>모든 단계를 완료하면 사용자가 등록됩니다!</p>
+
+                    <div sec:authorize="hasAuthority('VIP')"> <a href="/admin">관리자 페이지 이동</a></div>
+
                     <div class="row">
                         <div class="col-md-12 mx-0">
                             <form id="msform" action="/api/clients/file" method="post" enctype="multipart/form-data">
