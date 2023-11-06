@@ -51,6 +51,8 @@ public class UserService {
                     throw new UserNotFoundException();
                 });
 
+        sessionHandler.deleteAllByEmail(user.getEmail());
+
         user.withdrawal();
     }
 }

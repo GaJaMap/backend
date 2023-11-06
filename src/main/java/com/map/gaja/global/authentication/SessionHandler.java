@@ -36,6 +36,21 @@ public class SessionHandler {
         }
     }
 
+    /**
+     * 회원 탈퇴시 웹과 앱 세션 삭제
+     */
+    public void deleteAllByEmail(String email) {
+        Map<String, ? extends Session> sessions = getSessions(email);
+
+        sessions.values().stream()
+                .forEach(session -> sessionRepository.deleteById(session.getId()));
+    }
+
+    private Map<String, ? extends Session> getSessions(String email) {
+        return findByIndexNameSessionRepository.findByPrincipalName(email);
+    }
+
+
     private boolean isDuplicate(String platformType, String platformType1) {
         if (platformType.equals(platformType1)) {
             return true;
