@@ -1,4 +1,4 @@
-package com.map.gaja.oauth2.handler;
+package com.map.gaja.global.oauth2.handler;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;

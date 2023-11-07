@@ -11,8 +11,9 @@ import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
-import com.map.gaja.location.LocationResolver;
+import com.map.gaja.global.location.LocationResolver;
 import com.map.gaja.user.domain.model.Authority;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
