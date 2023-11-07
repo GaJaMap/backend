@@ -44,8 +44,14 @@ public class UserService {
         );
     }
 
-    public void withdrawal(String email) {
-        User user = findByEmailAndActive(userRepository, email);
+    @Transactional
+    public void withdrawal(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    throw new UserNotFoundException();
+                });
+
+        sessionHandler.deleteAllByEmail(user.getEmail());
 
         user.withdrawal();
     }
