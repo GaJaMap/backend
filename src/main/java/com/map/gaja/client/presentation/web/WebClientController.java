@@ -9,6 +9,7 @@ import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 
+import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.log.TimeCheckLog;
 
@@ -17,6 +18,7 @@ import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.global.location.LocationResolver;
 import com.map.gaja.global.location.exception.TooManyRequestException;
+import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -50,6 +52,8 @@ public class WebClientController {
     private final GroupService groupService;
     private final LocationResolver locationResolver;
     private final FileValidator fileValidator;
+    private final CurrentSecurityUserGetter getter;
+
 
     @GetMapping("/")
     public String clientFileUpload(
@@ -104,10 +108,11 @@ public class WebClientController {
 
         groupAccessVerifyService.verifyClientInsertAccess(groupId, loginEmail, clientExcelData.size());
 
+        List<Authority> authority = getter.getAuthority();
         Mono<Void> mono = locationResolver.convertToCoordinatesAsync(clientExcelData);
 
         return mono.doOnSuccess(s -> { //비동기 작업 모두 성공할 경우 후처리
-                    clientService.saveClientExcelData(groupId, clientExcelData);
+                    clientService.saveClientExcelData(groupId, clientExcelData, authority);
                 })
                 .doOnError(err -> { //예외가 한번이라도 발생할 경우 후처리
                     log.error("{}",loginEmail, err);

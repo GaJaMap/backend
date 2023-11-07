@@ -33,6 +33,16 @@ public final class UserServiceHelper {
         return user;
     }
 
+    /**
+     * Lock과 함께 유저 조회
+     */
+    public static User findByEmailAndActiveWithLock(UserRepository userRepository, Long userId) {
+        return userRepository.findByEmailAndActiveForUpdate(userId)
+                .orElseThrow(() -> {
+                    throw new UserNotFoundException();
+                });
+    }
+
     private static boolean isNewUser(User user) {
         if (user == null) {
             return true;

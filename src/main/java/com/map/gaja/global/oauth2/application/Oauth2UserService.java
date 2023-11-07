@@ -33,7 +33,7 @@ public class Oauth2UserService implements OAuth2UserService<OAuth2UserRequest, O
         try {
             user = findByEmail(userRepository, email);
         } catch (WithdrawalUserException e) { //회원 탈퇴한 유저일 경우
-            throw new OAuth2AuthenticationException(""); //Oauth2AuthenticationException으로 변환해줘야지 Oauth2FailureHandler가 예외를 잡을 수 있다.
+            throw new OAuth2AuthenticationException("410"); //Oauth2AuthenticationException으로 변환해줘야지 Oauth2FailureHandler가 예외를 잡을 수 있다.
         }
 
         sessionHandler.deduplicate(email, "WEB"); //중복 세션 제거

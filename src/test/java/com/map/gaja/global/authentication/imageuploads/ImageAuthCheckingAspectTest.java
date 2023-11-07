@@ -37,20 +37,11 @@ class ImageAuthCheckingAspectTest {
     @InjectMocks
     private ImageAuthCheckingAspect imageAuthCheckingAspect;
 
-    private PrincipalDetails mockFreeUser;
-    private PrincipalDetails mockVipUser;
-
-    @BeforeEach
-    void beforeEach() {
-        mockFreeUser = new PrincipalDetails(1L, "test@example.com", Authority.FREE.toString());
-        mockVipUser = new PrincipalDetails(1L, "test@example.com", Authority.VIP.toString());
-    }
-
     @Test
     @DisplayName("기본 이미지를 사용하는 Free User")
     void testFreeUser() throws Exception {
         when(requestCheckers.iterator()).thenReturn(Arrays.asList(mockChecker).iterator());
-        when(userGetter.getCurrentUser()).thenReturn(mockFreeUser);
+        when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(mockChecker.isSupported(Mockito.any())).thenReturn(true);
         when(mockChecker.isImageUploadingRequest(Mockito.any())).thenReturn(false);
 
@@ -66,7 +57,7 @@ class ImageAuthCheckingAspectTest {
     @Test
     @DisplayName("추가 이미지를 사용하는 VIP User")
     void testVipUser() throws Exception {
-        when(userGetter.getCurrentUser()).thenReturn(mockVipUser);
+        when(userGetter.getAuthority()).thenReturn(List.of(Authority.VIP));
         JoinPoint joinPoint = mock(JoinPoint.class);
         imageAuthCheckingAspect.checkAuthority(joinPoint);
     }
@@ -75,7 +66,7 @@ class ImageAuthCheckingAspectTest {
     @DisplayName("추가 이미지를 사용하는 Free User")
     void testFreeUserUsingImage() throws Exception {
         when(requestCheckers.iterator()).thenReturn(Arrays.asList(mockChecker).iterator());
-        when(userGetter.getCurrentUser()).thenReturn(mockFreeUser);
+        when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(mockChecker.isSupported(Mockito.any())).thenReturn(true);
         when(mockChecker.isImageUploadingRequest(Mockito.any())).thenReturn(true);
 

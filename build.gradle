@@ -95,6 +95,13 @@ task testCoverage(type: Test) {
 	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
 
+task testOnlyJava(type: Test) {
+	useJUnitPlatform {
+		exclude("/**/*RepositoryTest.class")
+		exclude("/**/GajaApplicationTests.class")
+	}
+}
+
 group = 'com.map'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -147,6 +154,7 @@ dependencies {
 	// Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
 	// 엑셀 파싱
 	implementation group: 'org.apache.poi', name: 'poi', version: '5.2.2'

@@ -39,9 +39,7 @@ public class ClientBulkRepository {
                 setStringOrSetNull(ps, 3, client.getAddress() == null ? null : client.getAddress().getAddress());
                 setStringOrSetNull(ps, 4, client.getAddress() == null ? null : client.getAddress().getDetail());
                 setStringOrSetNull(ps, 5, client.getLocation() == null || client.getLocation().getLocation() == null ? null
-                        : "POINT(" + client.getLocation().getLocation().getY() +" " + client.getLocation().getLocation().getX()+")");
-//                ps.setNull(5, Types.VARCHAR);
-//                ps.setString(5, "POINT(" + client.getLocation().getLocation().getY() +" " + client.getLocation().getLocation().getX()+")"); // null 허용해야함
+                        : "POINT(" + client.getLocation().getLocation().getX() +" " + client.getLocation().getLocation().getY()+")");
                 ps.setLong(6, group.getId());
             }
 

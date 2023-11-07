@@ -111,8 +111,8 @@ public class ClientPostControllerTest {
     void addSimpleBulkClient() throws Exception {
         String testUrl = "/api/clients/bulk";
         List<SimpleNewClientRequest> clientsRequest = List.of(
-                new SimpleNewClientRequest("aaa", "010-1111-2222"),
-                new SimpleNewClientRequest("aaa", "010-1111-2222")
+                new SimpleNewClientRequest("aaa", "01011112222"),
+                new SimpleNewClientRequest("aaa", "01011112222")
         );
 
         SimpleClientBulkRequest request = new SimpleClientBulkRequest(groupId, clientsRequest);

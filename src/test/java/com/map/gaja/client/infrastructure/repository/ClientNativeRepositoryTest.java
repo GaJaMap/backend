@@ -1,7 +1,6 @@
 package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ClientRepositoryTest {
+class ClientNativeRepositoryTest {
     @Autowired
     ClientRepository clientRepository;
 
@@ -48,12 +47,11 @@ class ClientRepositoryTest {
                 .groupCount(0)
                 .authority(Authority.FREE)
                 .lastLoginDate(LocalDateTime.now())
-                .active(false)
+                .active(true)
                 .build();
         em.persist(user2);
 
         Group group2 = new Group(user2.getEmail(), user2);
-        group2.remove();
         em.persist(group2);
 
         for (int j = 0; j < 5; j++) {
@@ -72,6 +70,6 @@ class ClientRepositoryTest {
         //when
         int result = clientRepository.deleteClientsInDeletedGroup();
 
-        assertEquals(10, result);
+        assertEquals(5, result);
     }
 }

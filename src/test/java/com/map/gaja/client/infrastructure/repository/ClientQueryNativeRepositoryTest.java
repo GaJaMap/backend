@@ -1,13 +1,11 @@
 package com.map.gaja.client.infrastructure.repository;
 
+import com.map.gaja.TestEntityCreator;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.domain.model.ClientAddress;
-import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
-import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ClientQueryRepositoryTest {
+class ClientQueryNativeRepositoryTest {
 
     @Autowired
     ClientQueryRepository clientQueryRepository;
@@ -39,65 +35,37 @@ class ClientQueryRepositoryTest {
     User user;
     Group group1, group2;
     List<Client> group1ClientList, group2ClientList;
-    int radius = 1000000;
+    private Client group2Client;
+
+    int radius = 10000;
 
     @BeforeEach
     void before() {
-        user = createUser();
+        user = TestEntityCreator.createUser("test@example.com");
         em.persist(user);
 
-        group1 = createGroup("group1");
-        group2 = createGroup("group2");
+        group1 = TestEntityCreator.createGroup(user, "group1");
+        group2 = TestEntityCreator.createGroup(user, "group2");
         em.persist(group1);
         em.persist(group2);
 
         group1ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = createClient(i, 0.003, group1);
+            Client client = TestEntityCreator.createClient(i, group1);
             group1ClientList.add(client);
         }
 
         group2ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = createClient(i, 0.005, group2);
+            Client client = TestEntityCreator.createClient(i, group2);
             group2ClientList.add(client);
         }
         clientRepository.saveAll(group1ClientList);
         clientRepository.saveAll(group2ClientList);
+        group2Client = group2ClientList.get(0);
 
         em.flush();
         em.clear();
-    }
-
-    private Client createClient(int sigIdx, double pointSig, Group group) {
-        String sig = sigIdx+""+sigIdx;
-        String name = "사용자 " + sig;
-        String phoneNumber = "010-1111-" + sig;
-        ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
-        ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        Client client = new Client(name, phoneNumber, address, location, group);
-        return client;
-    }
-
-    private Group createGroup(String groupName) {
-        Group createdGroup = Group.builder()
-                .name(groupName)
-                .user(user)
-                .clientCount(0)
-                .isDeleted(false)
-                .build();
-        return createdGroup;
-    }
-
-    private User createUser() {
-        User createdUser = User.builder()
-                .email("test@example.com")
-                .authority(Authority.FREE)
-                .groupCount(0)
-                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                .build();
-
-        return createdUser;
     }
 
     @Test
@@ -148,17 +116,18 @@ class ClientQueryRepositoryTest {
         });
     }
 
+
     @Test
     @DisplayName("Client가 그룹에 속해있을때")
     void hasClientByGroupTrue() {
-        boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group1ClientList.get(0).getId());
+        boolean result = clientQueryRepository.hasClientByGroup(group2.getId(), group2Client.getId());
         assertThat(result).isTrue();
     }
 
     @Test
     @DisplayName("Client가 번들에 속해있지 않을때")
     void hasClientByGroupFalse() {
-        boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group2ClientList.get(0).getId());
+        boolean result = clientQueryRepository.hasClientByGroup(group1.getId(), group2Client.getId());
         assertThat(result).isFalse();
     }
 
@@ -178,7 +147,6 @@ class ClientQueryRepositoryTest {
     @DisplayName("로그인 한 유저가 가지고 있는 Client 검색")
     void ss() {
         String nameCond = "사용자";
-
         List<ClientOverviewResponse> result = clientQueryRepository.findActiveClientByEmail(user.getEmail(), nameCond);
 
         assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());

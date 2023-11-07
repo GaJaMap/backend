@@ -127,7 +127,7 @@ public class LocationResolver {
             return false;
         }
 
-        return 33d > location.getLatitude() || location.getLatitude() > 38d
+        return 33d > location.getLatitude() || location.getLatitude() > 39d
                 || 124d > location.getLongitude() || location.getLongitude() > 132d;
     }
 

@@ -20,19 +20,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
+import static com.map.gaja.user.application.UserServiceHelper.*;
 
 @Service
 @RequiredArgsConstructor
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-    private final ClientRepository clientRepository;
     private final GroupQueryRepository groupQueryRepository;
 
     @Transactional
-    public Long create(String email, GroupCreateRequest request) {
-        User user = findByEmailAndActive(userRepository, email);
+    public Long create(Long userId, GroupCreateRequest request) {
+        User user = findByEmailAndActiveWithLock(userRepository, userId);
 
         user.checkCreateGroupPermission();
 
@@ -66,12 +65,12 @@ public class GroupService {
     }
 
     @Transactional
-    public void delete(String email, Long groupId) {
-        User user = findByEmailAndActive(userRepository, email);
+    public void delete(Long userId, Long groupId) {
+        User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, user.getId());
+        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, userId);
 
-        if (deletedGroupCount == 0) { //삭제된 번들이 없다면 존재하지 않은 번들이거나 userId가 다른 번들일 가능성이 있음
+        if (deletedGroupCount == 0) { //삭제된 그룹이 없다면 존재하지 않은 그룹이거나 userId가 다른 그룹일 가능성이 있음
             throw new GroupNotFoundException();
         }
 

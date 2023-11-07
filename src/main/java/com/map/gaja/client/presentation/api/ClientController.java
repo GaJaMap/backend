@@ -90,6 +90,8 @@ public class ClientController implements ClientCommandApiSpecification {
 
         MultipartFile clientImage = clientRequest.getClientImage();
         ClientOverviewResponse response;
+
+        // 여기도 그룹ID를 받도록 수정해야 함.
         if (clientRequest.getIsBasicImage()) {
             // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
             response = clientService.updateClientWithBasicImage(clientId, clientRequest);
