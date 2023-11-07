@@ -97,9 +97,8 @@ task testCoverage(type: Test) {
 
 task testOnlyJava(type: Test) {
 	useJUnitPlatform {
-		{
-			exclude("/**/*RepositoryTest.class")
-		}
+		exclude("/**/*RepositoryTest.class")
+		exclude("/**/GajaApplicationTests.class")
 	}
 }
 
