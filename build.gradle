@@ -103,6 +103,14 @@ task testOnlyJava(type: Test) {
 	}
 }
 
+task testWithoutNativeQuery(type: Test) {
+	useJUnitPlatform {
+		{
+			exclude("/**/*NativeRepositoryTest.class")
+		}
+	}
+}
+
 group = 'com.map'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
