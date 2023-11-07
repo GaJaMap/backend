@@ -1,4 +1,4 @@
-package com.map.gaja.location;
+package com.map.gaja.global.location;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
-import com.map.gaja.location.exception.NotExcelUploadException;
+import com.map.gaja.global.location.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;

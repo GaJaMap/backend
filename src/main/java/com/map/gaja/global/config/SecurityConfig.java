@@ -1,9 +1,9 @@
 package com.map.gaja.global.config;
 
 import com.map.gaja.global.filter.RemoveAnonymousAuthenticationFilter;
-import com.map.gaja.oauth2.application.Oauth2UserService;
-import com.map.gaja.oauth2.handler.Oauth2FailureHandler;
-import com.map.gaja.oauth2.handler.Oauth2SuccessHandler;
+import com.map.gaja.global.oauth2.application.Oauth2UserService;
+import com.map.gaja.global.oauth2.handler.Oauth2FailureHandler;
+import com.map.gaja.global.oauth2.handler.Oauth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .authorizeHttpRequests(request -> request
+                        .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger").hasAuthority("ADMIN")
                         .antMatchers("/api/user/login",
                                 monitoringPath,
                                 "/policy/**", "/", "/login", "/css/**", "/js/**", "/image/**", "/file/**" // 웹 페이지 설정
@@ -53,28 +56,4 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web
-                .ignoring()
-                .antMatchers(getPathInSwagger());
-    }
-
-    private String[] getPathInSwagger() {
-        return new String[]{
-                "/swagger",
-                "/swagger-ui/index.html",
-                "/swagger-ui/swagger-ui.css",
-                "/swagger-ui/index.css",
-                "/swagger-ui/swagger-ui-bundle.js",
-                "/swagger-ui/swagger-ui-standalone-preset.js",
-                "/swagger-ui/swagger-initializer.js",
-                "/v3/api-docs/swagger-config",
-                "/swagger-ui/favicon-32x32.png",
-                "/v3/api-docs/user-api",
-                "/v3/api-docs/group-api",
-                "/v3/api-docs/client-api",
-                "/favicon.ico"
-        };
-    }
 }

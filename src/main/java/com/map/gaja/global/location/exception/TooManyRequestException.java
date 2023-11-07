@@ -1,4 +1,4 @@
-package com.map.gaja.location.exception;
+package com.map.gaja.global.location.exception;
 
 import com.map.gaja.global.exception.BusinessException;
 import org.springframework.http.HttpStatus;
