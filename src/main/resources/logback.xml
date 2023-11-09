@@ -4,18 +4,19 @@
     <!-- 날짜 / 스레드명 / 로깅레벨 / 로그 최대 글자수(36) / 메소드명:줄 / 로그메시지 -->
     <property name="LOG_PATTERN_COLOR" value = "%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}.%method:%line) - %yellow(%msg%n)"></property>
     <property name="LOG_PATTERN_WITHOUT_COLOR" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%method:%line - %msg%n" />
+    <property name="TIME_CHECK_LOG_PATTERN_COLOR" value = "%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %yellow(%msg%n)"></property>
 
     <!-- appender는 로그를 어떤 방식으로 넣을 것인지 설정 -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender"> <!-- 콘솔에 로그 출력 -->
+    <appender name="TIME_CHECK" class="ch.qos.logback.core.FileAppender">
         <!-- 어떤 패턴으로 인코딩해서 출력할 것인지 -->
+        <file>logs/TimeCheck.log</file>
         <encoder>
-            <pattern>${LOG_PATTERN_COLOR}</pattern>
+            <pattern>${TIME_CHECK_LOG_PATTERN_COLOR}</pattern>
         </encoder>
     </appender>
 
-
     <!-- 클래스 별 로그 파일 분리 -->
-    <appender name="DeletionTask" class="ch.qos.logback.core.FileAppender"> <!-- 파일에 로그 출력 -->
+    <appender name="DeletionTask" class="ch.qos.logback.core.FileAppender">
         <file>logs/DeletionTask.log</file>
         <append>true</append> <!-- 새로운 로그는 기존 로그 파일의 끝에 추가 -->
         <encoder>
@@ -26,12 +27,15 @@
 
     <!-- 분리된 로그 파일 로그 설정 -->
     <logger name="com.map.gaja.global.schedule.DeletionTask" level="info" additivity="false">
-        <appender-ref ref="DeletionTask" />
+        <appender-ref ref="DeletionTask" /> <!-- 삭제 스케줄링 -->
     </logger>
 
+    <logger name="com.map.gaja.global.log.TimeCheckLogAspect" level="info" additivity="false">
+        <appender-ref ref="TIME_CHECK"></appender-ref> <!-- 로직 시간 측정 -->
+    </logger>
 
     <!-- 글로벌 로거라 모든 클래스에 대한 로그들이 콘솔에 출력. -->
-    <root level="info">
-        <appender-ref ref="CONSOLE" />
-    </root>
+<!--    <root level="info">-->
+<!--        <appender-ref ref="TIME_CHECK" />-->
+<!--    </root>-->
 </configuration>
