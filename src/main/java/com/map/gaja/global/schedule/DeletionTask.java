@@ -38,6 +38,7 @@ public class DeletionTask {
         int deletedUserCount = userRepository.deleteWithdrawnUsers(); //회원 탈퇴한 유저 전부 삭제
 
         int deletedImageCount = imageDeletionTask.deleteClientImages(); //이미지 삭제
+
         if(isS3Error(deletedImageCount)){ //s3 오류
             return;
         }
@@ -47,16 +48,15 @@ public class DeletionTask {
 
     private void createLog(long startTime, int deletedClientCount, int deletedGroupCount, int deletedUserCount, int deletedImageCount) {
         String result = String.format("유저: %d , 그룹: %d , 클라이언트: %d , 이미지: %d", deletedUserCount, deletedGroupCount, deletedClientCount, deletedImageCount);
-
         long executionTime = (System.nanoTime() - startTime) / 1000000;
         log.info("{} => Time: {} ms", result, executionTime);
     }
 
     private boolean isS3Error(int deletedImageCount) {
         if(deletedImageCount == -1){
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
 }
