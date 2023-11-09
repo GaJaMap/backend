@@ -14,9 +14,9 @@
 
 
     <!-- 클래스 별 로그 파일 분리 -->
-    <appender name="ImageDeletionTask" class="ch.qos.logback.core.FileAppender"> <!-- 파일에 로그 출력 -->
-        <file>logs/ImageDeletionTask.log</file>
-        <append>true</append>
+    <appender name="DeletionTask" class="ch.qos.logback.core.FileAppender"> <!-- 파일에 로그 출력 -->
+        <file>logs/DeletionTask.log</file>
+        <append>true</append> <!-- 새로운 로그는 기존 로그 파일의 끝에 추가 -->
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
@@ -24,13 +24,13 @@
 
 
     <!-- 분리된 로그 파일 로그 설정 -->
-    <logger name="com.map.gaja.global.schedule.DeletionTask" level="DEBUG" additivity="false">
-        <appender-ref ref="ImageDeletionTask" />
+    <logger name="com.map.gaja.global.schedule.DeletionTask" level="info" additivity="false">
+        <appender-ref ref="DeletionTask" />
     </logger>
 
 
     <!-- 글로벌 로거라 모든 클래스에 대한 로그들이 콘솔에 출력. -->
-    <root level="INFO">
+    <root level="info">
         <appender-ref ref="CONSOLE" />
     </root>
 </configuration>
