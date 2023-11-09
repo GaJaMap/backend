@@ -46,9 +46,7 @@
         </encoder>
     </appender>
 
-    <appender name="APPLICATION" class="ch.qos.logback.core.FileAppender">
-        <file>logs/Application.log</file>
-        <append>true</append>
+    <appender name="APPLICATION" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN_COLOR}</pattern>
         </encoder>
