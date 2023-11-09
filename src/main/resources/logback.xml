@@ -8,19 +8,49 @@
 
     <!-- appender는 로그를 어떤 방식으로 넣을 것인지 설정 -->
     <appender name="TIME_CHECK" class="ch.qos.logback.core.FileAppender">
-        <!-- 어떤 패턴으로 인코딩해서 출력할 것인지 -->
+        <append>true</append>
         <file>logs/TimeCheck.log</file>
         <encoder>
             <pattern>${TIME_CHECK_LOG_PATTERN_COLOR}</pattern>
         </encoder>
     </appender>
 
-    <!-- 클래스 별 로그 파일 분리 -->
     <appender name="DeletionTask" class="ch.qos.logback.core.FileAppender">
         <file>logs/DeletionTask.log</file>
         <append>true</append> <!-- 새로운 로그는 기존 로그 파일의 끝에 추가 -->
         <encoder>
             <pattern>${LOG_PATTERN_WITHOUT_COLOR}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SERVICE_INFO" class="ch.qos.logback.core.FileAppender">
+        <append>true</append>
+        <file>logs/ServiceInfo.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN_COLOR}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SERVICE_ERROR" class="ch.qos.logback.core.FileAppender">
+        <append>true</append>
+        <file>logs/ServiceError.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN_COLOR}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APPLICATION" class="ch.qos.logback.core.FileAppender">
+        <file>logs/Application.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>${LOG_PATTERN_COLOR}</pattern>
         </encoder>
     </appender>
 
@@ -34,8 +64,12 @@
         <appender-ref ref="TIME_CHECK"></appender-ref> <!-- 로직 시간 측정 -->
     </logger>
 
-    <!-- 글로벌 로거라 모든 클래스에 대한 로그들이 콘솔에 출력. -->
-<!--    <root level="info">-->
-<!--        <appender-ref ref="TIME_CHECK" />-->
-<!--    </root>-->
+    <logger name="com.map.gaja" level="info" additivity="false">
+        <appender-ref ref="SERVICE_INFO" /> <!-- 서비스 운영 Info 로그 -->
+        <appender-ref ref="SERVICE_ERROR" /> <!-- 서비스 운영 Error 로그 -->
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="APPLICATION" /> <!-- 프로젝트 실행 로그 -->
+    </root>
 </configuration>
