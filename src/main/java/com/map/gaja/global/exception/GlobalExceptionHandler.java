@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
      * API 비즈니스 관련 예외 공동 처리
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ExceptionDto> handleBusinessError(BusinessException e){
+    public ResponseEntity<ExceptionDto> handleBusinessError(BusinessException e) {
+        log.info("{}: {}", e.getStatus(), e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ExceptionDto(e.getMessage()));
@@ -30,15 +31,16 @@ public class GlobalExceptionHandler {
      * 웹 예외 공동 처리
      */
     @ExceptionHandler(WebException.class)
-    public ResponseEntity<Object> handleWebError(WebException e){
+    public ResponseEntity<Object> handleWebError(WebException e) {
+        log.info("{}: {}", e.getStatus(), e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
                 .body(e.getBody());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionDto> allHandle(Exception e){
-        e.printStackTrace();
+    public ResponseEntity<ExceptionDto> allHandle(Exception e) {
+        log.error("{}", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionDto("서버 에러"));
     }
@@ -51,10 +53,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<CommonErrorResponse> validationErrorHandle(BindException e) {
+        log.info("{}: {}", e.getAllErrors().toString(), e.getMessage());
         List<ValidationErrorResponse> body = new ArrayList<>();
         e.getAllErrors().stream().forEach(
                 error -> body.add(
-                        new ValidationErrorResponse(error.getCode(), error.getObjectName(),error.getDefaultMessage())
+                        new ValidationErrorResponse(error.getCode(), error.getObjectName(), error.getDefaultMessage())
                 )
         );
 
@@ -69,7 +72,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<CommonErrorResponse> Handle(HttpMessageNotReadableException e) {
         CommonErrorResponse body = new CommonErrorResponse("Type-Mismatch", "Type-Mismatch");
-        log.info("타입 미스매치 걸림");
+        log.info("{}", e.getMessage());
         return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
     }
 }
