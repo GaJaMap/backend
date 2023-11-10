@@ -16,4 +16,9 @@ public class AuthenticationHandler {
         SecurityContextHolder.setContext(context);
     }
 
+    public String getEmail() {
+        PrincipalDetails principalDetails = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principalDetails.getName();
+    }
+
 }

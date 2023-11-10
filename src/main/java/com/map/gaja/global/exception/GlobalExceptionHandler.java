@@ -1,9 +1,12 @@
 package com.map.gaja.global.exception;
 
+import com.map.gaja.global.authentication.AuthenticationHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,14 +17,16 @@ import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+    private final AuthenticationHandler authenticationHandler;
 
     /**
      * API 비즈니스 관련 예외 공동 처리
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ExceptionDto> handleBusinessError(BusinessException e) {
-        log.info("{}: {}", e.getStatus(), e.getMessage());
+        log.info("{}: {} => {}", authenticationHandler.getEmail(), e.getStatus(), e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ExceptionDto(e.getMessage()));
@@ -32,7 +37,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(WebException.class)
     public ResponseEntity<Object> handleWebError(WebException e) {
-        log.info("{}: {}", e.getStatus(), e.getMessage());
+        log.info("{}: {} => {}", authenticationHandler.getEmail(), e.getStatus(), e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
                 .body(e.getBody());
@@ -40,7 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDto> allHandle(Exception e) {
-        log.error("{}", e);
+        log.error("{}: {}", authenticationHandler.getEmail(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionDto("서버 에러"));
     }
@@ -53,7 +58,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<CommonErrorResponse> validationErrorHandle(BindException e) {
-        log.info("{}: {}", e.getAllErrors().toString(), e.getMessage());
+        log.info("{}: {} => {}", authenticationHandler.getEmail(), e.getAllErrors().toString(), e.getMessage());
         List<ValidationErrorResponse> body = new ArrayList<>();
         e.getAllErrors().stream().forEach(
                 error -> body.add(
@@ -72,7 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<CommonErrorResponse> Handle(HttpMessageNotReadableException e) {
         CommonErrorResponse body = new CommonErrorResponse("Type-Mismatch", "Type-Mismatch");
-        log.info("{}", e.getMessage());
+        log.info("{}: {}", authenticationHandler.getEmail(), e.getMessage());
         return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
     }
 }
