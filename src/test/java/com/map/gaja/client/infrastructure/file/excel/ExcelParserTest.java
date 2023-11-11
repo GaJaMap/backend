@@ -1,5 +1,6 @@
 package com.map.gaja.client.infrastructure.file.excel;
 
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;

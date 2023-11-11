@@ -1,4 +1,4 @@
-package com.map.gaja.client.infrastructure.file.excel;
+package com.map.gaja.client.infrastructure.file.parser.dto;
 
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import lombok.AllArgsConstructor;

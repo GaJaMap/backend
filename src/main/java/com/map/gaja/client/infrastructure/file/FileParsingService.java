@@ -1,7 +1,7 @@
 package com.map.gaja.client.infrastructure.file;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.infrastructure.file.parser.FileParser;
 import com.map.gaja.client.infrastructure.file.parser.dto.RowVO;

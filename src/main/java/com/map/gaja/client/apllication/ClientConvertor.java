@@ -1,6 +1,6 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;

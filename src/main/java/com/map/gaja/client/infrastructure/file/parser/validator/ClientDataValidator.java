@@ -1,6 +1,6 @@
 package com.map.gaja.client.infrastructure.file.parser.validator;
 
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;

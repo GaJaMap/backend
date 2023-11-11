@@ -1,7 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;

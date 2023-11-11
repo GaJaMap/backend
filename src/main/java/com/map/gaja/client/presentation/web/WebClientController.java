@@ -4,7 +4,7 @@ import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
-import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;

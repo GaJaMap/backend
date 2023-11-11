@@ -1,6 +1,7 @@
 package com.map.gaja.client.infrastructure.file.excel;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
