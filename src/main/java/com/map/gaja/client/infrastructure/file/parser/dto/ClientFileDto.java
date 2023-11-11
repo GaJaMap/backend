@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientExcelDto {
+public class ClientFileDto {
     private int rowIdx;
     private String name;
     private String phoneNumber;

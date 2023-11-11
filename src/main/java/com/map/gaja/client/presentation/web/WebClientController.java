@@ -4,7 +4,7 @@ import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
@@ -105,7 +105,7 @@ public class WebClientController {
         MultipartFile excelFile = excelRequest.getExcelFile();
         fileValidator.verifyFile(excelFile);
 
-        List<ClientExcelDto> clientExcelData = fileParsingService.parseClientFile(excelFile);
+        List<ClientFileDto> clientExcelData = fileParsingService.parseClientFile(excelFile);
         validateClientData(clientExcelData);
 
         groupAccessVerifyService.verifyClientInsertAccess(groupId, loginEmail, clientExcelData.size());
@@ -125,7 +125,7 @@ public class WebClientController {
                 .thenReturn(clientExcelData.size()); //저장 성공 수
     }
 
-    private void validateClientData(List<ClientExcelDto> clientExcelData) {
+    private void validateClientData(List<ClientFileDto> clientExcelData) {
         List<Integer> failRowIdx = new ArrayList<>();
         clientExcelData.forEach(clientData -> {
             if (!clientData.getIsValid()) {

@@ -1,7 +1,7 @@
 package com.map.gaja.client.infrastructure.file.excel;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -42,8 +42,8 @@ public class ExcelParser {
         public String addressDetail;
     }
 
-    public List<ClientExcelDto> parseClientExcelFile(MultipartFile excel) {
-        List<ClientExcelDto> dataList = new ArrayList<>();
+    public List<ClientFileDto> parseClientExcelFile(MultipartFile excel) {
+        List<ClientFileDto> dataList = new ArrayList<>();
         try (InputStream excelStream = excel.getInputStream()) {
             String extension = FilenameUtils.getExtension(excel.getOriginalFilename());
             Workbook workbook = getWorkBook(extension, excelStream);
@@ -57,7 +57,7 @@ public class ExcelParser {
                 }
 
                 RowData rowData = getRowData(row);
-                ClientExcelDto clientData = new ClientExcelDto();
+                ClientFileDto clientData = new ClientFileDto();
                 if (isEmptyRowData(rowData)) {
                     break; // 데이터가 전부 지워져 있는 ROW
                 }
@@ -86,7 +86,7 @@ public class ExcelParser {
                 || invalidateAddressDetail(rowData.addressDetail);
     }
 
-    private void setDataNormalField(ClientExcelDto clientData, int rowIdx, RowData rowData) {
+    private void setDataNormalField(ClientFileDto clientData, int rowIdx, RowData rowData) {
         clientData.setRowIdx(rowIdx+ APP_TO_EXCEL_IDX);
         clientData.setName(rowData.name);
         clientData.setPhoneNumber(rowData.phoneNumber);

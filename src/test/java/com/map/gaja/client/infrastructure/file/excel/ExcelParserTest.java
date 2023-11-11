@@ -1,6 +1,6 @@
 package com.map.gaja.client.infrastructure.file.excel;
 
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientExcelDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
@@ -28,7 +28,7 @@ class ExcelParserTest {
         String contentType = "application/vnd.ms-excel";
         byte[] content = Files.readAllBytes(path);
         MockMultipartFile testExcelFile = new MockMultipartFile("file", originalFileName, contentType, content);
-        List<ClientExcelDto> clientExcelData = excelParser.parseClientExcelFile(testExcelFile);
+        List<ClientFileDto> clientExcelData = excelParser.parseClientExcelFile(testExcelFile);
 
         assertThat(clientExcelData.size()).isEqualTo(7);
         clientExcelData.forEach(data -> {
@@ -44,7 +44,7 @@ class ExcelParserTest {
         String contentType = "application/vnd.ms-excel";
         byte[] content = Files.readAllBytes(path);
         MockMultipartFile testExcelFile = new MockMultipartFile("file", originalFileName, contentType, content);
-        List<ClientExcelDto> clientExcelData = excelParser.parseClientExcelFile(testExcelFile);
+        List<ClientFileDto> clientExcelData = excelParser.parseClientExcelFile(testExcelFile);
 
         assertThat(clientExcelData.size()).isEqualTo(5);
         clientExcelData.forEach(data -> {
