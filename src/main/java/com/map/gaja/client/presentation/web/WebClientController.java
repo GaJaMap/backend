@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.web;
 
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
+import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
@@ -47,6 +48,7 @@ import java.util.List;
 public class WebClientController {
 
     private final ExcelParser excelParser;
+    private final FileParsingService fileParsingService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final ClientService clientService;
     private final GroupService groupService;
@@ -103,7 +105,7 @@ public class WebClientController {
         MultipartFile excelFile = excelRequest.getExcelFile();
         fileValidator.verifyFile(excelFile);
 
-        List<ClientExcelDto> clientExcelData = excelParser.parseClientExcelFile(excelFile);
+        List<ClientExcelDto> clientExcelData = fileParsingService.parseClientFile(excelFile);
         validateClientData(clientExcelData);
 
         groupAccessVerifyService.verifyClientInsertAccess(groupId, loginEmail, clientExcelData.size());
