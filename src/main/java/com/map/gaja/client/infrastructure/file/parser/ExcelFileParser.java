@@ -92,7 +92,8 @@ public class ExcelFileParser implements FileParser {
 
     @Override
     public int getStartRowIndex() {
-        return startRowIdx;
+        // 데이터가 0부터 시작하지만 사용자가 보는 엑셀은 1부터 시작
+        return startRowIdx+1;
     }
 
     private static String getExtension(MultipartFile excel) {
