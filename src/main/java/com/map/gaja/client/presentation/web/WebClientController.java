@@ -5,7 +5,6 @@ import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
-import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
@@ -47,7 +46,6 @@ import java.util.List;
 @Slf4j
 public class WebClientController {
 
-    private final ExcelParser excelParser;
     private final FileParsingService fileParsingService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final ClientService clientService;

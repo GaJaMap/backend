@@ -2,9 +2,9 @@ package com.map.gaja.client.presentation.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
-import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
@@ -50,7 +50,7 @@ class WebClientControllerTest {
     MockMvc mvc;
 
     @MockBean
-    ExcelParser excelParser;
+    FileParsingService parsingService;
 
     @MockBean
     GroupAccessVerifyService groupAccessVerifyService;
@@ -88,7 +88,7 @@ class WebClientControllerTest {
             successList.add(createValidClientExcelData(i));
         }
         int successSize = successList.size();
-        when(excelParser.parseClientExcelFile(any())).thenReturn(successList);
+        when(parsingService.parseClientFile(any())).thenReturn(successList);
         when(locationResolver.convertToCoordinatesAsync(successList)).thenReturn(Mono.empty());
         when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         /*
@@ -122,7 +122,7 @@ class WebClientControllerTest {
         failList.add(createValidClientExcelData(1));
         failList.add(createInvalidClientExcelData(failIdx1));
         failList.add(createInvalidClientExcelData(failIdx2));
-        when(excelParser.parseClientExcelFile(any())).thenReturn(failList);
+        when(parsingService.parseClientFile(any())).thenReturn(failList);
         when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.multipart(testUrl)
