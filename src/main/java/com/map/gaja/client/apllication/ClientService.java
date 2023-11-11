@@ -1,7 +1,7 @@
 package com.map.gaja.client.apllication;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
@@ -209,7 +209,7 @@ public class ClientService {
      * JPA와 관계없이 저장하기 때문에 ID를 반환하지 않음.
      * 비동기로 처리한 정보를 받기 때문에 securityUserGetter.getAuthority()로 세션 정보 가져오기 불가능
      */
-    public void saveClientExcelData(Long groupId, List<ClientFileDto> excelData, List<Authority> authority) {
+    public void saveClientExcelData(Long groupId, List<ParsedClientDto> excelData, List<Authority> authority) {
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, groupId);
 
         List<Client> savedClient = new ArrayList<>();

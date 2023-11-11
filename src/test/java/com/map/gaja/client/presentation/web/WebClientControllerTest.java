@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.apllication.ClientService;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
@@ -83,7 +83,7 @@ class WebClientControllerTest {
     @DisplayName("엑셀 파일로 저장 성공")
     void parsingSuccessTest() throws Exception {
         MockMultipartFile mockFile = getMockFile();
-        List<ClientFileDto> successList = new ArrayList<>();
+        List<ParsedClientDto> successList = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
             successList.add(createValidClientExcelData(i));
         }
@@ -116,7 +116,7 @@ class WebClientControllerTest {
     @DisplayName("엑셀 파싱 실패")
     void parsingFailTest() throws Exception {
         MockMultipartFile mockFile = getMockFile();
-        List<ClientFileDto> failList = new ArrayList<>();
+        List<ParsedClientDto> failList = new ArrayList<>();
         int failIdx1 = 2;
         int failIdx2 = 3;
         failList.add(createValidClientExcelData(1));
@@ -142,12 +142,12 @@ class WebClientControllerTest {
                 });
     }
 
-    private static ClientFileDto createValidClientExcelData(int i) {
-        return new ClientFileDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), true);
+    private static ParsedClientDto createValidClientExcelData(int i) {
+        return new ParsedClientDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), true);
     }
 
-    private static ClientFileDto createInvalidClientExcelData(int i) {
-        return new ClientFileDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), false);
+    private static ParsedClientDto createInvalidClientExcelData(int i) {
+        return new ParsedClientDto(i, "테스트" + i, "010-1111-1111", "테스트 주소" + i, "테스트 상세 주소" + i, new LocationDto(33d + 0.003 * i, 126d + 0.003 * i), false);
     }
 
     private MockMultipartFile getMockFile() throws IOException {

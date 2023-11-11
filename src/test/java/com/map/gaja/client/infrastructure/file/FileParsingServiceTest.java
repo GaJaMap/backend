@@ -2,10 +2,9 @@ package com.map.gaja.client.infrastructure.file;
 
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.infrastructure.file.parser.FileParser;
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.file.parser.dto.RowVO;
 import com.map.gaja.client.infrastructure.file.parser.validator.ClientDataValidator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.ObjectProvider;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -48,14 +46,14 @@ class FileParsingServiceTest {
 
         when(fileParserProvider.getObject()).thenReturn(List.of(parser));
         when(clientDataValidator.isInvalidData(any())).thenReturn(isInvalid);
-        List<ClientFileDto> result = parsingService.parseClientFile(TestFileCreator.getMockExcelFile());
-        ClientFileDto clientFileDto = result.get(0);
+        List<ParsedClientDto> result = parsingService.parseClientFile(TestFileCreator.getMockExcelFile());
+        ParsedClientDto parsedClientDto = result.get(0);
 
-        assertThat(clientFileDto.getIsValid()).isEqualTo(!isInvalid);
-        assertThat(clientFileDto.getName()).isEqualTo(row1.getName());
-        assertThat(clientFileDto.getAddress()).isEqualTo(row1.getAddress());
-        assertThat(clientFileDto.getAddressDetail()).isEqualTo(row1.getAddressDetail());
-        assertThat(clientFileDto.getPhoneNumber()).isEqualTo(row1.getPhoneNumber().replace("-", ""));
+        assertThat(parsedClientDto.getIsValid()).isEqualTo(!isInvalid);
+        assertThat(parsedClientDto.getName()).isEqualTo(row1.getName());
+        assertThat(parsedClientDto.getAddress()).isEqualTo(row1.getAddress());
+        assertThat(parsedClientDto.getAddressDetail()).isEqualTo(row1.getAddressDetail());
+        assertThat(parsedClientDto.getPhoneNumber()).isEqualTo(row1.getPhoneNumber().replace("-", ""));
     }
 
     @Test

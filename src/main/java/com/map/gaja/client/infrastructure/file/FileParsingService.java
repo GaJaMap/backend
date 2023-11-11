@@ -1,7 +1,7 @@
 package com.map.gaja.client.infrastructure.file;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.infrastructure.file.parser.FileParser;
 import com.map.gaja.client.infrastructure.file.parser.dto.RowVO;
@@ -22,8 +22,8 @@ public class FileParsingService {
     private final ClientDataValidator clientDataValidator;
     private final ObjectProvider<List<FileParser>> fileParserProvider;
 
-    public List<ClientFileDto> parseClientFile(MultipartFile file) {
-        List<ClientFileDto> dataList = new ArrayList<>();
+    public List<ParsedClientDto> parseClientFile(MultipartFile file) {
+        List<ParsedClientDto> dataList = new ArrayList<>();
         FileParser parser = getParser(file);
         try (parser) {
             parser.init(file);
@@ -32,7 +32,7 @@ public class FileParsingService {
             while (parser.hasMoreData()) {
                 RowVO rowVO = parser.nextRowData();
                 int rowIdx = startRowIndex + count;
-                ClientFileDto clientData = convertDataToDto(rowIdx, rowVO);
+                ParsedClientDto clientData = convertDataToDto(rowIdx, rowVO);
                 dataList.add(clientData);
                 count++;
             }
@@ -61,15 +61,15 @@ public class FileParsingService {
     /**
      * 유효하지 않은 데이터
      */
-    private boolean isValidData(ClientFileDto clientData) {
+    private boolean isValidData(ParsedClientDto clientData) {
         return !clientDataValidator.isInvalidData(clientData);
     }
 
     /**
      * RowData -> ClientExcelData 변환
      */
-    private ClientFileDto convertDataToDto(int rowIdx, RowVO rowVO) {
-        ClientFileDto clientData = new ClientFileDto();
+    private ParsedClientDto convertDataToDto(int rowIdx, RowVO rowVO) {
+        ParsedClientDto clientData = new ParsedClientDto();
         clientData.setRowIdx(rowIdx);
         clientData.setName(rowVO.getName());
         if(!StringUtils.isEmpty(rowVO.getPhoneNumber()))

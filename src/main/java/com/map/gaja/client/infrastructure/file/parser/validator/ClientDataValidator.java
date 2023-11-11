@@ -1,6 +1,6 @@
 package com.map.gaja.client.infrastructure.file.parser.validator;
 
-import com.map.gaja.client.infrastructure.file.parser.dto.ClientFileDto;
+import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
@@ -18,7 +18,7 @@ public class ClientDataValidator {
 
 
 
-    public boolean isInvalidData(ClientFileDto rowData) {
+    public boolean isInvalidData(ParsedClientDto rowData) {
         return invalidateName(rowData.getName())
                 || invalidatePhoneNumber(rowData.getPhoneNumber())
                 || invalidateAddress(rowData.getAddress())

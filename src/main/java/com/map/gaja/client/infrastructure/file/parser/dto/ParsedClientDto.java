@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientFileDto {
+public class ParsedClientDto {
     private int rowIdx;
     private String name;
     private String phoneNumber;
