@@ -8,10 +8,9 @@ import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkReque
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
-import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
@@ -50,7 +49,7 @@ class ClientServiceTest {
     private ClientQueryRepository clientQueryRepository;
     IncreasingClientService increasingClientService = new IncreasingClientService();
     @Mock
-    CurrentSecurityUserGetter securityUserGetter;
+    AuthenticationRepository securityUserGetter;
 
     Long clientId = 1L;
     Long groupId = 1L;

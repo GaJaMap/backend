@@ -7,7 +7,7 @@ import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.file.excel.ExcelParser;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
@@ -69,7 +69,7 @@ class WebClientControllerTest {
     FileValidator fileValidator;
 
     @MockBean
-    CurrentSecurityUserGetter userGetter;
+    AuthenticationRepository userGetter;
 
     @Autowired
     ObjectMapper om;

@@ -5,7 +5,7 @@ import com.map.gaja.client.infrastructure.file.excel.ClientExcelDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.application.util.GroupServiceHelper;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
@@ -39,7 +39,7 @@ public class ClientService {
 
     private final ClientQueryRepository clientQueryRepository;
     private final IncreasingClientService increasingClientService;
-    private final CurrentSecurityUserGetter securityUserGetter;
+    private final AuthenticationRepository securityUserGetter;
 
 
     /**

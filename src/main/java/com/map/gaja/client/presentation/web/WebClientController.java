@@ -9,7 +9,7 @@ import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.log.TimeCheckLog;
 
@@ -52,7 +52,7 @@ public class WebClientController {
     private final GroupService groupService;
     private final LocationResolver locationResolver;
     private final FileValidator fileValidator;
-    private final CurrentSecurityUserGetter getter;
+    private final AuthenticationRepository getter;
 
 
     @GetMapping("/")

@@ -1,9 +1,12 @@
 package com.map.gaja.global.authentication;
 
 import com.map.gaja.user.domain.model.Authority;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -13,13 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 현재 요청한 사용자의 세션 정보를 가져오는 컴포넌트.
+ * 세션 정보를 핸들하는 컴포넌트.
  *
  * 무조건 인증된 사용자가 있을 때 사용할 것.
  * 인증되지 않은 사용자가 있을 때는 NULL 반환으로 인한 NPE 위험이 있음.
  */
 @Component
-public class CurrentSecurityUserGetter {
+public class AuthenticationRepository {
 
     private Map<String, Authority> authorityMap;
 
@@ -54,6 +57,24 @@ public class CurrentSecurityUserGetter {
         }
 
         return currentUserAuthorityList;
+    }
+
+    /**
+     * SecurityContextHolder에 사용자 인증 객체 저장 및 세션 생성
+     */
+    public void saveContext(Long userId, String email, String authority) {
+        UserDetails userDetails = new PrincipalDetails(userId, email, authority);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
+        SecurityContextHolder.setContext(context);
+    }
+
+    /**
+     * 세션에서 이메일 추출
+     */
+    public String getEmail() {
+        PrincipalDetails principalDetails = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principalDetails.getName();
     }
 
 }
