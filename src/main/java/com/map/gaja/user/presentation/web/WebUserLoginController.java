@@ -1,15 +1,13 @@
 package com.map.gaja.user.presentation.web;
 
-import com.map.gaja.global.authentication.AuthenticationHandler;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.log.TimeCheckLog;
-import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @TimeCheckLog
 @Controller
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class WebUserLoginController {
 
     private final UserRepository userRepository;
-    private final AuthenticationHandler authenticationHandler;
+    private final AuthenticationRepository authenticationRepository;
 
     @GetMapping("/login")
     public String login(@AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -34,7 +32,7 @@ public class WebUserLoginController {
 //        String loginEmail = "email3@example.com";
 //        User user = userRepository.findByEmailAndActive(loginEmail).get();
 //
-//        authenticationHandler.saveContext(user.getId(), loginEmail, user.getAuthority().toString());
+//        authenticationRepository.saveContext(user.getId(), loginEmail, user.getAuthority().toString());
 //        return "redirect:/";
 //    }
 }

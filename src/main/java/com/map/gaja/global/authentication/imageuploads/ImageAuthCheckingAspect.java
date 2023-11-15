@@ -1,7 +1,6 @@
 package com.map.gaja.global.authentication.imageuploads;
 
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
-import com.map.gaja.global.authentication.PrincipalDetails;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.imageuploads.checkers.ImageUploadRequestChecker;
 import com.map.gaja.user.domain.exception.ImageUploadPermissionException;
 import com.map.gaja.user.domain.model.Authority;
@@ -10,10 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,7 +22,7 @@ import java.util.List;
 @Component
 public class ImageAuthCheckingAspect {
 
-    private final CurrentSecurityUserGetter userGetter;
+    private final AuthenticationRepository userGetter;
     private final List<ImageUploadRequestChecker> requestCheckers;
 
 
