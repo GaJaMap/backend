@@ -10,6 +10,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
@@ -52,6 +53,8 @@ public class ClientPostControllerTest {
     S3FileService fileService;
     @MockBean
     ClientRequestValidator clientRequestValidator;
+    @MockBean
+    AuthenticationRepository authenticationRepository;
 
     private ObjectMapper om;
 
