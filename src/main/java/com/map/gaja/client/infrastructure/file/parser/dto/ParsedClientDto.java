@@ -1,4 +1,4 @@
-package com.map.gaja.client.infrastructure.file.excel;
+package com.map.gaja.client.infrastructure.file.parser.dto;
 
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientExcelDto {
+public class ParsedClientDto {
     private int rowIdx;
     private String name;
     private String phoneNumber;
