@@ -7,12 +7,13 @@ import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
-import com.map.gaja.location.LocationResolver;
+import com.map.gaja.global.location.LocationResolver;
 import com.map.gaja.user.domain.model.Authority;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class WebClientControllerTest {
     FileValidator fileValidator;
 
     @MockBean
-    CurrentSecurityUserGetter userGetter;
+    AuthenticationRepository userGetter;
 
     @Autowired
     ObjectMapper om;

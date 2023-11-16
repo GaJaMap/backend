@@ -27,7 +27,6 @@ public class TimeCheckLogAspect {
         String classDotMethod = getClassDotMethod(pjp);
         String logId = createLogId();
 
-        log.info("[{}] {} 시작. 파라미터: {}", logId, classDotMethod, args);
         try {
             result = pjp.proceed(); // 핵심 기능 실행
             return result;
@@ -41,7 +40,7 @@ public class TimeCheckLogAspect {
             end = System.nanoTime();
             long runningTimeNano = end - start;
             double runningTimeMillis = runningTimeNano / NANOSECONDS_TO_MILLISECONDS;
-            log.info("[{}] {} 동작 시간: {}ms", logId, classDotMethod, runningTimeMillis);
+            log.info("[{}] {} - {} => Time: {} ms", logId, classDotMethod, args, runningTimeMillis);
         }
     }
 

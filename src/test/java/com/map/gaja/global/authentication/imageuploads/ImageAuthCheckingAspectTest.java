@@ -1,13 +1,11 @@
 package com.map.gaja.global.authentication.imageuploads;
 
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
-import com.map.gaja.global.authentication.PrincipalDetails;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.imageuploads.checkers.ImageUploadRequestChecker;
 import com.map.gaja.user.domain.exception.ImageUploadPermissionException;
 import com.map.gaja.user.domain.model.Authority;
 import org.aspectj.lang.JoinPoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +25,7 @@ import static org.mockito.Mockito.when;
 class ImageAuthCheckingAspectTest {
 
     @Mock
-    private CurrentSecurityUserGetter userGetter;
+    private AuthenticationRepository userGetter;
 
     @Mock
     private ImageUploadRequestChecker mockChecker;

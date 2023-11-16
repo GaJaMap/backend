@@ -46,7 +46,7 @@ public class UserController implements UserApiSpecification {
 
     @Override
     @GetMapping("/auto-login")
-    public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "email") String email) {
+    public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "name") String email) {
         AutoLoginResponse response = autoLoginProcessor.process(email);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

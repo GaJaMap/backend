@@ -1,6 +1,7 @@
 package com.map.gaja.group.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.AuthenticationToken;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupService;
@@ -36,6 +37,9 @@ class GroupControllerTest {
 
     @MockBean
     GroupController groupController;
+
+    @MockBean
+    AuthenticationRepository authenticationRepository;
 
     @Autowired
     ObjectMapper mapper;

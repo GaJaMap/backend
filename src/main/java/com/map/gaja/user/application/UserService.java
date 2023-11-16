@@ -1,6 +1,6 @@
 package com.map.gaja.user.application;
 
-import com.map.gaja.global.authentication.AuthenticationHandler;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.exception.UserNotFoundException;
 import com.map.gaja.user.domain.model.User;
@@ -15,14 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.format.DateTimeFormatter;
 
 import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
-import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final Oauth2Client oauth2Client;
     private final UserRepository userRepository;
-    private final AuthenticationHandler authenticationHandler;
+    private final AuthenticationRepository authenticationRepository;
     private final SessionHandler sessionHandler;
 
     @Transactional
@@ -36,7 +35,7 @@ public class UserService {
 
         sessionHandler.deduplicate(email, "APP"); //중복로그인 처리 최대 2개까지
 
-        authenticationHandler.saveContext(user.getId(), email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
+        authenticationRepository.saveContext(user.getId(), email, user.getAuthority().toString()); //SecurityContextHolder에 인증 객체 저장
 
         return new LoginResponse(email,
                 user.getAuthority().name(),

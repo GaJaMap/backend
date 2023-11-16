@@ -39,4 +39,4 @@ src/main/resources/application.yml
 src/main/resources/application-*.yml
 
 ### 로그 제거 ###
-ImageDeletionTask.log
+logs/

@@ -9,15 +9,15 @@ import com.map.gaja.client.presentation.dto.request.ClientExcelRequest;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 
-import com.map.gaja.global.authentication.CurrentSecurityUserGetter;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.log.TimeCheckLog;
 
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
-import com.map.gaja.location.LocationResolver;
-import com.map.gaja.location.exception.TooManyRequestException;
+import com.map.gaja.global.location.LocationResolver;
+import com.map.gaja.global.location.exception.TooManyRequestException;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,7 @@ public class WebClientController {
     private final GroupService groupService;
     private final LocationResolver locationResolver;
     private final FileValidator fileValidator;
-    private final CurrentSecurityUserGetter getter;
+    private final AuthenticationRepository getter;
 
 
     @GetMapping("/")

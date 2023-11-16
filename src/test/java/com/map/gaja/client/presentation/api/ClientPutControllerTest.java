@@ -9,6 +9,7 @@ import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
+import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,9 @@ public class ClientPutControllerTest {
 
     @MockBean
     ClientRequestValidator clientRequestValidator;
+    @MockBean
+    AuthenticationRepository authenticationRepository;
+
     final String testUri = "/api/group/{groupId}/clients/{clientId}";
 
 
