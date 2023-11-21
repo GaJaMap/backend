@@ -20,13 +20,16 @@
     }
   </script>
 
-  <div class="list-group mt-3" style="max-height: 250px;">
+  <div th:if="${#lists.isEmpty(groupList)}">
+    <div th:replace="fragments/group/empty-group :: fragment-empty-group">
+      group이 없을 때
+    </div>
+  </div>
+
+  <div th:unless="${#lists.isEmpty(groupList)}" class="list-group mt-3" style="max-height: 250px;">
     <div style="position: sticky; top: 0; background-color: white; z-index: 1;">
-      <div th:unless="${#lists.isEmpty(groupList)}" class="list-group-item list-group-item-action disabled bg-light" tabindex="-1">
+      <div  class="list-group-item list-group-item-action disabled bg-light" tabindex="-1">
         그룹을 선택해주세요.
-      </div>
-      <div th:if="${#lists.isEmpty(groupList)}" class="list-group-item list-group-item-action disabled bg-light" tabindex="-1">
-        그룹이 존재하지 않습니다. 앱에서 그룹을 추가해주세요.
       </div>
     </div>
     <div style="cursor:pointer; overflow-y: scroll;">
