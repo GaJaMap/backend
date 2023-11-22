@@ -18,6 +18,7 @@ import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.global.location.LocationResolver;
 import com.map.gaja.global.location.exception.TooManyRequestException;
+import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,7 @@ public class WebClientController {
 
         List<GroupDetailDto> activeGroupInfo = groupService.findActiveGroupInfo(email);
         model.addAttribute("groupList", activeGroupInfo);
+        model.addAttribute("creationGroup", new GroupCreateRequest());
 
         return "index";
     }

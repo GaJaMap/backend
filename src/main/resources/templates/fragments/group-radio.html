@@ -30,6 +30,9 @@
       <div class="list-group-item list-group-item-action" onclick="selectItem(this)" th:each="group: ${groupList}" th:value="${group.groupId}">
         <span th:text="|${group.groupName} (${group.clientCount})|">그룹명 (그룹 내 고객 수)</span>
       </div>
+      <div class="list-group-item list-group-item-action list-group-item-light" data-bs-toggle="modal" data-bs-target="#groupCreationModal">
+        <span class="fw-bold">그룹 추가</span>
+      </div>
     </div>
   </div>
   <input type="hidden" name="groupId" id="groupId">

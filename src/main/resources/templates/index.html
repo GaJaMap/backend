@@ -11,6 +11,7 @@
     <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/excel-form.js}" src="../js/excel-form.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.js}" src="../js/bootstrap.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -93,6 +94,8 @@
 
 </head>
 <body>
+    <div th:replace="fragments/group/group-creation-modal :: fragment-group-creation-modal">그룹 추가 모달창</div>
+
     <!-- MultiStep Form -->
     <div class="container-fluid" id="grad1">
         <div class="row justify-content-center mt-0">
