@@ -198,4 +198,27 @@ class GroupRepositoryTest {
         //then
         assertEquals(false, groupRepository.findGroupInfoById(0L).isPresent());
     }
+
+    @Test
+    @DisplayName("그룹 삭제 실패(이미 삭제된 그룹을 또 삭제할 경우)")
+    void deleteGroupFail() {
+        //given
+        User user = User.builder()
+                .email("test")
+                .groupCount(0)
+                .authority(Authority.FREE)
+                .lastLoginDate(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        Group group = new Group("test", user);
+        group.remove();
+        groupRepository.save(group);
+
+        //when
+        int count = groupRepository.deleteByIdAndUserId(group.getId(), user.getId());
+
+        //then
+        assertEquals(0, count);
+    }
 }
