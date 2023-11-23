@@ -70,7 +70,6 @@ public class WebClientController {
 
         List<GroupDetailDto> activeGroupInfo = groupService.findActiveGroupInfo(email);
         model.addAttribute("groupList", activeGroupInfo);
-        model.addAttribute("creationGroup", new GroupCreateRequest());
 
         return "index";
     }

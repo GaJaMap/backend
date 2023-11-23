@@ -1,21 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="fragment-group-creation-modal" class="modal fade" id="groupCreationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <script>
+        function addGroup() {
+            var formData = {
+                name: $('#creationGroupName').val(),
+            };
+
+            // Make an AJAX request to the endpoint
+            $.ajax({
+                type: 'POST',
+                url: '/api/group',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(data) {
+                    location.reload();
+                },
+                error: function(error) {
+                    let errorMessage;
+                    if(error.status == 400)
+                        errorMessage = error.responseJSON[0].message;
+                    else if(error.status == 401)
+                        errorMessage = '로그인을 다시 진행한 후 시도해주세요.';
+                    else
+                        errorMessage = error.responseJSON.message;
+
+                    $('#creationGroupError').text(errorMessage);
+                }
+            });
+        }
+    </script>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">그룹 추가하기</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/group/add" th:object="${creationGroup}" method="POST">
+            <form action="/api/group" id="groupCreationForm" method="POST">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="mb-2 ms-2">그룹명</label>
-                        <input type="text" class="form-control" th:field="*{name}" placeholder="그룹명을 입력해주세요.">
+                        <label class="mb-1 ms-2">그룹명</label>
+                        <div class="mb-1 text-danger" id="creationGroupError"></div>
+                        <input type="text" class="form-control" id="creationGroupName" placeholder="그룹명을 입력해주세요.">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">추가</button>
+                    <button type="button" class="btn btn-primary" onclick="addGroup()">추가</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                 </div>
             </form>
