@@ -7,7 +7,6 @@
                 name: $('#creationGroupName').val(),
             };
 
-            // Make an AJAX request to the endpoint
             $.ajax({
                 type: 'POST',
                 url: '/api/group',
@@ -28,15 +27,24 @@
                     $('#creationGroupError').text(errorMessage);
                 }
             });
-
-            $(document).ready(function() {
-                $('#creationGroupName').keypress(function(event) {
-                    if (event.which === 13) {
-                        addGroup();
-                    }
-                });
-            });
         }
+
+        $(document).ready(function() {
+            let enterPressed = false;
+
+            $('#creationGroupName').keydown(function(event) {
+                if (event.which === 13 && !enterPressed) { // 13 is the keycode for Enter key
+                    enterPressed = true;
+                    addGroup();
+                }
+            });
+
+            $('#creationGroupName').keyup(function() {
+                setTimeout(function() {
+                    enterPressed = false;
+                }, 500);
+            });
+        });
     </script>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
