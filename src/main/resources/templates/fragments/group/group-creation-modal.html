@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="fragment-group-creation-modal" class="modal fade" id="groupCreationModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <script>
+        function addGroup() {
+            var formData = {
+                name: $('#creationGroupName').val(),
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/group',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(data) {
+                    location.reload();
+                },
+                error: function(error) {
+                    let errorMessage;
+                    if(error.status == 400)
+                        errorMessage = error.responseJSON[0].message;
+                    else if(error.status == 401)
+                        errorMessage = '로그인을 다시 진행한 후 시도해주세요.';
+                    else
+                        errorMessage = error.responseJSON.message;
+
+                    $('#creationGroupError').text(errorMessage);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            let enterPressed = false;
+
+            $('#creationGroupName').keydown(function(event) {
+                if (event.which === 13 && !enterPressed) { // 13 is the keycode for Enter key
+                    enterPressed = true;
+                    addGroup();
+                }
+            });
+
+            $('#creationGroupName').keyup(function() {
+                setTimeout(function() {
+                    enterPressed = false;
+                }, 500);
+            });
+        });
+    </script>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">그룹 추가하기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="mb-1 ms-2">그룹명</label>
+                        <div class="mb-1 text-danger" id="creationGroupError"></div>
+                        <input type="text" class="form-control" id="creationGroupName" placeholder="그룹명을 입력해주세요.">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addGroup()">추가</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
