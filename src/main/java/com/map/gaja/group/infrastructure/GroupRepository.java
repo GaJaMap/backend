@@ -25,7 +25,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      * groupId와 userId 값을 가진 삭제할 그룹을  isDeleted 필드 true로 변경
      */
     @Modifying
-    @Query("UPDATE Group g SET g.isDeleted = true WHERE g.id = :groupId AND g.user.id = :userId")
+    @Query("UPDATE Group g SET g.isDeleted = true WHERE g.id = :groupId AND g.user.id = :userId AND g.isDeleted = false")
     int deleteByIdAndUserId(@Param(value = "groupId") Long groupId, @Param(value = "userId") Long userId);
 
     /**
