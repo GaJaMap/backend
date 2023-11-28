@@ -73,8 +73,8 @@ public class AuthenticationRepository {
      * 세션에서 이메일 추출
      */
     public String getEmail() {
-        PrincipalDetails principalDetails = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principalDetails.getName();
+        PrincipalDetails principalDetails = getCurrentUser();
+        return principalDetails != null ? principalDetails.getName() : null;
     }
 
 }
