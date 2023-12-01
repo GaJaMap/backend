@@ -11,8 +11,6 @@ import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
-import com.map.gaja.client.domain.model.ClientAddress;
-import com.map.gaja.client.domain.model.ClientLocation;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -94,10 +92,8 @@ public class ClientService {
         Client existingClient = clientRepository.findById(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        if (isUpdatedGroup(existingClient, updateRequest)) {
-            updateClientGroup(existingClient, updateRequest);
-        }
-        updateClientField(existingClient, updateRequest);
+        updateClientGroupIfChanged(updateRequest, existingClient);
+        ClientUpdater.updateClient(existingClient, updateRequest);
 
         return entityToOverviewDto(existingClient);
     }
@@ -116,14 +112,9 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithImage(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        if (isUpdatedGroup(existingClient, updateRequest)) {
-            updateClientGroup(existingClient, updateRequest);
-        }
-        updateClientField(existingClient, updateRequest);
-
-        ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
-        existingClient.removeClientImage();
-        existingClient.updateImage(clientImage);
+        updateClientGroupIfChanged(updateRequest, existingClient);
+        ClientUpdater.updateClient(existingClient, updateRequest);
+        ClientUpdater.updateClientImage(existingClient, updatedFileDto);
 
         return entityToOverviewDto(existingClient);
     }
@@ -136,15 +127,18 @@ public class ClientService {
         Client existingClient = clientQueryRepository.findClientWithImage(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
 
-        if (isUpdatedGroup(existingClient, updateRequest)) {
-            updateClientGroup(existingClient, updateRequest);
-        }
-        updateClientField(existingClient, updateRequest);
+        updateClientGroupIfChanged(updateRequest, existingClient);
+        ClientUpdater.updateClient(existingClient, updateRequest);
         existingClient.removeClientImage();
 
         return entityToOverviewDto(existingClient);
     }
 
+    private void updateClientGroupIfChanged(NewClientRequest updateRequest, Client existingClient) {
+        if (isUpdatedGroup(existingClient, updateRequest)) {
+            updateClientGroup(existingClient, updateRequest);
+        }
+    }
 
     /**
      * 두 개의 그룹을 조회해서 Client의 기존 그룹을 새로운 그룹으로 변경
@@ -159,21 +153,6 @@ public class ClientService {
         existingGroup.decreaseClientCount(1);
         existingClient.updateGroup(updatedGroup);
         increasingClientService.increase(updatedGroup, securityUserGetter.getAuthority().get(0), 1);
-    }
-
-    /**
-     * ClientImage, Group을 제외한 순수 고객 정보만을 업데이트 한다.
-     */
-    private void updateClientField(Client existingClient, NewClientRequest updateRequest) {
-        ClientAddress updatedAddress = dtoToVo(updateRequest.getAddress());
-        ClientLocation updatedLocation = dtoToVo(updateRequest.getLocation());
-
-        existingClient.updateClientField(
-                updateRequest.getClientName(),
-                updateRequest.getPhoneNumber(),
-                updatedAddress,
-                updatedLocation
-        );
     }
 
     /**
