@@ -1,6 +1,5 @@
 package com.map.gaja.group.application;
 
-import com.map.gaja.group.domain.exception.ClientLimitExceededException;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
@@ -42,9 +41,7 @@ public class GroupAccessVerifyService {
             throw new GroupNotFoundException();
         }
 
-        if (!increasingClientService.isCreateClient(userAuth.getClientLimitCount(), group.getClientCount(), insertCount)) {
-            throw new ClientLimitExceededException(userAuth.name(), userAuth.getClientLimitCount());
-        }
+        increasingClientService.checkCanCreateClient(userAuth, group.getClientCount(), insertCount);
 
         group.getUser().accessGroup(groupId);
     }
