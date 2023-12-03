@@ -43,6 +43,16 @@ public final class UserServiceHelper {
                 });
     }
 
+    /**
+     * userId로 유저 조회
+     */
+    public static User findById(UserRepository userRepository, Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    throw new UserNotFoundException();
+                });
+    }
+
     private static boolean isNewUser(User user) {
         if (user == null) {
             return true;

@@ -34,19 +34,26 @@ public class AutoLoginProcessor {
         user.updateLastLoginDate(); //최근 접속일 update
 
         Long referenceGroupId = user.getReferenceGroupId();
+        GroupInfo groupInfo = getReferenceGroupInfo(referenceGroupId); //최근에 참조한 그룹 정보 조회
 
-        GroupInfo groupInfo = groupRepository.findGroupInfoById(referenceGroupId)
-                .orElseGet(this::createWholeGroup); //최근에 참조한 그룹 정보 조회
+        ClientListResponse recentGroupClients = getRecentGroupClients(email, referenceGroupId); //최근에 참조한 그룹에 속한 client 조회
 
-        ClientListResponse clientListResponse;
+        AutoLoginResponse response = new AutoLoginResponse(recentGroupClients, s3UrlGenerator.getS3Url(), groupInfo);
+        return response;
+    }
+
+    private ClientListResponse getRecentGroupClients(String email, Long referenceGroupId) {
         if (isWholeGroup(referenceGroupId)) { //최근에 참조한 그룹이 전체일 경우
-            clientListResponse = clientQueryService.findAllClient(email, null);
-        } else { //최근에 참조한 그룹이 특정 그룹일 경우
-            clientListResponse = clientQueryService.findAllClientsInGroup(groupInfo.getGroupId(), null);
+            return clientQueryService.findAllClient(email, null);
         }
 
-        AutoLoginResponse response = new AutoLoginResponse(clientListResponse, s3UrlGenerator.getS3Url(), groupInfo);
-        return response;
+        return clientQueryService.findAllClientsInGroup(referenceGroupId, null);
+    }
+
+    private GroupInfo getReferenceGroupInfo(Long referenceGroupId) {
+        GroupInfo groupInfo = groupRepository.findGroupInfoById(referenceGroupId)
+                .orElseGet(this::createWholeGroup);
+        return groupInfo;
     }
 
     private GroupInfo createWholeGroup() {

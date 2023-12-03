@@ -4,6 +4,7 @@ package com.map.gaja.user.infrastructure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.map.gaja.user.domain.exception.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -22,21 +23,45 @@ public class Oauth2Client {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public String getEmail(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(KAKAO_ACCESS_TOKEN_HEADER, KAKAO_ACCESS_TOKEN_PREFIX + accessToken);
+        ResponseEntity<String> response = requestKakaoLogin(accessToken);
 
-        RequestEntity<Void> request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(KAKAO_OAUTH2_URL));
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+        String email = extractEmail(response);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            try {
-                JsonNode jsonNode = mapper.readTree(response.getBody());
-                return jsonNode.get("kakao_account").get("email").asText();
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+        return email;
+    }
+
+    private String extractEmail(ResponseEntity<String> response) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new UserNotFoundException();
         }
 
-        return null;
+        String email = null;
+        try {
+            JsonNode jsonNode = mapper.readTree(response.getBody());
+            email = jsonNode.get("kakao_account").get("email").asText();
+        } catch (JsonProcessingException e) {
+            throw new UserNotFoundException(e);
+        }
+
+        if (email == null) {
+            throw new UserNotFoundException();
+        }
+
+        return email;
+    }
+
+    private ResponseEntity<String> requestKakaoLogin(String accessToken) {
+        HttpHeaders headers = createHttpHeaders(accessToken);
+
+        RequestEntity<Void> request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(KAKAO_OAUTH2_URL));
+
+        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+        return response;
+    }
+
+    private HttpHeaders createHttpHeaders(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(KAKAO_ACCESS_TOKEN_HEADER, KAKAO_ACCESS_TOKEN_PREFIX + accessToken);
+        return headers;
     }
 }

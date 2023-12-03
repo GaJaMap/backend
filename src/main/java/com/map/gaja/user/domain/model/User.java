@@ -5,7 +5,6 @@ import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -48,9 +47,13 @@ public class User extends BaseTimeEntity {
     }
 
     public void checkCreateGroupPermission() {
-        if (authority.getGroupLimitCount() <= groupCount) {
+        if (isGroupCreationLimitExceeded()) {
             throw new GroupLimitExceededException(authority.name(), authority.getGroupLimitCount());
         }
+    }
+
+    private boolean isGroupCreationLimitExceeded() {
+        return authority.getGroupLimitCount() <= groupCount;
     }
 
     public void increaseGroupCount() {

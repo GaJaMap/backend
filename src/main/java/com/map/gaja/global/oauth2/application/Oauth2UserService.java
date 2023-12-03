@@ -22,24 +22,32 @@ import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
 public class Oauth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final SessionHandler sessionHandler;
     private final UserRepository userRepository;
+    private final String WEB_LOGIN = "WEB";
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        Map<String, Object> attributes = parseAttributes(userRequest);
+        Map<String, Object> attributes = parseAttributes(userRequest); //oauth 사용자 정보 map으로 파싱
 
-        String email = (String) ((Map) attributes.get("kakao_account")).get("email");
+        String email = extractEmail(attributes); //속성에서 이메일 추출
 
-        User user;
-        try {
-            user = findByEmail(userRepository, email);
-        } catch (WithdrawalUserException e) { //회원 탈퇴한 유저일 경우
-            throw new OAuth2AuthenticationException("410"); //Oauth2AuthenticationException으로 변환해줘야지 Oauth2FailureHandler가 예외를 잡을 수 있다.
-        }
+        User user = getUser(email);
 
-        sessionHandler.deduplicate(email, "WEB"); //중복 세션 제거
+        sessionHandler.deduplicate(email, WEB_LOGIN); //중복 세션 제거
 
         return new PrincipalDetails(user.getId(), user.getEmail(), user.getAuthority().name(), attributes);
 
+    }
+
+    private User getUser(String email) {
+        try {
+            return findByEmail(userRepository, email);
+        } catch (WithdrawalUserException e) { //회원 탈퇴한 유저일 경우
+            throw new OAuth2AuthenticationException("410"); //Oauth2AuthenticationException으로 변환해야지 Oauth2FailureHandler가 예외를 잡을 수 있다.
+        }
+    }
+
+    private String extractEmail(Map<String, Object> attributes) {
+        return (String) ((Map) attributes.get("kakao_account")).get("email");
     }
 
     private Map<String, Object> parseAttributes(OAuth2UserRequest userRequest) {
