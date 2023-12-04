@@ -23,31 +23,41 @@ public class ImageDeletionTask {
     private final ClientImageRepository clientImageRepository;
 
     @Transactional
-    public int deleteClientImages() {
+    public int process() {
         int deletedImageCount = 0;
 
-        // DB에 삭제할 ClientImage가 존재하지 않을 때까지 LIMIT_SIZE만큼 ClientImage를 조회하고 s3에 해당 경로 이미지 삭제
+        // DB에 삭제할 ClientImage가 존재하지 않을 때까지 LIMIT_SIZE만큼 ClientImage를 조회하고 s3에도 이미지 삭제
         while (true) {
             List<ClientImage> clientImages = clientQueryRepository.findImagePathsToDelete(0L, LIMIT_SIZE);
-            List<Long> deleteIds = new ArrayList<>(); //삭제 할 id 저장
-            for (ClientImage clientImage : clientImages) {
-                try {
-                    s3FileService.removeFile(clientImage.getSavedPath());
-                } catch (S3NotWorkingException e) {
-                    clientImageRepository.deleteClientImagesInIds(deleteIds); // s3예외가 발생했지만 s3에서 삭제된 이미지가 있을 수도 있으므로 테이블에서도 레코드 삭제
-                    log.error("S3 오류입니다", e);
-                    return -1;
-                }
-                deleteIds.add(clientImage.getId());
-            }
-
-            deletedImageCount += clientImages.size();
-            clientImageRepository.deleteClientImagesInIds(deleteIds);
-            if (clientImages.size() <= LIMIT_SIZE) { // 다음 데이터가 존재하는지 체크
+            if (isNoImageToDelete(clientImages)) {
                 break;
             }
+
+            List<Long> deleteIds = new ArrayList<>(); //삭제 할 clientImage id 저장
+            try {
+                deleteClientImages(clientImages, deleteIds);
+            } catch (S3NotWorkingException e) {
+                deletedImageCount += deleteIds.size();
+                clientImageRepository.deleteClientImagesInIds(deleteIds); // s3예외가 발생했지만 s3에서 삭제된 이미지가 있을 수도 있으므로 테이블에서도 레코드 삭제
+                log.error("S3 오류입니다", e);
+                break;
+            }
+
+            deletedImageCount += deleteIds.size();
+            clientImageRepository.deleteClientImagesInIds(deleteIds);
         }
 
         return deletedImageCount;
+    }
+
+    private boolean isNoImageToDelete(List<ClientImage> clientImages) {
+        return clientImages.isEmpty();
+    }
+
+    private void deleteClientImages(List<ClientImage> clientImages, List<Long> deleteIds) throws S3NotWorkingException {
+        for (ClientImage clientImage : clientImages) {
+            s3FileService.removeFile(clientImage.getSavedPath());
+            deleteIds.add(clientImage.getId());
+        }
     }
 }
