@@ -16,7 +16,7 @@
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/time/%d{yyyy-MM-dd}_%i.gz</fileNamePattern> <!-- 매일 파일이 압축됨 -->
+            <fileNamePattern>logs/time/%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize> <!-- 10MB를 초과하면 파일 압축 -->
             </timeBasedFileNamingAndTriggeringPolicy>
