@@ -44,7 +44,8 @@ public class LocationResolver {
                 .defaultHeader("Authorization", "KakaoAK " + KAKAO_KEY)
                 .build();
 
-        Hooks.onErrorDropped(throwable -> {});
+        Hooks.onErrorDropped(throwable -> {
+        });
     }
 
     /**
@@ -91,31 +92,39 @@ public class LocationResolver {
         return Flux.fromIterable(addresses)
                 .filter(data -> data.getAddress() != null)
                 .flatMap(data -> { //비동기로 실행
-                    URI uri = createUri(data.getAddress());
-                    return callGeoApi(data, uri);
+                    return callGeoApi(data, createUri(data.getAddress()));
                 }, 2) //2개씩 병렬처리
                 .then();
     }
 
     private Publisher<?> callGeoApi(ParsedClientDto data, URI uri) {
+        return getResponse(uri)
+                .flatMap(this::handleResponse)
+                .doOnNext(data::setLocation);
+    }
+
+    private Mono<LocationDto> handleResponse(ResponseEntity<String> responseEntity) {
+        if (!isSuccessfulResponse(responseEntity)) {
+            return Mono.error(new NotExcelUploadException());
+        }
+
+        LocationDto location = parseLocation(responseEntity.getBody());
+        if (isLocationOutOfKorea(location)) {
+            return Mono.error(new LocationOutsideKoreaException());
+        }
+
+        return Mono.just(location);
+    }
+
+    private boolean isSuccessfulResponse(ResponseEntity<String> responseEntity) {
+        return responseEntity.getStatusCode().is2xxSuccessful();
+    }
+
+    private Mono<ResponseEntity<String>> getResponse(URI uri) {
         return webClient.get()
                 .uri(uri)
                 .retrieve() //비동기 통신
-                .toEntity(String.class) //응답 결과를 String으로 받고 ResponseEntity 객체로 래핑하여 반환받음.
-                .map(responseEntity -> {
-                    if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                        LocationDto location = parseLocation(responseEntity.getBody());
-
-                        if (isLocationOutOfKorea(location)) {
-                            throw new LocationOutsideKoreaException();
-                        }
-
-                        data.setLocation(location);
-                        return Mono.empty();
-                    } else { //200번대가 아니라면 api통신에 문제가 있음.
-                        throw new NotExcelUploadException();
-                    }
-                });
+                .toEntity(String.class); //응답 결과를 String으로 받고 ResponseEntity 객체로 래핑하여 반환받음.
     }
 
     /**
@@ -159,7 +168,7 @@ public class LocationResolver {
 
                 return new LocationDto(y, x);
             }
-        } catch(JsonProcessingException e){
+        } catch (JsonProcessingException e) {
             throw new NotExcelUploadException(e);
         }
 
