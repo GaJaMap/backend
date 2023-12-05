@@ -1,6 +1,5 @@
 package com.map.gaja.client.apllication;
 
-import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
@@ -49,7 +48,7 @@ public class ClientService {
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
         Client client = dtoToEntity(clientRequest, group);
         clientRepository.save(client);
-        increasingClientService.increase(group, securityUserGetter.getAuthority().get(0), 1);
+        increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
         return entityToOverviewDto(client);
     }
 
@@ -64,7 +63,7 @@ public class ClientService {
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
         Client client = dtoToEntity(clientRequest, group, storedFileDto);
         clientRepository.save(client);
-        increasingClientService.increase(group, securityUserGetter.getAuthority().get(0), 1);
+        increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
         return entityToOverviewDto(client);
     }
 
@@ -152,7 +151,7 @@ public class ClientService {
 
         existingGroup.decreaseClientCount(1);
         existingClient.updateGroup(updatedGroup);
-        increasingClientService.increase(updatedGroup, securityUserGetter.getAuthority().get(0), 1);
+        increasingClientService.increaseByOne(updatedGroup, securityUserGetter.getAuthority().get(0));
     }
 
     /**
@@ -170,7 +169,7 @@ public class ClientService {
             savedClient.add(dtoToEntity(clientRequest, group));
         });
 
-        increasingClientService.increase(group, securityUserGetter.getAuthority().get(0), savedClient.size());
+        increasingClientService.increaseByMany(group, securityUserGetter.getAuthority().get(0), savedClient.size());
         clientRepository.saveAll(savedClient);
         return savedClient.stream().mapToLong(Client::getId).boxed()
                 .collect(Collectors.toList());
@@ -194,7 +193,7 @@ public class ClientService {
         List<Client> savedClient = new ArrayList<>();
         excelData.forEach((clientData) -> savedClient.add(dtoToEntity(clientData, group)));
 
-        increasingClientService.increase(group, authority.get(0), savedClient.size());
+        increasingClientService.increaseByMany(group, authority.get(0), savedClient.size());
         clientBulkRepository.saveClientWithGroup(group, savedClient);
     }
 
