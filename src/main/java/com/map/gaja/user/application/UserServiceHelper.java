@@ -4,8 +4,11 @@ import com.map.gaja.user.domain.exception.UserNotFoundException;
 import com.map.gaja.user.domain.exception.WithdrawalUserException;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public final class UserServiceHelper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class UserServiceHelper {
     /**
      * 회은 탈퇴 안 한 유저 조회
      */
