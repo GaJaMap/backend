@@ -24,7 +24,7 @@ import java.util.List;
  * Request -> Entity 또는 Entity -> Response 컨버터
  */
 public class ClientConvertor {
-    protected static ClientListResponse entityToDto(List<Client> clients) {
+    public static ClientListResponse entityToDto(List<Client> clients) {
         List<ClientOverviewResponse> responseClients = new ArrayList<>();
 
         clients.forEach(client -> {
