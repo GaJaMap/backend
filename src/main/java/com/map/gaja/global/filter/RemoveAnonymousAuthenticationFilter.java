@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class RemoveAnonymousAuthenticationFilter extends OncePerRequestFilter {
+    private static final String SPRING_SECURITY_SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -28,7 +29,7 @@ public class RemoveAnonymousAuthenticationFilter extends OncePerRequestFilter {
         }
 
         //익명 객체는 세션의 속성 키 값이 "SPRING_SECURITY_SAVED_REQUEST" 이고 인증 객체의 키 값은 "SPRING_SECURITY_CONTEXT"
-        SavedRequest savedRequest = (SavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+        SavedRequest savedRequest = (SavedRequest) session.getAttribute(SPRING_SECURITY_SAVED_REQUEST);
         if (savedRequest != null) {
             return true;
         }
