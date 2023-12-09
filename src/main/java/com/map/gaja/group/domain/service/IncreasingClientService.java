@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IncreasingClientService {
-    private final int ONE_INCREMENT = 1;
+    private static final int ONE_INCREMENT = 1;
 
     public void increaseByMany(Group group, Authority authority, int count) {
         checkCanCreateClient(authority, group.getClientCount(), count);
