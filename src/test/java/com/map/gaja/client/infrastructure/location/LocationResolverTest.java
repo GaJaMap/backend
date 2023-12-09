@@ -1,7 +1,8 @@
-//package com.map.gaja.location;
+//package com.map.gaja.client.infrastructure.location;
 //
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.map.gaja.client.infrastructure.file.excel.ClientExcelData;
+//import com.map.gaja.client.infrastructure.location.LocationResolver;
 //import org.junit.jupiter.api.Test;
 //
 //import java.util.ArrayList;

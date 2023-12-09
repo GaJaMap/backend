@@ -24,11 +24,11 @@ public class UserServiceHelper {
      */
     public static User findByEmail(UserRepository userRepository, String email) {
         User user = userRepository.findByEmail(email);
-        if (isWithdrawalUser(user)) { //회원 탈퇴한 유저인가?
+        if (isWithdrawalUser(user)) {
             throw new WithdrawalUserException();
         }
 
-        if (isNewUser(user)) { //신규 유저인가?
+        if (isNewUser(user)) {
             user = new User(email);
             userRepository.save(user);
         }

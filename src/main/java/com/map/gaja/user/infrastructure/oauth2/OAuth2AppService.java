@@ -14,13 +14,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
+import static com.map.gaja.user.constant.OAuthConstant.*;
+
 @Component
-public class OAuth2Appservice {
-    private final String KAKAO_OAUTH2_URL = "https://kapi.kakao.com/v2/user/me";
-    private final String KAKAO_ACCESS_TOKEN_HEADER = "Authorization";
-    private final String KAKAO_ACCESS_TOKEN_PREFIX = "Bearer ";
-    private final String KAKAO_ACCOUNT = "kakao_account";
-    private final String EMAIL = "email";
+public class OAuth2AppService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 

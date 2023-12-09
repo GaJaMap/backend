@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
+import static com.map.gaja.user.constant.UserConstant.WHOLE_GROUP_INFO;
 
 @Service
 @RequiredArgsConstructor
@@ -58,27 +60,8 @@ public class AutoLoginProcessor {
 
     private GroupInfo getReferenceGroupInfo(Long referenceGroupId) {
         GroupInfo groupInfo = groupRepository.findGroupInfoById(referenceGroupId)
-                .orElseGet(this::createWholeGroup);
+                .orElseGet((Supplier<? extends GroupInfo>) WHOLE_GROUP_INFO);
         return groupInfo;
-    }
-
-    private GroupInfo createWholeGroup() {
-        return new GroupInfo() {
-            @Override
-            public Long getGroupId() {
-                return -1L;
-            }
-
-            @Override
-            public String getGroupName() {
-                return "전체";
-            }
-
-            @Override
-            public Integer getClientCount() {
-                return -1;
-            }
-        };
     }
 
     private boolean isWholeGroup(Long referenceGroupId) {

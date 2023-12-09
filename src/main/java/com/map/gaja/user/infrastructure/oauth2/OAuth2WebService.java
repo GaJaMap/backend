@@ -16,23 +16,23 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
+import static com.map.gaja.user.constant.OAuthConstant.*;
 
 @Service
 @RequiredArgsConstructor
 public class OAuth2WebService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final SessionHandler sessionHandler;
     private final UserRepository userRepository;
-    private final String WEB_LOGIN = "WEB";
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         Map<String, Object> attributes = parseAttributes(userRequest); //oauth 사용자 정보 map으로 파싱
 
-        String email = extractEmail(attributes); //속성에서 이메일 추출
+        String email = extractEmail(attributes);
 
         User user = getUser(email);
 
-        sessionHandler.deduplicate(email, WEB_LOGIN); //중복 세션 제거
+        sessionHandler.deduplicate(email, WEB_LOGIN);
 
         return new PrincipalDetails(user.getId(), user.getEmail(), user.getAuthority().name(), attributes);
 
@@ -42,12 +42,12 @@ public class OAuth2WebService implements OAuth2UserService<OAuth2UserRequest, OA
         try {
             return findByEmail(userRepository, email);
         } catch (WithdrawalUserException e) { //회원 탈퇴한 유저일 경우
-            throw new OAuth2AuthenticationException("410"); //Oauth2AuthenticationException으로 변환해야지 Oauth2FailureHandler가 예외를 잡을 수 있다.
+            throw new OAuth2AuthenticationException(FAIL_STATUS_STRING); //OAuth2AuthenticationException으로 변환해야지 OAuth2WebFailureHandler가 예외를 잡을 수 있다.
         }
     }
 
     private String extractEmail(Map<String, Object> attributes) {
-        return (String) ((Map) attributes.get("kakao_account")).get("email");
+        return (String) ((Map) attributes.get(KAKAO_ACCOUNT)).get(EMAIL);
     }
 
     private Map<String, Object> parseAttributes(OAuth2UserRequest userRequest) {

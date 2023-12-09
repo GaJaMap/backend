@@ -9,11 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.map.gaja.user.constant.OAuthConstant.REDIRECT_PATH;
+
 @Component
 public class OAuth2WebSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.sendRedirect("/"); //리다이렉트 경로 입력
+        response.sendRedirect(REDIRECT_PATH);
     }
 }
