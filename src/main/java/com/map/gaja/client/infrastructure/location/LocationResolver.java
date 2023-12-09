@@ -26,6 +26,8 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.map.gaja.client.constant.LocationResolverConstant.*;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -34,18 +36,16 @@ public class LocationResolver {
     private String KAKAO_KEY;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper;
-    private static final String KAKAO_URL = "https://dapi.kakao.com/v2/local/search/address.json";
     private WebClient webClient;
 
     @PostConstruct
     private void init() {
         webClient = WebClient.builder()
                 .baseUrl(KAKAO_URL)
-                .defaultHeader("Authorization", "KakaoAK " + KAKAO_KEY)
+                .defaultHeader(AUTHORIZATION, KAKAO_AK + KAKAO_KEY)
                 .build();
 
-        Hooks.onErrorDropped(throwable -> {
-        });
+        Hooks.onErrorDropped(throwable -> {});
     }
 
     /**
@@ -93,7 +93,7 @@ public class LocationResolver {
                 .filter(data -> data.getAddress() != null)
                 .flatMap(data -> { //비동기로 실행
                     return callGeoApi(data, createUri(data.getAddress()));
-                }, 2) //2개씩 병렬처리
+                }, ASYNC_CONCURRENCY) //2개씩 병렬처리
                 .then();
     }
 
@@ -136,21 +136,21 @@ public class LocationResolver {
             return false;
         }
 
-        return 33d > location.getLatitude() || location.getLatitude() > 39d
-                || 124d > location.getLongitude() || location.getLongitude() > 132d;
+        return MIN_LATITUDE > location.getLatitude() || location.getLatitude() > MAX_LATITUDE
+                || MIN_LONGITUDE > location.getLongitude() || location.getLongitude() > MAX_LONGITUDE;
     }
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + KAKAO_KEY);
+        headers.set(AUTHORIZATION, KAKAO_AK + KAKAO_KEY);
         return headers;
     }
 
     private URI createUri(String address) {
         return UriComponentsBuilder.fromUriString(KAKAO_URL)
-                .queryParam("query", address)
-                .queryParam("analyze_type", "exact")
-                .queryParam("size", 1)
+                .queryParam(QUERY_ADDRESS_PARAM, address)
+                .queryParam(ANALYZE_TYPE_PARAM, ANALYZE_TYPE_VALUE)
+                .queryParam(RESPONSE_SIZE_PARAM, RESPONSE_SIZE_VALUE)
                 .encode(StandardCharsets.UTF_8)
                 .build()
                 .toUri();
@@ -160,11 +160,11 @@ public class LocationResolver {
         try {
             JsonNode jsonNode = mapper.readTree(result);
 
-            JsonNode documentsNode = jsonNode.get("documents");
-            if (documentsNode.isArray() && documentsNode.size() > 0) {
-                JsonNode documentNode = documentsNode.get(0);
-                double x = documentNode.get("x").asDouble();
-                double y = documentNode.get("y").asDouble();
+            JsonNode documentsNode = jsonNode.get(DOCUMENTS_NODE_NAME);
+            if (documentsNode.isArray() && documentsNode.size() > ZERO) {
+                JsonNode documentNode = documentsNode.get(ZERO);
+                double x = documentNode.get(X_NODE_NAME).asDouble();
+                double y = documentNode.get(Y_NODE_NAME).asDouble();
 
                 return new LocationDto(y, x);
             }
