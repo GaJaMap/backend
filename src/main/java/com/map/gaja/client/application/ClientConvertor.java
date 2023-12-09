@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;

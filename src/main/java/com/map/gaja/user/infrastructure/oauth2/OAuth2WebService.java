@@ -1,4 +1,4 @@
-package com.map.gaja.global.oauth2.application;
+package com.map.gaja.user.infrastructure.oauth2;
 
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.global.authentication.SessionHandler;
@@ -19,7 +19,7 @@ import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
 
 @Service
 @RequiredArgsConstructor
-public class Oauth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class OAuth2WebService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final SessionHandler sessionHandler;
     private final UserRepository userRepository;
     private final String WEB_LOGIN = "WEB";

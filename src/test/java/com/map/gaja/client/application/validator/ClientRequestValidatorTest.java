@@ -1,6 +1,5 @@
-package com.map.gaja.client.apllication.validator;
+package com.map.gaja.client.application.validator;
 
-import com.map.gaja.client.apllication.validator.ClientRequestValidator;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.exception.FileNotAllowedException;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;

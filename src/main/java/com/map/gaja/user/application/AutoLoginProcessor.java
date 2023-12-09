@@ -1,6 +1,6 @@
 package com.map.gaja.user.application;
 
-import com.map.gaja.client.apllication.ClientConvertor;
+import com.map.gaja.client.application.ClientConvertor;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;

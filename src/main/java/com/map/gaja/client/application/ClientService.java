@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.map.gaja.client.apllication.ClientConvertor.*;
+import static com.map.gaja.client.application.ClientConvertor.*;
 
 @Service
 @RequiredArgsConstructor

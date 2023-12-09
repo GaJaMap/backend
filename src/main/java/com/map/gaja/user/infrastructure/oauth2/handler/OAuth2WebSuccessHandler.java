@@ -1,4 +1,4 @@
-package com.map.gaja.global.oauth2.handler;
+package com.map.gaja.user.infrastructure.oauth2.handler;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2WebSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

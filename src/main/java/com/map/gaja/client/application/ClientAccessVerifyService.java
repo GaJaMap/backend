@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.group.application.GroupAccessVerifyService;

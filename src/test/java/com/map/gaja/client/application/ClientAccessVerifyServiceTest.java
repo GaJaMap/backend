@@ -1,24 +1,18 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
-import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
-import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
-import com.map.gaja.group.domain.model.Group;
-import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.*;
 

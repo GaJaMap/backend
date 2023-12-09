@@ -1,13 +1,12 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.apllication.ClientQueryService;
+import com.map.gaja.client.application.ClientQueryService;
 import com.map.gaja.client.presentation.api.specification.ClientQueryApiSpecification;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

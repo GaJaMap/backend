@@ -1,4 +1,4 @@
-package com.map.gaja.global.oauth2.handler;
+package com.map.gaja.user.infrastructure.oauth2.handler;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Component
-public class Oauth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
+public class OAuth2WebFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         HttpSession session = request.getSession();

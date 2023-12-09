@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

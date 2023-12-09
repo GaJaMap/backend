@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;

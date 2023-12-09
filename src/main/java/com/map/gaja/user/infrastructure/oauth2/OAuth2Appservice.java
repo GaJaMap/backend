@@ -1,4 +1,4 @@
-package com.map.gaja.user.infrastructure;
+package com.map.gaja.user.infrastructure.oauth2;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,10 +15,12 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 @Component
-public class Oauth2Client {
-    private static final String KAKAO_OAUTH2_URL = "https://kapi.kakao.com/v2/user/me";
-    private static final String KAKAO_ACCESS_TOKEN_HEADER = "Authorization";
-    private static final String KAKAO_ACCESS_TOKEN_PREFIX = "Bearer ";
+public class OAuth2Appservice {
+    private final String KAKAO_OAUTH2_URL = "https://kapi.kakao.com/v2/user/me";
+    private final String KAKAO_ACCESS_TOKEN_HEADER = "Authorization";
+    private final String KAKAO_ACCESS_TOKEN_PREFIX = "Bearer ";
+    private final String KAKAO_ACCOUNT = "kakao_account";
+    private final String EMAIL = "email";
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -38,7 +40,7 @@ public class Oauth2Client {
         String email = null;
         try {
             JsonNode jsonNode = mapper.readTree(response.getBody());
-            email = jsonNode.get("kakao_account").get("email").asText();
+            email = jsonNode.get(KAKAO_ACCOUNT).get(EMAIL).asText();
         } catch (JsonProcessingException e) {
             throw new UserNotFoundException(e);
         }

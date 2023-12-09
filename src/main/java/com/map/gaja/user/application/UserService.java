@@ -3,7 +3,7 @@ package com.map.gaja.user.application;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.model.User;
-import com.map.gaja.user.infrastructure.Oauth2Client;
+import com.map.gaja.user.infrastructure.oauth2.OAuth2Appservice;
 import com.map.gaja.user.infrastructure.UserRepository;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.dto.response.LoginResponse;
@@ -19,7 +19,7 @@ import static com.map.gaja.user.application.UserServiceHelper.findById;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final Oauth2Client oauth2Client;
+    private final OAuth2Appservice oauth2AppService;
     private final UserRepository userRepository;
     private final AuthenticationRepository authenticationRepository;
     private final SessionHandler sessionHandler;
@@ -27,7 +27,7 @@ public class UserService {
 
     @Transactional
     public LoginResponse login(LoginRequest request) {
-        String email = oauth2Client.getEmail(request.getAccessToken());
+        String email = oauth2AppService.getEmail(request.getAccessToken());
 
         User user = findByEmail(userRepository, email);
 

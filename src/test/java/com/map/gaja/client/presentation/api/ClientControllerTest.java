@@ -1,11 +1,11 @@
 package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.apllication.ClientAccessVerifyService;
-import com.map.gaja.client.apllication.ClientQueryService;
-import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.application.ClientAccessVerifyService;
+import com.map.gaja.client.application.ClientQueryService;
+import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.apllication.validator.ClientRequestValidator;
+import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;

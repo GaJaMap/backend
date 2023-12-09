@@ -1,6 +1,5 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
-import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.map.gaja.client.apllication.ClientConvertor.*;
+import static com.map.gaja.client.application.ClientConvertor.*;
 
 @Service
 @RequiredArgsConstructor

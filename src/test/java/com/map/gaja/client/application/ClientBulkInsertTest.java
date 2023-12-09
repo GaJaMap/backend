@@ -1,4 +1,4 @@
-package com.map.gaja.client.apllication;
+package com.map.gaja.client.application;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.Client;
@@ -6,9 +6,7 @@ import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.group.domain.model.Group;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
