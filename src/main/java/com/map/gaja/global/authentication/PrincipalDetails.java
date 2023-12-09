@@ -9,18 +9,21 @@ import java.util.Collection;
 import java.util.Map;
 
 public class PrincipalDetails extends SessionDetails implements UserDetails, OAuth2User {
-    private String email;
-    private String authority;
-    private Map<String, Object> attributes;
+    private final String email;
+    private final String authority;
+    private final Map<String, Object> attributes;
+    private static final String PLATFORM_TYPE_APP = "APP";
+    private static final String PLATFORM_TYPE_WEB = "WEB";
 
     public PrincipalDetails(Long userId, String email, String authority) {
-        super(userId, "APP");
+        super(userId, PLATFORM_TYPE_APP);
         this.email = email;
         this.authority = authority;
+        this.attributes = null;
     }
 
     public PrincipalDetails(Long userId, String email, String authority, Map<String, Object> attributes) {
-        super(userId, "WEB");
+        super(userId, PLATFORM_TYPE_WEB);
         this.email = email;
         this.authority = authority;
         this.attributes = attributes;
