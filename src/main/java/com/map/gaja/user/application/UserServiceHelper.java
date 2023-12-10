@@ -4,8 +4,11 @@ import com.map.gaja.user.domain.exception.UserNotFoundException;
 import com.map.gaja.user.domain.exception.WithdrawalUserException;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public final class UserServiceHelper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class UserServiceHelper {
     /**
      * 회은 탈퇴 안 한 유저 조회
      */
@@ -21,11 +24,11 @@ public final class UserServiceHelper {
      */
     public static User findByEmail(UserRepository userRepository, String email) {
         User user = userRepository.findByEmail(email);
-        if (isWithdrawalUser(user)) { //회원 탈퇴한 유저인가?
+        if (isWithdrawalUser(user)) {
             throw new WithdrawalUserException();
         }
 
-        if (isNewUser(user)) { //신규 유저인가?
+        if (isNewUser(user)) {
             user = new User(email);
             userRepository.save(user);
         }
@@ -38,6 +41,16 @@ public final class UserServiceHelper {
      */
     public static User findByEmailAndActiveWithLock(UserRepository userRepository, Long userId) {
         return userRepository.findByEmailAndActiveForUpdate(userId)
+                .orElseThrow(() -> {
+                    throw new UserNotFoundException();
+                });
+    }
+
+    /**
+     * userId로 유저 조회
+     */
+    public static User findById(UserRepository userRepository, Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> {
                     throw new UserNotFoundException();
                 });

@@ -7,20 +7,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IncreasingClientService {
+    private static final int ONE_INCREMENT = 1;
 
-    public void increase(Group group, Authority authority, int count) {
-        if (isCreateClient(authority.getClientLimitCount(), group.getClientCount(), count)) {
-            group.increaseClientCount(count);
-            return;
-        }
+    public void increaseByMany(Group group, Authority authority, int count) {
+        checkCanCreateClient(authority, group.getClientCount(), count);
 
-        throw new ClientLimitExceededException(authority.name(), authority.getClientLimitCount());
+        group.increaseClientCount(count);
     }
 
-    public boolean isCreateClient(int clientLimitCount, int currentClientCount, int increaseInClient) {
-        if (clientLimitCount >= (currentClientCount + increaseInClient)) {
-            return true;
+    public void increaseByOne(Group group, Authority authority) {
+        checkCanCreateClient(authority, group.getClientCount(), ONE_INCREMENT);
+
+        group.increaseClientCount(ONE_INCREMENT);
+    }
+
+    public void checkCanCreateClient(Authority authority, int currentClientCount, int increaseInClient) {
+        if (authority.getClientLimitCount() < (currentClientCount + increaseInClient)) {
+            throw new ClientLimitExceededException(authority.name(), authority.getClientLimitCount());
         }
-        return false;
     }
 }

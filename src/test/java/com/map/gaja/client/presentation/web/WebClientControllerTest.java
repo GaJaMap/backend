@@ -1,7 +1,7 @@
 package com.map.gaja.client.presentation.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
@@ -11,7 +11,7 @@ import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
-import com.map.gaja.global.location.LocationResolver;
+import com.map.gaja.client.infrastructure.location.LocationResolver;
 import com.map.gaja.user.domain.model.Authority;
 
 import org.junit.jupiter.api.BeforeEach;

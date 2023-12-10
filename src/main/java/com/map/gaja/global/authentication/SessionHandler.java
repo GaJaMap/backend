@@ -16,6 +16,7 @@ import java.util.Map;
 public class SessionHandler {
     private final FindByIndexNameSessionRepository findByIndexNameSessionRepository;
     private final SessionRepository sessionRepository;
+    private static final String SPRING_SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
 
     /**
      * 앱 or 웹 플랫폼에 중복된 세션이 있으면 제거
@@ -44,15 +45,15 @@ public class SessionHandler {
     }
 
 
-    private boolean isDuplicate(String platformType, String platformType1) {
-        if (platformType.equals(platformType1)) {
+    private boolean isDuplicate(String currentLoginPlatformType, String previousSessionPlatformType) {
+        if (currentLoginPlatformType.equals(previousSessionPlatformType)) {
             return true;
         }
         return false;
     }
 
     private PrincipalDetails extractPrincipalDetails(Session session) {
-        Object object = session.getAttribute("SPRING_SECURITY_CONTEXT");
+        Object object = session.getAttribute(SPRING_SECURITY_CONTEXT);
         SecurityContextImpl securityContext = (SecurityContextImpl) object;
         Authentication authentication = securityContext.getAuthentication();
         return (PrincipalDetails) authentication.getPrincipal();

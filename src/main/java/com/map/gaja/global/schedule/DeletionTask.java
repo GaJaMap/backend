@@ -22,7 +22,7 @@ public class DeletionTask {
 
     /**
      * 회원탈퇴, 그룹 삭제, 클라이언트 삭제를 처리하기 위한 스케줄링
-     * */
+     */
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // 초 분 시 => 한국 시간 매일 새벽 3시에 작업 수행
     public void execute() {
         long startTime = System.nanoTime();
@@ -37,26 +37,16 @@ public class DeletionTask {
 
         int deletedUserCount = userRepository.deleteWithdrawnUsers(); //회원 탈퇴한 유저 전부 삭제
 
-        int deletedImageCount = imageDeletionTask.deleteClientImages(); //이미지 삭제
+        int deletedImageCount = imageDeletionTask.process(); //이미지 삭제
 
-        if(isS3Error(deletedImageCount)){ //s3 오류
-            return;
-        }
-
-        createLog(startTime, deletedClientCount, deletedGroupCount, deletedUserCount, deletedImageCount);
-    }
-
-    private void createLog(long startTime, int deletedClientCount, int deletedGroupCount, int deletedUserCount, int deletedImageCount) {
-        String result = String.format("유저: %d , 그룹: %d , 클라이언트: %d , 이미지: %d", deletedUserCount, deletedGroupCount, deletedClientCount, deletedImageCount);
         long executionTime = (System.nanoTime() - startTime) / 1000000;
-        log.info("{} => Time: {} ms", result, executionTime);
+
+        createLog(executionTime, deletedClientCount, deletedGroupCount, deletedUserCount, deletedImageCount);
     }
 
-    private boolean isS3Error(int deletedImageCount) {
-        if(deletedImageCount == -1){
-            return true;
-        }
-        return false;
+    private void createLog(long executionTime, int deletedClientCount, int deletedGroupCount, int deletedUserCount, int deletedImageCount) {
+        String result = String.format("유저: %d , 그룹: %d , 클라이언트: %d , 이미지: %d", deletedUserCount, deletedGroupCount, deletedClientCount, deletedImageCount);
+        log.info("{} => Time: {} ms", result, executionTime);
     }
 
 }

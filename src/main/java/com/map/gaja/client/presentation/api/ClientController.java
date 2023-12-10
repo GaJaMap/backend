@@ -1,7 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.global.authentication.imageuploads.ImageAuthChecking;
-import com.map.gaja.client.apllication.validator.ClientRequestValidator;
+import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
 import com.map.gaja.client.presentation.dto.access.ClientListAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
@@ -9,8 +9,8 @@ import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkReque
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
-import com.map.gaja.client.apllication.ClientAccessVerifyService;
-import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.application.ClientAccessVerifyService;
+import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;

@@ -59,14 +59,14 @@ public class Group extends BaseTimeEntity {
     }
 
     public void decreaseClientCount(int decreaseInCount) {
-        if (clientCount < decreaseInCount) {
+        if (isClientUnreducible(decreaseInCount)) {
             throw new ClientNotDeletedException();
         }
         clientCount -= decreaseInCount;
     }
 
-    public void accessGroup() {
-        this.user.accessGroup(this.id);
+    private boolean isClientUnreducible(int decreaseInCount) {
+        return clientCount < decreaseInCount;
     }
 
 }

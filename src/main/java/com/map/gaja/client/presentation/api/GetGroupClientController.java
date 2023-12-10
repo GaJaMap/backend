@@ -4,12 +4,11 @@ import com.map.gaja.client.presentation.api.specification.GroupClientQueryApiSpe
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
-import com.map.gaja.client.apllication.ClientAccessVerifyService;
-import com.map.gaja.client.apllication.ClientQueryService;
+import com.map.gaja.client.application.ClientAccessVerifyService;
+import com.map.gaja.client.application.ClientQueryService;
 import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
-import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

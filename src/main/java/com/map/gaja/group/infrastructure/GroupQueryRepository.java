@@ -1,7 +1,6 @@
 package com.map.gaja.group.infrastructure;
 
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
-import com.map.gaja.client.presentation.dto.subdto.GroupInfoDto;
 import com.map.gaja.group.domain.model.Group;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;

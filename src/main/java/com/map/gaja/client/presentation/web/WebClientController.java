@@ -1,6 +1,6 @@
 package com.map.gaja.client.presentation.web;
 
-import com.map.gaja.client.apllication.ClientService;
+import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
@@ -16,9 +16,8 @@ import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
-import com.map.gaja.global.location.LocationResolver;
-import com.map.gaja.global.location.exception.TooManyRequestException;
-import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
+import com.map.gaja.client.infrastructure.location.LocationResolver;
+import com.map.gaja.client.infrastructure.location.exception.TooManyRequestException;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

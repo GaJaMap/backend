@@ -1,6 +1,7 @@
 package com.map.gaja.global.authentication;
 
 import com.map.gaja.user.domain.model.Authority;
+import com.map.gaja.user.domain.model.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 /**
  * 세션 정보를 핸들하는 컴포넌트.
- *
+ * <p>
  * 무조건 인증된 사용자가 있을 때 사용할 것.
  * 인증되지 않은 사용자가 있을 때는 NULL 반환으로 인한 NPE 위험이 있음.
  */
@@ -52,7 +53,7 @@ public class AuthenticationRepository {
         List<Authority> currentUserAuthorityList = new ArrayList<>();
         for (GrantedAuthority grantedAuthority : getCurrentUser().getAuthorities()) {
             Authority mappedAuthority = authorityMap.get(grantedAuthority.getAuthority());
-            if(mappedAuthority != null)
+            if (mappedAuthority != null)
                 currentUserAuthorityList.add(mappedAuthority);
         }
 
@@ -62,8 +63,8 @@ public class AuthenticationRepository {
     /**
      * SecurityContextHolder에 사용자 인증 객체 저장 및 세션 생성
      */
-    public void saveContext(Long userId, String email, String authority) {
-        UserDetails userDetails = new PrincipalDetails(userId, email, authority);
+    public void saveContext(User user) {
+        UserDetails userDetails = new PrincipalDetails(user.getId(), user.getEmail(), user.getAuthority().toString());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
         SecurityContextHolder.setContext(context);

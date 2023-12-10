@@ -9,7 +9,6 @@ import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
 import com.map.gaja.group.presentation.dto.response.GroupResponse;
-import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -70,11 +69,15 @@ public class GroupService {
 
         int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, userId);
 
-        if (deletedGroupCount == 0) { //삭제된 그룹이 없다면 존재하지 않은 그룹이거나 userId가 다른 그룹일 가능성이 있음
+        if (isGroupMissing(deletedGroupCount)) { //삭제된 그룹이 없다면 존재하지 않은 그룹이거나 userId가 다른 그룹일 가능성이 있음
             throw new GroupNotFoundException();
         }
 
         user.decreaseGroupCount();
+    }
+
+    private boolean isGroupMissing(int deletedGroupCount) {
+        return deletedGroupCount == 0;
     }
 
     @Transactional
