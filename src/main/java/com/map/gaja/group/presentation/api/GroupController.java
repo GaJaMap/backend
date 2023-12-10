@@ -6,6 +6,8 @@ import com.map.gaja.group.presentation.api.specification.GroupApiSpecification;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
 import com.map.gaja.group.presentation.dto.response.GroupResponse;
+
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
+@Timed("group.crud")
 @TimeCheckLog
 @RestController
 @RequestMapping("/api/group")
