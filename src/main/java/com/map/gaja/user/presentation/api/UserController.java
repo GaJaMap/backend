@@ -7,7 +7,8 @@ import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.api.specification.UserApiSpecification;
 import com.map.gaja.user.presentation.dto.response.AutoLoginResponse;
 import com.map.gaja.user.presentation.dto.response.LoginResponse;
-import io.micrometer.core.annotation.Counted;
+
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
+@Timed("user.login")
 @TimeCheckLog
 @RestController
 @RequestMapping("/api/user")
@@ -45,7 +47,6 @@ public class UserController implements UserApiSpecification {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Counted("user.login.auto")
     @Override
     @GetMapping("/auto-login")
     public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "name") String email) {
