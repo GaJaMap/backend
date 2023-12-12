@@ -60,7 +60,7 @@ public class AutoLoginProcessor {
 
     private GroupInfo getReferenceGroupInfo(Long referenceGroupId) {
         GroupInfo groupInfo = groupRepository.findGroupInfoById(referenceGroupId)
-                .orElseGet((Supplier<? extends GroupInfo>) WHOLE_GROUP_INFO);
+                .orElseGet(WHOLE_GROUP_INFO);
         return groupInfo;
     }
 
