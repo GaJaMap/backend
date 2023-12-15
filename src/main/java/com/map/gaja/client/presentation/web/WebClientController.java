@@ -93,6 +93,8 @@ public class WebClientController {
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
+        locationResolver.checkServiceAvailability();
+
         Long groupId = excelRequest.getGroupId();
         if (groupId == null) {
             throw new GroupNotFoundException();
@@ -107,6 +109,7 @@ public class WebClientController {
         groupAccessVerifyService.verifyClientInsertAccess(groupId, loginEmail, clientExcelData.size());
 
         List<Authority> authority = getter.getAuthority();
+
         Mono<Void> mono = locationResolver.convertToCoordinatesAsync(clientExcelData);
 
         return mono.doOnSuccess(s -> { //비동기 작업 모두 성공할 경우 후처리
