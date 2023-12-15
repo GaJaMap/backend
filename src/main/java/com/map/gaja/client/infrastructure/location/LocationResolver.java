@@ -26,8 +26,10 @@ import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeoutException;
 
 import static com.map.gaja.client.constant.LocationResolverConstant.*;
 
@@ -41,6 +43,8 @@ public class LocationResolver {
     private final ObjectMapper mapper;
     private WebClient webClient;
     private final Semaphore semaphore = new Semaphore(1);
+    private static final Duration DELAY_ELEMENTS_MILLIS = Duration.ofMillis(1L);
+    private static final Duration TIMEOUT_SECONDS = Duration.ofSeconds(10L);
 
     @PostConstruct
     private void init() {
@@ -99,16 +103,22 @@ public class LocationResolver {
 
             return Flux.fromIterable(addresses)
                     .filter(data -> data.getAddress() != null)
+                    .delayElements(DELAY_ELEMENTS_MILLIS)
+                    .timeout(TIMEOUT_SECONDS)
                     .flatMap(data -> callGeoApi(data, createUri(data.getAddress())))
                     .doOnTerminate(semaphore::release)
-                    .doOnError(err -> { //예외가 한번이라도 발생할 경우 후처리
-                        if (err instanceof WebClientResponseException) { //429 예외처리
-                            throw new TooManyRequestException();
-                        }
-                    })
+                    .doOnError(this::handleError)
                     .then();
         } catch (InterruptedException e) {
             throw new NotExcelUploadException(e);
+        }
+    }
+
+    private void handleError(Throwable err) {
+        if (err instanceof WebClientResponseException) { //429 예외처리
+            throw new TooManyRequestException();
+        } else if (err instanceof TimeoutException) {
+            throw new NotExcelUploadException(err);
         }
     }
 
@@ -140,6 +150,7 @@ public class LocationResolver {
                 .uri(uri)
                 .retrieve() //비동기 통신
                 .toEntity(String.class); //응답 결과를 String으로 받고 ResponseEntity 객체로 래핑하여 반환받음.
+
     }
 
     /**
