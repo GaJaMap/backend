@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
+import com.map.gaja.client.infrastructure.location.exception.LockAcquisitionFailedException;
 import com.map.gaja.client.infrastructure.location.exception.TooManyRequestException;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.infrastructure.location.exception.NotExcelUploadException;
@@ -26,9 +27,9 @@ import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static com.map.gaja.client.constant.LocationResolverConstant.*;
@@ -43,8 +44,6 @@ public class LocationResolver {
     private final ObjectMapper mapper;
     private WebClient webClient;
     private final Semaphore semaphore = new Semaphore(1);
-    private static final Duration DELAY_ELEMENTS_MILLIS = Duration.ofMillis(1L);
-    private static final Duration TIMEOUT_SECONDS = Duration.ofSeconds(10L);
 
     @PostConstruct
     private void init() {
@@ -98,18 +97,25 @@ public class LocationResolver {
      * 비동기 통신으로 도로명 주소를 위경도로 변환
      */
     public Mono<Void> convertToCoordinatesAsync(List<ParsedClientDto> addresses) {
-        try {
-            semaphore.acquire();
+        getLock();
 
-            return Flux.fromIterable(addresses)
-                    .filter(this::hasAddress)
-                    .delayElements(DELAY_ELEMENTS_MILLIS)
-                    .timeout(TIMEOUT_SECONDS)
-                    .flatMap(data -> callGeoApi(data, createUri(data.getAddress())))
-                    .doOnTerminate(semaphore::release)
-                    .doOnError(this::handleError)
-                    .then();
-        } catch (InterruptedException e) {
+        return Flux.fromIterable(addresses)
+                .filter(this::hasAddress)
+                .delayElements(DELAY_ELEMENTS_MILLIS)
+                .timeout(TIMEOUT_SECONDS)
+                .flatMap(data -> callGeoApi(data, createUri(data.getAddress())))
+                .doOnTerminate(semaphore::release)
+                .doOnError(this::handleError)
+                .then();
+
+    }
+
+    private void getLock() {
+        try {
+            if (!semaphore.tryAcquire(LOCK_TIMEOUT, TimeUnit.SECONDS)) {
+                throw new LockAcquisitionFailedException();
+            }
+        } catch (Exception e) {
             throw new NotExcelUploadException(e);
         }
     }

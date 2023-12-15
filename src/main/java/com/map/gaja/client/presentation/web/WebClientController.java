@@ -93,7 +93,6 @@ public class WebClientController {
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
-        System.out.println("START: "+Thread.currentThread().getName());
         Long groupId = excelRequest.getGroupId();
         if (groupId == null) {
             throw new GroupNotFoundException();
