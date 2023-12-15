@@ -102,7 +102,7 @@ public class LocationResolver {
             semaphore.acquire();
 
             return Flux.fromIterable(addresses)
-                    .filter(data -> data.getAddress() != null)
+                    .filter(this::hasAddress)
                     .delayElements(DELAY_ELEMENTS_MILLIS)
                     .timeout(TIMEOUT_SECONDS)
                     .flatMap(data -> callGeoApi(data, createUri(data.getAddress())))
@@ -112,6 +112,10 @@ public class LocationResolver {
         } catch (InterruptedException e) {
             throw new NotExcelUploadException(e);
         }
+    }
+
+    private boolean hasAddress(ParsedClientDto data) {
+        return data.getAddress() != null;
     }
 
     private void handleError(Throwable err) {
