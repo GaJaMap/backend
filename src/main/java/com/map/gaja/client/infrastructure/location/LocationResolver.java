@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
+import com.map.gaja.client.infrastructure.location.exception.TooManyRequestException;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.infrastructure.location.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
@@ -25,6 +27,7 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import static com.map.gaja.client.constant.LocationResolverConstant.*;
 
@@ -37,6 +40,7 @@ public class LocationResolver {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper;
     private WebClient webClient;
+    private final Semaphore semaphore = new Semaphore(1);
 
     @PostConstruct
     private void init() {
@@ -45,7 +49,8 @@ public class LocationResolver {
                 .defaultHeader(AUTHORIZATION, KAKAO_AK + KAKAO_KEY)
                 .build();
 
-        Hooks.onErrorDropped(throwable -> {});
+        Hooks.onErrorDropped(throwable -> {
+        });
     }
 
     /**
@@ -89,12 +94,22 @@ public class LocationResolver {
      * 비동기 통신으로 도로명 주소를 위경도로 변환
      */
     public Mono<Void> convertToCoordinatesAsync(List<ParsedClientDto> addresses) {
-        return Flux.fromIterable(addresses)
-                .filter(data -> data.getAddress() != null)
-                .flatMap(data -> { //비동기로 실행
-                    return callGeoApi(data, createUri(data.getAddress()));
-                }, ASYNC_CONCURRENCY) //2개씩 병렬처리
-                .then();
+        try {
+            semaphore.acquire();
+
+            return Flux.fromIterable(addresses)
+                    .filter(data -> data.getAddress() != null)
+                    .flatMap(data -> callGeoApi(data, createUri(data.getAddress())))
+                    .doOnTerminate(semaphore::release)
+                    .doOnError(err -> { //예외가 한번이라도 발생할 경우 후처리
+                        if (err instanceof WebClientResponseException) { //429 예외처리
+                            throw new TooManyRequestException();
+                        }
+                    })
+                    .then();
+        } catch (InterruptedException e) {
+            throw new NotExcelUploadException(e);
+        }
     }
 
     private Publisher<?> callGeoApi(ParsedClientDto data, URI uri) {

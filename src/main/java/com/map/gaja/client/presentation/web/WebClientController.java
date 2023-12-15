@@ -17,7 +17,6 @@ import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.client.infrastructure.location.LocationResolver;
-import com.map.gaja.client.infrastructure.location.exception.TooManyRequestException;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -95,6 +93,7 @@ public class WebClientController {
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
+        System.out.println("START: "+Thread.currentThread().getName());
         Long groupId = excelRequest.getGroupId();
         if (groupId == null) {
             throw new GroupNotFoundException();
@@ -113,12 +112,6 @@ public class WebClientController {
 
         return mono.doOnSuccess(s -> { //비동기 작업 모두 성공할 경우 후처리
                     clientService.saveClientExcelData(groupId, clientExcelData, authority);
-                })
-                .doOnError(err -> { //예외가 한번이라도 발생할 경우 후처리
-                    log.error("{}",loginEmail, err);
-                    if(err instanceof WebClientResponseException) { //429 예외처리
-                        throw new TooManyRequestException();
-                    }
                 })
                 .thenReturn(clientExcelData.size()); //저장 성공 수
     }
