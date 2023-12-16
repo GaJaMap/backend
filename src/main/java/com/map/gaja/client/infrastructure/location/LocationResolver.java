@@ -16,7 +16,6 @@ import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,7 +40,6 @@ import static com.map.gaja.client.constant.LocationResolverConstant.*;
 public class LocationResolver {
     @Value("${kakao.key}")
     private String KAKAO_KEY;
-    private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper;
     private WebClient webClient;
     private final Semaphore semaphore = new Semaphore(1);
@@ -56,43 +54,6 @@ public class LocationResolver {
 
         Hooks.onErrorDropped(throwable -> {
         });
-    }
-
-    /**
-     * 도로명 주소를 위도 경도로 변환
-     *
-     * @param addresses 엑셀에서 추룰한 고객 정보
-     */
-    public void convertCoordinate(List<ParsedClientDto> addresses) {
-        try {
-            HttpHeaders headers = createHeaders();
-            for (ParsedClientDto data : addresses) {
-                if (data.getAddress() == null) {
-                    continue;
-                }
-
-                URI uri = createUri(data.getAddress());
-
-                RequestEntity<Void> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
-                ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
-
-                if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                    LocationDto location = parseLocation(responseEntity.getBody());
-                    if (isLocationOutOfKorea(location)) {
-                        throw new LocationOutsideKoreaException();
-                    }
-                    data.setLocation(location);
-                } else {
-                    // 200번대 외 상태코드는 현재 카카오 서비스를 사용할 수 없다고 볼 수 있음.
-                    throw new NotExcelUploadException();
-                }
-            }
-
-        } catch (LocationOutsideKoreaException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
