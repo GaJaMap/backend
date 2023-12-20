@@ -23,7 +23,7 @@ import static com.map.gaja.client.constant.LocationResolverConstant.*;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class LocationResolver {
+public class Geocoder {
     private final KakaoGeoApi kakaoGeoApi;
     private final ResponseParser responseParser;
     private final Semaphore semaphore = new Semaphore(1);

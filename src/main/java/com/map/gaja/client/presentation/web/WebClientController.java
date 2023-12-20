@@ -16,7 +16,7 @@ import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
-import com.map.gaja.client.infrastructure.location.LocationResolver;
+import com.map.gaja.client.infrastructure.location.Geocoder;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class WebClientController {
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final ClientService clientService;
     private final GroupService groupService;
-    private final LocationResolver locationResolver;
+    private final Geocoder geocoder;
     private final FileValidator fileValidator;
     private final AuthenticationRepository getter;
 
@@ -93,7 +93,7 @@ public class WebClientController {
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
-        locationResolver.checkServiceAvailability();
+        geocoder.checkServiceAvailability();
 
         Long groupId = excelRequest.getGroupId();
         if (groupId == null) {
@@ -110,7 +110,7 @@ public class WebClientController {
 
         List<Authority> authority = getter.getAuthority();
 
-        Mono<Void> mono = locationResolver.convertToCoordinatesAsync(clientExcelData);
+        Mono<Void> mono = geocoder.convertToCoordinatesAsync(clientExcelData);
 
         return mono.doOnSuccess(s -> { //비동기 작업 모두 성공할 경우 후처리
                     clientService.saveClientExcelData(groupId, clientExcelData, authority);
