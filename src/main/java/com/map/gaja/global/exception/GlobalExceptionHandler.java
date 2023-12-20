@@ -1,6 +1,6 @@
 package com.map.gaja.global.exception;
 
-import com.map.gaja.client.infrastructure.location.exception.NotExcelUploadException;
+import com.map.gaja.client.application.geocode.exception.NotExcelUploadException;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

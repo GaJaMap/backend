@@ -1,9 +1,10 @@
-package com.map.gaja.client.infrastructure.location;
+package com.map.gaja.client.application.geocode;
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
-import com.map.gaja.client.infrastructure.location.exception.LockAcquisitionFailedException;
-import com.map.gaja.client.infrastructure.location.exception.TooManyRequestException;
-import com.map.gaja.client.infrastructure.location.exception.NotExcelUploadException;
+import com.map.gaja.client.infrastructure.api.KakaoGeoApi;
+import com.map.gaja.client.application.geocode.exception.LockAcquisitionFailedException;
+import com.map.gaja.client.application.geocode.exception.TooManyRequestException;
+import com.map.gaja.client.application.geocode.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
