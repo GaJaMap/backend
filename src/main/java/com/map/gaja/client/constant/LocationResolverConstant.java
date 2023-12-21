@@ -24,7 +24,6 @@ public class LocationResolverConstant {
     public static final double MIN_LONGITUDE = 124d;
     public static final double MAX_LONGITUDE = 132d;
     public static final Duration DELAY_ELEMENTS_MILLIS = Duration.ofMillis(1L);
-    public static final Duration TIMEOUT_SECONDS = Duration.ofSeconds(10L);
     public static final long LOCK_TIMEOUT = 30L;
     public static final int LIMIT_PROCESS_COUNT = 1000;
 }

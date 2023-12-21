@@ -31,7 +31,6 @@ public class Geocoder {
         return Flux.fromIterable(addresses)
                 .filter(this::hasAddress)
                 .delayElements(DELAY_ELEMENTS_MILLIS)
-                .timeout(TIMEOUT_SECONDS)
                 .flatMap(this::convert)
                 .doOnError(this::handleError)
                 .then();
