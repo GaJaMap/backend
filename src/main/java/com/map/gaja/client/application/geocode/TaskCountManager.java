@@ -20,7 +20,7 @@ final class TaskCountManager {
 
     @Before("execution(* com.map.gaja.client.presentation.web.WebClientController.saveExcelFileData(..))")
     private void doCheckServiceAvailability() {
-        taskCounter.checkServiceAvailability();
+        taskCounter.checkQuickServiceAvailability();
     }
 
     @Around("execution(* com.map.gaja.client.application.geocode.Geocoder.convertToCoordinatesAsync(..))")

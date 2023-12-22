@@ -14,7 +14,7 @@ public class TaskCounter {
     /**
      * 통신을 해야 되는 작업이 많을 경우 사용자는 오래 기다려야 되고 자원을 점유하는 시간도 길어지므로 빠른 시간안에 서비스를 이용할 수 있는지 확인한다.
      */
-    void checkServiceAvailability() {
+    void checkQuickServiceAvailability() {
         if (isLongWait()) {
             throw new TooManyRequestException();
         }
