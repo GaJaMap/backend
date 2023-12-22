@@ -9,7 +9,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -20,34 +19,25 @@ import static com.map.gaja.client.constant.LocationResolverConstant.LOCK_TIMEOUT
 @RequiredArgsConstructor
 public class AsyncLockManager {
     private final Semaphore semaphore = new Semaphore(1);
-    private final TaskCounter taskCounter;
 
     @Around("execution(* com.map.gaja.client.application.geocode.Geocoder.convertToCoordinatesAsync(..))")
     public Object process(ProceedingJoinPoint joinPoint) throws Throwable {
-        int taskCount = getTaskCount(joinPoint);
-        taskCounter.increaseTaskCount(taskCount);
-        acquireLock(taskCount);
+        acquireLock();
 
         Mono<Void> result = (Mono<Void>) joinPoint.proceed();
 
         return result.doOnTerminate(() -> {
             semaphore.release();
-            taskCounter.decreaseTaskCount(taskCount);
         });
     }
 
-    private int getTaskCount(ProceedingJoinPoint joinPoint) {
-        Object[] args = joinPoint.getArgs();
-        return ((List<Object>) args[0]).size();
-    }
-
-    private void acquireLock(int taskCount) {
+    private void acquireLock() {
         try {
             if (!semaphore.tryAcquire(LOCK_TIMEOUT, TimeUnit.SECONDS)) {
+                //비동기 처리 중 예외말고 이렇게 비동기 처리 이전에 발생한 예외일 경우 세마포어랑 taskCount를 어떻게 처리할 것인가?
                 throw new LockAcquisitionFailedException();
             }
         } catch (Exception e) {
-            taskCounter.decreaseTaskCount(taskCount);
             throw new NotExcelUploadException(e);
         }
     }
