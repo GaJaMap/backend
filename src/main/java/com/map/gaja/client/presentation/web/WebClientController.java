@@ -1,7 +1,6 @@
 package com.map.gaja.client.presentation.web;
 
 import com.map.gaja.client.application.ClientService;
-import com.map.gaja.client.application.geocode.TaskCounter;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
@@ -49,7 +48,6 @@ public class WebClientController {
     private final ClientService clientService;
     private final GroupService groupService;
     private final Geocoder geocoder;
-    private final TaskCounter taskCounter;
     private final FileValidator fileValidator;
     private final AuthenticationRepository getter;
 
@@ -94,8 +92,6 @@ public class WebClientController {
             @AuthenticationPrincipal(expression = "name") String loginEmail,
             ClientExcelRequest excelRequest
     ) {
-        taskCounter.checkServiceAvailability();
-
         Long groupId = excelRequest.getGroupId();
         if (groupId == null) {
             throw new GroupNotFoundException();
