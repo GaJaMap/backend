@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +18,7 @@ import static com.map.gaja.client.constant.LocationResolverConstant.LOCK_TIMEOUT
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Order(2)
 public class AsyncLockManager {
     private final Semaphore semaphore = new Semaphore(1);
 
