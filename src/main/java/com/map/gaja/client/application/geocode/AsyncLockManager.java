@@ -19,11 +19,11 @@ import static com.map.gaja.client.constant.LocationResolverConstant.LOCK_TIMEOUT
 @Component
 @RequiredArgsConstructor
 @Order(2)
-public class AsyncLockManager {
+final class AsyncLockManager {
     private final Semaphore semaphore = new Semaphore(1);
 
     @Around("execution(* com.map.gaja.client.application.geocode.Geocoder.convertToCoordinatesAsync(..))")
-    public Object process(ProceedingJoinPoint joinPoint) throws Throwable {
+    private Object process(ProceedingJoinPoint joinPoint) throws Throwable {
         acquireLock();
 
         Mono<Void> result = (Mono<Void>) joinPoint.proceed();
