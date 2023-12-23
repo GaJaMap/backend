@@ -84,40 +84,40 @@ public class ClientController implements ClientCommandApiSpecification {
             BindingResult bindingResult
     ) throws BindException {
         clientRequestValidator.validateUpdateClientRequestFields(clientRequest, bindingResult);
-
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         verifyUpdateClientRequest(accessCheck, clientRequest);
-
         MultipartFile clientImage = clientRequest.getClientImage();
-        ClientOverviewResponse response;
 
-        // 여기도 그룹ID를 받도록 수정해야 함.
+        // 기본 이미지를 사용하지 않고, 새 이미지 파일을 요청에 실어보냄
+        if (!clientRequest.getIsBasicImage() && !isEmptyFile(clientImage)) {
+            // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
+            StoredFileDto newFileDto = fileService.createTemporaryFileDto(loginEmail, clientRequest.getClientImage()); // 임시 UUID 생성
+            ClientOverviewResponse response = clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto); // 임시 UUID를 path로 저장
+            if (storeImage(clientRequest, newFileDto)) { // 이미지 저장 성공 여부
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(response, HttpStatus.PARTIAL_CONTENT);
+        }
+
+        // 기본 이미지를 사용하고 있음
         if (clientRequest.getIsBasicImage()) {
             // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
-            response = clientService.updateClientWithBasicImage(clientId, clientRequest);
-        } else if (isEmptyFile(clientImage)) {
-            // 저장되어 있는 기존 이미지를 사용한다.
-            response = clientService.updateClientWithoutImage(clientId, clientRequest);
-        } else {
-            // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            response = updateClientWithNewImage(loginEmail, clientId, clientRequest);
+            new ResponseEntity<>(clientService.updateClientWithBasicImage(clientId, clientRequest), HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        // 기본 이미지를 사용하지 않지만, 새 이미지를 보내지 않음 => 기존 이미지를 사용함
+        return new ResponseEntity<>(clientService.updateClientWithoutImage(clientId, clientRequest), HttpStatus.OK);
     }
 
-    /**
-     * 이미지와 함께 고객 업데이트
-     */
-    private ClientOverviewResponse updateClientWithNewImage(String loginEmail, Long clientId, NewClientRequest clientRequest) {
-        StoredFileDto newFileDto = fileService.storeFile(loginEmail, clientRequest.getClientImage());
+
+    private boolean storeImage(NewClientRequest clientRequest, StoredFileDto newFileDto) {
         try {
-            return clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto);
-        } catch(Exception e) {
-            log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
-            fileService.removeFile(newFileDto.getFilePath());
-            throw e;
+            fileService.storeFile(newFileDto, clientRequest.getClientImage());// 임시 UUID 위치로 실제 파일 저장
+        } catch (Exception e) {
+            log.warn("이미지 관련 오류가 발생. clientImage에 저장된 임시 saved_path 필드 조치 필요");
+            return false;
         }
+        return true;
     }
 
     private void verifyUpdateClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {
@@ -157,25 +157,18 @@ public class ClientController implements ClientCommandApiSpecification {
         clientRequestValidator.validateNewClientRequestFields(clientRequest, bindingResult);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
-        ClientOverviewResponse response;
         if (isEmptyFile(clientRequest.getClientImage())) {
-            response = clientService.saveClient(clientRequest);
-        } else {
-            response = saveClientWithImage(loginEmail, clientRequest);
+            // 이미지를 등록하지 않음.
+            return new ResponseEntity<>(clientService.saveClient(clientRequest), HttpStatus.CREATED);
         }
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    private ClientOverviewResponse saveClientWithImage(String loginEmail, NewClientRequest client) {
-        StoredFileDto storedFileDto = fileService.storeFile(loginEmail, client.getClientImage());
-        try {
-            return clientService.saveClientWithImage(client, storedFileDto);
-        } catch(Exception e) {
-            log.info("client 저장 도중 오류가 발생하여 저장한 파일 삭제");
-            fileService.removeFile(storedFileDto.getFilePath());
-            throw e;
+        StoredFileDto storedFileDto = fileService.createTemporaryFileDto(loginEmail, clientRequest.getClientImage());
+        ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, storedFileDto);
+        if (storeImage(clientRequest, storedFileDto)) {
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
+
+        return new ResponseEntity<>(response, HttpStatus.PARTIAL_CONTENT);
     }
 
     private boolean isEmptyFile(MultipartFile newImage) {
