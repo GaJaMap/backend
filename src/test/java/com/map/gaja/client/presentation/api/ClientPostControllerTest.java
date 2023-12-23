@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.application.ClientAccessVerifyService;
 import com.map.gaja.client.application.ClientQueryService;
 import com.map.gaja.client.application.ClientService;
+import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -77,6 +78,20 @@ public class ClientPostControllerTest {
         mockRequest.param("isBasicImage", String.valueOf(true));
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    @DisplayName("이미지와 함께 고객 등록 중 이미지 예외")
+    void addClientWithImageFailTest() throws Exception {
+        String testUrl = "/api/clients";
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
+        ClientRequestCreator.setNormalField(mockRequest, request);
+        doThrow(InvalidFileException.class).when(fileService).storeFile(any(),any());
+        mockRequest.param("isBasicImage", String.valueOf(false));
+
+        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
+        verify(clientService, times(1)).saveClientWithImage(any(), any());
     }
 
     @Test
