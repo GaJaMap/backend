@@ -98,6 +98,25 @@ class S3FileServiceTest {
         assertThrows(S3NotWorkingException.class, () -> s3FileService.removeFile(s3ObjectUri));
     }
 
+    @Test
+    @DisplayName("임시 DTO 생성 테스트")
+    void createTemporaryFileDtoTest() {
+        MockMultipartFile mockFile = createMockFile();
+        StoredFileDto temporaryFileDto = s3FileService.createTemporaryFileDto(loginEmail, mockFile);
+
+        assertThat(temporaryFileDto.getOriginalFileName()).isEqualTo(mockFile.getOriginalFilename());
+        assertThat(temporaryFileDto.getFilePath()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("임시 DTO 생성 중 파일 확장자 식별 불가 에러")
+    void createTemporaryFileDtoFailTest() {
+        String fileNameWithoutExtension = "MallFileName";
+        assertThrows(InvalidFileException.class,
+                () -> s3FileService.createTemporaryFileDto(loginEmail, createMockFile(fileNameWithoutExtension))
+        );
+    }
+
     private MockMultipartFile createMockFile() {
         return new MockMultipartFile(
                 "file",
@@ -106,4 +125,15 @@ class S3FileServiceTest {
                 "test image files".getBytes()
         );
     }
+
+    private MockMultipartFile createMockFile(String fileName) {
+        return new MockMultipartFile(
+                "file",
+                fileName,
+                "image/jpeg",
+                "test image files".getBytes()
+        );
+    }
+
+
 }
