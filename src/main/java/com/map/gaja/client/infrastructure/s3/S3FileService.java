@@ -144,8 +144,10 @@ public class S3FileService {
 
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
-        if(pos == -1) // 확장자를 파악할 수 없는 파일
+        if(pos == -1){ // 확장자를 파악할 수 없는 파일
+            log.info("확장자를 파악할 수 없는 파일 - 파일명 : {}", originalFilename);
             throw new InvalidFileException();
+        }
         return originalFilename.substring(pos + 1);
     }
 }
