@@ -93,20 +93,18 @@ public class ClientPostControllerTest {
     }
 
     @Test
-    @DisplayName("이미지와 함께 고객 저장 중 오류 발생")
+    @DisplayName("이미지와 함께 고객 저장 중 DB 오류 발생")
     void addClientWithImageExceptionTest() throws Exception {
         String testUrl = "/api/clients";
         NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
-        StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
-        when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
         when(clientService.saveClientWithImage(any(), any())).thenThrow(new GroupNotFoundException());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).saveClientWithImage(any(), any());
-        verify(fileService, times(1)).removeFile(savedS3TestFile.getFilePath());
+        verify(fileService, times(1)).createTemporaryFileDto(any(),any());
     }
 
     @Test

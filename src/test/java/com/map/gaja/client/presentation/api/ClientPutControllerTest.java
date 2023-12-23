@@ -87,12 +87,11 @@ public class ClientPutControllerTest {
         mockRequest.param("isBasicImage", String.valueOf(false));
 
         StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
-        when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
         doThrow(new ClientNotFoundException()).when(clientService).updateClientWithNewImage(any(), any(),any());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
-        verify(fileService, times(1)).removeFile(savedS3TestFile.getFilePath());
+        verify(fileService, times(1)).createTemporaryFileDto(any(), any());
     }
 
     @Test

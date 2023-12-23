@@ -48,25 +48,25 @@ class S3FileServiceTest {
     @DisplayName("파일 정상 저장")
     void storeFileTest() throws MalformedURLException {
         MockMultipartFile mockFile = createMockFile();
+        StoredFileDto fileDto = new StoredFileDto("test-Path", "test-image.png");
 
         when(awsS3Client.putObject(any())).thenReturn(null);
         when(awsS3Client.getUrl(any(), any())).thenReturn(new URL(s3FileUrl));
-        when(s3UrlGenerator.extractFilePath(any())).thenReturn(s3ObjectUri);
 
-        StoredFileDto result = s3FileService.storeFile(loginEmail, mockFile);
-
-        assertThat(result.getFilePath()).isEqualTo(s3ObjectUri);
-        assertThat(result.getOriginalFileName()).isEqualTo(originalFileName);
+        s3FileService.storeFile(fileDto, mockFile);
+        verify(awsS3Client, times(1)).putObject(any());
+        verify(awsS3Client, times(1)).getUrl(any(), any());
     }
 
     @Test
     @DisplayName("잘못된 파일이 들어옴")
     void storeInvalidFileTest() throws IOException {
         MockMultipartFile mockFile = Mockito.mock(MockMultipartFile.class);
+        StoredFileDto fileDto = new StoredFileDto("test-Path", "test-image.png");
 
         when(mockFile.getInputStream()).thenThrow(IOException.class);
 
-        assertThrows(InvalidFileException.class, () -> s3FileService.storeFile(loginEmail, mockFile));
+        assertThrows(InvalidFileException.class, () -> s3FileService.storeFile(fileDto, mockFile));
     }
 
     @Test
