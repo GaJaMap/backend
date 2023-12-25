@@ -1,4 +1,4 @@
-package com.map.gaja.client.application.geocode.exception;
+package com.map.gaja.client.domain.service.geocode.exception;
 
 import com.map.gaja.global.exception.BusinessException;
 import org.springframework.http.HttpStatus;

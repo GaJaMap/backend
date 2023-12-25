@@ -1,7 +1,7 @@
-package com.map.gaja.client.application.geocode;
+package com.map.gaja.client.infrastructure.aop;
 
-import com.map.gaja.client.application.geocode.exception.LockAcquisitionFailedException;
-import com.map.gaja.client.application.geocode.exception.NotExcelUploadException;
+import com.map.gaja.client.domain.service.geocode.exception.LockAcquisitionFailedException;
+import com.map.gaja.client.domain.service.geocode.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -22,7 +22,7 @@ import static com.map.gaja.client.constant.LocationResolverConstant.LOCK_TIMEOUT
 final class AsyncLockManager {
     private final Semaphore semaphore = new Semaphore(1);
 
-    @Around("execution(* com.map.gaja.client.application.geocode.Geocoder.convertToCoordinatesAsync(..))")
+    @Around("execution(* com.map.gaja.client.domain.service.geocode.Geocoder.convertToCoordinatesAsync(..))")
     private Object process(ProceedingJoinPoint joinPoint) throws Throwable {
         acquireLock();
 

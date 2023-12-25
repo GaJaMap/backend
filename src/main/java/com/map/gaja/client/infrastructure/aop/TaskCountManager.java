@@ -1,6 +1,6 @@
-package com.map.gaja.client.application.geocode;
+package com.map.gaja.client.infrastructure.aop;
 
-import com.map.gaja.client.application.geocode.exception.TooManyRequestException;
+import com.map.gaja.client.domain.service.geocode.exception.TooManyRequestException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,7 +27,7 @@ final class TaskCountManager {
         checkQuickServiceAvailability();
     }
 
-    @Around("execution(* com.map.gaja.client.application.geocode.Geocoder.convertToCoordinatesAsync(..))")
+    @Around("execution(* com.map.gaja.client.domain.service.geocode.Geocoder.convertToCoordinatesAsync(..))")
     private Object processTask(ProceedingJoinPoint joinPoint) throws Throwable {
         int taskCount = getTaskCount(joinPoint);
         increaseTaskCount(taskCount);

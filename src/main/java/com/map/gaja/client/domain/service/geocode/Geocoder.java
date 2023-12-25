@@ -1,9 +1,9 @@
-package com.map.gaja.client.application.geocode;
+package com.map.gaja.client.domain.service.geocode;
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.api.KakaoGeoApi;
-import com.map.gaja.client.application.geocode.exception.TooManyRequestException;
-import com.map.gaja.client.application.geocode.exception.NotExcelUploadException;
+import com.map.gaja.client.domain.service.geocode.exception.TooManyRequestException;
+import com.map.gaja.client.domain.service.geocode.exception.NotExcelUploadException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;

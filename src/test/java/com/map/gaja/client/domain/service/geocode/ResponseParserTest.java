@@ -1,4 +1,4 @@
-package com.map.gaja.client.application.geocode;
+package com.map.gaja.client.domain.service.geocode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
