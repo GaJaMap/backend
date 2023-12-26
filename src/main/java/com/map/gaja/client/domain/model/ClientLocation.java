@@ -1,6 +1,5 @@
 package com.map.gaja.client.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
@@ -14,7 +13,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ClientLocation {
     @Column(columnDefinition = "geometry(Point, 4326)") // PostgreSQL
     private Point location;

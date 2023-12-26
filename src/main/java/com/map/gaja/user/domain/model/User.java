@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "users")
@@ -37,6 +35,17 @@ public class User extends BaseTimeEntity {
     private Long referenceGroupId;
 
     private Boolean active;
+
+    @Builder
+    private User(Long id, String email, Integer groupCount, Authority authority, LocalDateTime lastLoginDate, Long referenceGroupId, Boolean active) {
+        this.id = id;
+        this.email = email;
+        this.groupCount = groupCount;
+        this.authority = authority;
+        this.lastLoginDate = lastLoginDate;
+        this.referenceGroupId = referenceGroupId;
+        this.active = active;
+    }
 
     public User(String email) {
         this.email = email;
