@@ -1,7 +1,7 @@
 package com.map.gaja.global.config;
 
 import com.map.gaja.global.filter.RemoveAnonymousAuthenticationFilter;
-import com.map.gaja.user.infrastructure.oauth2.OAuth2WebService;
+import com.map.gaja.user.application.OAuth2WebService;
 import com.map.gaja.user.infrastructure.oauth2.handler.OAuth2WebFailureHandler;
 import com.map.gaja.user.infrastructure.oauth2.handler.OAuth2WebSuccessHandler;
 import lombok.RequiredArgsConstructor;
