@@ -1,10 +1,8 @@
 package com.map.gaja.user.presentation.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class LoginResponse {
     @Schema(description = "이메일")
@@ -16,6 +14,9 @@ public class LoginResponse {
     @Schema(description = "생성일")
     private String createdDate;
 
-
-
+    public LoginResponse(String email, String authority, String createdDate) {
+        this.email = email;
+        this.authority = authority;
+        this.createdDate = createdDate;
+    }
 }
