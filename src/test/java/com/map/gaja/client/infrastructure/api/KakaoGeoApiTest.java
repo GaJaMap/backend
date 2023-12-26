@@ -1,6 +1,7 @@
 package com.map.gaja.client.infrastructure.api;
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
+import com.map.gaja.client.infrastructure.geocode.KakaoGeoApi;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,6 +2,7 @@ package com.map.gaja.client.domain.service.geocode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
+import com.map.gaja.client.infrastructure.geocode.ResponseParser;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

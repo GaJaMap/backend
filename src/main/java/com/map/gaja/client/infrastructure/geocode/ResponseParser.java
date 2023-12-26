@@ -1,10 +1,10 @@
-package com.map.gaja.client.domain.service.geocode;
+package com.map.gaja.client.infrastructure.geocode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.domain.exception.LocationOutsideKoreaException;
-import com.map.gaja.client.domain.service.geocode.exception.NotExcelUploadException;
+import com.map.gaja.client.infrastructure.geocode.exception.NotExcelUploadException;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

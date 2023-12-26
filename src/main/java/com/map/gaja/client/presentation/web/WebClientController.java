@@ -16,7 +16,7 @@ import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
-import com.map.gaja.client.domain.service.geocode.Geocoder;
+import com.map.gaja.client.infrastructure.geocode.Geocoder;
 import com.map.gaja.user.domain.model.Authority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

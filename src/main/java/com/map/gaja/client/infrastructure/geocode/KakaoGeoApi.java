@@ -1,4 +1,4 @@
-package com.map.gaja.client.infrastructure.api;
+package com.map.gaja.client.infrastructure.geocode;
 
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
