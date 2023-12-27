@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LocationResolverConstant {
+public abstract class LocationResolverConstant {
     public static final String AUTHORIZATION = "Authorization";
     public static final String KAKAO_AK = "KakaoAK ";
     public static final String KAKAO_URL = "https://dapi.kakao.com/v2/local/search/address.json";
