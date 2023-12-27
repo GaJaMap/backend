@@ -51,7 +51,7 @@ public class User extends BaseTimeEntity {
         this.email = email;
         authority = Authority.FREE;
         groupCount = 0;
-        lastLoginDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        lastLoginDate = LocalDateTime.now();
         active = true;
     }
 
@@ -85,7 +85,7 @@ public class User extends BaseTimeEntity {
      * hour, min, sec을 제외한 yyyy-MM-dd 날짜가 다르면 최근 접속 일을 update
      */
     public void updateLastLoginDate() {
-        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
         if (isDifferentDate(currentDateTime)) {
             this.lastLoginDate = currentDateTime;
