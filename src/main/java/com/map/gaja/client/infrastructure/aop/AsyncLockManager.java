@@ -22,7 +22,7 @@ import static com.map.gaja.client.constant.LocationResolverConstant.LOCK_TIMEOUT
 final class AsyncLockManager {
     private final Semaphore semaphore = new Semaphore(1);
 
-    @Around("execution(* com.map.gaja.client.domain.infrastructure.geocode.Geocoder.convertToCoordinatesAsync(..))")
+    @Around("execution(* com.map.gaja.client.infrastructure.geocode.Geocoder.convertToCoordinatesAsync(..))")
     private Object process(ProceedingJoinPoint joinPoint) throws Throwable {
         acquireLock();
 

@@ -27,7 +27,7 @@ final class TaskCountManager {
         checkQuickServiceAvailability();
     }
 
-    @Around("execution(* com.map.gaja.client.domain.infrastructure.geocode.Geocoder.convertToCoordinatesAsync(..))")
+    @Around("execution(* com.map.gaja.client.infrastructure.geocode.Geocoder.convertToCoordinatesAsync(..))")
     private Object processTask(ProceedingJoinPoint joinPoint) throws Throwable {
         int taskCount = getTaskCount(joinPoint);
         increaseTaskCount(taskCount);
