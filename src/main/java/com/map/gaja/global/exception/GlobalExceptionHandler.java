@@ -1,5 +1,6 @@
 package com.map.gaja.global.exception;
 
+import com.map.gaja.client.infrastructure.geocode.exception.NotExcelUploadException;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDto> allHandle(Exception e) {
-        log.error("{}: {}", authenticationRepository.getEmail(), e);
+        log.error("{}: ", authenticationRepository.getEmail(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionDto("서버 에러"));
     }
@@ -77,7 +78,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
     }
 
-
     /**
      * RequestBody로 들어온 값을 객체 파싱할 수 없는 경우
      * ex) int타입에 "abc"가 들어온 경우
@@ -87,5 +87,15 @@ public class GlobalExceptionHandler {
         CommonErrorResponse body = new CommonErrorResponse("Type-Mismatch", "Type-Mismatch");
         log.info("{}: {}", authenticationRepository.getEmail(), e.getMessage());
         return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 엑셀파일 업로드 예외 처리
+     */
+    @ExceptionHandler(NotExcelUploadException.class)
+    public ResponseEntity<ExceptionDto> excelErrorHandle(NotExcelUploadException e) {
+        log.error("{}: ", authenticationRepository.getEmail(), e);
+        return ResponseEntity.status(e.getStatus())
+                .body(new ExceptionDto(e.getMessage()));
     }
 }

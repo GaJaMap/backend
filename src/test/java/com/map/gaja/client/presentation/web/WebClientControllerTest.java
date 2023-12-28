@@ -11,7 +11,7 @@ import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.application.GroupService;
-import com.map.gaja.client.infrastructure.location.LocationResolver;
+import com.map.gaja.client.infrastructure.geocode.Geocoder;
 import com.map.gaja.user.domain.model.Authority;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +63,7 @@ class WebClientControllerTest {
     GroupService groupService;
 
     @MockBean
-    LocationResolver locationResolver;
+    Geocoder geocoder;
 
     @MockBean
     FileValidator fileValidator;
@@ -90,7 +90,7 @@ class WebClientControllerTest {
         }
         int successSize = successList.size();
         when(parsingService.parseClientFile(any())).thenReturn(successList);
-        when(locationResolver.convertToCoordinatesAsync(successList)).thenReturn(Mono.empty());
+        when(geocoder.convertToCoordinatesAsync(successList)).thenReturn(Mono.empty());
         when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         /*
             doAnswer(invocation -> {
