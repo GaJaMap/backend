@@ -3,7 +3,7 @@ package com.map.gaja.group.application;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
-import com.map.gaja.group.domain.service.GroupCreationService;
+import com.map.gaja.group.domain.service.GroupCommandService;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
@@ -28,13 +28,13 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final GroupQueryRepository groupQueryRepository;
-    private final GroupCreationService groupCreationService;
+    private final GroupCommandService groupCommandService;
 
     @Transactional
     public Long create(Long userId, GroupCreateRequest request) {
         User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        Group group = groupCreationService.create(request.getName(), user);
+        Group group = groupCommandService.create(request.getName(), user);
         groupRepository.save(group);
 
         user.increaseGroupCount(); //도메인 이벤트로 분리

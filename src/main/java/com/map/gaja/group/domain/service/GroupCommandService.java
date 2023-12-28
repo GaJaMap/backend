@@ -5,7 +5,7 @@ import com.map.gaja.user.domain.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupCreationService {
+public class GroupCommandService {
 
     public Group create(String groupName, User user) {
         user.checkCreateGroupPermission();

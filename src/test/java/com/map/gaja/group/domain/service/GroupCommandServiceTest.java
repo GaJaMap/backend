@@ -11,8 +11,8 @@ import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class GroupCreationServiceTest {
-    GroupCreationService groupCreationService = new GroupCreationService();
+class GroupCommandServiceTest {
+    GroupCommandService groupCommandService = new GroupCommandService();
 
     @Test
     @DisplayName("등급 제한으로 그룹 생성 실패")
@@ -26,6 +26,6 @@ class GroupCreationServiceTest {
                 .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
 
-        assertThatThrownBy(() -> groupCreationService.create("group", user)).isInstanceOf(GroupLimitExceededException.class);
+        assertThatThrownBy(() -> groupCommandService.create("group", user)).isInstanceOf(GroupLimitExceededException.class);
     }
 }

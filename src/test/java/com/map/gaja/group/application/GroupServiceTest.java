@@ -2,11 +2,10 @@ package com.map.gaja.group.application;
 
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
-import com.map.gaja.group.domain.service.GroupCreationService;
+import com.map.gaja.group.domain.service.GroupCommandService;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
-import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
@@ -35,7 +34,7 @@ class GroupServiceTest {
     UserRepository userRepository;
 
     @Mock
-    GroupCreationService groupCreationService;
+    GroupCommandService groupCommandService;
 
     @InjectMocks
     GroupService groupService;
@@ -48,7 +47,7 @@ class GroupServiceTest {
         User user = new User(email);
 
         when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupCreationService.create(any(), any())).thenReturn(new Group("group", user));
+        when(groupCommandService.create(any(), any())).thenReturn(new Group("group", user));
 
         Long groupId = groupService.create(user.getId(), groupCreateRequest);
 
