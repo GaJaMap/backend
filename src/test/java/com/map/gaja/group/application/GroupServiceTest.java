@@ -2,6 +2,7 @@ package com.map.gaja.group.application;
 
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.domain.service.GroupCreationService;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
@@ -33,26 +34,11 @@ class GroupServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    GroupCreationService groupCreationService;
+
     @InjectMocks
     GroupService groupService;
-
-    @Test
-    @DisplayName("등급 제한으로 그룹 생성 실패")
-    void createGroupFail() {
-        String email = "test@gmail.com";
-        GroupCreateRequest groupCreateRequest = new GroupCreateRequest("bundle");
-        User user = User.builder()
-                .id(1L)
-                .email(email)
-                .groupCount(100)
-                .authority(Authority.FREE)
-                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                .build();
-
-        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-
-        assertThatThrownBy(() -> groupService.create(user.getId(), groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
-    }
 
     @Test
     @DisplayName("그룹 생성 성공")
@@ -62,7 +48,7 @@ class GroupServiceTest {
         User user = new User(email);
 
         when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupRepository.save(any())).thenReturn(new Group("group", user));
+        when(groupCreationService.create(any(), any())).thenReturn(new Group("group", user));
 
         Long groupId = groupService.create(user.getId(), groupCreateRequest);
 
