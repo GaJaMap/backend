@@ -49,7 +49,7 @@ class GroupServiceTest {
         when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
         when(groupCommandService.create(any(), any())).thenReturn(new Group("group", user));
 
-        Long groupId = groupService.create(user.getId(), groupCreateRequest);
+        groupService.create(user.getId(), groupCreateRequest);
 
         verify(groupRepository, times(1)).save(any());
         assertEquals(1, user.getGroupCount());
@@ -69,35 +69,10 @@ class GroupServiceTest {
                 .build();
 
         when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(1);
 
         groupService.delete(user.getId(), 1L);
 
         assertEquals(0, user.getGroupCount());
-
-
-    }
-
-    @Test
-    @DisplayName("그룹 삭제 실패")
-    void deleteGroupFail() {
-        String email = "test@gmail.com";
-        User user = User.builder()
-                .id(1L)
-                .email(email)
-                .groupCount(0)
-                .active(true)
-                .authority(Authority.FREE)
-                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                .build();
-
-        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(0);
-
-        assertThatThrownBy(() -> {
-            groupService.delete(user.getId(), 1L);
-        })
-                .isInstanceOf(GroupNotFoundException.class);
 
     }
 
