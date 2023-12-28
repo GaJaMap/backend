@@ -64,18 +64,11 @@ public class GroupService {
     public void delete(Long userId, Long groupId) {
         User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, userId);
+        groupCommandService.delete(groupRepository, userId, groupId);
 
-        if (isGroupMissing(deletedGroupCount)) { //삭제된 그룹이 없다면 존재하지 않은 그룹이거나 userId가 다른 그룹일 가능성이 있음
-            throw new GroupNotFoundException();
-        }
-
-        user.decreaseGroupCount();
+        user.decreaseGroupCount(); //도메인 이벤트로 분리
     }
 
-    private boolean isGroupMissing(int deletedGroupCount) {
-        return deletedGroupCount == 0;
-    }
 
     @Transactional
     public void updateName(Long userId, Long groupId, GroupUpdateRequest request) {
