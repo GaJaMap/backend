@@ -11,13 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
 import static com.map.gaja.user.application.UserServiceHelper.findById;
 import static com.map.gaja.user.constant.UserConstant.APP_LOGIN;
-import static com.map.gaja.user.constant.UserConstant.DATE_FORMAT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +36,7 @@ public class UserService {
 
         return new LoginResponse(email,
                 user.getAuthority().name(),
-                getCreateDate(user.getCreatedAt()));
-    }
-
-    private String getCreateDate(LocalDateTime createdAt) {
-        return createdAt.format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+                user.getFormattedDateAsString());
     }
 
     @Transactional

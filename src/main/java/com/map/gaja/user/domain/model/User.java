@@ -7,6 +7,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
+import static com.map.gaja.user.constant.UserConstant.DATE_FORMAT;
 
 @Entity
 @Builder
@@ -88,6 +91,10 @@ public class User extends BaseTimeEntity {
             return true;
         }
         return false;
+    }
+
+    public String getFormattedDateAsString() {
+        return getCreatedAt().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
     }
 
 }
