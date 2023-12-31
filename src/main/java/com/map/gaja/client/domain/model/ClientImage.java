@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -30,6 +31,9 @@ public class ClientImage extends BaseTimeEntity {
     private Boolean isDeleted;
 
     public static ClientImage create(String loginEmail, String originalFileName) {
+        Objects.requireNonNull(loginEmail);
+        Objects.requireNonNull(originalFileName);
+
         String savedPath = createFilePath(loginEmail, originalFileName);
         return new ClientImage(originalFileName, savedPath);
     }
