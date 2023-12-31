@@ -162,9 +162,8 @@ public class ClientController implements ClientCommandApiSpecification {
             return new ResponseEntity<>(clientService.saveClient(clientRequest), HttpStatus.CREATED);
         }
 
-        StoredFileDto storedFileDto = fileService.createTemporaryFileDto(loginEmail, clientRequest.getClientImage());
-        ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, storedFileDto);
-        if (storeImage(clientRequest, storedFileDto)) {
+        ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, loginEmail);
+        if (storeImage(clientRequest, response.getImage())) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
 
