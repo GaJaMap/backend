@@ -29,10 +29,9 @@ public class ClientImage extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    public static ClientImage create(String loginEmail, MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        String savedPath = createFilePath(loginEmail, originalFilename);
-        return new ClientImage(originalFilename, savedPath);
+    public static ClientImage create(String loginEmail, String originalFileName) {
+        String savedPath = createFilePath(loginEmail, originalFileName);
+        return new ClientImage(originalFileName, savedPath);
     }
 
     private static String createFilePath(String loginEmail, String originalFilename) {
