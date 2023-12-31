@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -39,11 +38,11 @@ public class ClientImage extends BaseTimeEntity {
     }
 
     private static String createFilePath(String loginEmail, String originalFilename) {
-        String uuidFileName = createUuidFileName(originalFilename);
+        String uuidFileName = convertRawFileStringToUuidFileString(originalFilename);
         return loginEmail + "/" + uuidFileName;
     }
 
-    private static String createUuidFileName(String originalFilename) {
+    private static String convertRawFileStringToUuidFileString(String originalFilename) {
         String uuid = UUID.randomUUID().toString();
         String ext = extractExtension(originalFilename);
         return uuid + "." + ext;
