@@ -6,6 +6,7 @@ import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.global.authentication.AuthenticationRepository;
@@ -24,7 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +82,7 @@ class ClientServiceTest {
         user = TestEntityCreator.createUser(email);
         existingGroup = TestEntityCreator.createGroup(user, groupId, "Test Group1", 1);
         changedGroup = TestEntityCreator.createGroup(user, groupId, "Test Group2", 0);
-        clientImage = TestEntityCreator.createMockImage("Test Image");
+        clientImage = ClientImage.create(email, "Image.png");
         existingClient = TestEntityCreator.createClientWithImage(existingName, existingGroup, clientImage);
     }
 
@@ -136,22 +139,23 @@ class ClientServiceTest {
     @DisplayName("Client 이미지 업데이트 테스트")
     public void updateClientImageTest() throws Exception {
         // given
-        String updatedImageFilePath = UUID.randomUUID().toString();
-        StoredFileDto updatedImageFile = new StoredFileDto(updatedImageFilePath, "ddd");
         NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
+        String imageName = "testImage.png";
+        MultipartFile mockFile = mock(MultipartFile.class);
+        when(mockFile.getOriginalFilename()).thenReturn(imageName);
+        changedRequest.setClientImage(mockFile);
 
         when(clientQueryRepository.findClientWithImage(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        ClientOverviewResponse response = clientService.updateClientWithNewImage(existingClientId, changedRequest, updatedImageFile);
+        ClientOverviewResponse response = clientService.updateClientWithNewImage(existingClientId, changedRequest, email);
 
         // then
         assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
 
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
-        assertThat(response.getImage().getOriginalFileName()).isSameAs(updatedImageFile.getOriginalFileName());
-        assertThat(response.getImage().getFilePath()).isEqualTo(updatedImageFilePath);
+        assertThat(response.getImage().getOriginalFileName()).isEqualTo(imageName);
     }
 
     @Test
@@ -230,8 +234,10 @@ class ClientServiceTest {
     @DisplayName("이미지와 함께 Client 저장 테스트")
     void saveClientWithImageTest() {
         NewClientRequest request = createChangeRequest(existingGroup.getId(), "New Name");
-        StoredFileDto storedFileDto = new StoredFileDto(clientImage.getSavedPath(), clientImage.getOriginalName());
         int beforeClientCount = existingGroup.getClientCount();
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("testImage.png");
+        request.setClientImage(file);
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
@@ -242,7 +248,7 @@ class ClientServiceTest {
             return savedClient;
         });
 
-        ClientOverviewResponse result = clientService.saveClientWithImage(request, storedFileDto);
+        ClientOverviewResponse result = clientService.saveClientWithImage(request,email);
 
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + 1);
         assertThat(result.getClientId()).isEqualTo(clientId);
@@ -332,6 +338,7 @@ class ClientServiceTest {
         changedRequest.setGroupId(changedGroupId);
         changedRequest.setLatitude(35d);
         changedRequest.setLongitude(127d);
+
         return changedRequest;
     }
 }
