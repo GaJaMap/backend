@@ -24,13 +24,4 @@ public class ClientUpdater {
                 updatedLocation
         );
     }
-
-    /**
-     * ClientImage 업데이트
-     */
-    protected static void updateClientImage(Client existingClient, StoredFileDto updatedFileDto) {
-        ClientImage clientImage = new ClientImage(updatedFileDto.getOriginalFileName(), updatedFileDto.getFilePath());
-        existingClient.removeClientImage();
-        existingClient.updateImage(clientImage);
-    }
 }

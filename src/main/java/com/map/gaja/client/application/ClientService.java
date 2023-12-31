@@ -105,19 +105,21 @@ public class ClientService {
      * 고객 + 고객 이미지 정보 변경
      * @param existingClientId 기존 고객 ID
      * @param updateRequest    고객 업데이트 요청 정보
-     * @param updatedFileDto   고객 이미지 업데이트 정보
+     * @param loginEmail   요청 사용자 이메일
      */
     public ClientOverviewResponse updateClientWithNewImage(
             Long existingClientId,
             NewClientRequest updateRequest,
-            StoredFileDto updatedFileDto
+            String loginEmail
     ) {
         Client existingClient = clientQueryRepository.findClientWithImage(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
+        ClientImage newImage = ClientImage.create(loginEmail, updateRequest.getClientImage().getOriginalFilename());
 
         updateClientGroupIfChanged(updateRequest, existingClient);
         ClientUpdater.updateClient(existingClient, updateRequest);
-        ClientUpdater.updateClientImage(existingClient, updatedFileDto);
+        existingClient.removeClientImage();
+        existingClient.updateImage(newImage);
 
         return entityToOverviewDto(existingClient);
     }
