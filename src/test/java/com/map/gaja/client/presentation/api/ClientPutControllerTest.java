@@ -5,6 +5,7 @@ import com.map.gaja.client.application.ClientAccessVerifyService;
 import com.map.gaja.client.application.ClientQueryService;
 import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
+import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -78,21 +79,30 @@ public class ClientPutControllerTest {
     }
 
     @Test
+    @DisplayName("고객 이미지 변경 중 이미지 예외")
+    void updateClientOtherImageFail() throws Exception {
+        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
+        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPutRequestWithImage(testUri, groupId, clientId);
+        ClientRequestCreator.setNormalField(mockRequest, request);
+        doThrow(InvalidFileException.class).when(fileService).storeFile(any(),any());
+        mockRequest.param("isBasicImage", String.valueOf(false));
+
+        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
+        verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
+    }
+
+    @Test
     @DisplayName("고객 이미지 DB 변경 중 예외")
     void updateClientOtherImageException() throws Exception {
         NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
-
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPutRequestWithImage(testUri, groupId, clientId);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
-
-        StoredFileDto savedS3TestFile = new StoredFileDto("testFile-uuid", "testFile");
-        when(fileService.storeFile(any(), any())).thenReturn(savedS3TestFile);
         doThrow(new ClientNotFoundException()).when(clientService).updateClientWithNewImage(any(), any(),any());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
-        verify(fileService, times(1)).removeFile(savedS3TestFile.getFilePath());
+        verify(fileService, times(1)).createTemporaryFileDto(any(), any());
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.map.gaja.client.infrastructure.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.map.gaja.client.domain.exception.InvalidFileException;
@@ -19,10 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
- * 저장경로: /{파일확장자}/{uuid}.{파일확장자}
+ * 저장경로: /{이메일}/{uuid}.{파일확장자}
  * 파일 확장자 하위로 저장한다.
  */
 @Slf4j
@@ -36,19 +34,41 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public StoredFileDto storeFile(String loginEmail, MultipartFile file) {
-        try (InputStream fileInputStream = file.getInputStream()) {
-            String s3FileUrl = storeFileToS3(loginEmail, file, fileInputStream);
-            log.info("저장 완료. S3 저장위치 = {}", s3FileUrl);
+    /**
+     * DB 저장 하기위한 임시 저장 파일 정보
+     * 임시 저장 정보를 만들었다면 DB 저장 후
+     * 반드시 storeFile(...)메소드를 호출해서 실제로 저장해주어야 한다.
+     */
+    public StoredFileDto createTemporaryFileDto(String loginEmail, MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String storePath = createFilePath(loginEmail, originalFilename);
+        return new StoredFileDto(storePath, file.getOriginalFilename());
+    }
 
-            return createStoredFileDto(s3FileUrl, file.getOriginalFilename());
+    public void storeFile(StoredFileDto storedFileDto, MultipartFile file) {
+        try (InputStream fileInputStream = file.getInputStream()) {
+            String s3FileUrl = storeFileToS3(storedFileDto, file, fileInputStream);
+            log.info("저장 완료. S3 저장위치 = {}", s3FileUrl);
+//            log.info("저장 완료. S3 저장위치 = {}", s3FileUrl);
         } catch (RuntimeException e) {
             log.error("S3 문제로 파일 저장 실패", e);
             throw new S3NotWorkingException(e);
         } catch (IOException e) {
-            log.warn("파일 문제로 저장 실패 file={}", file);
+            log.warn("파일 문제로 저장 실패 file={}", file, e);
             throw new InvalidFileException(e);
         }
+    }
+
+    /**
+     * 파일 저장 후 파일 저장 위치 URL 반환
+     */
+    private String storeFileToS3(StoredFileDto storedFileDto, MultipartFile file, InputStream fileInputStream) {
+        ObjectMetadata objectMetadata = getFileMetadata(file);
+        amazonS3Client.putObject(
+                new PutObjectRequest(bucket, storedFileDto.getFilePath(), fileInputStream, objectMetadata)
+        );
+
+        return decodePath(amazonS3Client.getUrl(bucket, storedFileDto.getFilePath()).toString());
     }
 
     public boolean removeFile(String s3ObjectUri) {
@@ -99,25 +119,6 @@ public class S3FileService {
         return amazonS3Client.doesObjectExist(bucket, filePath);
     }
 
-    private StoredFileDto createStoredFileDto(String s3FileUrl, String originalFilename) {
-        String filePath = extractFilePath(s3FileUrl);
-        return new StoredFileDto(filePath, originalFilename);
-    }
-
-    private String storeFileToS3(String loginEmail, MultipartFile file, InputStream fileInputStream) {
-        String originalFilename = file.getOriginalFilename();
-        String storePath = createFilePath(loginEmail, originalFilename);
-
-        ObjectMetadata objectMetadata = getFileMetadata(file);
-
-        amazonS3Client.putObject(
-                new PutObjectRequest(bucket, storePath, fileInputStream, objectMetadata)
-        );
-
-        String storedPath = amazonS3Client.getUrl(bucket, storePath).toString();
-        return decodePath(storedPath);
-    }
-
     private String decodePath(String storedPath) {
         return URLDecoder.decode(storedPath, StandardCharsets.UTF_8);
     }
@@ -143,10 +144,10 @@ public class S3FileService {
 
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
+        if(pos == -1){ // 확장자를 파악할 수 없는 파일
+            log.info("확장자를 파악할 수 없는 파일 - 파일명 : {}", originalFilename);
+            throw new InvalidFileException();
+        }
         return originalFilename.substring(pos + 1);
-    }
-
-    private String extractFilePath(String s3FileUrl) {
-        return s3UrlGenerator.extractFilePath(s3FileUrl);
     }
 }
