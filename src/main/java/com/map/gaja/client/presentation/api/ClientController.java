@@ -91,9 +91,8 @@ public class ClientController implements ClientCommandApiSpecification {
         // 기본 이미지를 사용하지 않고, 새 이미지 파일을 요청에 실어보냄
         if (!clientRequest.getIsBasicImage() && !isEmptyFile(clientImage)) {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            StoredFileDto newFileDto = fileService.createTemporaryFileDto(loginEmail, clientRequest.getClientImage()); // 임시 UUID 생성
-            ClientOverviewResponse response = clientService.updateClientWithNewImage(clientId, clientRequest, newFileDto); // 임시 UUID를 path로 저장
-            if (storeImage(clientRequest, newFileDto)) { // 이미지 저장 성공 여부
+            ClientOverviewResponse response = clientService.updateClientWithNewImage(clientId, clientRequest, loginEmail); // 임시 UUID를 path로 저장
+            if (storeImage(clientRequest, response.getImage())) { // 이미지 저장 성공 여부
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
 
@@ -162,9 +161,8 @@ public class ClientController implements ClientCommandApiSpecification {
             return new ResponseEntity<>(clientService.saveClient(clientRequest), HttpStatus.CREATED);
         }
 
-        StoredFileDto storedFileDto = fileService.createTemporaryFileDto(loginEmail, clientRequest.getClientImage());
-        ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, storedFileDto);
-        if (storeImage(clientRequest, storedFileDto)) {
+        ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, loginEmail);
+        if (storeImage(clientRequest, response.getImage())) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
 

@@ -102,20 +102,6 @@ public class ClientConvertor {
         );
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, Group group, StoredFileDto storedFileDto) {
-        AddressDto address = request.getAddress();
-        LocationDto location = request.getLocation();
-        ClientImage clientImage = new ClientImage(storedFileDto.getOriginalFileName(), storedFileDto.getFilePath());
-        return new Client(
-                request.getClientName(),
-                request.getPhoneNumber(),
-                dtoToVo(address),
-                dtoToVo(location),
-                group,
-                clientImage
-        );
-    }
-
     protected static ClientLocation dtoToVo(LocationDto location) {
         return (location == null || location.getLongitude() == null || location.getLatitude() == null) ? new ClientLocation() :
                 new ClientLocation(location.getLatitude(), location.getLongitude());

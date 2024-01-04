@@ -10,7 +10,7 @@ class ClientImageTest {
     @Test
     void aaa() {
         Assertions.assertThrows(InvalidFileException.class, () -> {
-            new ClientImage("aaaa",null);
+            ClientImage.create("aaaa","test");
         });
     }
 

@@ -1,5 +1,6 @@
 package com.map.gaja.client.application;
 
+import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
@@ -56,12 +57,15 @@ public class ClientService {
      * 이미지와 함께 고객 등록
      *
      * @param clientRequest 고객 등록 요청 정보
-     * @param storedFileDto S3에 저장된 이미지 저장 정보
-     * @return 만들어진 고객 ID
+     * @param loginEmail 요청을 보내는 사용자 이메일
+     * @return 만들어진 고객
      */
-    public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, StoredFileDto storedFileDto) {
+    public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, String loginEmail) {
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
-        Client client = dtoToEntity(clientRequest, group, storedFileDto);
+        ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage().getOriginalFilename());
+        Client client = dtoToEntity(clientRequest, group);
+        client.updateImage(clientImage);
+
         clientRepository.save(client);
         increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
         return entityToOverviewDto(client);
@@ -101,19 +105,21 @@ public class ClientService {
      * 고객 + 고객 이미지 정보 변경
      * @param existingClientId 기존 고객 ID
      * @param updateRequest    고객 업데이트 요청 정보
-     * @param updatedFileDto   고객 이미지 업데이트 정보
+     * @param loginEmail   요청 사용자 이메일
      */
     public ClientOverviewResponse updateClientWithNewImage(
             Long existingClientId,
             NewClientRequest updateRequest,
-            StoredFileDto updatedFileDto
+            String loginEmail
     ) {
         Client existingClient = clientQueryRepository.findClientWithImage(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
+        ClientImage newImage = ClientImage.create(loginEmail, updateRequest.getClientImage().getOriginalFilename());
 
         updateClientGroupIfChanged(updateRequest, existingClient);
         ClientUpdater.updateClient(existingClient, updateRequest);
-        ClientUpdater.updateClientImage(existingClient, updatedFileDto);
+        existingClient.removeClientImage();
+        existingClient.updateImage(newImage);
 
         return entityToOverviewDto(existingClient);
     }

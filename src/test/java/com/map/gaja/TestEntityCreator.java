@@ -60,8 +60,4 @@ public class TestEntityCreator {
         Group group = createGroup(user, groupName);
         return group;
     }
-
-    public static ClientImage createMockImage(String imageName) {
-        return new ClientImage(imageName, UUID.randomUUID().toString());
-    }
 }
