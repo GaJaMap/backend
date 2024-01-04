@@ -163,11 +163,13 @@ dependencies {
 	// oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	// 스프링 배치
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
-
 	//web-flux
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	// 회로 차단기
+	implementation 'io.github.resilience4j:resilience4j-reactor:1.7.1'
+	implementation 'io.github.resilience4j:resilience4j-circuitbreaker:1.7.1'
+	testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.0'
 
 	compileOnly 'org.projectlombok:lombok'
 //	runtimeOnly 'com.mysql:mysql-connector-j'
