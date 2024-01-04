@@ -91,6 +91,18 @@ public class CircuitBreakerTest {
         assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
     }
 
+    @Test
+    @DisplayName("회로가 HALF-OPEN 상태에서 요청 성공 후 CLOSE 상태로 전환되는지 확인")
+    void halfOpenToClosed() throws InterruptedException {
+        request(MINIMUM_NUMBER_OF_CALLS, 500); //OPEN 상태로 전환
+
+        Thread.sleep(WAIT_DURATION_IN_OPEN_STATE_MILLIS); //HALF-OPEN 상태로 전환
+
+        request(PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_SATE, 200); //HALF-OPEN 상태에서 요청 성공
+
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.CLOSED);
+    }
+
     void request(int n, int responeCode) {
         for (int i = 0; i < n; i++) {
             mockWebServer.enqueue(new MockResponse()
