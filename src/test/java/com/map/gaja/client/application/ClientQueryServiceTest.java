@@ -59,8 +59,9 @@ class ClientQueryServiceTest {
         when(findClient.getLocation()).thenReturn(new ClientLocation());
         when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
 
-        String savedPath = "testImage";
-        when(findClient.getClientImage()).thenReturn(new ClientImage("testImage", savedPath));
+        String testEmail = "test@example.com";
+        String savedPath = "testImage.png";
+        when(findClient.getClientImage()).thenReturn(ClientImage.create(testEmail, savedPath));
 
         //when
         ClientDetailResponse response = clientQueryService.findClient(searchId);
@@ -68,7 +69,8 @@ class ClientQueryServiceTest {
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
         assertThat(response.getClientName()).isEqualTo(searchName);
-        assertThat(response.getImage().getFilePath()).isEqualTo(savedPath);
+        assertThat(response.getImage().getFilePath()).isNotEqualTo(savedPath);
+        assertThat(response.getImage().getFilePath()).startsWith(testEmail);
     }
 
     @Test
