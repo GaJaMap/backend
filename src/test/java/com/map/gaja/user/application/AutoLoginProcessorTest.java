@@ -9,6 +9,7 @@ import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
+import com.map.gaja.user.presentation.dto.ReferenceGroupId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,10 +47,10 @@ class AutoLoginProcessorTest {
         User user = new User(email);
         List<ClientOverviewResponse> clientList = new ArrayList<>();
         ClientListResponse clientListResponse = new ClientListResponse();
+        ReferenceGroupId referenceGroupId = new ReferenceGroupId(null);
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
         when(clientQueryRepository.findActiveClientByEmail(email, null)).thenReturn(clientList);
-        autoLoginProcessor.process(email);
+        autoLoginProcessor.findReferenceGroupInClients(email, referenceGroupId);
 
         verify(clientQueryRepository, times(1)).findActiveClientByEmail(email, null);
     }
@@ -61,6 +62,7 @@ class AutoLoginProcessorTest {
         User user = new User(email);
         user.accessGroup(1L);
         ClientListResponse clientListResponse = new ClientListResponse();
+        ReferenceGroupId referenceGroupId = new ReferenceGroupId(1L);
         List<Client> clients = new ArrayList<>();
         GroupInfo groupInfo = new GroupInfo() {
             @Override
@@ -79,10 +81,9 @@ class AutoLoginProcessorTest {
             }
         };
 
-        when(userRepository.findByEmailAndActive(email)).thenReturn(Optional.of(user));
         when(groupRepository.findGroupInfoById(user.getReferenceGroupId())).thenReturn(Optional.of(groupInfo));
         when(clientQueryRepository.findByGroup_Id(groupInfo.getGroupId(), null)).thenReturn(clients);
-        autoLoginProcessor.process(email);
+        autoLoginProcessor.findReferenceGroupInClients(email, referenceGroupId);
 
         verify(clientQueryRepository, times(1)).findByGroup_Id(groupInfo.getGroupId(), null);
         verify(groupRepository, times(1)).findGroupInfoById(user.getReferenceGroupId());
