@@ -17,7 +17,7 @@ import java.net.URI;
 import static com.map.gaja.user.constant.OAuthConstant.*;
 
 @Component
-public class OAuth2AppService {
+public class KakaoEmailProvider {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
 

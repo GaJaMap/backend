@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "users")
@@ -38,11 +36,22 @@ public class User extends BaseTimeEntity {
 
     private Boolean active;
 
+    @Builder
+    private User(Long id, String email, Integer groupCount, Authority authority, LocalDateTime lastLoginDate, Long referenceGroupId, Boolean active) {
+        this.id = id;
+        this.email = email;
+        this.groupCount = groupCount;
+        this.authority = authority;
+        this.lastLoginDate = lastLoginDate;
+        this.referenceGroupId = referenceGroupId;
+        this.active = active;
+    }
+
     public User(String email) {
         this.email = email;
         authority = Authority.FREE;
         groupCount = 0;
-        lastLoginDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        lastLoginDate = LocalDateTime.now();
         active = true;
     }
 
@@ -76,7 +85,7 @@ public class User extends BaseTimeEntity {
      * hour, min, sec을 제외한 yyyy-MM-dd 날짜가 다르면 최근 접속 일을 update
      */
     public void updateLastLoginDate() {
-        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
         if (isDifferentDate(currentDateTime)) {
             this.lastLoginDate = currentDateTime;

@@ -3,7 +3,7 @@ package com.map.gaja.user.application;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.model.User;
-import com.map.gaja.user.infrastructure.oauth2.OAuth2AppService;
+import com.map.gaja.user.infrastructure.oauth2.KakaoEmailProvider;
 import com.map.gaja.user.infrastructure.UserRepository;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.dto.response.LoginResponse;
@@ -22,7 +22,7 @@ import static com.map.gaja.user.constant.UserConstant.DATE_FORMAT;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final OAuth2AppService oauth2AppService;
+    private final KakaoEmailProvider oauth2AppService;
     private final UserRepository userRepository;
     private final AuthenticationRepository authenticationRepository;
     private final SessionHandler sessionHandler;
