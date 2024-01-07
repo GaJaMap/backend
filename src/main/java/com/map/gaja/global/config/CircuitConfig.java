@@ -18,7 +18,7 @@ public class CircuitConfig {
     private final int PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_SATE = 1;
     private final int SLIDING_WINDOW_SIZE = 4;
     private final int SLOW_CALL_RATE_THRESHOLD = 10;
-    private final int SLOW_CALL_DURATION_THRESHOLD_SECONDS = 30;
+    private final int SLOW_CALL_DURATION_THRESHOLD_SECONDS = 7;
 
     private CircuitBreakerConfig geoApiCircuitBreakerConfig() {
         return CircuitBreakerConfig.custom()
