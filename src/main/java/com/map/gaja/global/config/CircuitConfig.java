@@ -21,8 +21,7 @@ public class CircuitConfig {
     private final int SLOW_CALL_RATE_THRESHOLD = 10;
     private final int SLOW_CALL_DURATION_THRESHOLD_SECONDS = 30;
 
-    @Bean
-    public CircuitBreakerConfig geoApiCircuitBreakerConfig() {
+    private CircuitBreakerConfig geoApiCircuitBreakerConfig() {
         return CircuitBreakerConfig.custom()
                 .failureRateThreshold(FAILURE_RATE_THRESHOLD)
                 .minimumNumberOfCalls(MINIMUM_NUMBER_OF_CALLS)
@@ -36,8 +35,7 @@ public class CircuitConfig {
                 .build();
     }
 
-    @Bean
-    public CircuitBreakerRegistry geoApiCircuitBreakerRegistry() {
+    private CircuitBreakerRegistry geoApiCircuitBreakerRegistry() {
         return CircuitBreakerRegistry.of(geoApiCircuitBreakerConfig());
     }
 
