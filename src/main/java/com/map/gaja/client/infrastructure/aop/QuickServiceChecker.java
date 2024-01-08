@@ -21,7 +21,7 @@ import static com.map.gaja.client.constant.LocationResolverConstant.LIMIT_PROCES
 @RequiredArgsConstructor
 @Aspect
 @Order(1)
-final class TaskCountManager {
+final class QuickServiceChecker {
     private final AtomicInteger totalTaskCount = new AtomicInteger(0);
     private final CircuitBreaker circuitBreaker;
 
