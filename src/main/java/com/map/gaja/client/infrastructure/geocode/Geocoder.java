@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.*;
+import static com.map.gaja.client.constant.GeocodeConstant.*;
 
 @Component
 @RequiredArgsConstructor

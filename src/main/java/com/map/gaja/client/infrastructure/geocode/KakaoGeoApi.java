@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.*;
+import static com.map.gaja.client.constant.GeocodeConstant.*;
 
 @Component
 @RequiredArgsConstructor

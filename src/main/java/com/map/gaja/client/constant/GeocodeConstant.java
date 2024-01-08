@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.time.Duration;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LocationResolverConstant {
+public class GeocodeConstant {
     public static final String AUTHORIZATION = "Authorization";
     public static final String KAKAO_AK = "KakaoAK ";
     public static final String KAKAO_URL = "https://dapi.kakao.com/v2/local/search/address.json";

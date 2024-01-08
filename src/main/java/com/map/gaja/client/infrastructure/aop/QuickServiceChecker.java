@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.LIMIT_PROCESS_COUNT;
+import static com.map.gaja.client.constant.GeocodeConstant.LIMIT_PROCESS_COUNT;
 
 @Component
 @RequiredArgsConstructor
