@@ -99,6 +99,7 @@ task testOnlyJava(type: Test) {
 	useJUnitPlatform {
 		exclude("/**/*RepositoryTest.class")
 		exclude("/**/GajaApplicationTests.class")
+		exclude("/**/geocode/**")
 	}
 }
 
