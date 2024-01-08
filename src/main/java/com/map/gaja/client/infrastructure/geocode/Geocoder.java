@@ -2,6 +2,7 @@ package com.map.gaja.client.infrastructure.geocode;
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.infrastructure.geocode.exception.NotExcelUploadException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,7 @@ public class Geocoder {
     }
 
     private void handleError(Throwable err) {
-        if (err instanceof WebClientException || err instanceof TimeoutException) {
+        if (err instanceof WebClientException || err instanceof TimeoutException || err instanceof CallNotPermittedException) {
             throw new NotExcelUploadException(err);
         }
     }
