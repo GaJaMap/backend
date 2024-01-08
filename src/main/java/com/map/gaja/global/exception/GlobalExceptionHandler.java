@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -94,7 +96,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotExcelUploadException.class)
     public ResponseEntity<ExceptionDto> excelErrorHandle(NotExcelUploadException e) {
-        log.error("{}: ", authenticationRepository.getEmail(), e);
+        String suppressedExceptions = Arrays.stream(e.getSuppressed())
+                .map(Throwable::getMessage)
+                .collect(Collectors.joining("\n"));
+
+        log.info("{}: {} {}", authenticationRepository.getEmail(), e.getMessage(), suppressedExceptions);
         return ResponseEntity.status(e.getStatus())
                 .body(new ExceptionDto(e.getMessage()));
     }
