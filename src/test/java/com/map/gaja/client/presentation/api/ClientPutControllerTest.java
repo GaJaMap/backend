@@ -9,6 +9,7 @@ import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
+import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.application.GroupAccessVerifyService;
@@ -74,6 +75,12 @@ public class ClientPutControllerTest {
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPutRequestWithImage(testUri, groupId, clientId);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
+
+        ClientOverviewResponse response = new ClientOverviewResponse();
+        StoredFileDto fileDto = new StoredFileDto("test", "test");
+        response.setImage(fileDto);
+        when(clientService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
+
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isOk());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
     }
@@ -86,6 +93,11 @@ public class ClientPutControllerTest {
         ClientRequestCreator.setNormalField(mockRequest, request);
         doThrow(InvalidFileException.class).when(fileService).storeFile(any(),any());
         mockRequest.param("isBasicImage", String.valueOf(false));
+
+        ClientOverviewResponse response = new ClientOverviewResponse();
+        StoredFileDto fileDto = new StoredFileDto("test", "test");
+        response.setImage(fileDto);
+        when(clientService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
@@ -102,7 +114,6 @@ public class ClientPutControllerTest {
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
         verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
-        verify(fileService, times(1)).createTemporaryFileDto(any(), any());
     }
 
     @Test

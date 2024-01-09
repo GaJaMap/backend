@@ -1,6 +1,6 @@
 package com.map.gaja.user.infrastructure;
 
-import com.map.gaja.user.infrastructure.oauth2.OAuth2AppService;
+import com.map.gaja.user.infrastructure.oauth2.KakaoEmailProvider;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,7 +8,7 @@ class OAuth2AppServiceTest {
 
 //    @Test
     void oauth2Login() {
-        OAuth2AppService oauth2AppService = new OAuth2AppService();
+        KakaoEmailProvider oauth2AppService = new KakaoEmailProvider();
         String accessToken = "accessToken";
 
         String email = oauth2AppService.getEmail(accessToken);

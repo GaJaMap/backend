@@ -3,6 +3,7 @@ package com.map.gaja.user.presentation.api;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.user.application.AutoLoginProcessor;
 import com.map.gaja.user.application.UserService;
+import com.map.gaja.user.presentation.dto.ReferenceGroupId;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.api.specification.UserApiSpecification;
 import com.map.gaja.user.presentation.dto.response.AutoLoginResponse;
@@ -50,7 +51,8 @@ public class UserController implements UserApiSpecification {
     @Override
     @GetMapping("/auto-login")
     public ResponseEntity<AutoLoginResponse> autoLogin(@AuthenticationPrincipal(expression = "name") String email) {
-        AutoLoginResponse response = autoLoginProcessor.process(email);
+        ReferenceGroupId referenceGroupId = autoLoginProcessor.login(email);
+        AutoLoginResponse response = autoLoginProcessor.findReferenceGroupInClients(email, referenceGroupId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

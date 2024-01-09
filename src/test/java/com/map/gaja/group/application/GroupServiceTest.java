@@ -2,10 +2,10 @@ package com.map.gaja.group.application;
 
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.domain.service.GroupCommandService;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 import com.map.gaja.group.presentation.dto.request.GroupUpdateRequest;
-import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
@@ -33,26 +33,11 @@ class GroupServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    GroupCommandService groupCommandService;
+
     @InjectMocks
     GroupService groupService;
-
-    @Test
-    @DisplayName("등급 제한으로 그룹 생성 실패")
-    void createGroupFail() {
-        String email = "test@gmail.com";
-        GroupCreateRequest groupCreateRequest = new GroupCreateRequest("bundle");
-        User user = User.builder()
-                .id(1L)
-                .email(email)
-                .groupCount(100)
-                .authority(Authority.FREE)
-                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                .build();
-
-        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-
-        assertThatThrownBy(() -> groupService.create(user.getId(), groupCreateRequest)).isInstanceOf(GroupLimitExceededException.class);
-    }
 
     @Test
     @DisplayName("그룹 생성 성공")
@@ -62,9 +47,9 @@ class GroupServiceTest {
         User user = new User(email);
 
         when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupRepository.save(any())).thenReturn(new Group("group", user));
+        when(groupCommandService.create(any(), any())).thenReturn(new Group("group", user));
 
-        Long groupId = groupService.create(user.getId(), groupCreateRequest);
+        groupService.create(user.getId(), groupCreateRequest);
 
         verify(groupRepository, times(1)).save(any());
         assertEquals(1, user.getGroupCount());
@@ -84,35 +69,10 @@ class GroupServiceTest {
                 .build();
 
         when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(1);
 
         groupService.delete(user.getId(), 1L);
 
         assertEquals(0, user.getGroupCount());
-
-
-    }
-
-    @Test
-    @DisplayName("그룹 삭제 실패")
-    void deleteGroupFail() {
-        String email = "test@gmail.com";
-        User user = User.builder()
-                .id(1L)
-                .email(email)
-                .groupCount(0)
-                .active(true)
-                .authority(Authority.FREE)
-                .lastLoginDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                .build();
-
-        when(userRepository.findByEmailAndActiveForUpdate(user.getId())).thenReturn(Optional.of(user));
-        when(groupRepository.deleteByIdAndUserId(1L, 1L)).thenReturn(0);
-
-        assertThatThrownBy(() -> {
-            groupService.delete(user.getId(), 1L);
-        })
-                .isInstanceOf(GroupNotFoundException.class);
 
     }
 

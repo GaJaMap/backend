@@ -3,7 +3,7 @@ package com.map.gaja.user.application;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.model.User;
-import com.map.gaja.user.infrastructure.oauth2.OAuth2AppService;
+import com.map.gaja.user.infrastructure.oauth2.KakaoEmailProvider;
 import com.map.gaja.user.infrastructure.UserRepository;
 import com.map.gaja.user.presentation.dto.request.LoginRequest;
 import com.map.gaja.user.presentation.dto.response.LoginResponse;
@@ -11,18 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
 import static com.map.gaja.user.application.UserServiceHelper.findById;
 import static com.map.gaja.user.constant.UserConstant.APP_LOGIN;
-import static com.map.gaja.user.constant.UserConstant.DATE_FORMAT;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final OAuth2AppService oauth2AppService;
+    private final KakaoEmailProvider oauth2AppService;
     private final UserRepository userRepository;
     private final AuthenticationRepository authenticationRepository;
     private final SessionHandler sessionHandler;
@@ -40,11 +36,7 @@ public class UserService {
 
         return new LoginResponse(email,
                 user.getAuthority().name(),
-                getCreateDate(user.getCreatedAt()));
-    }
-
-    private String getCreateDate(LocalDateTime createdAt) {
-        return createdAt.format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+                user.getFormattedDateAsString());
     }
 
     @Transactional

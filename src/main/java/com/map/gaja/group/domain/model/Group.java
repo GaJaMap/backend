@@ -8,8 +8,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "GROUP_SET")
@@ -31,6 +29,15 @@ public class Group extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    private Group(Long id, String name, Integer clientCount, Boolean isDeleted, User user) {
+        this.id = id;
+        this.name = name;
+        this.clientCount = clientCount;
+        this.isDeleted = isDeleted;
+        this.user = user;
+    }
 
     public Group(String name, User user) {
         this.name = name;

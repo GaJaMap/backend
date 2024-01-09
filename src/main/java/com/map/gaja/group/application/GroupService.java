@@ -3,6 +3,7 @@ package com.map.gaja.group.application;
 import com.map.gaja.client.presentation.dto.subdto.GroupDetailDto;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
+import com.map.gaja.group.domain.service.GroupCommandService;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
@@ -27,22 +28,18 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final GroupQueryRepository groupQueryRepository;
+    private final GroupCommandService groupCommandService;
 
     @Transactional
     public Long create(Long userId, GroupCreateRequest request) {
         User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        user.checkCreateGroupPermission();
+        Group group = groupCommandService.create(request.getName(), user);
+        groupRepository.save(group);
 
-        Group group = groupRepository.save(createGroup(request.getName(), user));
-
-        user.increaseGroupCount();
+        user.increaseGroupCount(); //도메인 이벤트로 분리
 
         return group.getId();
-    }
-
-    private Group createGroup(String name, User user) {
-        return new Group(name, user);
     }
 
     @Transactional(readOnly = true)
@@ -67,18 +64,11 @@ public class GroupService {
     public void delete(Long userId, Long groupId) {
         User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        int deletedGroupCount = groupRepository.deleteByIdAndUserId(groupId, userId);
+        groupCommandService.delete(groupRepository, userId, groupId);
 
-        if (isGroupMissing(deletedGroupCount)) { //삭제된 그룹이 없다면 존재하지 않은 그룹이거나 userId가 다른 그룹일 가능성이 있음
-            throw new GroupNotFoundException();
-        }
-
-        user.decreaseGroupCount();
+        user.decreaseGroupCount(); //도메인 이벤트로 분리
     }
 
-    private boolean isGroupMissing(int deletedGroupCount) {
-        return deletedGroupCount == 0;
-    }
 
     @Transactional
     public void updateName(Long userId, Long groupId, GroupUpdateRequest request) {

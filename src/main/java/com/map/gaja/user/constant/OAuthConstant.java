@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class OAuthConstant {
+public abstract class OAuthConstant {
     public static final String KAKAO_OAUTH2_URL = "https://kapi.kakao.com/v2/user/me";
     public static final String KAKAO_ACCESS_TOKEN_HEADER = "Authorization";
     public static final String KAKAO_ACCESS_TOKEN_PREFIX = "Bearer ";
