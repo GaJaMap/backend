@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.*;
-import static com.map.gaja.client.constant.LocationResolverConstant.MAX_LONGITUDE;
+import static com.map.gaja.client.constant.GeocodeConstant.*;
+import static com.map.gaja.client.constant.GeocodeConstant.MAX_LONGITUDE;
 
 @Component
 @RequiredArgsConstructor

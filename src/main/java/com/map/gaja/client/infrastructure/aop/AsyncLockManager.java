@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.LOCK_TIMEOUT;
+import static com.map.gaja.client.constant.GeocodeConstant.LOCK_TIMEOUT;
 
 @Aspect
 @Component

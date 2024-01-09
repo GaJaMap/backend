@@ -2,6 +2,8 @@ package com.map.gaja.client.infrastructure.geocode;
 
 
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,7 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.*;
+import static com.map.gaja.client.constant.GeocodeConstant.*;
 
 @Component
 @RequiredArgsConstructor
@@ -24,11 +26,11 @@ public class KakaoGeoApi {
     @Value("${kakao.key}")
     private String KAKAO_KEY;
     private WebClient webClient;
+    private final CircuitBreaker circuitBreaker;
 
     @PostConstruct
     private void init() {
         webClient = WebClient.builder()
-                .baseUrl(KAKAO_URL)
                 .defaultHeader(AUTHORIZATION, KAKAO_AK + KAKAO_KEY)
                 .build();
 
@@ -39,7 +41,8 @@ public class KakaoGeoApi {
         return webClient.get()
                 .uri(createUri(data.getAddress()))
                 .retrieve()
-                .toEntity(String.class);
+                .toEntity(String.class)
+                .transformDeferred(CircuitBreakerOperator.of(circuitBreaker));
     }
 
     private URI createUri(String address) {

@@ -1,6 +1,8 @@
 package com.map.gaja.client.infrastructure.aop;
 
+import com.map.gaja.client.infrastructure.geocode.exception.NotExcelUploadException;
 import com.map.gaja.client.infrastructure.geocode.exception.TooManyRequestException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,18 +15,27 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.map.gaja.client.constant.LocationResolverConstant.LIMIT_PROCESS_COUNT;
+import static com.map.gaja.client.constant.GeocodeConstant.LIMIT_PROCESS_COUNT;
 
 @Component
 @RequiredArgsConstructor
 @Aspect
 @Order(1)
-final class TaskCountManager {
+final class QuickServiceChecker {
     private final AtomicInteger totalTaskCount = new AtomicInteger(0);
+    private final CircuitBreaker circuitBreaker;
 
     @Before("execution(* com.map.gaja.client.presentation.web.WebClientController.saveExcelFileData(..))")
     private void doCheckServiceAvailability() {
+        checkServiceAvailabilityByCircuitState();
+
         checkQuickServiceAvailability();
+    }
+
+    private void checkServiceAvailabilityByCircuitState() {
+        if(!circuitBreaker.tryAcquirePermission()) {
+            throw new NotExcelUploadException();
+        }
     }
 
     @Around("execution(* com.map.gaja.client.infrastructure.geocode.Geocoder.convertToCoordinatesAsync(..))")
