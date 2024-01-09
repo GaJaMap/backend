@@ -13,6 +13,7 @@ import com.map.gaja.group.presentation.dto.response.GroupResponse;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,6 @@ public class GroupService {
 
         Group group = groupCommandService.create(request.getName(), user);
         groupRepository.save(group);
-
-        user.increaseGroupCount(); //도메인 이벤트로 분리
 
         return group.getId();
     }
