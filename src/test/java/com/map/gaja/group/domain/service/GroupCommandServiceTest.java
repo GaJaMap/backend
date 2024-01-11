@@ -8,6 +8,7 @@ import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,7 +24,8 @@ class GroupCommandServiceTest {
     @Mock
     GroupRepository groupRepository;
 
-    GroupCommandService groupCommandService = new GroupCommandService();
+    @InjectMocks
+    GroupCommandService groupCommandService;
 
     @Test
     @DisplayName("등급 제한으로 그룹 생성 실패")

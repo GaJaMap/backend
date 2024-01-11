@@ -1,6 +1,5 @@
 package com.map.gaja.group.event;
 
-import com.map.gaja.global.event.Events;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ class GroupEventListenerTest {
         GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(new User("test"));
 
         //when
-        Events.raise(groupCreatedEvent);
+        publisher.publishEvent(groupCreatedEvent);
 
         //then
         verify(groupEventListener).create(groupCreatedEvent);

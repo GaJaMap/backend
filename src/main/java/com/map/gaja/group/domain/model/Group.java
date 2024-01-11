@@ -1,9 +1,7 @@
 package com.map.gaja.group.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
-import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.exception.ClientNotDeletedException;
-import com.map.gaja.group.event.GroupCreatedEvent;
 import com.map.gaja.user.domain.model.User;
 import lombok.*;
 
@@ -46,7 +44,6 @@ public class Group extends BaseTimeEntity {
         this.user = user;
         clientCount = 0;
         isDeleted = false;
-        Events.raise(new GroupCreatedEvent(user));
     }
 
     public void updateName(String name) {
