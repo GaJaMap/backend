@@ -17,10 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,27 +44,69 @@ class AutoLoginProcessorTest {
     S3UrlGenerator s3UrlGenerator;
 
     @Test
+    @DisplayName("사용자가 최근에 참조한 전체 그룹 아이디 조회")
+    void findReferenceWholeGroupId() {
+        // given
+        String email = "test@gmail.com";
+        User user = new User(email);
+        ReferenceGroupId referenceGroupId = new ReferenceGroupId(null);
+
+        given(userRepository.findByEmailAndActive(email))
+                .willReturn(Optional.of(user));
+
+        // when
+        ReferenceGroupId result = autoLoginProcessor.login(email);
+
+        // then
+        assertThat(referenceGroupId.getId()).isEqualTo(result.getId());
+    }
+
+    @Test
+    @DisplayName("사용자가 최근에 참조한 특정 그룹 아이디 조회")
+    void findReferenceGroupId() {
+        // given
+        String email = "test@gmail.com";
+        User user = User.builder()
+                .referenceGroupId(1L)
+                .lastLoginDate(LocalDateTime.now())
+                .build();
+        ReferenceGroupId referenceGroupId = new ReferenceGroupId(1L);
+
+        given(userRepository.findByEmailAndActive(email))
+                .willReturn(Optional.of(user));
+
+        // when
+        ReferenceGroupId result = autoLoginProcessor.login(email);
+
+        // then
+        assertThat(referenceGroupId.getId()).isEqualTo(result.getId());
+    }
+
+    @Test
     @DisplayName("사용자가 최근에 참조한 전체 그룹 조회")
     void findWholeGroup() {
+        // given
         String email = "test@gmail.com";
         User user = new User(email);
         List<ClientOverviewResponse> clientList = new ArrayList<>();
-        ClientListResponse clientListResponse = new ClientListResponse();
         ReferenceGroupId referenceGroupId = new ReferenceGroupId(null);
 
         when(clientQueryRepository.findActiveClientByEmail(email, null)).thenReturn(clientList);
+
+        // when
         autoLoginProcessor.findReferenceGroupInClients(email, referenceGroupId);
 
-        verify(clientQueryRepository, times(1)).findActiveClientByEmail(email, null);
+        // then
+        verify(clientQueryRepository).findActiveClientByEmail(email, null);
     }
 
     @Test
     @DisplayName("사용자가 최근에 참조한 특정 그룹 조회")
     void findGroup() {
+        // given
         String email = "test@gmail.com";
         User user = new User(email);
         user.accessGroup(1L);
-        ClientListResponse clientListResponse = new ClientListResponse();
         ReferenceGroupId referenceGroupId = new ReferenceGroupId(1L);
         List<Client> clients = new ArrayList<>();
         GroupInfo groupInfo = new GroupInfo() {
@@ -81,11 +126,14 @@ class AutoLoginProcessorTest {
             }
         };
 
-        when(groupRepository.findGroupInfoById(user.getReferenceGroupId())).thenReturn(Optional.of(groupInfo));
-        when(clientQueryRepository.findByGroup_Id(groupInfo.getGroupId(), null)).thenReturn(clients);
+        when(groupRepository.findGroupInfoById(referenceGroupId.getId())).thenReturn(Optional.of(groupInfo));
+        when(clientQueryRepository.findByGroup_Id(referenceGroupId.getId(), null)).thenReturn(clients);
+
+        // when
         autoLoginProcessor.findReferenceGroupInClients(email, referenceGroupId);
 
-        verify(clientQueryRepository, times(1)).findByGroup_Id(groupInfo.getGroupId(), null);
-        verify(groupRepository, times(1)).findGroupInfoById(user.getReferenceGroupId());
+        // then
+        verify(clientQueryRepository).findByGroup_Id(referenceGroupId.getId(), null);
+        verify(groupRepository).findGroupInfoById(user.getReferenceGroupId());
     }
 }
