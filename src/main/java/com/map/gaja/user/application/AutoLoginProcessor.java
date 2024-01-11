@@ -35,7 +35,7 @@ public class AutoLoginProcessor {
 
         user.updateLastLoginDate();
 
-        return new ReferenceGroupId(user.getId());
+        return new ReferenceGroupId(user.getReferenceGroupId());
     }
 
     @Transactional(readOnly = true)
