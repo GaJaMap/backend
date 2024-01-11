@@ -32,4 +32,17 @@ class GroupEventListenerTest {
         //then
         verify(groupEventListener).create(groupCreatedEvent);
     }
+
+    @Test
+    @DisplayName("그룹이 삭제되면 이벤트 리스너가 실행된다.")
+    void groupDeleteEvent() {
+        //given
+        GroupDeletedEvent groupDeletedEvent = new GroupDeletedEvent(new User("test"));
+
+        //when
+        publisher.publishEvent(groupDeletedEvent);
+
+        //then
+        verify(groupEventListener).delete(groupDeletedEvent);
+    }
 }
