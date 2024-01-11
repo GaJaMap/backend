@@ -63,9 +63,7 @@ public class GroupService {
     public void delete(Long userId, Long groupId) {
         User user = findByEmailAndActiveWithLock(userRepository, userId);
 
-        groupCommandService.delete(groupRepository, userId, groupId);
-
-        user.decreaseGroupCount(); //도메인 이벤트로 분리
+        groupCommandService.delete(groupRepository, user, groupId);
     }
 
 

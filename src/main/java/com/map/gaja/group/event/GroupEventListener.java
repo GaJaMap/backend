@@ -13,4 +13,10 @@ public class GroupEventListener {
         user.increaseGroupCount();
     }
 
+    @EventListener(GroupDeletedEvent.class)
+    public void delete(GroupDeletedEvent event) {
+        User user = event.getUser();
+        user.decreaseGroupCount();
+    }
+
 }
