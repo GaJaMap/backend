@@ -1,7 +1,6 @@
 package com.map.gaja.user.application;
 
 import com.map.gaja.global.authentication.AuthenticationRepository;
-import com.map.gaja.global.authentication.SessionHandler;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.oauth2.KakaoEmailProvider;
 import com.map.gaja.user.infrastructure.UserRepository;
@@ -18,12 +17,12 @@ import static com.map.gaja.user.constant.UserConstant.APP_LOGIN;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final KakaoEmailProvider oauth2AppService;
+    private final KakaoEmailProvider kakaoEmailProvider;
     private final UserRepository userRepository;
     private final AuthenticationRepository authenticationRepository;
 
     public LoginResponse login(LoginRequest request) {
-        String email = oauth2AppService.getEmail(request.getAccessToken());
+        String email = kakaoEmailProvider.getEmail(request.getAccessToken());
 
         User user = loginByEmail(userRepository, email, APP_LOGIN);
 
