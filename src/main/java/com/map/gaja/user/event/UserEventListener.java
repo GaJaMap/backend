@@ -14,4 +14,9 @@ public class UserEventListener {
     public void login(LoginSucceededEvent event) {
         sessionHandler.deduplicate(event.getEmail(), event.getPlatformType());
     }
+
+    @EventListener(WithdrawnEvent.class)
+    public void withdrawal(WithdrawnEvent event) {
+        sessionHandler.deleteAllByEmail(event.getEmail());
+    }
 }

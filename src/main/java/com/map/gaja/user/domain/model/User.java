@@ -1,7 +1,9 @@
 package com.map.gaja.user.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.user.domain.exception.GroupLimitExceededException;
+import com.map.gaja.user.event.WithdrawnEvent;
 import lombok.*;
 
 import javax.persistence.*;
@@ -78,6 +80,7 @@ public class User extends BaseTimeEntity {
 
     public void withdrawal() {
         active = false;
+        Events.raise(new WithdrawnEvent(email));
     }
 
     public void decreaseGroupCount() {

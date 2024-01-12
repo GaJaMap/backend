@@ -21,7 +21,6 @@ public class UserService {
     private final KakaoEmailProvider oauth2AppService;
     private final UserRepository userRepository;
     private final AuthenticationRepository authenticationRepository;
-    private final SessionHandler sessionHandler;
 
     public LoginResponse login(LoginRequest request) {
         String email = oauth2AppService.getEmail(request.getAccessToken());
@@ -38,8 +37,6 @@ public class UserService {
     @Transactional
     public void withdrawal(Long userId) {
         User user = findById(userRepository, userId);
-
-        sessionHandler.deleteAllByEmail(user.getEmail());
 
         user.withdrawal();
     }
