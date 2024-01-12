@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
+import static com.map.gaja.user.application.UserServiceHelper.loginByEmail;
 import static com.map.gaja.user.application.UserServiceHelper.findById;
 import static com.map.gaja.user.constant.UserConstant.APP_LOGIN;
 
@@ -23,14 +23,10 @@ public class UserService {
     private final AuthenticationRepository authenticationRepository;
     private final SessionHandler sessionHandler;
 
-
-    @Transactional
     public LoginResponse login(LoginRequest request) {
         String email = oauth2AppService.getEmail(request.getAccessToken());
 
-        User user = findByEmail(userRepository, email);
-
-        sessionHandler.deduplicate(email, APP_LOGIN);
+        User user = loginByEmail(userRepository, email, APP_LOGIN);
 
         authenticationRepository.saveContext(user);
 
