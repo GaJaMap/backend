@@ -31,4 +31,17 @@ class UserEventListenerTest {
         verify(userEventListener).login(loginSucceededEvent);
     }
 
+    @Test
+    @DisplayName("회원 탈퇴하면 이벤트 리스너가 실행된다.")
+    void withdrawnEvent() {
+        // given
+        WithdrawnEvent withdrawnEvent = new WithdrawnEvent("email");
+
+        // when
+        Events.raise(withdrawnEvent);
+
+        // then
+        verify(userEventListener).withdrawal(withdrawnEvent);
+    }
+
 }
