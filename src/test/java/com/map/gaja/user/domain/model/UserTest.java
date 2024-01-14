@@ -34,7 +34,7 @@ class UserTest {
                 .build();
 
         // when
-        user.updateLastLoginDateIfDifferent();
+        user.updateLastLoginDateIfDifferent(LocalDateTime.now());
 
         // then
         verify(publisher).publishEvent(any(AutoLoginSucceededEvent.class));
@@ -44,13 +44,13 @@ class UserTest {
     @DisplayName("날짜가 같으면 최근 접속일 update 이벤트를 발행하지 않는다.")
     void updateLastLoginDateFail() {
         // given
-        LocalDateTime beforeDate = LocalDateTime.now();
+        LocalDateTime currentDate = LocalDateTime.now();
         User user = User.builder()
-                .lastLoginDate(beforeDate)
+                .lastLoginDate(currentDate)
                 .build();
 
         // when
-        user.updateLastLoginDateIfDifferent();
+        user.updateLastLoginDateIfDifferent(currentDate);
 
         // then
         verify(publisher, times(0)).publishEvent(any(AutoLoginSucceededEvent.class));

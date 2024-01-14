@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
@@ -32,7 +33,7 @@ public class AutoLoginProcessor {
     public AutoLoginResponse process(String email) {
         User user = findByEmailAndActive(userRepository, email);
 
-        user.updateLastLoginDateIfDifferent();
+        user.updateLastLoginDateIfDifferent(LocalDateTime.now());
 
         GroupInfo referenceGroupInfo = getReferenceGroupInfo(user.getReferenceGroupId());
 

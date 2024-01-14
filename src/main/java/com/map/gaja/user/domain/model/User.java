@@ -90,12 +90,10 @@ public class User extends BaseTimeEntity {
     /**
      * hour, min, sec을 제외한 yyyy-MM-dd 날짜가 다르면 최근 접속 일을 update
      */
-    public void updateLastLoginDateIfDifferent() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-
-        //if (isDifferentDate(currentDateTime)) {
+    public void updateLastLoginDateIfDifferent(LocalDateTime currentDateTime) {
+        if (isDifferentDate(currentDateTime)) {
             Events.raise(new AutoLoginSucceededEvent(id, currentDateTime));
-        //}
+        }
     }
 
     private boolean isDifferentDate(LocalDateTime currentDateTime) {
