@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
@@ -42,6 +44,19 @@ class UserEventListenerTest {
 
         // then
         verify(userEventListener).withdrawal(withdrawnEvent);
+    }
+
+    @Test
+    @DisplayName("자동 로그인 시 접속 날짜가 변경되면 이벤트 리스너가 실행된다.")
+    void autoLoginSucceededEvent() {
+        // given
+        AutoLoginSucceededEvent autoLoginSucceededEvent = new AutoLoginSucceededEvent(1L, LocalDateTime.now());
+
+        // when
+        Events.raise(autoLoginSucceededEvent);
+
+        // then
+        verify(userEventListener).autoLogin(autoLoginSucceededEvent);
     }
 
 }
