@@ -10,12 +10,12 @@ import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
-import com.map.gaja.user.presentation.dto.ReferenceGroupId;
 import com.map.gaja.user.presentation.dto.response.AutoLoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
@@ -29,20 +29,15 @@ public class AutoLoginProcessor {
     private final UserRepository userRepository;
     private final S3UrlGenerator s3UrlGenerator;
 
-    @Transactional
-    public ReferenceGroupId login(String email) {
+    @Transactional(readOnly = true)
+    public AutoLoginResponse process(String email) {
         User user = findByEmailAndActive(userRepository, email);
 
-        user.updateLastLoginDate();
+        user.updateLastLoginDateIfDifferent(LocalDateTime.now());
 
-        return new ReferenceGroupId(user.getReferenceGroupId());
-    }
+        GroupInfo referenceGroupInfo = getReferenceGroupInfo(user.getReferenceGroupId());
 
-    @Transactional(readOnly = true)
-    public AutoLoginResponse findReferenceGroupInClients(String email, ReferenceGroupId referenceGroupId) {
-        GroupInfo referenceGroupInfo = getReferenceGroupInfo(referenceGroupId.getId());
-
-        ClientListResponse recentGroupClients = getReferenceGroupClients(email, referenceGroupId.getId());
+        ClientListResponse recentGroupClients = getReferenceGroupClients(email, user.getReferenceGroupId());
 
         return new AutoLoginResponse(recentGroupClients, s3UrlGenerator.getS3Url(), referenceGroupInfo);
     }

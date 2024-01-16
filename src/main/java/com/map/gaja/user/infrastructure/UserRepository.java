@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.LockModeType;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -37,4 +38,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT u FROM User u WHERE u.id = :userId AND u.active = true")
     Optional<User> findByEmailAndActiveForUpdate(@Param(value = "userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE User u SET u.lastLoginDate = :lastLoginDate WHERE u.id = :userId")
+    @Transactional
+    void updateLastLoginDate(@Param("userId") Long userId, @Param("lastLoginDate") LocalDateTime lastLoginDate);
 }

@@ -1,12 +1,14 @@
 package com.map.gaja.user.domain.model;
 
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.user.domain.exception.GroupLimitExceededException;
+import com.map.gaja.user.event.AutoLoginSucceededEvent;
+import com.map.gaja.user.event.WithdrawnEvent;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import static com.map.gaja.user.constant.UserConstant.DATE_FORMAT;
@@ -78,6 +80,7 @@ public class User extends BaseTimeEntity {
 
     public void withdrawal() {
         active = false;
+        Events.raise(new WithdrawnEvent(email));
     }
 
     public void decreaseGroupCount() {
@@ -87,11 +90,9 @@ public class User extends BaseTimeEntity {
     /**
      * hour, min, sec을 제외한 yyyy-MM-dd 날짜가 다르면 최근 접속 일을 update
      */
-    public void updateLastLoginDate() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-
+    public void updateLastLoginDateIfDifferent(LocalDateTime currentDateTime) {
         if (isDifferentDate(currentDateTime)) {
-            this.lastLoginDate = currentDateTime;
+            Events.raise(new AutoLoginSucceededEvent(id, currentDateTime));
         }
     }
 

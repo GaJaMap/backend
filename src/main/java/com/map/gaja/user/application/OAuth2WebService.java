@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static com.map.gaja.user.application.UserServiceHelper.findByEmail;
+import static com.map.gaja.user.application.UserServiceHelper.loginByEmail;
 import static com.map.gaja.user.constant.OAuthConstant.*;
 
 @Service
@@ -32,15 +32,13 @@ public class OAuth2WebService implements OAuth2UserService<OAuth2UserRequest, OA
 
         User user = getUser(email);
 
-        sessionHandler.deduplicate(email, WEB_LOGIN);
-
         return new PrincipalDetails(user.getId(), user.getEmail(), user.getAuthority().name(), attributes);
 
     }
 
     private User getUser(String email) {
         try {
-            return findByEmail(userRepository, email);
+            return loginByEmail(userRepository, email, WEB_LOGIN);
         } catch (WithdrawalUserException e) { //회원 탈퇴한 유저일 경우
             throw new OAuth2AuthenticationException(FAIL_STATUS_STRING); //OAuth2AuthenticationException으로 변환해야지 OAuth2WebFailureHandler가 예외를 잡을 수 있다.
         }

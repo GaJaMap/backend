@@ -30,7 +30,7 @@ class UserServiceHelperTest {
 
         when(userRepository.findByEmail(email)).thenReturn(user);
 
-        assertThatThrownBy(()->userServiceHelper.findByEmail(userRepository, email));
+        assertThatThrownBy(()->userServiceHelper.loginByEmail(userRepository, email, "APP"));
 
     }
 
@@ -40,7 +40,7 @@ class UserServiceHelperTest {
         String email = "test@gmail.com";
 
         when(userRepository.findByEmail(email)).thenReturn(null);
-        UserServiceHelper.findByEmail(userRepository, email);
+        UserServiceHelper.loginByEmail(userRepository, email, "APP");
 
         verify(userRepository, times(1)).save(any());
     }

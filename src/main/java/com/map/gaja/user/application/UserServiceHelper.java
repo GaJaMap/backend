@@ -1,8 +1,10 @@
 package com.map.gaja.user.application;
 
+import com.map.gaja.global.event.Events;
 import com.map.gaja.user.domain.exception.UserNotFoundException;
 import com.map.gaja.user.domain.exception.WithdrawalUserException;
 import com.map.gaja.user.domain.model.User;
+import com.map.gaja.user.event.LoginSucceededEvent;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ public class UserServiceHelper {
     /**
      * 소셜 로그인 시 신규유저인지 회원 탈퇴 유저인지 판별
      */
-    public static User findByEmail(UserRepository userRepository, String email) {
+    public static User loginByEmail(UserRepository userRepository, String email, String platformType) {
         User user = userRepository.findByEmail(email);
         if (isWithdrawalUser(user)) {
             throw new WithdrawalUserException();
@@ -31,7 +33,10 @@ public class UserServiceHelper {
         if (isNewUser(user)) {
             user = new User(email);
             userRepository.save(user);
+            return user;
         }
+
+        Events.raise(new LoginSucceededEvent(email, platformType));
 
         return user;
     }
