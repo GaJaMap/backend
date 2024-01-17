@@ -18,14 +18,15 @@ public class MemoService {
     private final ClientRepository clientRepository;
 
     @Transactional
-    public void create(Long userId, Long clientId, MemoCreateRequest request) {
+    public Long create(Long userId, Long clientId, MemoCreateRequest request) {
         Client client = clientRepository.findByIdAndUser(clientId, userId)
                 .orElseThrow(() -> {
                     throw new ClientNotFoundException();
                 });
 
-        memoRepository.save(
-                new Memo(request.getMessage(), MemoType.from(request.getMemoType()), client)
-        );
+        Memo memo = new Memo(request.getMessage(), MemoType.from(request.getMemoType()), client);
+        memoRepository.save(memo);
+
+        return memo.getId();
     }
 }

@@ -17,12 +17,13 @@ public class MemoController {
     private final MemoService memoService;
 
     @PostMapping("/client/{clientId}")
-    public ResponseEntity<Void> create(
+    public ResponseEntity<Long> create(
             @AuthenticationPrincipal(expression = "userId") Long userId,
             @PathVariable Long clientId,
             @Valid @RequestBody MemoCreateRequest memoCreateRequest
     ) {
-        memoService.create(userId, clientId, memoCreateRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Long memoId = memoService.create(userId, clientId, memoCreateRequest);
+        return new ResponseEntity<>(memoId, HttpStatus.CREATED);
     }
+
 }
