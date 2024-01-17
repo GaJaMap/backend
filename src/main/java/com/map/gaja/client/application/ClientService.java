@@ -16,7 +16,10 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
+import com.map.gaja.user.application.UserServiceHelper;
 import com.map.gaja.user.domain.model.Authority;
+import com.map.gaja.user.domain.model.User;
+import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,7 @@ public class ClientService {
     private final ClientQueryRepository clientQueryRepository;
     private final IncreasingClientService increasingClientService;
     private final AuthenticationRepository securityUserGetter;
+    private final UserRepository userRepository;
 
 
     /**
@@ -45,9 +49,10 @@ public class ClientService {
      * @param clientRequest 고객 등록 요청 정보
      * @return 만들어진 고객 ID
      */
-    public ClientOverviewResponse saveClient(NewClientRequest clientRequest) {
+    public ClientOverviewResponse saveClient(NewClientRequest clientRequest, String loginEmail) {
+        User user = userRepository.findByEmail(loginEmail);
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
-        Client client = dtoToEntity(clientRequest, group);
+        Client client = dtoToEntity(clientRequest, group, user);
         clientRepository.save(client);
         increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
         return entityToOverviewDto(client);
@@ -61,9 +66,10 @@ public class ClientService {
      * @return 만들어진 고객
      */
     public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, String loginEmail) {
+        User user = userRepository.findByEmail(loginEmail);
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
         ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage().getOriginalFilename());
-        Client client = dtoToEntity(clientRequest, group);
+        Client client = dtoToEntity(clientRequest, group, user);
         client.updateImage(clientImage);
 
         clientRepository.save(client);
@@ -167,12 +173,13 @@ public class ClientService {
         return existingClient.getGroup().getId() != updateRequest.getGroupId();
     }
 
-    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest) {
+    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest, String loginEmail) {
+        User user = userRepository.findByEmail(loginEmail);
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, bulkRequest.getGroupId());
 
         List<Client> savedClient = new ArrayList<>();
         bulkRequest.getClients().forEach((clientRequest) -> {
-            savedClient.add(dtoToEntity(clientRequest, group));
+            savedClient.add(dtoToEntity(clientRequest, group, user));
         });
 
         increasingClientService.increaseByMany(group, securityUserGetter.getAuthority().get(0), savedClient.size());
@@ -193,11 +200,12 @@ public class ClientService {
      * JPA와 관계없이 저장하기 때문에 ID를 반환하지 않음.
      * 비동기로 처리한 정보를 받기 때문에 securityUserGetter.getAuthority()로 세션 정보 가져오기 불가능
      */
-    public void saveClientExcelData(Long groupId, List<ParsedClientDto> excelData, List<Authority> authority) {
+    public void saveClientExcelData(Long groupId, List<ParsedClientDto> excelData, List<Authority> authority, String loginEmail) {
+        User user = userRepository.findByEmail(loginEmail);
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, groupId);
 
         List<Client> savedClient = new ArrayList<>();
-        excelData.forEach((clientData) -> savedClient.add(dtoToEntity(clientData, group)));
+        excelData.forEach((clientData) -> savedClient.add(dtoToEntity(clientData, group, user)));
 
         increasingClientService.increaseByMany(group, authority.get(0), savedClient.size());
         clientBulkRepository.saveClientWithGroup(group, savedClient);

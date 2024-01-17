@@ -99,8 +99,8 @@ class ClientQueryServiceTest {
 
         List<Client> clientList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            clientList.add(TestEntityCreator.createClient(i, testGroup1));
-            clientList.add(TestEntityCreator.createClient(i, testGroup2));
+            clientList.add(TestEntityCreator.createClient(i, testGroup1, testUser));
+            clientList.add(TestEntityCreator.createClient(i, testGroup2, testUser));
         }
         List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList).getClients();
 
@@ -131,8 +131,8 @@ class ClientQueryServiceTest {
         List<Long> groupIdList = List.of(groupId1, groupId2);
         List<Client> clientList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            clientList.add(TestEntityCreator.createClient(i, testGroup1));
-            clientList.add(TestEntityCreator.createClient(i, testGroup2));
+            clientList.add(TestEntityCreator.createClient(i, testGroup1, testUser));
+            clientList.add(TestEntityCreator.createClient(i, testGroup2, testUser));
         }
         List<ClientOverviewResponse> testList = ClientConvertor.entityToDto(clientList).getClients();
 

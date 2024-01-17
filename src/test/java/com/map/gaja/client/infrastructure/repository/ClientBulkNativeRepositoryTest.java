@@ -40,7 +40,7 @@ class ClientBulkNativeRepositoryTest {
 
         clientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = TestEntityCreator.createClient(i, group);
+            Client client = TestEntityCreator.createClient(i, group, user);
             clientList.add(client);
         }
     }

@@ -135,7 +135,7 @@ public class ClientController implements ClientCommandApiSpecification {
     ) {
         // 단순한 Client 정보 등록
         groupAccessVerifyService.verifyGroupAccess(clientBulkRequest.getGroupId(), loginEmail);
-        List<Long> response = clientService.saveSimpleClientList(clientBulkRequest);
+        List<Long> response = clientService.saveSimpleClientList(clientBulkRequest, loginEmail);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -158,7 +158,7 @@ public class ClientController implements ClientCommandApiSpecification {
 
         if (isEmptyFile(clientRequest.getClientImage())) {
             // 이미지를 등록하지 않음.
-            return new ResponseEntity<>(clientService.saveClient(clientRequest), HttpStatus.CREATED);
+            return new ResponseEntity<>(clientService.saveClient(clientRequest, loginEmail), HttpStatus.CREATED);
         }
 
         ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, loginEmail);

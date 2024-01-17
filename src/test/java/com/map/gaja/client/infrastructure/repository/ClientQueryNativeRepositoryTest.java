@@ -51,13 +51,13 @@ class ClientQueryNativeRepositoryTest {
 
         group1ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = TestEntityCreator.createClient(i, group1);
+            Client client = TestEntityCreator.createClient(i, group1, user);
             group1ClientList.add(client);
         }
 
         group2ClientList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Client client = TestEntityCreator.createClient(i, group2);
+            Client client = TestEntityCreator.createClient(i, group2, user);
             group2ClientList.add(client);
         }
         clientRepository.saveAll(group1ClientList);

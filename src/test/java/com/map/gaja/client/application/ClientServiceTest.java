@@ -19,6 +19,7 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
+import com.map.gaja.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,8 @@ class ClientServiceTest {
     private GroupRepository groupRepository;
     @Mock
     private ClientQueryRepository clientQueryRepository;
+    @Mock
+    private UserRepository userRepository;
     IncreasingClientService increasingClientService = new IncreasingClientService();
     @Mock
     AuthenticationRepository securityUserGetter;
@@ -76,14 +79,15 @@ class ClientServiceTest {
                 groupRepository,
                 clientQueryRepository,
                 increasingClientService,
-                securityUserGetter
+                securityUserGetter,
+                userRepository
         );
 
         user = TestEntityCreator.createUser(email);
         existingGroup = TestEntityCreator.createGroup(user, groupId, "Test Group1", 1);
         changedGroup = TestEntityCreator.createGroup(user, groupId, "Test Group2", 0);
         clientImage = ClientImage.create(email, "Image.png");
-        existingClient = TestEntityCreator.createClientWithImage(existingName, existingGroup, clientImage);
+        existingClient = TestEntityCreator.createClientWithImage(existingName, existingGroup, clientImage, user);
     }
 
     @Test
@@ -102,7 +106,7 @@ class ClientServiceTest {
         });
 
         // when
-        ClientOverviewResponse result = clientService.saveClient(changedRequest);
+        ClientOverviewResponse result = clientService.saveClient(changedRequest, user.getEmail());
 
         // then
         assertThat(result.getClientId()).isEqualTo(clientId);
@@ -273,7 +277,7 @@ class ClientServiceTest {
         });
 
         SimpleClientBulkRequest bulkRequest = new SimpleClientBulkRequest(existingGroup.getId(), clients);
-        clientService.saveSimpleClientList(bulkRequest);
+        clientService.saveSimpleClientList(bulkRequest, user.getEmail());
 
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + clients.size());
     }
@@ -287,7 +291,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(existingGroup));
 
 
-        clientService.saveClientExcelData(existingGroup.getId(), excelData, List.of(Authority.FREE));
+        clientService.saveClientExcelData(existingGroup.getId(), excelData, List.of(Authority.FREE), user.getEmail());
 
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + excelData.size());
     }

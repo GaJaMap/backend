@@ -10,7 +10,7 @@ import com.map.gaja.user.domain.model.User;
 import java.util.UUID;
 
 public class TestEntityCreator {
-    public static Client createClient(int sigIdx, Group group) {
+    public static Client createClient(int sigIdx, Group group, User user) {
         String sig = sigIdx+""+sigIdx;
         double pointSig = 0.003;
 
@@ -18,15 +18,17 @@ public class TestEntityCreator {
         String phoneNumber = "010-1111-" + sig;
         ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
         ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        return new Client(name, phoneNumber, address, location, group);
+        return new Client(name, phoneNumber, address, location, group, user);
     }
 
-    public static Client createClientWithImage(String clientName, Group existingGroup, ClientImage existingImage) {
+    public static Client createClientWithImage(String clientName, Group existingGroup, ClientImage existingImage, User user) {
         return new Client(
                 clientName, null,
                 new ClientAddress("Test Main Address", "Test Detail Address"),
                 new ClientLocation(35d, 125d),
-                existingGroup, existingImage
+                existingGroup,
+                existingImage,
+                user
         );
     }
 
