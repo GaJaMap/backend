@@ -10,8 +10,11 @@ import org.springframework.stereotype.Component;
 public class ClientImageUploadRequestChecker implements ImageUploadRequestChecker {
     @Override
     public boolean isSupported(Object[] args) {
-        NewClientRequest request = getClientRequestArgs(args);
-        return request != null;
+        for (Object arg : args) {
+            if(arg instanceof NewClientRequest)
+                return true;
+        }
+        return false;
     }
 
     @Override
