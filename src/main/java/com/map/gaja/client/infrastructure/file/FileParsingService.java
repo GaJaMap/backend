@@ -21,6 +21,7 @@ import java.util.List;
 public class FileParsingService {
     private final ClientDataValidator clientDataValidator;
     private final ObjectProvider<List<FileParser>> fileParserProvider;
+    private final int PARSING_LIMIT = 1000;
 
     public List<ParsedClientDto> parseClientFile(MultipartFile file) {
         List<ParsedClientDto> dataList = new ArrayList<>();
@@ -28,13 +29,13 @@ public class FileParsingService {
         try (parser) {
             parser.init(file);
             int startRowIndex = parser.getStartRowIndex();
-            int count = 0;
-            while (parser.hasMoreData()) {
+            int parsingCount = 0;
+            while (parser.hasMoreData() && parsingCount < PARSING_LIMIT) {
                 RowVO rowVO = parser.nextRowData();
-                int rowIdx = startRowIndex + count;
+                int rowIdx = startRowIndex + parsingCount;
                 ParsedClientDto clientData = convertDataToDto(rowIdx, rowVO);
                 dataList.add(clientData);
-                count++;
+                parsingCount++;
             }
         } catch (Exception e) {
             throw new InvalidFileException(e);

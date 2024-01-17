@@ -28,7 +28,6 @@ public class ExcelFileParser implements FileParser {
     private Sheet worksheet;
 
     private final int startRowIdx = 2;
-    private final int endRowIdx = 1002;
     private final int nameColumnIdx = 1;
     private final int numberColumnIdx = 2;
     private final int addressColumnIdx = 3;
@@ -70,9 +69,6 @@ public class ExcelFileParser implements FileParser {
 
     @Override
     public RowVO nextRowData() {
-        if(currentRowIdx == endRowIdx)
-            return null;
-
         RowVO rowVO = getCurrentRowData();
         currentRowIdx++;
 
@@ -101,6 +97,9 @@ public class ExcelFileParser implements FileParser {
     }
 
     private RowVO getRowData(Row row) {
+        if(row == null)
+            return new RowVO(null, null, null, null);
+
         String name = getCellDataOrNull(row.getCell(nameColumnIdx));
         String phoneNumber = getCellDataOrNull(row.getCell(numberColumnIdx));
         String address = getCellDataOrNull(row.getCell(addressColumnIdx));
