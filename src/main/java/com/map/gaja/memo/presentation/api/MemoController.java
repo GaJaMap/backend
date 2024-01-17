@@ -16,7 +16,7 @@ import javax.validation.Valid;
 public class MemoController {
     private final MemoService memoService;
 
-    @PostMapping("/client/{clientId}/message")
+    @PostMapping("/client/{clientId}")
     public ResponseEntity<Void> create(
             @AuthenticationPrincipal(expression = "userId") Long userId,
             @PathVariable Long clientId,

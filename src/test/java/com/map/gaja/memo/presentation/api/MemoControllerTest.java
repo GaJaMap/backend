@@ -44,7 +44,7 @@ class MemoControllerTest {
         MemoCreateRequest request = new MemoCreateRequest("gajamap", "MESSAGE");
 
         // when, then
-        mvc.perform(post("/api/memo/client/{clientId}/message", clientId)
+        mvc.perform(post("/api/memo/client/{clientId}", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .with(csrf())
@@ -65,7 +65,7 @@ class MemoControllerTest {
         MemoCreateRequest request = new MemoCreateRequest(message.toString(), "MESSAGE");
 
         // when, then
-        mvc.perform(post("/api/memo/client/{clientId}/message", clientId)
+        mvc.perform(post("/api/memo/client/{clientId}", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .with(csrf())
@@ -86,7 +86,7 @@ class MemoControllerTest {
         MemoCreateRequest request = new MemoCreateRequest(null, memoType.toString());
 
         // when, then
-        mvc.perform(post("/api/memo/client/{clientId}/message", clientId)
+        mvc.perform(post("/api/memo/client/{clientId}", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .with(csrf())
@@ -103,7 +103,7 @@ class MemoControllerTest {
         MemoCreateRequest request = new MemoCreateRequest(null, null);
 
         // when, then
-        mvc.perform(post("/api/memo/client/{clientId}/message", clientId)
+        mvc.perform(post("/api/memo/client/{clientId}", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .with(csrf())
