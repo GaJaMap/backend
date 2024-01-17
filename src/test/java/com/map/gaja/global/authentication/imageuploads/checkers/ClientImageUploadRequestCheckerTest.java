@@ -14,6 +14,14 @@ class ClientImageUploadRequestCheckerTest {
     LocationDto mockLocation = new LocationDto(1d, 1d);
 
     @Test
+    @DisplayName("지원하는 Object")
+    void test4() {
+        Object[] args ={"something", new NewClientRequest(), new Object()};
+        boolean supported = requestChecker.isSupported(args);
+        assertThat(supported).isTrue();
+    }
+
+    @Test
     @DisplayName("지원하지 않는 Object")
     void test1() {
         Object[] args ={"sample", new Object()};
@@ -22,24 +30,20 @@ class ClientImageUploadRequestCheckerTest {
     }
 
     @Test
-    @DisplayName("지원 O, 이미지 업로드 요청 O")
+    @DisplayName("이미지 업로드 요청 O")
     void test2() {
         NewClientRequest newClientRequest = new NewClientRequest("test", 1L, "010-1111-2222", mockAddress, mockLocation, null, false);
         Object[] args ={newClientRequest, "sample", new Object()};
-        boolean supported = requestChecker.isSupported(args);
         boolean isImageUploadingRequest = requestChecker.isImageUploadingRequest(args);
-        assertThat(supported).isTrue();
         assertThat(isImageUploadingRequest).isTrue();
     }
 
     @Test
-    @DisplayName("지원 O, 이미지 업로드 요청 X")
+    @DisplayName("이미지 업로드 요청 X")
     void test3() {
         NewClientRequest newClientRequest = new NewClientRequest("test", 1L, "010-1111-2222", mockAddress, mockLocation, null, true);
         Object[] args ={newClientRequest, "sample", new Object()};
-        boolean supported = requestChecker.isSupported(args);
         boolean isImageUploadingRequest = requestChecker.isImageUploadingRequest(args);
-        assertThat(supported).isTrue();
         assertThat(isImageUploadingRequest).isFalse();
     }
 }
