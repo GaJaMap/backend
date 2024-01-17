@@ -57,6 +57,25 @@ class FileParsingServiceTest {
     }
 
     @Test
+    @DisplayName("1000번 파싱 제한")
+    void limit() {
+        int rowIdx = 1;
+        boolean isInvalid = false;
+
+        FileParser parser = mock(FileParser.class);
+        when(parser.supports(any())).thenReturn(true);
+        when(parser.hasMoreData()).thenReturn(true);
+        when(parser.nextRowData()).thenReturn(row1);
+        when(parser.getStartRowIndex()).thenReturn(rowIdx);
+
+        when(fileParserProvider.getObject()).thenReturn(List.of(parser));
+        when(clientDataValidator.isInvalidData(any())).thenReturn(isInvalid);
+        List<ParsedClientDto> result = parsingService.parseClientFile(TestFileCreator.getMockExcelFile());
+
+        assertThat(result.size()).isEqualTo(1000);
+    }
+
+    @Test
     @DisplayName("Paser를 찾을 수 없음")
     void notFoundParser() throws IOException {
         FileParser parser = mock(FileParser.class);
