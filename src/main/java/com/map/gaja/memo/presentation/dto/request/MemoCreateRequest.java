@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemoCreateRequest {
     @Schema(description = "메모 메시지")
-    @NotNull(message = "메세지를 입력해 주세요.")
     @Size(max = 100, message = "메시지는 100자 이하로 입력해 주세요.")
     private String message;
 
