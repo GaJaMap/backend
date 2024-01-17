@@ -26,8 +26,8 @@ public class ClientBulkRepository {
      */
     public void saveClientWithGroup(Group group, List<Client> newClient) {
         final String insertSQL = "INSERT INTO " +
-                "client (name, phone_number, address, detail, location, group_id, created_at, updated_at) " +
-                "VALUES(?, ?, ?, ?, ST_GeomFromText(?, 4326), ?, NOW(), NOW())";
+                "client (name, phone_number, address, detail, location, group_id, created_at, updated_at, user_id) " +
+                "VALUES(?, ?, ?, ?, ST_GeomFromText(?, 4326), ?, NOW(), NOW(), ?)";
 
 
         template.batchUpdate(insertSQL, new BatchPreparedStatementSetter() {
@@ -41,6 +41,7 @@ public class ClientBulkRepository {
                 setStringOrSetNull(ps, 5, client.getLocation() == null || client.getLocation().getLocation() == null ? null
                         : "POINT(" + client.getLocation().getLocation().getX() +" " + client.getLocation().getLocation().getY()+")");
                 ps.setLong(6, group.getId());
+                ps.setLong(7, client.getUser().getId());
             }
 
             private void setStringOrSetNull(PreparedStatement ps, int index, String value) throws SQLException {

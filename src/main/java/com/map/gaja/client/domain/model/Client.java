@@ -2,6 +2,7 @@ package com.map.gaja.client.domain.model;
 
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
+import com.map.gaja.user.domain.model.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,26 +35,33 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "client_image_id")
     private ClientImage clientImage;
 
-    public Client(String name, String phoneNumber, Group group) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Client(String name, String phoneNumber, Group group, User user) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateGroup(group);
+        this.user = user;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, User user) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
         updateGroup(group);
         this.clientImage = null;
+        this.user = user;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage) {
+    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage, User user) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         updateLocation(location, address);
         updateGroup(group);
         this.clientImage = clientImage;
+        this.user = user;
     }
 
     public void updateWithoutClientImage(String name, String phoneNumber, ClientAddress address, ClientLocation location) {

@@ -49,7 +49,7 @@ public class ClientBulkInsertTest {
 
         /*========================================*/
         for (int i = 0; i < loop; i++) {
-            Client client = TestEntityCreator.createClient(i, group);
+            Client client = TestEntityCreator.createClient(i, group, group.getUser());
             clientRepository.save(client);
         }
         /*========================================*/
@@ -68,7 +68,7 @@ public class ClientBulkInsertTest {
         /*========================================*/
         List<Client> list = new ArrayList<>();
         for (int i = 0; i < loop; i++) {
-            Client client = TestEntityCreator.createClient(i, group);
+            Client client = TestEntityCreator.createClient(i, group, group.getUser());
             list.add(client);
         }
         clientRepository.saveAll(list);
@@ -88,7 +88,7 @@ public class ClientBulkInsertTest {
         /*========================================*/
         List<Client> list = new ArrayList<>();
         for (int i = 0; i < loop; i++) {
-            Client client = TestEntityCreator.createClient(i, group);
+            Client client = TestEntityCreator.createClient(i, group, group.getUser());
             list.add(client);
         }
         clientBulkRepository.saveClientWithGroup(group, list);

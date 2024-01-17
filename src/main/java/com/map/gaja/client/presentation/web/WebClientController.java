@@ -110,7 +110,7 @@ public class WebClientController {
         Mono<Void> mono = geocoder.convertToCoordinatesAsync(clientExcelData);
 
         return mono.doOnSuccess(s -> { //비동기 작업 모두 성공할 경우 후처리
-                    clientService.saveClientExcelData(groupId, clientExcelData, authority);
+                    clientService.saveClientExcelData(groupId, clientExcelData, authority, loginEmail);
                 })
                 .thenReturn(clientExcelData.size()); //저장 성공 수
     }

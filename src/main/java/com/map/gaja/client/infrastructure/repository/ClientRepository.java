@@ -54,4 +54,8 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "WHERE c.id = :clientId AND g.isDeleted = false")
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Client> findClientWithGroupForUpdate(long clientId);
+
+    @Query("SELECT c FROM Client c " +
+            "WHERE c.id=:clientId AND c.user=:userId")
+    Optional<Client> findByIdAndUser(Long clientId, Long userId);
 }

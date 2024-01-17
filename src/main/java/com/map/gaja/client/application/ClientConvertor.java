@@ -16,6 +16,7 @@ import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
+import com.map.gaja.user.domain.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,11 +67,11 @@ public class ClientConvertor {
 
     protected static List<Client> dtoToEntity(NewClientBulkRequest request) {
         List<Client> clients = new ArrayList<>();
-        request.getClients().forEach(client -> clients.add(dtoToEntity(client, null)));
+        request.getClients().forEach(client -> clients.add(dtoToEntity(client, null, null)));
         return clients;
     }
 
-    protected static Client dtoToEntity(NewClientRequest request, Group group) {
+    protected static Client dtoToEntity(NewClientRequest request, Group group, User user) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
         return new Client(
@@ -78,19 +79,21 @@ public class ClientConvertor {
                 request.getPhoneNumber(),
                 dtoToVo(address),
                 dtoToVo(location),
-                group
+                group,
+                user
             );
     }
 
-    protected static Client dtoToEntity(SimpleNewClientRequest request, Group group) {
+    protected static Client dtoToEntity(SimpleNewClientRequest request, Group group, User user) {
         return new Client(
                 request.getClientName(),
                 request.getPhoneNumber(),
-                group
+                group,
+                user
         );
     }
 
-    protected static Client dtoToEntity(ParsedClientDto clientData, Group group) {
+    protected static Client dtoToEntity(ParsedClientDto clientData, Group group, User user) {
         ClientAddress address = new ClientAddress(clientData.getAddress(), clientData.getAddressDetail());
         ClientLocation location = dtoToVo(clientData.getLocation());
         return new Client(
@@ -98,7 +101,8 @@ public class ClientConvertor {
                 clientData.getPhoneNumber(),
                 address,
                 location,
-                group
+                group,
+                user
         );
     }
 

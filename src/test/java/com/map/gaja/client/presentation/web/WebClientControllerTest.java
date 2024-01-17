@@ -110,7 +110,7 @@ class WebClientControllerTest {
                 .param("groupId", String.valueOf(groupId));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientService, times(1)).saveClientExcelData(groupId, successList, List.of(Authority.FREE));
+        verify(clientService, times(1)).saveClientExcelData(groupId, successList, List.of(Authority.FREE), "test@gmail.com");
     }
 
     @Test

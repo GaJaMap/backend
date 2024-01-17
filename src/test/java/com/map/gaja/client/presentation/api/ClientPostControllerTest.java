@@ -151,7 +151,7 @@ public class ClientPostControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated());
-        verify(clientService, times(1)).saveSimpleClientList(request);
+        verify(clientService, times(1)).saveSimpleClientList(request, "test@gmail.com");
     }
 
 }
