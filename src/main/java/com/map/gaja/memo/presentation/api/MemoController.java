@@ -26,4 +26,13 @@ public class MemoController {
         return new ResponseEntity<>(memoId, HttpStatus.CREATED);
     }
 
+    @DeleteMapping("{memoId}/client/{clientId}")
+    public ResponseEntity<Void> delete(
+            @AuthenticationPrincipal(expression = "userId") Long userId,
+            @PathVariable Long memoId,
+            @PathVariable Long clientId
+    ) {
+        memoService.delete(userId, clientId, memoId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
