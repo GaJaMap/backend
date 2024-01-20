@@ -10,6 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -65,5 +69,31 @@ class MemoRepositoryTest {
         // when, then
         assertThat(memoRepository.findByIdAndClient(memo.getId(), user.getId() + 1).isEmpty())
                 .isTrue();
+    }
+
+    @Test
+    @DisplayName("메모를 최신순으로 조회한다.")
+    void findPageByClientId() {
+        // given
+        User user = TestEntityCreator.createUser("test@gmail.com");
+        Group group = TestEntityCreator.createGroup(user, "group");
+        Client client = TestEntityCreator.createClient(0, group, user);
+        Memo memo = new Memo(null, MemoType.CALL, client);
+        Memo memo2 = new Memo(null, MemoType.NAVIGATION, client);
+        em.persist(user);
+        em.persist(group);
+        em.persist(client);
+        em.persist(memo);
+        em.persist(memo2);
+        em.flush();
+        Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")));
+
+        // when
+        Slice<Memo> memos = memoRepository.findPageByClientId(client.getId(), user.getId(), pageable);
+
+        // then
+        assertThat(memos.getSize()).isEqualTo(2);
+        assertThat(memos.getContent().get(0)).isEqualTo(memo2);
+        assertThat(memos.getContent().get(1)).isEqualTo(memo);
     }
 }
