@@ -1,6 +1,7 @@
 package com.map.gaja.memo.presentation.api;
 
 import com.map.gaja.memo.application.MemoService;
+import com.map.gaja.memo.presentation.api.specification.MemoApiSpecification;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
 import com.map.gaja.memo.presentation.dto.response.MemoPageResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/memo")
 @RequiredArgsConstructor
-public class MemoController {
+public class MemoController implements MemoApiSpecification {
     private final MemoService memoService;
 
     @PostMapping("/client/{clientId}")
@@ -40,7 +41,7 @@ public class MemoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("{memoId}/client/{clientId}")
+    @GetMapping("/client/{clientId}")
     public ResponseEntity<MemoPageResponse> read(
             @AuthenticationPrincipal(expression = "userId") Long userId,
             @PathVariable Long clientId,
