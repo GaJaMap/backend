@@ -2,7 +2,11 @@ package com.map.gaja.memo.presentation.api;
 
 import com.map.gaja.memo.application.MemoService;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
+import com.map.gaja.memo.presentation.dto.response.MemoPageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,5 +38,15 @@ public class MemoController {
     ) {
         memoService.delete(userId, clientId, memoId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("{memoId}/client/{clientId}")
+    public ResponseEntity<MemoPageResponse> read(
+            @AuthenticationPrincipal(expression = "userId") Long userId,
+            @PathVariable Long clientId,
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        MemoPageResponse response = memoService.findPageByClientId(userId, clientId, pageable);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
