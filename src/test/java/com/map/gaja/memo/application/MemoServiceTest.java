@@ -8,15 +8,21 @@ import com.map.gaja.memo.domain.model.Memo;
 import com.map.gaja.memo.domain.model.MemoType;
 import com.map.gaja.memo.infrastructure.MemoRepository;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
+import com.map.gaja.memo.presentation.dto.response.MemoPageResponse;
+import com.map.gaja.memo.presentation.dto.response.MemoResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -101,5 +107,29 @@ class MemoServiceTest {
         // when, then
         assertThatThrownBy(() -> memoService.delete(userId, clientId, memoId))
                 .isInstanceOf(MemoNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("메모를 최신순으로 조회한다.")
+    void findPageByClientId() {
+        // given
+        Memo memo = new Memo(null, MemoType.CALL, null);
+        Memo memo2 = new Memo(null, MemoType.NAVIGATION, null);
+        List<Memo> memos = List.of(memo, memo2);
+        Long userId = 1L;
+        Long clientId = 1L;
+        Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")));
+        List<MemoResponse> memoResponses = List.of(MemoResponse.from(memo), MemoResponse.from(memo2));
+
+        given(memoRepository.findPageByClientId(userId, clientId, pageable))
+                .willReturn(new SliceImpl<>(memos, pageable, true));
+
+        // when
+        MemoPageResponse expect = memoService.findPageByClientId(userId, clientId, pageable);
+
+        // then
+        assertThat(expect.getMemos())
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactlyElementsOf(memoResponses);
     }
 }

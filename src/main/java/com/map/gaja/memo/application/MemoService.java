@@ -9,7 +9,10 @@ import com.map.gaja.memo.domain.model.Memo;
 import com.map.gaja.memo.domain.model.MemoType;
 import com.map.gaja.memo.infrastructure.MemoRepository;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
+import com.map.gaja.memo.presentation.dto.response.MemoPageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,5 +44,12 @@ public class MemoService {
     private Client findClient(Long userId, Long clientId) {
         return clientRepository.findByIdAndUser(clientId, userId)
                 .orElseThrow(ClientNotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public MemoPageResponse findPageByClientId(Long userId, Long clientId, Pageable pageable) {
+        Slice<Memo> memos = memoRepository.findPageByClientId(clientId, userId, pageable);
+
+        return MemoPageResponse.from(memos);
     }
 }
