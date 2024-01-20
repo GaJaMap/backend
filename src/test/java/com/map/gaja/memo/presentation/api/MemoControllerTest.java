@@ -5,9 +5,10 @@ import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
 import com.map.gaja.memo.application.MemoService;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +39,7 @@ class MemoControllerTest {
 
     @Test
     @DisplayName("메모를 생성에 성공하면 201을 반환한다.")
-    void createTest() throws Exception {
+    void create() throws Exception {
         // given
         Long userId = 1L;
         Long clientId = 1L;
@@ -111,4 +113,32 @@ class MemoControllerTest {
         ).andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("메모를 삭제하면 200을 반환한다.")
+    void delete() throws Exception {
+        // given
+        Long userId = 1L;
+        Long memoId = 1L;
+        Long clientId = 1L;
+
+        // when, then
+        mvc.perform(MockMvcRequestBuilders.delete("/api/memo/{memoId}/client/{clientId}", memoId, clientId)
+                .with(csrf())
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(userId, "test@gmail.com", "FREE")))
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("메모를 조회하면 200반환한다.")
+    void read() throws Exception {
+        // given
+        Long userId = 1L;
+        Long clientId = 1L;
+
+        // when, then
+        mvc.perform(MockMvcRequestBuilders.get("/api/memo/client/{clientId}?page=0&size=10", clientId)
+                .with(csrf())
+                .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(userId, "test@gmail.com", "FREE")))
+        ).andExpect(status().isOk());
+    }
 }
