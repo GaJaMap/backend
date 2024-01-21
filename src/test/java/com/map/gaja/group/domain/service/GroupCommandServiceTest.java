@@ -1,13 +1,16 @@
 package com.map.gaja.group.domain.service;
 
+import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.user.domain.exception.GroupLimitExceededException;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,6 +28,9 @@ class GroupCommandServiceTest {
 
     @Mock
     ApplicationEventPublisher publisher;
+
+    @InjectMocks
+    Events events;
 
     @InjectMocks
     GroupCommandService groupCommandService;
@@ -72,11 +78,13 @@ class GroupCommandServiceTest {
         // given
         User user = User.builder()
                 .id(1L)
+                .groupCount(1)
                 .build();
+
         given(groupRepository.deleteByIdAndUserId(anyLong(), anyLong()))
                 .willReturn(1);
 
         // when, then
-        assertDoesNotThrow(()->groupCommandService.delete(groupRepository, user, 1L));
+        assertDoesNotThrow(() -> groupCommandService.delete(groupRepository, user, 1L));
     }
 }
