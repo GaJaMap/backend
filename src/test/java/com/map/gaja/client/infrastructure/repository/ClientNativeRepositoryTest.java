@@ -55,12 +55,12 @@ class ClientNativeRepositoryTest {
         em.persist(group2);
 
         for (int j = 0; j < 5; j++) {
-            Client client = new Client("name", "010-1234-1234", group, user);
+            Client client = Client.create("name", "010-1234-1234", group, user);
             em.persist(client);
         }
 
         for (int j = 0; j < 5; j++) {
-            Client client = new Client("name", "010-1234-1234", group2, user2);
+            Client client = Client.create("name", "010-1234-1234", group2, user2);
             em.persist(client);
         }
 

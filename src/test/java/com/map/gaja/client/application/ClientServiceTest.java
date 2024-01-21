@@ -98,6 +98,7 @@ class ClientServiceTest {
         NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(userRepository.findByEmail(any())).thenReturn(user);
         when(groupRepository.findGroupByIdForUpdate(any())).thenReturn(Optional.ofNullable(existingGroup));
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
             Client savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
@@ -251,6 +252,7 @@ class ClientServiceTest {
             ReflectionTestUtils.setField(savedClient, "id", clientId);
             return savedClient;
         });
+        when(userRepository.findByEmail(any())).thenReturn(user);
 
         ClientOverviewResponse result = clientService.saveClientWithImage(request,email);
 
@@ -265,6 +267,7 @@ class ClientServiceTest {
         long beforeClientCount = existingGroup.getClientCount();
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(userRepository.findByEmail(any())).thenReturn(user);
         when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
         when(clientRepository.saveAll(any())).thenAnswer(invocation -> {
@@ -289,7 +292,7 @@ class ClientServiceTest {
         long beforeClientCount = existingGroup.getClientCount();
         when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
-
+        when(userRepository.findByEmail(any())).thenReturn(user);
 
         clientService.saveClientExcelData(existingGroup.getId(), excelData, List.of(Authority.FREE), user.getEmail());
 

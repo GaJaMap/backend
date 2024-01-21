@@ -1,5 +1,7 @@
 package com.map.gaja.client.domain.model;
 
+import com.map.gaja.client.event.ClientImageCreationEvent;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import com.map.gaja.user.domain.model.User;
@@ -80,39 +82,14 @@ public class Client extends BaseTimeEntity {
         }
     }
 
-    public Client(String name, String phoneNumber, Group group, User user) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        updateGroup(group);
-        this.user = user;
-    }
-
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, User user) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        updateLocation(location, address);
-        updateGroup(group);
-        this.clientImage = null;
-        this.user = user;
-    }
-
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage, User user) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        updateLocation(location, address);
-        updateGroup(group);
-        this.clientImage = clientImage;
-        this.user = user;
-    }
-
     public void updateWithoutClientImage(String name, String phoneNumber, ClientAddress address, ClientLocation location) {
         updateName(name);
         updatePhoneNumber(phoneNumber);
         updateLocation(location, address);
     }
 
-    public void updateGroup(Group group) {
-        this.group = group;
+    public void updateGroup(Group changedGroup) {
+        this.group = changedGroup;
     }
 
     private void updateName(String name) {
