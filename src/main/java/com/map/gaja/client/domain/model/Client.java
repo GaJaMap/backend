@@ -39,6 +39,38 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public static Client create(
+            String name, String phoneNumber,
+            Group group, User user
+    ) {
+        validateRequiredFields(name, group, user);
+
+        Client client = new Client();
+        client.name = name;
+        client.phoneNumber = phoneNumber;
+        client.group = group;
+        client.user = user;
+        return client;
+    }
+
+    public static Client createWithLocationAndImage(
+            String name, String phoneNumber,
+            ClientAddress address, ClientLocation location,
+            ClientImage clientImage,
+            Group group, User user
+    ) {
+        Client client = create(name, phoneNumber, group, user);
+        client.updateLocation(location, address);
+        client.clientImage = clientImage;
+        return client;
+    }
+
+    private static void validateRequiredFields(String name, Group group, User user) {
+        if (name == null || group == null || user == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Client(String name, String phoneNumber, Group group, User user) {
         this.name = name;
         this.phoneNumber = phoneNumber;
