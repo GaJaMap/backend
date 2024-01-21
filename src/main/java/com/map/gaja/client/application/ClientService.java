@@ -68,7 +68,7 @@ public class ClientService {
     public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, String loginEmail) {
         User user = userRepository.findByEmail(loginEmail);
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
-        ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage().getOriginalFilename());
+        ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage());
         Client client = dtoToEntity(clientRequest, group, user);
         client.updateImage(clientImage);
 
@@ -120,7 +120,7 @@ public class ClientService {
     ) {
         Client existingClient = clientQueryRepository.findClientWithImage(existingClientId)
                 .orElseThrow(() -> new ClientNotFoundException());
-        ClientImage newImage = ClientImage.create(loginEmail, updateRequest.getClientImage().getOriginalFilename());
+        ClientImage newImage = ClientImage.create(loginEmail, updateRequest.getClientImage());
 
         updateClientGroupIfChanged(updateRequest, existingClient);
         ClientUpdater.updateClient(existingClient, updateRequest);

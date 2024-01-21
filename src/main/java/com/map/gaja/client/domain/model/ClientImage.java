@@ -1,12 +1,14 @@
 package com.map.gaja.client.domain.model;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
+import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -30,17 +32,13 @@ public class ClientImage extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    public static ClientImage create(String loginEmail, String originalFileName) {
-        Objects.requireNonNull(loginEmail);
-        Objects.requireNonNull(originalFileName);
+    public static ClientImage create(String loginEmail, MultipartFile image) {
+        if(loginEmail == null || image.isEmpty())
+            throw new IllegalArgumentException();
 
-        String savedPath = createFilePath(loginEmail, originalFileName);
+        String originalFileName = image.getOriginalFilename();
+        String savedPath = loginEmail + "/" + convertRawFileStringToUuidFileString(originalFileName);
         return new ClientImage(originalFileName, savedPath);
-    }
-
-    private static String createFilePath(String loginEmail, String originalFilename) {
-        String uuidFileName = convertRawFileStringToUuidFileString(originalFilename);
-        return loginEmail + "/" + uuidFileName;
     }
 
     private static String convertRawFileStringToUuidFileString(String originalFilename) {
