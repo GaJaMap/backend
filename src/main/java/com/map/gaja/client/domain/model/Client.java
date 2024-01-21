@@ -53,14 +53,23 @@ public class Client extends BaseTimeEntity {
         return client;
     }
 
+    public static Client createWithLocation(
+            String name, String phoneNumber,
+            ClientAddress address, ClientLocation location,
+            Group group, User user
+    ) {
+        Client client = create(name, phoneNumber, group, user);
+        client.updateLocation(location, address);
+        return client;
+    }
+
     public static Client createWithLocationAndImage(
             String name, String phoneNumber,
             ClientAddress address, ClientLocation location,
             ClientImage clientImage,
             Group group, User user
     ) {
-        Client client = create(name, phoneNumber, group, user);
-        client.updateLocation(location, address);
+        Client client = createWithLocation(name, phoneNumber, address, location, group, user);
         client.clientImage = clientImage;
         return client;
     }
