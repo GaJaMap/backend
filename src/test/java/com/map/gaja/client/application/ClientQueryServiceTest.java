@@ -22,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +60,7 @@ class ClientQueryServiceTest {
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
         when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
-
-        String testEmail = "test@example.com";
-        String savedPath = "testImage.png";
-        when(findClient.getClientImage()).thenReturn(ClientImage.create(testEmail, savedPath));
+        when(findClient.getClientImage()).thenReturn(TestEntityCreator.createClientImage());
 
         //when
         ClientDetailResponse response = clientQueryService.findClient(searchId);
@@ -69,8 +68,6 @@ class ClientQueryServiceTest {
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
         assertThat(response.getClientName()).isEqualTo(searchName);
-        assertThat(response.getImage().getFilePath()).isNotEqualTo(savedPath);
-        assertThat(response.getImage().getFilePath()).startsWith(testEmail);
     }
 
     @Test

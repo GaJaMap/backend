@@ -86,7 +86,7 @@ class ClientServiceTest {
         user = TestEntityCreator.createUser(email);
         existingGroup = TestEntityCreator.createGroup(user, groupId, "Test Group1", 1);
         changedGroup = TestEntityCreator.createGroup(user, groupId, "Test Group2", 0);
-        clientImage = ClientImage.create(email, "Image.png");
+        clientImage = TestEntityCreator.createClientImage(email);
         existingClient = TestEntityCreator.createClientWithImage(existingName, existingGroup, clientImage, user);
     }
 
