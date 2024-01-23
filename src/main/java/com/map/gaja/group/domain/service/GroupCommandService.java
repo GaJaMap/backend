@@ -7,18 +7,19 @@ import com.map.gaja.group.event.GroupDeletedEvent;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
+
 import org.springframework.stereotype.Service;
+
+import static com.map.gaja.global.event.Events.raise;
 
 @Service
 @RequiredArgsConstructor
 public class GroupCommandService {
-    private final ApplicationEventPublisher publisher;
 
     public Group create(String groupName, User user) {
         user.checkCreateGroupPermission();
 
-        publisher.publishEvent(new GroupCreatedEvent(user));
+        raise(new GroupCreatedEvent(user));
 
         return new Group(groupName, user);
     }
@@ -30,7 +31,7 @@ public class GroupCommandService {
             throw new GroupNotFoundException();
         }
 
-        publisher.publishEvent(new GroupDeletedEvent(user));
+        raise(new GroupDeletedEvent(user));
     }
 
     private boolean isGroupMissing(int deletedGroupCount) {
