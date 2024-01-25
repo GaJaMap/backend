@@ -59,6 +59,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
      * User가 가진 단일 클라이언트 조회
      */
     @Query("SELECT c FROM Client c " +
+            "JOIN FETCH c.user u " +
             "WHERE c.id=:clientId AND c.user.id=:userId")
     Optional<Client> findByIdAndUser(@Param("clientId") Long clientId, @Param("userId") Long userId);
 }

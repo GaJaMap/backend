@@ -4,6 +4,7 @@ import com.map.gaja.memo.domain.model.Memo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,8 +16,11 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     Optional<Memo> findByIdAndClient(@Param("memoId") Long memoId, @Param("clientId") Long clientId);
 
     @Query("SELECT m FROM Memo m " +
-            "JOIN m.client c " +
-            "JOIN c.user u " +
-            "WHERE c.id = :clientId AND u.id = :userId")
+            "WHERE m.client.id = :clientId AND m.user.id = :userId")
     Slice<Memo> findPageByClientId(@Param("clientId") Long clientId, @Param("userId") Long userId, Pageable pageable);
+
+    @Modifying
+    @Query("DELETE FROM Memo m " +
+            "WHERE m.id=:memoId AND m.user.id=:userId")
+    void deleteByIdAndUser(@Param("memoId") Long memoId, @Param("userId") Long userId);
 }

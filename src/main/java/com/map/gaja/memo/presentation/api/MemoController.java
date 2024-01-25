@@ -31,13 +31,12 @@ public class MemoController implements MemoApiSpecification {
         return new ResponseEntity<>(memoId, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("{memoId}/client/{clientId}")
+    @DeleteMapping("{memoId}")
     public ResponseEntity<Void> delete(
             @AuthenticationPrincipal(expression = "userId") Long userId,
-            @PathVariable Long memoId,
-            @PathVariable Long clientId
+            @PathVariable Long memoId
     ) {
-        memoService.delete(userId, clientId, memoId);
+        memoService.delete(userId, memoId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

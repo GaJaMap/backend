@@ -32,10 +32,15 @@ class ClientRepositoryTest {
         em.persist(user);
         em.persist(group);
         Client client = clientRepository.save(TestEntityCreator.createClient(0, group, user));
+        em.flush();
+        em.clear();
 
-        // when, then
-        assertThat(clientRepository.findByIdAndUser(client.getId(), user.getId()).get())
-                .isNotNull();
+        // when
+        Client expect = clientRepository.findByIdAndUser(client.getId(), user.getId()).get();
+
+        //then
+        assertThat(expect.getUser().getId())
+                .isEqualTo(user.getId());
     }
 
     @Test

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
 @Transactional
@@ -42,7 +43,7 @@ class MemoRepositoryTest {
         em.flush();
         em.clear();
 
-        Memo memo = new Memo(null, MemoType.CALL, client);
+        Memo memo = new Memo(null, MemoType.CALL, client, user);
         memoRepository.save(memo);
 
         // when, then
@@ -63,7 +64,7 @@ class MemoRepositoryTest {
         em.flush();
         em.clear();
 
-        Memo memo = new Memo(null, MemoType.CALL, client);
+        Memo memo = new Memo(null, MemoType.CALL, client, user);
         memoRepository.save(memo);
 
         // when, then
@@ -78,8 +79,8 @@ class MemoRepositoryTest {
         User user = TestEntityCreator.createUser("test@gmail.com");
         Group group = TestEntityCreator.createGroup(user, "group");
         Client client = TestEntityCreator.createClient(0, group, user);
-        Memo memo = new Memo(null, MemoType.CALL, client);
-        Memo memo2 = new Memo(null, MemoType.NAVIGATION, client);
+        Memo memo = new Memo(null, MemoType.CALL, client, user);
+        Memo memo2 = new Memo(null, MemoType.NAVIGATION, client, user);
         em.persist(user);
         em.persist(group);
         em.persist(client);
@@ -95,5 +96,23 @@ class MemoRepositoryTest {
         assertThat(memos.getSize()).isEqualTo(2);
         assertThat(memos.getContent().get(0)).isEqualTo(memo2);
         assertThat(memos.getContent().get(1)).isEqualTo(memo);
+    }
+
+    @Test
+    @DisplayName("메모를 삭제한다.")
+    void deleteByIdAndUser() {
+        // given
+        User user = TestEntityCreator.createUser("test@gmail.com");
+        Group group = TestEntityCreator.createGroup(user, "group");
+        Client client = TestEntityCreator.createClient(0, group, user);
+        Memo memo = new Memo(null, MemoType.CALL, client, user);
+        em.persist(user);
+        em.persist(group);
+        em.persist(client);
+        em.persist(memo);
+        em.flush();
+
+        // when, then
+        assertDoesNotThrow(() -> memoRepository.deleteByIdAndUser(memo.getId(), user.getId()));
     }
 }

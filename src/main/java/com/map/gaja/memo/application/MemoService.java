@@ -3,7 +3,6 @@ package com.map.gaja.memo.application;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
-import com.map.gaja.memo.domain.exception.MemoNotFoundException;
 
 import com.map.gaja.memo.domain.model.Memo;
 import com.map.gaja.memo.domain.model.MemoType;
@@ -24,26 +23,18 @@ public class MemoService {
 
     @Transactional
     public Long create(Long userId, Long clientId, MemoCreateRequest request) {
-        Client client = findClient(userId, clientId);
+        Client client = clientRepository.findByIdAndUser(clientId, userId)
+                .orElseThrow(ClientNotFoundException::new);
 
-        Memo memo = new Memo(request.getMessage(), MemoType.from(request.getMemoType()), client);
+        Memo memo = new Memo(request.getMessage(), MemoType.from(request.getMemoType()), client, client.getUser());
         memoRepository.save(memo);
 
         return memo.getId();
     }
 
     @Transactional
-    public void delete(Long userId, Long clientId, Long memoId) {
-        findClient(userId, clientId);
-
-        Memo memo = memoRepository.findByIdAndClient(memoId, clientId)
-                .orElseThrow(MemoNotFoundException::new);
-        memoRepository.delete(memo);
-    }
-
-    private Client findClient(Long userId, Long clientId) {
-        return clientRepository.findByIdAndUser(clientId, userId)
-                .orElseThrow(ClientNotFoundException::new);
+    public void delete(Long userId, Long memoId) {
+        memoRepository.deleteByIdAndUser(memoId, userId);
     }
 
     @Transactional(readOnly = true)

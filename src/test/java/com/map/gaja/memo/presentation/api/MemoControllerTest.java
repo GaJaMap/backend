@@ -119,10 +119,9 @@ class MemoControllerTest {
         // given
         Long userId = 1L;
         Long memoId = 1L;
-        Long clientId = 1L;
 
         // when, then
-        mvc.perform(MockMvcRequestBuilders.delete("/api/memo/{memoId}/client/{clientId}", memoId, clientId)
+        mvc.perform(MockMvcRequestBuilders.delete("/api/memo/{memoId}", memoId)
                 .with(csrf())
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(userId, "test@gmail.com", "FREE")))
         ).andExpect(status().isOk());
@@ -136,7 +135,7 @@ class MemoControllerTest {
         Long clientId = 1L;
 
         // when, then
-        mvc.perform(MockMvcRequestBuilders.get("/api/memo/client/{clientId}?page=0&size=10", clientId)
+        mvc.perform(MockMvcRequestBuilders.get("/api/memo/client/{clientId}?page=0", clientId)
                 .with(csrf())
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(userId, "test@gmail.com", "FREE")))
         ).andExpect(status().isOk());

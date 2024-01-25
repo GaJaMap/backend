@@ -32,14 +32,13 @@ public interface MemoApiSpecification {
     @Operation(summary = "메모 삭제",
             parameters = {
                     @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
-                    @Parameter(name = "memoId", description = "Memo ID"),
-                    @Parameter(name = "clientId", description = "Client ID"),
+                    @Parameter(name = "memoId", description = "Memo ID")
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 또는 메모입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             })
-    ResponseEntity<Void> delete(@Parameter(hidden = true) Long userId, Long memoId, Long clientId);
+    ResponseEntity<Void> delete(@Parameter(hidden = true) Long userId, Long memoId);
 
     @Operation(summary = "메모 페이징 조회",
             parameters = {

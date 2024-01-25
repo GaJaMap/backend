@@ -74,47 +74,11 @@ class MemoServiceTest {
     }
 
     @Test
-    @DisplayName("메모 삭제에 성공한다.")
-    void deleteSuccess() {
-        // given
-        Long userId = 1L;
-        Long clientId = 1L;
-        Long memoId = 1L;
-        given(clientRepository.findByIdAndUser(anyLong(), anyLong()))
-                .willReturn(Optional.of(new Client("a", "a", null, null)));
-        given(memoRepository.findByIdAndClient(anyLong(), anyLong()))
-                .willReturn(Optional.of(new Memo(null, MemoType.CALL, null)));
-
-        // when
-        memoService.delete(userId, clientId, memoId);
-
-        // then
-        verify(memoRepository).delete(any());
-    }
-
-    @Test
-    @DisplayName("메모 조회 실패로 삭제에 실패한다.")
-    void deleteFail() {
-        // given
-        Long userId = 1L;
-        Long clientId = 1L;
-        Long memoId = 1L;
-        given(clientRepository.findByIdAndUser(anyLong(), anyLong()))
-                .willReturn(Optional.of(new Client("a", "a", null, null)));
-        given(memoRepository.findByIdAndClient(anyLong(), anyLong()))
-                .willReturn(Optional.empty());
-
-        // when, then
-        assertThatThrownBy(() -> memoService.delete(userId, clientId, memoId))
-                .isInstanceOf(MemoNotFoundException.class);
-    }
-
-    @Test
     @DisplayName("메모를 최신순으로 조회한다.")
     void findPageByClientId() {
         // given
-        Memo memo = new Memo(null, MemoType.CALL, null);
-        Memo memo2 = new Memo(null, MemoType.NAVIGATION, null);
+        Memo memo = new Memo(null, MemoType.CALL, null, null);
+        Memo memo2 = new Memo(null, MemoType.NAVIGATION, null, null);
         List<Memo> memos = List.of(memo, memo2);
         Long userId = 1L;
         Long clientId = 1L;

@@ -1,6 +1,7 @@
 package com.map.gaja.memo.domain.model;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.user.domain.model.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,18 +36,24 @@ public class Memo {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Builder
-    private Memo(Long id, String message, MemoType memoType, LocalDateTime createdAt, Client client) {
+    private Memo(Long id, String message, MemoType memoType, LocalDateTime createdAt, Client client, User user) {
         this.id = id;
         this.message = message;
         this.memoType = memoType;
         this.createdAt = createdAt;
         this.client = client;
+        this.user = user;
     }
 
-    public Memo(String message, MemoType memoType, Client client) {
+    public Memo(String message, MemoType memoType, Client client, User user) {
         this.message = message;
         this.memoType = memoType;
         this.client = client;
+        this.user = user;
     }
 }
