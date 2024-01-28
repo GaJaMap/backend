@@ -36,9 +36,11 @@ class ClientControllerTest {
     MockMvc mvc;
 
     @MockBean
-    ClientService clientService;
+    ClientUpdatingService clientUpdatingService;
     @MockBean
     ClientBulkService clientBulkService;
+    @MockBean
+    ClientDeleteService clientDeleteService;
     @MockBean
     ClientSavingService clientSavingService;
     @MockBean
@@ -73,7 +75,7 @@ class ClientControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isNoContent());
-        verify(clientService, times(1)).deleteClient(clientId);
+        verify(clientDeleteService, times(1)).deleteClient(clientId);
     }
 
     @Test

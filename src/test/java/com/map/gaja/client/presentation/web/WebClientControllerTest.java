@@ -2,7 +2,7 @@ package com.map.gaja.client.presentation.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.application.ClientBulkService;
-import com.map.gaja.client.application.ClientService;
+import com.map.gaja.client.application.ClientUpdatingService;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
@@ -58,7 +58,7 @@ class WebClientControllerTest {
     GroupAccessVerifyService groupAccessVerifyService;
 
     @MockBean
-    ClientService clientService;
+    ClientUpdatingService clientUpdatingService;
 
     @MockBean
     ClientBulkService clientBulkService;

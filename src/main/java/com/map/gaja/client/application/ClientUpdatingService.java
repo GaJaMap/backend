@@ -1,9 +1,6 @@
 package com.map.gaja.client.application;
 
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
-import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
-import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.application.util.GroupServiceHelper;
@@ -14,42 +11,22 @@ import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
-import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
-import com.map.gaja.user.application.UserServiceHelper;
-import com.map.gaja.user.domain.model.Authority;
-import com.map.gaja.user.domain.model.User;
-import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.map.gaja.client.application.ClientConvertor.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ClientService {
+public class ClientUpdatingService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
     private final IncreasingClientService increasingClientService;
     private final AuthenticationRepository securityUserGetter;
-
-    public void deleteClient(long clientId) {
-        Client deletedClient = clientRepository.findClientWithGroupForUpdate(clientId)
-                .orElseThrow(() -> new ClientNotFoundException());
-        Group group = deletedClient.getGroup();
-
-        group.decreaseClientCount(1);
-        deletedClient.removeClientImage();
-
-        clientRepository.delete(deletedClient);
-    }
 
     /**
      * 이미지 정보를 제외한 고객 정보 변경

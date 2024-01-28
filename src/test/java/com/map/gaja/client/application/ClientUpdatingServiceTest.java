@@ -13,7 +13,6 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
-import com.map.gaja.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -31,9 +29,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ClientServiceTest {
+class ClientUpdatingServiceTest {
     @InjectMocks
-    ClientService clientService;
+    ClientUpdatingService clientUpdatingService;
 
     @Mock ClientRepository clientRepository;
     @Mock GroupRepository groupRepository;
@@ -41,17 +39,15 @@ class ClientServiceTest {
     @Mock IncreasingClientService increasingClientService;
     @Mock AuthenticationRepository securityUserGetter;
 
-    Long clientId = 1L;
-    Long groupId = 1L;
-    Long changedGroupId = 2L;
-    Long existingClientId = 1L;
-    String existingName = "test";
-    String changedName = "update Test";
-    String email = "testEmail";
+    Long groupId = 1L,
+            changedGroupId = 2L,
+            existingClientId = 1L;
+    String existingName = "test",
+            changedName = "update Test",
+            email = "testEmail";
 
     User user;
-    Group existingGroup;
-    Group changedGroup;
+    Group existingGroup, changedGroup;
     Client existingClient;
     ClientImage clientImage;
 
@@ -66,7 +62,7 @@ class ClientServiceTest {
 
     @Test
     @DisplayName("이미지를 제외한 Client 업데이트 테스트")
-    public void updateClientTest() throws Exception {
+    public void updateClientTest() {
         // given
         Group changedGroup = TestEntityCreator.createGroup(user, changedGroupId, "Changed Group",0);
 
@@ -82,7 +78,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(changedGroup));
 
         // when
-        ClientOverviewResponse response = clientService.updateClientWithoutImage(existingClientId, changedRequest);
+        ClientOverviewResponse response = clientUpdatingService.updateClientWithoutImage(existingClientId, changedRequest);
 
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
@@ -105,7 +101,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        ClientOverviewResponse response = clientService.updateClientWithNewImage(existingClientId, changedRequest, email);
+        ClientOverviewResponse response = clientUpdatingService.updateClientWithNewImage(existingClientId, changedRequest, email);
 
         // then
         assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
@@ -125,7 +121,7 @@ class ClientServiceTest {
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, request);
+        ClientOverviewResponse response = clientUpdatingService.updateClientWithBasicImage(existingClientId, request);
 
         // then
         verify(increasingClientService, times(0)).increaseByOne(any(), any());
@@ -152,7 +148,7 @@ class ClientServiceTest {
         int beforeExistingGroupClientCount = existingGroup.getClientCount();
 
         // when
-        ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, changedRequest);
+        ClientOverviewResponse response = clientUpdatingService.updateClientWithBasicImage(existingClientId, changedRequest);
 
         // then
         assertThat(clientImage.getIsDeleted()).isTrue();
@@ -160,21 +156,6 @@ class ClientServiceTest {
         assertThat(response.getImage().getFilePath()).isNull();
         assertThat(existingGroup.getClientCount()).isEqualTo(beforeExistingGroupClientCount - 1);
         verify(increasingClientService, times(1)).increaseByOne(changedGroup, Authority.FREE);
-    }
-
-    @Test
-    @DisplayName("Client 삭제 테스트")
-    void deleteClientTest() {
-        int beforeGroupClientCnt = existingGroup.getClientCount();
-        ClientImage deletedImage = existingClient.getClientImage();
-        when(clientRepository.findClientWithGroupForUpdate(existingClientId))
-                .thenReturn(Optional.ofNullable(existingClient));
-
-        clientService.deleteClient(existingClientId);
-
-        verify(clientRepository).delete(existingClient);
-        assertThat(deletedImage.getIsDeleted()).isTrue();
-        assertThat(existingClient.getGroup().getClientCount()).isEqualTo(beforeGroupClientCnt - 1);
     }
 
     private static NewClientRequest createRequest(Long groupId, String name) {

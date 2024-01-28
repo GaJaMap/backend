@@ -1,7 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
-import com.map.gaja.client.application.ClientBulkService;
-import com.map.gaja.client.application.ClientSavingService;
+import com.map.gaja.client.application.*;
 import com.map.gaja.global.authentication.imageuploads.ImageAuthChecking;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
@@ -11,8 +10,6 @@ import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkReque
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.log.TimeCheckLog;
 import com.map.gaja.group.application.GroupAccessVerifyService;
-import com.map.gaja.client.application.ClientAccessVerifyService;
-import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.presentation.dto.access.ClientAccessCheckDto;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
@@ -39,13 +36,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientController implements ClientCommandApiSpecification {
 
-    private final ClientService clientService;
+    private final ClientUpdatingService clientUpdatingService;
     private final ClientBulkService clientBulkService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
     private final ClientRequestValidator clientRequestValidator;
     private final ClientSavingService clientSavingService;
+    private final ClientDeleteService clientDeleteService;
 
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
@@ -58,7 +56,7 @@ public class ClientController implements ClientCommandApiSpecification {
         ClientAccessCheckDto accessCheck = new ClientAccessCheckDto(loginEmail, groupId, clientId);
         clientAccessVerifyService.verifyClientAccess(accessCheck);
 
-        clientService.deleteClient(clientId);
+        clientDeleteService.deleteClient(clientId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -95,7 +93,7 @@ public class ClientController implements ClientCommandApiSpecification {
         // 기본 이미지를 사용하지 않고, 새 이미지 파일을 요청에 실어보냄
         if (!clientRequest.getIsBasicImage() && !isEmptyFile(clientImage)) {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
-            ClientOverviewResponse response = clientService.updateClientWithNewImage(clientId, clientRequest, loginEmail); // 임시 UUID를 path로 저장
+            ClientOverviewResponse response = clientUpdatingService.updateClientWithNewImage(clientId, clientRequest, loginEmail); // 임시 UUID를 path로 저장
             if (storeImage(clientRequest, response.getImage())) { // 이미지 저장 성공 여부
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
@@ -106,10 +104,10 @@ public class ClientController implements ClientCommandApiSpecification {
         // 기본 이미지를 사용하고 있음
         if (clientRequest.getIsBasicImage()) {
             // 기존 이미지가 DB에 있다면 제거 후 기본 이미지(null)로 초기화 한다.
-            new ResponseEntity<>(clientService.updateClientWithBasicImage(clientId, clientRequest), HttpStatus.OK);
+            new ResponseEntity<>(clientUpdatingService.updateClientWithBasicImage(clientId, clientRequest), HttpStatus.OK);
         }
         // 기본 이미지를 사용하지 않지만, 새 이미지를 보내지 않음 => 기존 이미지를 사용함
-        return new ResponseEntity<>(clientService.updateClientWithoutImage(clientId, clientRequest), HttpStatus.OK);
+        return new ResponseEntity<>(clientUpdatingService.updateClientWithoutImage(clientId, clientRequest), HttpStatus.OK);
     }
 
 

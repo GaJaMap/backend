@@ -42,9 +42,11 @@ public class ClientPostControllerTest {
     MockMvc mvc;
 
     @MockBean
-    ClientService clientService;
+    ClientUpdatingService clientUpdatingService;
     @MockBean
     ClientBulkService clientBulkService;
+    @MockBean
+    ClientDeleteService clientDeleteService;
     @MockBean
     ClientQueryService clientQueryService;
     @MockBean

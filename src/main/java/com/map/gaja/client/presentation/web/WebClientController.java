@@ -1,7 +1,7 @@
 package com.map.gaja.client.presentation.web;
 
 import com.map.gaja.client.application.ClientBulkService;
-import com.map.gaja.client.application.ClientService;
+import com.map.gaja.client.application.ClientUpdatingService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
@@ -46,7 +46,7 @@ import java.util.List;
 public class WebClientController {
     private final FileParsingService fileParsingService;
     private final GroupAccessVerifyService groupAccessVerifyService;
-    private final ClientService clientService;
+    private final ClientUpdatingService clientUpdatingService;
     private final GroupService groupService;
     private final Geocoder geocoder;
     private final FileValidator fileValidator;

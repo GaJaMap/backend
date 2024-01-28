@@ -32,7 +32,9 @@ public class ClientPutControllerTest {
     MockMvc mvc;
 
     @MockBean
-    ClientService clientService;
+    ClientUpdatingService clientUpdatingService;
+    @MockBean
+    ClientDeleteService clientDeleteService;
     @MockBean
     ClientSavingService clientSavingService;
     @MockBean
@@ -69,7 +71,7 @@ public class ClientPutControllerTest {
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientService, times(1)).updateClientWithoutImage(clientId, request);
+        verify(clientUpdatingService, times(1)).updateClientWithoutImage(clientId, request);
     }
 
     @Test
@@ -83,10 +85,10 @@ public class ClientPutControllerTest {
         ClientOverviewResponse response = new ClientOverviewResponse();
         StoredFileDto fileDto = new StoredFileDto("test", "test");
         response.setImage(fileDto);
-        when(clientService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
+        when(clientUpdatingService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
+        verify(clientUpdatingService, times(1)).updateClientWithNewImage(any(), any(), any());
     }
 
     @Test
@@ -101,10 +103,10 @@ public class ClientPutControllerTest {
         ClientOverviewResponse response = new ClientOverviewResponse();
         StoredFileDto fileDto = new StoredFileDto("test", "test");
         response.setImage(fileDto);
-        when(clientService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
+        when(clientUpdatingService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
-        verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
+        verify(clientUpdatingService, times(1)).updateClientWithNewImage(any(), any(), any());
     }
 
     @Test
@@ -114,10 +116,10 @@ public class ClientPutControllerTest {
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPutRequestWithImage(testUri, groupId, clientId);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
-        doThrow(new ClientNotFoundException()).when(clientService).updateClientWithNewImage(any(), any(),any());
+        doThrow(new ClientNotFoundException()).when(clientUpdatingService).updateClientWithNewImage(any(), any(),any());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
-        verify(clientService, times(1)).updateClientWithNewImage(any(), any(), any());
+        verify(clientUpdatingService, times(1)).updateClientWithNewImage(any(), any(), any());
     }
 
     @Test
@@ -128,6 +130,6 @@ public class ClientPutControllerTest {
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(true));
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientService, times(1)).updateClientWithBasicImage(clientId, request);
+        verify(clientUpdatingService, times(1)).updateClientWithBasicImage(clientId, request);
     }
 }
