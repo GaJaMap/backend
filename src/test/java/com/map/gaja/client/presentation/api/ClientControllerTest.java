@@ -1,10 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.ClientAccessVerifyService;
-import com.map.gaja.client.application.ClientBulkService;
-import com.map.gaja.client.application.ClientQueryService;
-import com.map.gaja.client.application.ClientService;
+import com.map.gaja.client.application.*;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
@@ -42,6 +39,8 @@ class ClientControllerTest {
     ClientService clientService;
     @MockBean
     ClientBulkService clientBulkService;
+    @MockBean
+    ClientSavingService clientSavingService;
     @MockBean
     ClientQueryService clientQueryService;
     @MockBean

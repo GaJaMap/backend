@@ -36,45 +36,9 @@ import static com.map.gaja.client.application.ClientConvertor.*;
 public class ClientService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
-
     private final ClientQueryRepository clientQueryRepository;
     private final IncreasingClientService increasingClientService;
     private final AuthenticationRepository securityUserGetter;
-    private final UserRepository userRepository;
-
-
-    /**
-     * 이미지 없는 고객 등록
-     * @param clientRequest 고객 등록 요청 정보
-     * @return 만들어진 고객 ID
-     */
-    public ClientOverviewResponse saveClient(NewClientRequest clientRequest, String loginEmail) {
-        User user = userRepository.findByEmail(loginEmail);
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
-        Client client = dtoToEntity(clientRequest, group, user);
-        clientRepository.save(client);
-        increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
-        return entityToOverviewDto(client);
-    }
-
-    /**
-     * 이미지와 함께 고객 등록
-     *
-     * @param clientRequest 고객 등록 요청 정보
-     * @param loginEmail 요청을 보내는 사용자 이메일
-     * @return 만들어진 고객
-     */
-    public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, String loginEmail) {
-        User user = userRepository.findByEmail(loginEmail);
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
-        ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage());
-        Client client = dtoToEntity(clientRequest, group, user, clientImage);
-        client.updateImage(clientImage);
-
-        clientRepository.save(client);
-        increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
-        return entityToOverviewDto(client);
-    }
 
     public void deleteClient(long clientId) {
         Client deletedClient = clientRepository.findClientWithGroupForUpdate(clientId)

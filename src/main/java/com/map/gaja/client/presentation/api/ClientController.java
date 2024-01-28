@@ -1,6 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.map.gaja.client.application.ClientBulkService;
+import com.map.gaja.client.application.ClientSavingService;
 import com.map.gaja.global.authentication.imageuploads.ImageAuthChecking;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
@@ -44,6 +45,7 @@ public class ClientController implements ClientCommandApiSpecification {
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
     private final ClientRequestValidator clientRequestValidator;
+    private final ClientSavingService clientSavingService;
 
 
     @DeleteMapping("/group/{groupId}/clients/{clientId}")
@@ -160,10 +162,10 @@ public class ClientController implements ClientCommandApiSpecification {
 
         if (isEmptyFile(clientRequest.getClientImage())) {
             // 이미지를 등록하지 않음.
-            return new ResponseEntity<>(clientService.saveClient(clientRequest, loginEmail), HttpStatus.CREATED);
+            return new ResponseEntity<>(clientSavingService.saveClient(clientRequest, loginEmail), HttpStatus.CREATED);
         }
 
-        ClientOverviewResponse response = clientService.saveClientWithImage(clientRequest, loginEmail);
+        ClientOverviewResponse response = clientSavingService.saveClientWithImage(clientRequest, loginEmail);
         if (storeImage(clientRequest, response.getImage())) {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }

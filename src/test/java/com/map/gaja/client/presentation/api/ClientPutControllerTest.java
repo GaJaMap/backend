@@ -1,10 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.ClientAccessVerifyService;
-import com.map.gaja.client.application.ClientBulkService;
-import com.map.gaja.client.application.ClientQueryService;
-import com.map.gaja.client.application.ClientService;
+import com.map.gaja.client.application.*;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
@@ -36,6 +33,8 @@ public class ClientPutControllerTest {
 
     @MockBean
     ClientService clientService;
+    @MockBean
+    ClientSavingService clientSavingService;
     @MockBean
     ClientBulkService bulkSavingService;
     @MockBean
