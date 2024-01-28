@@ -12,6 +12,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
      * API 비즈니스 관련 예외 공동 처리
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ExceptionDto> handleBusinessError(BusinessException e) {
+    public ResponseEntity<ExceptionDto> handleBusinessException(BusinessException e) {
         log.info("{}: {} => {}", authenticationRepository.getEmail(), e.getStatus(), e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
@@ -40,7 +41,7 @@ public class GlobalExceptionHandler {
      * 웹 예외 공동 처리
      */
     @ExceptionHandler(WebException.class)
-    public ResponseEntity<Object> handleWebError(WebException e) {
+    public ResponseEntity<Object> handleWebException(WebException e) {
         log.info("{}: {} => {}", authenticationRepository.getEmail(), e.getStatus(), e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionDto> allHandle(Exception e) {
+    public ResponseEntity<ExceptionDto> handleException(Exception e) {
         log.error("{}: ", authenticationRepository.getEmail(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionDto("서버 에러"));
@@ -68,7 +69,7 @@ public class GlobalExceptionHandler {
      * Json 형식 -> MethodArgumentNotValidException
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
-    public ResponseEntity<CommonErrorResponse> validationErrorHandle(BindException e) {
+    public ResponseEntity<CommonErrorResponse> handleValidation(BindException e) {
         log.info("{}: {} => {}", authenticationRepository.getEmail(), e.getAllErrors().toString(), e.getMessage());
         List<ValidationErrorResponse> body = new ArrayList<>();
         e.getAllErrors().stream().forEach(
@@ -85,7 +86,7 @@ public class GlobalExceptionHandler {
      * ex) int타입에 "abc"가 들어온 경우
      */
     @ExceptionHandler
-    public ResponseEntity<CommonErrorResponse> Handle(HttpMessageNotReadableException e) {
+    public ResponseEntity<CommonErrorResponse> handleTypeMismatch(HttpMessageNotReadableException e) {
         CommonErrorResponse body = new CommonErrorResponse("Type-Mismatch", "Type-Mismatch");
         log.info("{}: {}", authenticationRepository.getEmail(), e.getMessage());
         return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
@@ -95,13 +96,23 @@ public class GlobalExceptionHandler {
      * 엑셀파일 업로드 예외 처리
      */
     @ExceptionHandler(NotExcelUploadException.class)
-    public ResponseEntity<ExceptionDto> excelErrorHandle(NotExcelUploadException e) {
+    public ResponseEntity<ExceptionDto> handleExcelException(NotExcelUploadException e) {
         String suppressedExceptions = Arrays.stream(e.getSuppressed())
                 .map(Throwable::getMessage)
                 .collect(Collectors.joining("\n"));
 
         log.info("{}: {} {}", authenticationRepository.getEmail(), e.getMessage(), suppressedExceptions);
         return ResponseEntity.status(e.getStatus())
+                .body(new ExceptionDto(e.getMessage()));
+    }
+
+    /**
+     * argument resolver 미스 타입
+     */
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ExceptionDto> handleArgumentTypeMismatch(IllegalArgumentException e) {
+        log.info("{}: {}", authenticationRepository.getEmail(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionDto(e.getMessage()));
     }
 }

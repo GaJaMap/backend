@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public GroupedOpenApi userApi(){
+    public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("user-api")
                 .pathsToMatch("/api/user/**")
@@ -17,7 +17,7 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public GroupedOpenApi GroupApi(){
+    public GroupedOpenApi GroupApi() {
         return GroupedOpenApi.builder()
                 .group("group-api")
                 .pathsToMatch("/api/group/**")
@@ -26,7 +26,7 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public GroupedOpenApi clientApi(){
+    public GroupedOpenApi clientApi() {
         return GroupedOpenApi.builder()
                 .group("client-api")
                 .pathsToMatch("/api/**/clients/**")
@@ -34,11 +34,19 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public OpenAPI openApi(){
+    public GroupedOpenApi memoApi() {
+        return GroupedOpenApi.builder()
+                .group("memo-api")
+                .pathsToMatch("/api/memo/**")
+                .build();
+    }
+
+    @Bean
+    public OpenAPI openApi() {
         return new OpenAPI()
                 .info(new Info()
                         .title("GaJaMap API")
                         .description("API 명세서")
-                        .version("0.0.1"));
+                        .version("0.0.2"));
     }
 }
