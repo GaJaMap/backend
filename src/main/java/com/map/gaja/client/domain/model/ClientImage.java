@@ -1,8 +1,10 @@
 package com.map.gaja.client.domain.model;
 
 import com.map.gaja.client.domain.exception.InvalidFileException;
+import com.map.gaja.client.event.ClientImageCreationEvent;
 import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
+import com.map.gaja.global.event.Events;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +40,10 @@ public class ClientImage extends BaseTimeEntity {
 
         String originalFileName = image.getOriginalFilename();
         String savedPath = loginEmail + "/" + convertRawFileStringToUuidFileString(originalFileName);
-        return new ClientImage(originalFileName, savedPath);
+        ClientImage clientImage = new ClientImage(originalFileName, savedPath);
+        Events.raise(new ClientImageCreationEvent(clientImage, image));
+
+        return clientImage;
     }
 
     private static String convertRawFileStringToUuidFileString(String originalFilename) {

@@ -53,7 +53,6 @@ public class ClientSavingService {
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
         ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage());
         Client client = dtoToEntity(clientRequest, group, user, clientImage);
-        client.updateImage(clientImage);
 
         clientRepository.save(client);
         increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
