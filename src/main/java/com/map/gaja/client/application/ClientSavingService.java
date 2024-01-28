@@ -8,6 +8,7 @@ import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.application.util.GroupServiceHelper;
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupRepository;
@@ -34,7 +35,8 @@ public class ClientSavingService {
      */
     public ClientOverviewResponse saveClient(NewClientRequest clientRequest, String loginEmail) {
         User user = userRepository.findByEmail(loginEmail);
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
+        Group group = groupRepository.findByIdAndUserEmail(clientRequest.getGroupId(), loginEmail)
+                .orElseThrow(GroupNotFoundException::new);
         Client client = dtoToEntity(clientRequest, group, user);
         clientRepository.save(client);
         increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
@@ -50,7 +52,8 @@ public class ClientSavingService {
      */
     public ClientOverviewResponse saveClientWithImage(NewClientRequest clientRequest, String loginEmail) {
         User user = userRepository.findByEmail(loginEmail);
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
+        Group group = groupRepository.findByIdAndUserEmail(clientRequest.getGroupId(), loginEmail)
+                .orElseThrow(GroupNotFoundException::new);
         ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage());
         Client client = dtoToEntity(clientRequest, group, user, clientImage);
 

@@ -56,7 +56,7 @@ public class Client extends BaseTimeEntity {
         client.group = group;
         client.user = user;
 
-        Events.raise(new GroupClientAddedEvent(group, user));
+        Events.raise(new GroupClientAddedEvent(group.getId(), user));
         return client;
     }
 

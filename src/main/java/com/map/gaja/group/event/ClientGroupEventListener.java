@@ -21,7 +21,8 @@ public class ClientGroupEventListener {
 
     @EventListener(GroupClientAddedEvent.class)
     public void increaseClientCount(GroupClientAddedEvent event) {
-        increasingClientService.increaseByOne(event.getGroup(), event.getUser().getAuthority());
+        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, event.getGroupId());
+        increasingClientService.increaseByOne(group, event.getUser().getAuthority());
     }
 
     @EventListener(ClientGroupUpdatedEvent.class)
