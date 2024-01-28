@@ -4,6 +4,7 @@ import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.application.util.GroupServiceHelper;
+import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupRepository;
@@ -25,7 +26,6 @@ public class ClientUpdatingService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
     private final ClientQueryRepository clientQueryRepository;
-    private final IncreasingClientService increasingClientService;
     private final AuthenticationRepository securityUserGetter;
 
     /**
@@ -88,23 +88,10 @@ public class ClientUpdatingService {
 
     private void updateClientGroupIfChanged(NewClientRequest updateRequest, Client existingClient) {
         if (isUpdatedGroup(existingClient, updateRequest)) {
-            updateClientGroup(existingClient, updateRequest);
+            Group changedGroup = groupRepository.findByIdAndUserEmail(updateRequest.getGroupId(), securityUserGetter.getEmail())
+                    .orElseThrow(GroupNotFoundException::new);
+            existingClient.updateGroup(changedGroup);
         }
-    }
-
-    /**
-     * 두 개의 그룹을 조회해서 Client의 기존 그룹을 새로운 그룹으로 변경
-     * 기존 그룹 ClientCount -1
-     * 새 그룹 ClientCount +1
-     * 기존 그룹과, 새 그룹 각각의 Lock이 필요하다.
-     */
-    private void updateClientGroup(Client existingClient, NewClientRequest updateRequest) {
-        Group existingGroup = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, existingClient.getGroup().getId());
-        Group updatedGroup = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, updateRequest.getGroupId());
-
-        existingGroup.decreaseClientCount(1);
-        existingClient.updateGroup(updatedGroup);
-        increasingClientService.increaseByOne(updatedGroup, securityUserGetter.getAuthority().get(0));
     }
 
     /**

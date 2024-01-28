@@ -1,5 +1,7 @@
 package com.map.gaja.client.domain.model;
 
+import com.map.gaja.client.event.ClientGroupUpdatedEvent;
+import com.map.gaja.client.event.ClientImageDeletedEvent;
 import com.map.gaja.client.event.GroupClientAddedEvent;
 import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
@@ -94,6 +96,10 @@ public class Client extends BaseTimeEntity {
     }
 
     public void updateGroup(Group changedGroup) {
+        if(group == changedGroup)
+            return;
+
+        Events.raise(new ClientGroupUpdatedEvent(this.group.getId(), changedGroup.getId(), user));
         this.group = changedGroup;
     }
 
