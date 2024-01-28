@@ -1,6 +1,6 @@
 package com.map.gaja.client.domain.model;
 
-import com.map.gaja.client.event.ClientImageCreationEvent;
+import com.map.gaja.client.event.GroupClientAddedEvent;
 import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
@@ -41,6 +41,7 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    /** 전화번호를 통한 등록 시 */
     public static Client create(
             String name, String phoneNumber,
             Group group, User user
@@ -52,10 +53,13 @@ public class Client extends BaseTimeEntity {
         client.phoneNumber = phoneNumber;
         client.group = group;
         client.user = user;
+
+        Events.raise(new GroupClientAddedEvent(group, user));
         return client;
     }
 
-    public static Client createWithLocation(
+    /** 엑셀 파일 or 이미지 없는 사용자 등록 시 */
+    public static Client createWithoutImage(
             String name, String phoneNumber,
             ClientAddress address, ClientLocation location,
             Group group, User user
@@ -65,13 +69,14 @@ public class Client extends BaseTimeEntity {
         return client;
     }
 
-    public static Client createWithLocationAndImage(
+    /** 이미지 있는 사용자 등록 시 */
+    public static Client createWithImage(
             String name, String phoneNumber,
             ClientAddress address, ClientLocation location,
             ClientImage clientImage,
             Group group, User user
     ) {
-        Client client = createWithLocation(name, phoneNumber, address, location, group, user);
+        Client client = createWithoutImage(name, phoneNumber, address, location, group, user);
         client.clientImage = clientImage;
         return client;
     }

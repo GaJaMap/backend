@@ -69,7 +69,7 @@ public class ClientService {
         User user = userRepository.findByEmail(loginEmail);
         Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, clientRequest.getGroupId());
         ClientImage clientImage = ClientImage.create(loginEmail, clientRequest.getClientImage());
-        Client client = dtoToEntity(clientRequest, group, user);
+        Client client = dtoToEntity(clientRequest, group, user, clientImage);
         client.updateImage(clientImage);
 
         clientRepository.save(client);
