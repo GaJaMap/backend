@@ -119,7 +119,7 @@ public class Client extends BaseTimeEntity {
             return;
         }
 
-        clientImage.delete();
+        Events.raise(new ClientImageDeletedEvent(this.clientImage));
         this.clientImage = null;
     }
 }
