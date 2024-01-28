@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.application.ClientAccessVerifyService;
+import com.map.gaja.client.application.ClientBulkService;
 import com.map.gaja.client.application.ClientQueryService;
 import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.domain.exception.InvalidFileException;
@@ -45,6 +46,8 @@ public class ClientPostControllerTest {
 
     @MockBean
     ClientService clientService;
+    @MockBean
+    ClientBulkService clientBulkService;
     @MockBean
     ClientQueryService clientQueryService;
     @MockBean
@@ -151,7 +154,7 @@ public class ClientPostControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated());
-        verify(clientService, times(1)).saveSimpleClientList(request, "test@gmail.com");
+        verify(clientBulkService, times(1)).saveSimpleClientList(request, "test@gmail.com");
     }
 
 }

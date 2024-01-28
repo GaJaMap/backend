@@ -2,13 +2,7 @@ package com.map.gaja.client.application;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.ClientImage;
-import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
-import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
-import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
-import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
-import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
-import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
@@ -24,16 +18,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,21 +33,15 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 
 class ClientServiceTest {
+    @InjectMocks
     ClientService clientService;
 
-    @Mock
-    private ClientRepository clientRepository;
-    @Mock
-    private ClientBulkRepository clientBulkRepository;
-    @Mock
-    private GroupRepository groupRepository;
-    @Mock
-    private ClientQueryRepository clientQueryRepository;
-    @Mock
-    private UserRepository userRepository;
-    IncreasingClientService increasingClientService = new IncreasingClientService();
-    @Mock
-    AuthenticationRepository securityUserGetter;
+    @Mock ClientRepository clientRepository;
+    @Mock GroupRepository groupRepository;
+    @Mock ClientQueryRepository clientQueryRepository;
+    @Mock UserRepository userRepository;
+    @Mock IncreasingClientService increasingClientService;
+    @Mock AuthenticationRepository securityUserGetter;
 
     Long clientId = 1L;
     Long groupId = 1L;
@@ -73,16 +59,6 @@ class ClientServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        clientService = new ClientService(
-                clientRepository,
-                clientBulkRepository,
-                groupRepository,
-                clientQueryRepository,
-                increasingClientService,
-                securityUserGetter,
-                userRepository
-        );
-
         user = TestEntityCreator.createUser(email);
         existingGroup = TestEntityCreator.createGroup(user, groupId, "Test Group1", 1);
         changedGroup = TestEntityCreator.createGroup(user, groupId, "Test Group2", 0);
@@ -94,24 +70,21 @@ class ClientServiceTest {
     @DisplayName("Group을 포함한 Client 저장 테스트")
     public void saveClientTest() throws Exception {
         // given
-        Integer clientCount = 1;
-        NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
-
+        NewClientRequest request = createRequest(groupId, changedName);
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(userRepository.findByEmail(any())).thenReturn(user);
         when(groupRepository.findGroupByIdForUpdate(any())).thenReturn(Optional.ofNullable(existingGroup));
-        when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
-            Client savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
-            ReflectionTestUtils.setField(savedClient, "id", clientId);
-            return savedClient;
-        });
+        mockClientRepoSave();
 
         // when
-        ClientOverviewResponse result = clientService.saveClient(changedRequest, user.getEmail());
+        ClientOverviewResponse result = clientService.saveClient(request, user.getEmail());
 
         // then
         assertThat(result.getClientId()).isEqualTo(clientId);
-        assertThat(existingGroup.getClientCount()).isEqualTo(clientCount + 1);
+        verify(userRepository).findByEmail(email);
+        verify(groupRepository).findGroupByIdForUpdate(groupId);
+        verify(clientRepository).save(any());
+        verify(increasingClientService).increaseByOne(existingGroup, Authority.FREE);
     }
 
     @Test
@@ -120,7 +93,8 @@ class ClientServiceTest {
         // given
         Group changedGroup = TestEntityCreator.createGroup(user, changedGroupId, "Changed Group",0);
 
-        NewClientRequest changedRequest = createChangeRequest(changedGroupId, changedName);
+        NewClientRequest changedRequest = createRequest(changedGroupId, changedName);
+        int beforeExistingGroupClientCnt = existingGroup.getClientCount();
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(clientRepository.findById(anyLong()))
@@ -136,15 +110,15 @@ class ClientServiceTest {
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroupId);
-        assertThat(changedGroup.getClientCount()).isEqualTo(1);
-        assertThat(existingGroup.getClientCount()).isEqualTo(0);
+        verify(increasingClientService).increaseByOne(changedGroup, Authority.FREE);
+        assertThat(existingGroup.getClientCount()).isEqualTo(beforeExistingGroupClientCnt - 1);
     }
 
     @Test
     @DisplayName("Client 이미지 업데이트 테스트")
     public void updateClientImageTest() throws Exception {
         // given
-        NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
+        NewClientRequest changedRequest = createRequest(existingGroup.getId(), existingName);
         String imageName = "testImage.png";
         MultipartFile mockFile = mock(MultipartFile.class);
         when(mockFile.getOriginalFilename()).thenReturn(imageName);
@@ -161,22 +135,24 @@ class ClientServiceTest {
 
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
         assertThat(response.getImage().getOriginalFileName()).isEqualTo(imageName);
+        System.out.println(existingGroup.getClientCount());
     }
 
     @Test
-    @DisplayName("Client Basic Image로 업데이트")
+    @DisplayName("Client Basic Image로 업데이트 - 그룹 유지")
     public void updateClientWithBasicImageTest() throws Exception {
         // given
-        NewClientRequest changedRequest = createChangeRequest(existingGroup.getId(), existingName);
+        NewClientRequest request = createRequest(existingGroup.getId(), existingName);
+        request.setIsBasicImage(true);
         when(clientQueryRepository.findClientWithImage(anyLong()))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
-        ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, changedRequest);
+        ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, request);
 
         // then
+        verify(increasingClientService, times(0)).increaseByOne(any(), any());
         assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
-
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
         assertThat(response.getImage().getFilePath()).isNull();
     }
@@ -185,19 +161,18 @@ class ClientServiceTest {
     @DisplayName("Client Basic Image로 업데이트 + 그룹 변경")
     public void updateClientWithBasicImage2Test() throws Exception {
         // given
-        NewClientRequest changedRequest = createChangeRequest(changedGroupId, existingName);
+        NewClientRequest changedRequest = createRequest(changedGroupId, existingName);
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(clientQueryRepository.findClientWithImage(existingClientId))
                 .thenReturn(Optional.ofNullable(existingClient));
 
-        when(groupRepository.findGroupByIdForUpdate(existingClient.getGroup().getId()))
+        when(groupRepository.findGroupByIdForUpdate(groupId))
                 .thenReturn(Optional.ofNullable(existingGroup));
         when(groupRepository.findGroupByIdForUpdate(changedGroupId))
                 .thenReturn(Optional.ofNullable(changedGroup));
 
-        int existingGroupClientCount = existingGroup.getClientCount();
-        int changedGroupClientCount = changedGroup.getClientCount();
+        int beforeExistingGroupClientCount = existingGroup.getClientCount();
 
         // when
         ClientOverviewResponse response = clientService.updateClientWithBasicImage(existingClientId, changedRequest);
@@ -206,146 +181,65 @@ class ClientServiceTest {
         assertThat(clientImage.getIsDeleted()).isTrue();
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
         assertThat(response.getImage().getFilePath()).isNull();
-
-        assertThat(existingGroup.getClientCount()).isEqualTo(existingGroupClientCount - 1);
-        assertThat(changedGroup.getClientCount()).isEqualTo(changedGroupClientCount + 1);
+        assertThat(existingGroup.getClientCount()).isEqualTo(beforeExistingGroupClientCount - 1);
+        verify(increasingClientService, times(1)).increaseByOne(changedGroup, Authority.FREE);
     }
 
     @Test
     @DisplayName("Client 삭제 테스트")
     void deleteClientTest() {
-        when(clientRepository.findClientWithGroupForUpdate(anyLong()))
+        int beforeGroupClientCnt = existingGroup.getClientCount();
+        ClientImage deletedImage = existingClient.getClientImage();
+        when(clientRepository.findClientWithGroupForUpdate(existingClientId))
                 .thenReturn(Optional.ofNullable(existingClient));
 
-        clientService.deleteClient(clientId);
+        clientService.deleteClient(existingClientId);
 
-        assertThat(existingGroup.getClientCount()).isEqualTo(0);
-    }
-
-    @Test
-    @DisplayName("Client-Image 삭제 테스트")
-    void deleteClientWithImageTest() {
-        ClientImage savedImage = existingClient.getClientImage();
-        when(clientRepository.findClientWithGroupForUpdate(anyLong()))
-                .thenReturn(Optional.ofNullable(existingClient));
-
-        clientService.deleteClient(clientId);
-
-        assertThat(existingGroup.getClientCount()).isEqualTo(0);
-        assertThat(savedImage.getIsDeleted()).isTrue();
+        verify(clientRepository).delete(existingClient);
+        assertThat(deletedImage.getIsDeleted()).isTrue();
+        assertThat(existingClient.getGroup().getClientCount()).isEqualTo(beforeGroupClientCnt - 1);
     }
 
     @Test
     @DisplayName("이미지와 함께 Client 저장 테스트")
     void saveClientWithImageTest() {
-        NewClientRequest request = createChangeRequest(existingGroup.getId(), "New Name");
-        int beforeClientCount = existingGroup.getClientCount();
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn("testImage.png");
-        request.setClientImage(file);
+        String changedName = "New Name";
+        String extension = "png";
+        String changedImageName = "testImage." + extension;
+        NewClientRequest request = createRequest(existingGroup.getId(), changedName);
+        request.setClientImage(TestEntityCreator.createMockFile(changedImageName));
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
                 .thenReturn(Optional.ofNullable(existingGroup));
-        when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
-            Client savedClient = invocation.getArgument(0);
-            ReflectionTestUtils.setField(savedClient, "id", clientId);
-            return savedClient;
-        });
+        mockClientRepoSave();
         when(userRepository.findByEmail(any())).thenReturn(user);
 
         ClientOverviewResponse result = clientService.saveClientWithImage(request,email);
 
-        assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + 1);
+        verify(clientRepository).save(any());
+        verify(userRepository).findByEmail(email);
+        verify(groupRepository).findGroupByIdForUpdate(groupId);
+        verify(increasingClientService).increaseByOne(existingGroup, Authority.FREE);
         assertThat(result.getClientId()).isEqualTo(clientId);
+        assertThat(result.getImage().getFilePath()).contains(extension);
     }
 
-    @Test
-    @DisplayName("단순 이름, 전화번호 저장 테스트")
-    void saveSimpleClientListTest() {
-        List<SimpleNewClientRequest> clients = createSimpleClientRequestSize3();
-        long beforeClientCount = existingGroup.getClientCount();
-
-        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
-        when(userRepository.findByEmail(any())).thenReturn(user);
-        when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
-                .thenReturn(Optional.ofNullable(existingGroup));
-        when(clientRepository.saveAll(any())).thenAnswer(invocation -> {
-            List<Client> savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
-            long tempId = 1;
-            for (Client client : savedClient) {
-                ReflectionTestUtils.setField(client, "id", tempId++);
-            }
-            return savedClient;
-        });
-
-        SimpleClientBulkRequest bulkRequest = new SimpleClientBulkRequest(existingGroup.getId(), clients);
-        clientService.saveSimpleClientList(bulkRequest, user.getEmail());
-
-        assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + clients.size());
-    }
-
-    @Test
-    @DisplayName("파싱한 엑셀 데이터 저장 테스트")
-    void saveClientExcelDataTest() {
-        List<ParsedClientDto> excelData = createExcelDataSize3();
-        long beforeClientCount = existingGroup.getClientCount();
-        when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
-                .thenReturn(Optional.ofNullable(existingGroup));
-        when(userRepository.findByEmail(any())).thenReturn(user);
-
-        clientService.saveClientExcelData(existingGroup.getId(), excelData, List.of(Authority.FREE), user.getEmail());
-
-        assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientCount + excelData.size());
-    }
-
-    @Test
-    @DisplayName("그룹 내의 특정 고객 제거")
-    void deleteBulkClientTest() {
-        int beforeClientSize = 4;
-        Group size4Group = TestEntityCreator.createGroup(user, 1L, "Test Group", beforeClientSize);
-        when(groupRepository.findGroupByIdForUpdate(size4Group.getId()))
-                .thenReturn(Optional.ofNullable(size4Group));
-        List<Long> size3ClientIds = getSize3ClientIds();
-        int deletedClientSize = size3ClientIds.size();
-
-        clientService.deleteBulkClient(size4Group.getId(), new ArrayList<>());
-
-        assertThat(existingGroup.getClientCount()).isEqualTo(beforeClientSize - deletedClientSize);
-    }
-
-    private static List<Long> getSize3ClientIds() {
-        List<Long> size3ClientIds = new ArrayList<>();
-        size3ClientIds.add(1L);
-        size3ClientIds.add(2L);
-        size3ClientIds.add(3L);
-        return size3ClientIds;
-    }
-
-    private static List<ParsedClientDto> createExcelDataSize3() {
-        List<ParsedClientDto> excelData = new ArrayList<>();
-        excelData.add(new ParsedClientDto(1, "Test Excel 1", null, null, null, null, true));
-        excelData.add(new ParsedClientDto(2, "Test Excel 2", null, null, null, null, true));
-        excelData.add(new ParsedClientDto(3, "Test Excel 3", null, null, null, null, true));
-        return excelData;
-    }
-
-
-    private static List<SimpleNewClientRequest> createSimpleClientRequestSize3() {
-        List<SimpleNewClientRequest> clients = new ArrayList<>();
-        clients.add(new SimpleNewClientRequest("Test 1", "010-1111-222"));
-        clients.add(new SimpleNewClientRequest("Test 1", null));
-        clients.add(new SimpleNewClientRequest("Test 1", "010-1111-222"));
-        return clients;
-    }
-
-    private static NewClientRequest createChangeRequest(Long changedGroupId, String changedName) {
+    private static NewClientRequest createRequest(Long groupId, String name) {
         NewClientRequest changedRequest = new NewClientRequest();
-        changedRequest.setClientName(changedName);
-        changedRequest.setGroupId(changedGroupId);
+        changedRequest.setClientName(name);
+        changedRequest.setGroupId(groupId);
         changedRequest.setLatitude(35d);
         changedRequest.setLongitude(127d);
 
         return changedRequest;
+    }
+
+    private void mockClientRepoSave() {
+        when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> {
+            Client savedClient = invocation.getArgument(0); // 저장되는 클라이언트 객체
+            ReflectionTestUtils.setField(savedClient, "id", clientId);
+            return savedClient;
+        });
     }
 }

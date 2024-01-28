@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.api;
 
+import com.map.gaja.client.application.ClientBulkService;
 import com.map.gaja.global.authentication.imageuploads.ImageAuthChecking;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.api.specification.ClientCommandApiSpecification;
@@ -38,6 +39,7 @@ import java.util.List;
 public class ClientController implements ClientCommandApiSpecification {
 
     private final ClientService clientService;
+    private final ClientBulkService clientBulkService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
     private final S3FileService fileService;
@@ -69,7 +71,7 @@ public class ClientController implements ClientCommandApiSpecification {
         ClientListAccessCheckDto accessCheck = new ClientListAccessCheckDto(loginEmail, groupId, clientIdsRequest.getClientIds());
         clientAccessVerifyService.verifyClientListAccess(accessCheck);
 
-        clientService.deleteBulkClient(groupId, clientIdsRequest.getClientIds());
+        clientBulkService.deleteBulkClient(groupId, clientIdsRequest.getClientIds());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -135,7 +137,7 @@ public class ClientController implements ClientCommandApiSpecification {
     ) {
         // 단순한 Client 정보 등록
         groupAccessVerifyService.verifyGroupAccess(clientBulkRequest.getGroupId(), loginEmail);
-        List<Long> response = clientService.saveSimpleClientList(clientBulkRequest, loginEmail);
+        List<Long> response = clientBulkService.saveSimpleClientList(clientBulkRequest, loginEmail);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

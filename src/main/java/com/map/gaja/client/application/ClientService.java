@@ -35,7 +35,6 @@ import static com.map.gaja.client.application.ClientConvertor.*;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
-    private final ClientBulkRepository clientBulkRepository;
     private final GroupRepository groupRepository;
 
     private final ClientQueryRepository clientQueryRepository;
@@ -81,6 +80,7 @@ public class ClientService {
         Client deletedClient = clientRepository.findClientWithGroupForUpdate(clientId)
                 .orElseThrow(() -> new ClientNotFoundException());
         Group group = deletedClient.getGroup();
+
         group.decreaseClientCount(1);
         deletedClient.removeClientImage();
 
@@ -171,54 +171,5 @@ public class ClientService {
      */
     private static boolean isUpdatedGroup(Client existingClient, NewClientRequest updateRequest) {
         return existingClient.getGroup().getId() != updateRequest.getGroupId();
-    }
-
-    public List<Long> saveSimpleClientList(SimpleClientBulkRequest bulkRequest, String loginEmail) {
-        User user = userRepository.findByEmail(loginEmail);
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, bulkRequest.getGroupId());
-
-        List<Client> savedClient = new ArrayList<>();
-        bulkRequest.getClients().forEach((clientRequest) -> {
-            savedClient.add(dtoToEntity(clientRequest, group, user));
-        });
-
-        increasingClientService.increaseByMany(group, securityUserGetter.getAuthority().get(0), savedClient.size());
-        clientRepository.saveAll(savedClient);
-        return savedClient.stream().mapToLong(Client::getId).boxed()
-                .collect(Collectors.toList());
-
-        /*
-         * 모바일의 빠른 진행을 위해 ID를 반환하도록 수정
-         * 만약 모바일에서 새로고침 기능이 완성된다면 해당 코드를 사용하고
-         * 반환타입을 void로 수정할 것
-         */
-        // clientBulkRepository.saveClientWithGroup(group, savedClient);
-    }
-
-    /**
-     * 파싱한 엑셀 데이터 저장.
-     * JPA와 관계없이 저장하기 때문에 ID를 반환하지 않음.
-     * 비동기로 처리한 정보를 받기 때문에 securityUserGetter.getAuthority()로 세션 정보 가져오기 불가능
-     */
-    public void saveClientExcelData(Long groupId, List<ParsedClientDto> excelData, List<Authority> authority, String loginEmail) {
-        User user = userRepository.findByEmail(loginEmail);
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, groupId);
-
-        List<Client> savedClient = new ArrayList<>();
-        excelData.forEach((clientData) -> savedClient.add(dtoToEntity(clientData, group, user)));
-
-        increasingClientService.increaseByMany(group, authority.get(0), savedClient.size());
-        clientBulkRepository.saveClientWithGroup(group, savedClient);
-    }
-
-    /**
-     * 그룹 내의 특정 고객들을 제거
-     */
-    public void deleteBulkClient(Long groupId, List<Long> clientIds) {
-        clientRepository.markClientImageAsDeleted(clientIds);
-        clientRepository.deleteClientsInClientIds(clientIds);
-
-        Group group = GroupServiceHelper.findGroupByIdForUpdating(groupRepository, groupId);
-        group.decreaseClientCount(clientIds.size());
     }
 }

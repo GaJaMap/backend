@@ -18,11 +18,11 @@ public class TestEntityCreator {
         String phoneNumber = "010-1111-" + sig;
         ClientAddress address = new ClientAddress("address " + sig, "detail " + sig);
         ClientLocation location = new ClientLocation(35d + pointSig * sigIdx, 125.0d + pointSig * sigIdx);
-        return Client.createWithLocation(name, phoneNumber, address, location, group, user);
+        return Client.createWithoutImage(name, phoneNumber, address, location, group, user);
     }
 
     public static Client createClientWithImage(String clientName, Group existingGroup, ClientImage existingImage, User user) {
-        return Client.createWithLocationAndImage(
+        return Client.createWithImage(
                 clientName, null,
                 new ClientAddress("Test Main Address", "Test Detail Address"),
                 new ClientLocation(35d, 125d),

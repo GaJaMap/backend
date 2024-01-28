@@ -1,5 +1,6 @@
 package com.map.gaja.client.presentation.web;
 
+import com.map.gaja.client.application.ClientBulkService;
 import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.domain.exception.InvalidClientRowDataException;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
@@ -50,6 +51,7 @@ public class WebClientController {
     private final Geocoder geocoder;
     private final FileValidator fileValidator;
     private final AuthenticationRepository getter;
+    private final ClientBulkService clientBulkService;
 
 
     @GetMapping("/")
@@ -110,7 +112,7 @@ public class WebClientController {
         Mono<Void> mono = geocoder.convertToCoordinatesAsync(clientExcelData);
 
         return mono.doOnSuccess(s -> { //비동기 작업 모두 성공할 경우 후처리
-                    clientService.saveClientExcelData(groupId, clientExcelData, authority, loginEmail);
+                    clientBulkService.saveClientExcelData(groupId, clientExcelData, authority, loginEmail);
                 })
                 .thenReturn(clientExcelData.size()); //저장 성공 수
     }

@@ -1,6 +1,7 @@
 package com.map.gaja.client.presentation.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.map.gaja.client.application.ClientBulkService;
 import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.infrastructure.file.FileParsingService;
 import com.map.gaja.client.infrastructure.file.FileValidator;
@@ -60,6 +61,9 @@ class WebClientControllerTest {
     ClientService clientService;
 
     @MockBean
+    ClientBulkService clientBulkService;
+
+    @MockBean
     GroupService groupService;
 
     @MockBean
@@ -110,7 +114,7 @@ class WebClientControllerTest {
                 .param("groupId", String.valueOf(groupId));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientService, times(1)).saveClientExcelData(groupId, successList, List.of(Authority.FREE), "test@gmail.com");
+        verify(clientBulkService, times(1)).saveClientExcelData(groupId, successList, List.of(Authority.FREE), "test@gmail.com");
     }
 
     @Test

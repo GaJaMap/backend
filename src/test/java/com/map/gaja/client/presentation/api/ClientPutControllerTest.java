@@ -2,6 +2,7 @@ package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.application.ClientAccessVerifyService;
+import com.map.gaja.client.application.ClientBulkService;
 import com.map.gaja.client.application.ClientQueryService;
 import com.map.gaja.client.application.ClientService;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
@@ -36,6 +37,8 @@ public class ClientPutControllerTest {
     @MockBean
     ClientService clientService;
     @MockBean
+    ClientBulkService bulkSavingService;
+    @MockBean
     ClientQueryService clientQueryService;
     @MockBean
     ClientAccessVerifyService clientAccessVerifyService;
@@ -48,6 +51,8 @@ public class ClientPutControllerTest {
     ClientRequestValidator clientRequestValidator;
     @MockBean
     AuthenticationRepository authenticationRepository;
+
+
 
     final String testUri = "/api/group/{groupId}/clients/{clientId}";
 
