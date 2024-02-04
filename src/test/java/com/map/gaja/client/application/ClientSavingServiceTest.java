@@ -38,7 +38,6 @@ class ClientSavingServiceTest {
 
     @Mock ClientRepository clientRepository;
     @Mock GroupRepository groupRepository;
-    @Mock IncreasingClientService increasingClientService;
     @Mock AuthenticationRepository securityUserGetter;
     @Mock UserRepository userRepository;
     @InjectMocks ClientSavingService clientSavingService;
@@ -73,7 +72,6 @@ class ClientSavingServiceTest {
     public void saveClientTest() throws Exception {
         // given
         NewClientRequest request = createRequest(groupId, changedName);
-        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(userRepository.findByEmail(any())).thenReturn(user);
         when(groupRepository.findByIdAndUserEmail(groupId, user.getEmail()))
                 .thenReturn(Optional.ofNullable(existingGroup));
@@ -87,7 +85,6 @@ class ClientSavingServiceTest {
         verify(userRepository).findByEmail(email);
         verify(groupRepository).findByIdAndUserEmail(groupId, user.getEmail());
         verify(clientRepository).save(any());
-        verify(increasingClientService).increaseByOne(existingGroup, Authority.FREE);
     }
 
     @Test
@@ -99,7 +96,6 @@ class ClientSavingServiceTest {
         NewClientRequest request = createRequest(existingGroup.getId(), changedName);
         request.setClientImage(TestEntityCreator.createMockFile(changedImageName));
 
-        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(groupRepository.findByIdAndUserEmail(groupId, email))
                 .thenReturn(Optional.ofNullable(existingGroup));
         mockClientRepoSave();
@@ -110,7 +106,6 @@ class ClientSavingServiceTest {
         verify(clientRepository).save(any());
         verify(userRepository).findByEmail(email);
         verify(groupRepository).findByIdAndUserEmail(groupId, email);
-        verify(increasingClientService).increaseByOne(existingGroup, Authority.FREE);
         assertThat(result.getClientId()).isEqualTo(clientId);
         assertThat(result.getImage().getFilePath()).contains(extension);
     }

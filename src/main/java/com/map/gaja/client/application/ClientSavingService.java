@@ -26,7 +26,6 @@ import static com.map.gaja.client.application.ClientConvertor.*;
 public class ClientSavingService {
     private final ClientRepository clientRepository;
     private final GroupRepository groupRepository;
-    private final IncreasingClientService increasingClientService;
     private final AuthenticationRepository securityUserGetter;
     private final UserRepository userRepository;
 
@@ -41,7 +40,6 @@ public class ClientSavingService {
                 .orElseThrow(GroupNotFoundException::new);
         Client client = dtoToEntity(clientRequest, group, user);
         clientRepository.save(client);
-        increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
         return entityToOverviewDto(client);
     }
 
@@ -60,7 +58,6 @@ public class ClientSavingService {
         Client client = dtoToEntity(clientRequest, group, user, clientImage);
 
         clientRepository.save(client);
-        increasingClientService.increaseByOne(group, securityUserGetter.getAuthority().get(0));
         return entityToOverviewDto(client);
     }
 }
