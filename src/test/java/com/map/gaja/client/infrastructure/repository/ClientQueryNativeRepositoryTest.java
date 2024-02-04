@@ -176,4 +176,16 @@ class ClientQueryNativeRepositoryTest {
                 .isEqualTo(group2ClientList.size());
     }
 
+    @Test
+    @DisplayName("사용자가 최근에 참조한 특정 그룹에 속해 있는 Client를 조회한다")
+    void findRecentGroupClients() {
+        // when
+        List<ClientOverviewResponse> result = clientQueryRepository.findRecentGroupClients(group1.getId(), user.getAuthority().getClientLimitCount());
+
+        // then
+        assertThat(result.stream()
+                .filter(c -> c.getGroupInfo().getGroupId().equals(group1.getId()))
+                .count())
+                .isEqualTo(group1ClientList.size());
+    }
 }
