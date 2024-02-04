@@ -3,10 +3,8 @@ package com.map.gaja.client.application;
 import com.map.gaja.client.domain.model.ClientImage;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.authentication.AuthenticationRepository;
-import com.map.gaja.group.application.util.GroupServiceHelper;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
 import com.map.gaja.group.domain.model.Group;
-import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
@@ -80,7 +78,7 @@ public class ClientUpdatingService {
 
         updateClientGroupIfChanged(updateRequest, existingClient);
         ClientUpdater.updateClient(existingClient, updateRequest);
-        existingClient.removeClientImage();
+        existingClient.removeImage();
 
         return entityToOverviewDto(existingClient);
     }

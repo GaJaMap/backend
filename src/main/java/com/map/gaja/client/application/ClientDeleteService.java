@@ -18,7 +18,7 @@ public class ClientDeleteService {
         Group group = deletedClient.getGroup();
 
         group.decreaseClientCount(1);
-        deletedClient.removeClientImage();
+        deletedClient.removeImage();
 
         clientRepository.delete(deletedClient);
     }

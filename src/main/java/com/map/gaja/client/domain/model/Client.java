@@ -117,11 +117,11 @@ public class Client extends BaseTimeEntity {
     }
 
     public void updateImage(ClientImage image) {
-        removeClientImage();
+        removeImage();
         this.clientImage = image;
     }
 
-    public void removeClientImage() {
+    public void removeImage() {
         if (clientImage == null) {
             return;
         }
