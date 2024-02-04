@@ -7,6 +7,7 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.global.authentication.AuthenticationRepository;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.domain.service.IncreasingClientService;
 import com.map.gaja.group.infrastructure.GroupRepository;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -40,6 +42,10 @@ class ClientSavingServiceTest {
     @Mock AuthenticationRepository securityUserGetter;
     @Mock UserRepository userRepository;
     @InjectMocks ClientSavingService clientSavingService;
+
+    @Mock ApplicationEventPublisher publisher;
+    @InjectMocks
+    Events events;
 
 
     Long clientId = 1L, groupId = 1L;
