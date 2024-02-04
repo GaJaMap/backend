@@ -69,7 +69,8 @@ class ClientSavingServiceTest {
         NewClientRequest request = createRequest(groupId, changedName);
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
         when(userRepository.findByEmail(any())).thenReturn(user);
-        when(groupRepository.findGroupByIdForUpdate(any())).thenReturn(Optional.ofNullable(existingGroup));
+        when(groupRepository.findByIdAndUserEmail(groupId, user.getEmail()))
+                .thenReturn(Optional.ofNullable(existingGroup));
         mockClientRepoSave();
 
         // when
@@ -78,7 +79,7 @@ class ClientSavingServiceTest {
         // then
         assertThat(result.getClientId()).isEqualTo(clientId);
         verify(userRepository).findByEmail(email);
-        verify(groupRepository).findGroupByIdForUpdate(groupId);
+        verify(groupRepository).findByIdAndUserEmail(groupId, user.getEmail());
         verify(clientRepository).save(any());
         verify(increasingClientService).increaseByOne(existingGroup, Authority.FREE);
     }
@@ -93,7 +94,7 @@ class ClientSavingServiceTest {
         request.setClientImage(TestEntityCreator.createMockFile(changedImageName));
 
         when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
-        when(groupRepository.findGroupByIdForUpdate(existingGroup.getId()))
+        when(groupRepository.findByIdAndUserEmail(groupId, email))
                 .thenReturn(Optional.ofNullable(existingGroup));
         mockClientRepoSave();
         when(userRepository.findByEmail(any())).thenReturn(user);
@@ -102,7 +103,7 @@ class ClientSavingServiceTest {
 
         verify(clientRepository).save(any());
         verify(userRepository).findByEmail(email);
-        verify(groupRepository).findGroupByIdForUpdate(groupId);
+        verify(groupRepository).findByIdAndUserEmail(groupId, email);
         verify(increasingClientService).increaseByOne(existingGroup, Authority.FREE);
         assertThat(result.getClientId()).isEqualTo(clientId);
         assertThat(result.getImage().getFilePath()).contains(extension);

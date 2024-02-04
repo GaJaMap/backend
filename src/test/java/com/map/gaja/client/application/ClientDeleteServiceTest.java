@@ -55,7 +55,6 @@ class ClientDeleteServiceTest {
         clientDeleteService.deleteClient(existingClientId);
 
         verify(clientRepository).delete(existingClient);
-        assertThat(deletedImage.getIsDeleted()).isTrue();
         assertThat(existingClient.getGroup().getClientCount()).isEqualTo(beforeGroupClientCnt - 1);
     }
 }

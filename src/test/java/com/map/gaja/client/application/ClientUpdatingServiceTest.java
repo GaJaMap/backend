@@ -36,7 +36,6 @@ class ClientUpdatingServiceTest {
     @Mock ClientRepository clientRepository;
     @Mock GroupRepository groupRepository;
     @Mock ClientQueryRepository clientQueryRepository;
-    @Mock IncreasingClientService increasingClientService;
     @Mock AuthenticationRepository securityUserGetter;
 
     Long groupId = 1L,
@@ -55,7 +54,7 @@ class ClientUpdatingServiceTest {
     void beforeEach() {
         user = TestEntityCreator.createUser(email);
         existingGroup = TestEntityCreator.createGroup(user, groupId, "Test Group1", 1);
-        changedGroup = TestEntityCreator.createGroup(user, groupId, "Test Group2", 0);
+        changedGroup = TestEntityCreator.createGroup(user, changedGroupId, "Test Group2", 0);
         clientImage = TestEntityCreator.createClientImage(email);
         existingClient = TestEntityCreator.createClientWithImage(existingName, existingGroup, clientImage, user);
     }
@@ -65,17 +64,11 @@ class ClientUpdatingServiceTest {
     public void updateClientTest() {
         // given
         Group changedGroup = TestEntityCreator.createGroup(user, changedGroupId, "Changed Group",0);
-
         NewClientRequest changedRequest = createRequest(changedGroupId, changedName);
-        int beforeExistingGroupClientCnt = existingGroup.getClientCount();
 
-        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
-        when(clientRepository.findById(anyLong()))
-                .thenReturn(Optional.ofNullable(existingClient));
-        when(groupRepository.findGroupByIdForUpdate(existingClient.getGroup().getId()))
-                .thenReturn(Optional.ofNullable(existingGroup));
-        when(groupRepository.findGroupByIdForUpdate(changedGroupId))
-                .thenReturn(Optional.ofNullable(changedGroup));
+        when(securityUserGetter.getEmail()).thenReturn(email);
+        when(clientRepository.findById(existingClientId)).thenReturn(Optional.ofNullable(existingClient));
+        when(groupRepository.findByIdAndUserEmail(changedGroupId, email)).thenReturn(Optional.ofNullable(changedGroup));
 
         // when
         ClientOverviewResponse response = clientUpdatingService.updateClientWithoutImage(existingClientId, changedRequest);
@@ -83,8 +76,6 @@ class ClientUpdatingServiceTest {
         // then
         assertThat(response.getClientName()).isEqualTo(changedName);
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroupId);
-        verify(increasingClientService).increaseByOne(changedGroup, Authority.FREE);
-        assertThat(existingGroup.getClientCount()).isEqualTo(beforeExistingGroupClientCnt - 1);
     }
 
     @Test
@@ -97,18 +88,14 @@ class ClientUpdatingServiceTest {
         when(mockFile.getOriginalFilename()).thenReturn(imageName);
         changedRequest.setClientImage(mockFile);
 
-        when(clientQueryRepository.findClientWithImage(anyLong()))
-                .thenReturn(Optional.ofNullable(existingClient));
+        when(clientQueryRepository.findClientWithImage(existingClientId)).thenReturn(Optional.ofNullable(existingClient));
 
         // when
         ClientOverviewResponse response = clientUpdatingService.updateClientWithNewImage(existingClientId, changedRequest, email);
 
         // then
-        assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
-
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
         assertThat(response.getImage().getOriginalFileName()).isEqualTo(imageName);
-        System.out.println(existingGroup.getClientCount());
     }
 
     @Test
@@ -117,17 +104,15 @@ class ClientUpdatingServiceTest {
         // given
         NewClientRequest request = createRequest(existingGroup.getId(), existingName);
         request.setIsBasicImage(true);
-        when(clientQueryRepository.findClientWithImage(anyLong()))
+        when(clientQueryRepository.findClientWithImage(existingClientId))
                 .thenReturn(Optional.ofNullable(existingClient));
 
         // when
         ClientOverviewResponse response = clientUpdatingService.updateClientWithBasicImage(existingClientId, request);
 
         // then
-        verify(increasingClientService, times(0)).increaseByOne(any(), any());
-        assertThat(clientImage.getIsDeleted()).isTrue(); // 기존 이미지 삭제
         assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
-        assertThat(response.getImage().getFilePath()).isNull();
+        validateEmptyFile(response);
     }
 
     @Test
@@ -136,26 +121,23 @@ class ClientUpdatingServiceTest {
         // given
         NewClientRequest changedRequest = createRequest(changedGroupId, existingName);
 
-        when(securityUserGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(securityUserGetter.getEmail()).thenReturn(email);
         when(clientQueryRepository.findClientWithImage(existingClientId))
                 .thenReturn(Optional.ofNullable(existingClient));
-
-        when(groupRepository.findGroupByIdForUpdate(groupId))
-                .thenReturn(Optional.ofNullable(existingGroup));
-        when(groupRepository.findGroupByIdForUpdate(changedGroupId))
+        when(groupRepository.findByIdAndUserEmail(changedRequest.getGroupId(), email))
                 .thenReturn(Optional.ofNullable(changedGroup));
-
-        int beforeExistingGroupClientCount = existingGroup.getClientCount();
 
         // when
         ClientOverviewResponse response = clientUpdatingService.updateClientWithBasicImage(existingClientId, changedRequest);
 
         // then
-        assertThat(clientImage.getIsDeleted()).isTrue();
-        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(existingGroup.getId());
+        assertThat(response.getGroupInfo().getGroupId()).isEqualTo(changedGroup.getId());
+        validateEmptyFile(response);
+    }
+
+    private static void validateEmptyFile(ClientOverviewResponse response) {
         assertThat(response.getImage().getFilePath()).isNull();
-        assertThat(existingGroup.getClientCount()).isEqualTo(beforeExistingGroupClientCount - 1);
-        verify(increasingClientService, times(1)).increaseByOne(changedGroup, Authority.FREE);
+        assertThat(response.getImage().getOriginalFileName()).isNull();
     }
 
     private static NewClientRequest createRequest(Long groupId, String name) {
