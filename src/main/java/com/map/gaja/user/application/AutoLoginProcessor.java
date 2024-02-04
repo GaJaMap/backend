@@ -1,7 +1,5 @@
 package com.map.gaja.user.application;
 
-import com.map.gaja.client.application.ClientConvertor;
-import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
@@ -18,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.map.gaja.user.application.UserServiceHelper.findByEmailAndActive;
+import static com.map.gaja.user.application.UserServiceHelper.findById;
 import static com.map.gaja.user.constant.UserConstant.WHOLE_GROUP_INFO;
 
 @Service
@@ -30,26 +28,27 @@ public class AutoLoginProcessor {
     private final S3UrlGenerator s3UrlGenerator;
 
     @Transactional(readOnly = true)
-    public AutoLoginResponse process(String email) {
-        User user = findByEmailAndActive(userRepository, email);
+    public AutoLoginResponse process(Long userId) {
+        User user = findById(userRepository, userId);
 
         user.updateLastLoginDateIfDifferent(LocalDateTime.now());
 
         GroupInfo referenceGroupInfo = getReferenceGroupInfo(user.getReferenceGroupId());
 
-        ClientListResponse recentGroupClients = getReferenceGroupClients(email, user.getReferenceGroupId());
+        ClientListResponse recentGroupClients = getReferenceClients(user);
 
         return new AutoLoginResponse(recentGroupClients, s3UrlGenerator.getS3Url(), referenceGroupInfo);
     }
 
-    private ClientListResponse getReferenceGroupClients(String email, Long referenceGroupId) {
-        if (isWholeGroup(referenceGroupId)) {
-            List<ClientOverviewResponse> clientList = clientQueryRepository.findActiveClientByEmail(email, null);
+    private ClientListResponse getReferenceClients(User user) {
+        if (isWholeGroup(user.getReferenceGroupId())) {
+            List<ClientOverviewResponse> clientList = clientQueryRepository.findWholeGroupClients(user.getId(), user.getAuthority().getClientLimitCount());
             return new ClientListResponse(clientList);
         }
 
-        List<Client> clients = clientQueryRepository.findByGroup_Id(referenceGroupId, null);
-        return ClientConvertor.entityToDto(clients);
+        List<ClientOverviewResponse> clientList = clientQueryRepository.findRecentGroupClients(user.getReferenceGroupId(), user.getAuthority().getClientLimitCount());
+        return new ClientListResponse(clientList);
+
     }
 
     private GroupInfo getReferenceGroupInfo(Long referenceGroupId) {
