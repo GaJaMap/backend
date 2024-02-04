@@ -37,24 +37,14 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @WebMvcTest(ClientSavingController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class ClientPostControllerTest {
+public class ClientSavingControllerTest {
     @Autowired
     MockMvc mvc;
 
     @MockBean
-    ClientUpdatingService clientUpdatingService;
-    @MockBean
     ClientBulkService clientBulkService;
     @MockBean
-    ClientDeleteService clientDeleteService;
-    @MockBean
-    ClientQueryService clientQueryService;
-    @MockBean
-    ClientAccessVerifyService clientAccessVerifyService;
-    @MockBean
     GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    S3FileService fileService;
     @MockBean
     ClientRequestValidator clientRequestValidator;
     @MockBean
@@ -83,25 +73,6 @@ public class ClientPostControllerTest {
         mockRequest.param("isBasicImage", String.valueOf(true));
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
-    }
-
-    @Test
-    @DisplayName("이미지와 함께 고객 등록 중 이미지 예외")
-    void addClientWithImageFailTest() throws Exception {
-        String testUrl = "/api/clients";
-        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
-        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
-        ClientRequestCreator.setNormalField(mockRequest, request);
-        doThrow(InvalidFileException.class).when(fileService).storeFile(any(),any());
-        mockRequest.param("isBasicImage", String.valueOf(false));
-
-        ClientOverviewResponse response = new ClientOverviewResponse();
-        StoredFileDto fileDto = new StoredFileDto("test", "test");
-        response.setImage(fileDto);
-        when(clientSavingService.saveClientWithImage(any(),any())).thenReturn(response);
-
-        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
-        verify(clientSavingService, times(1)).saveClientWithImage(any(), any());
     }
 
     @Test

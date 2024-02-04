@@ -27,7 +27,6 @@ public interface ClientUpdatingApiSpecification {
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ClientOverviewResponse.class))),
-                    @ApiResponse(responseCode = "206", description = "부분 성공 - 이미지 저장은 실패. DB에 저장 실패한 URL이 반환되기 때문에 사용자에게 변경을 권유해야함", content = @Content(schema = @Schema(implementation = ClientOverviewResponse.class))),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ValidationErrorResponse.class)))),
                     @ApiResponse(responseCode = "403", description = "Free 등급 사용자 이미지 업로드 제한", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
                     @ApiResponse(responseCode = "415", description = "서버에서 지원하지 않는 파일 형식", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),

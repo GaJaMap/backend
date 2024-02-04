@@ -35,7 +35,6 @@ public class ClientSavingController implements ClientSavingApiSpecification {
 
     private final ClientBulkService clientBulkService;
     private final GroupAccessVerifyService groupAccessVerifyService;
-    private final S3FileService fileService;
     private final ClientRequestValidator clientRequestValidator;
     private final ClientSavingService clientSavingService;
 
@@ -67,30 +66,12 @@ public class ClientSavingController implements ClientSavingApiSpecification {
         clientRequestValidator.validateNewClientRequestFields(clientRequest, bindingResult);
         groupAccessVerifyService.verifyGroupAccess(clientRequest.getGroupId(), loginEmail);
 
-        if (isEmptyFile(clientRequest.getClientImage())) {
+        if (clientRequest.getClientImage() == null || clientRequest.getClientImage().isEmpty()) {
             // 이미지를 등록하지 않음.
             return new ResponseEntity<>(clientSavingService.saveClient(clientRequest, loginEmail), HttpStatus.CREATED);
         }
 
         ClientOverviewResponse response = clientSavingService.saveClientWithImage(clientRequest, loginEmail);
-        if (storeImage(clientRequest, response.getImage())) {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<>(response, HttpStatus.PARTIAL_CONTENT);
-    }
-
-    private boolean storeImage(NewClientRequest clientRequest, StoredFileDto newFileDto) {
-        try {
-            fileService.storeFile(newFileDto, clientRequest.getClientImage());// 임시 UUID 위치로 실제 파일 저장
-        } catch (Exception e) {
-            log.warn("이미지 관련 오류가 발생. clientImage에 저장된 임시 saved_path 필드 조치 필요");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isEmptyFile(MultipartFile newImage) {
-        return newImage == null || newImage.isEmpty();
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

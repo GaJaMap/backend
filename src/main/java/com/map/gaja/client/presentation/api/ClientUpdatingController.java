@@ -38,7 +38,6 @@ public class ClientUpdatingController implements ClientUpdatingApiSpecification 
     private final ClientUpdatingService clientUpdatingService;
     private final ClientAccessVerifyService clientAccessVerifyService;
     private final GroupAccessVerifyService groupAccessVerifyService;
-    private final S3FileService fileService;
     private final ClientRequestValidator clientRequestValidator;
 
     @PutMapping("/group/{groupId}/clients/{clientId}")
@@ -59,11 +58,7 @@ public class ClientUpdatingController implements ClientUpdatingApiSpecification 
         if (!clientRequest.getIsBasicImage() && !isEmptyFile(clientImage)) {
             // 기존 이미지를 제거하고 업데이트된 이미지를 사용한다.
             ClientOverviewResponse response = clientUpdatingService.updateClientWithNewImage(clientId, clientRequest, loginEmail); // 임시 UUID를 path로 저장
-            if (storeImage(clientRequest, response.getImage())) { // 이미지 저장 성공 여부
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }
-
-            return new ResponseEntity<>(response, HttpStatus.PARTIAL_CONTENT);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
         // 기본 이미지를 사용하고 있음
@@ -73,17 +68,6 @@ public class ClientUpdatingController implements ClientUpdatingApiSpecification 
         }
         // 기본 이미지를 사용하지 않지만, 새 이미지를 보내지 않음 => 기존 이미지를 사용함
         return new ResponseEntity<>(clientUpdatingService.updateClientWithoutImage(clientId, clientRequest), HttpStatus.OK);
-    }
-
-
-    private boolean storeImage(NewClientRequest clientRequest, StoredFileDto newFileDto) {
-        try {
-            fileService.storeFile(newFileDto, clientRequest.getClientImage());// 임시 UUID 위치로 실제 파일 저장
-        } catch (Exception e) {
-            log.warn("이미지 관련 오류가 발생. clientImage에 저장된 임시 saved_path 필드 조치 필요");
-            return false;
-        }
-        return true;
     }
 
     private void verifyUpdateClientRequest(ClientAccessCheckDto accessCheck, NewClientRequest clientRequest) {

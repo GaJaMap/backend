@@ -27,27 +27,16 @@ import static org.mockito.Mockito.when;
 
 @WebMvcTest(ClientUpdatingController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class ClientPutControllerTest {
+public class ClientUpdatingControllerTest {
     @Autowired
     MockMvc mvc;
 
     @MockBean
     ClientUpdatingService clientUpdatingService;
     @MockBean
-    ClientDeleteService clientDeleteService;
-    @MockBean
-    ClientSavingService clientSavingService;
-    @MockBean
-    ClientBulkService bulkSavingService;
-    @MockBean
-    ClientQueryService clientQueryService;
-    @MockBean
     ClientAccessVerifyService clientAccessVerifyService;
     @MockBean
     GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    S3FileService fileService;
-
     @MockBean
     ClientRequestValidator clientRequestValidator;
     @MockBean
@@ -88,24 +77,6 @@ public class ClientPutControllerTest {
         when(clientUpdatingService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(clientUpdatingService, times(1)).updateClientWithNewImage(any(), any(), any());
-    }
-
-    @Test
-    @DisplayName("고객 이미지 변경 중 이미지 예외")
-    void updateClientOtherImageFail() throws Exception {
-        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
-        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPutRequestWithImage(testUri, groupId, clientId);
-        ClientRequestCreator.setNormalField(mockRequest, request);
-        doThrow(InvalidFileException.class).when(fileService).storeFile(any(),any());
-        mockRequest.param("isBasicImage", String.valueOf(false));
-
-        ClientOverviewResponse response = new ClientOverviewResponse();
-        StoredFileDto fileDto = new StoredFileDto("test", "test");
-        response.setImage(fileDto);
-        when(clientUpdatingService.updateClientWithNewImage(any(),any(),any())).thenReturn(response);
-
-        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
         verify(clientUpdatingService, times(1)).updateClientWithNewImage(any(), any(), any());
     }
 
