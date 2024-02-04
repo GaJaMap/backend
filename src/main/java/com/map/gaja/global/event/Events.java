@@ -14,6 +14,10 @@ public class Events {
     }
 
     public static void raise(Object event) {
+        if (publisher == null) {
+            return;
+        }
+
         publisher.publishEvent(event);
     }
 }
