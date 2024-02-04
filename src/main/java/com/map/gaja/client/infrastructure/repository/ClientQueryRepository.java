@@ -273,4 +273,30 @@ public class ClientQueryRepository {
     private static BooleanExpression isClientInGroup(long groupId) {
         return client.group.id.eq(groupId);
     }
+
+    public List<ClientOverviewResponse> findWholeGroupClients(Long userId, Integer limit) {
+        List<ClientOverviewResponse> result = query
+                .select(
+                        Projections.constructor(ClientOverviewResponse.class,
+                                client.id,
+                                Projections.constructor(GroupInfoDto.class, client.group.id, client.group.name),
+                                client.name,
+                                client.phoneNumber,
+                                Projections.constructor(AddressDto.class, client.address.address, client.address.detail),
+                                Projections.constructor(LocationDto.class, client.location.location),
+                                Projections.constructor(StoredFileDto.class, client.clientImage.savedPath, client.clientImage.originalName),
+                                client.createdAt
+                        )
+                )
+                .from(client)
+                .leftJoin(client.clientImage, clientImage)
+                .join(client.group, group)
+                .where(client.user.id.eq(userId).and(client.group.user.id.eq(userId)))
+                .orderBy(client.id.desc())
+                .limit(limit)
+                .fetch();
+
+        return result;
+    }
+
 }
