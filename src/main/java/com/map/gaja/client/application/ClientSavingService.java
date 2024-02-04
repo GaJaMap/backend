@@ -16,10 +16,12 @@ import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.map.gaja.client.application.ClientConvertor.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ClientSavingService {
     private final ClientRepository clientRepository;

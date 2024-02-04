@@ -6,8 +6,10 @@ import com.map.gaja.client.infrastructure.repository.ClientRepository;
 import com.map.gaja.group.domain.model.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ClientDeleteService {
     private final ClientRepository clientRepository;

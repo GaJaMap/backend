@@ -15,6 +15,7 @@ import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import static com.map.gaja.client.application.ClientConvertor.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ClientBulkService {
     private final ClientRepository clientRepository;
