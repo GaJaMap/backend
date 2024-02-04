@@ -33,7 +33,6 @@ public class ClientImageListener {
         }
     }
 
-    @Transactional
     @EventListener(ClientImageDeletedEvent.class)
     public void deleteImage(ClientImageDeletedEvent event) {
         event.getClientImage().delete();
