@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(ClientController.class)
+@WebMvcTest(ClientSavingController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 public class ClientPostControllerTest {
     @Autowired

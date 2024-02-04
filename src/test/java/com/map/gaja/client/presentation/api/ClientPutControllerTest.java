@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest(ClientController.class)
+@WebMvcTest(ClientUpdatingController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 public class ClientPutControllerTest {
     @Autowired

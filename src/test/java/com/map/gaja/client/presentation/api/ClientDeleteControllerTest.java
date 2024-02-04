@@ -2,12 +2,9 @@ package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.gaja.client.application.*;
-import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.group.application.GroupAccessVerifyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,31 +25,19 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(ClientController.class)
+@WebMvcTest(ClientDeleteController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-class ClientControllerTest {
+class ClientDeleteControllerTest {
 
     @Autowired
     MockMvc mvc;
 
     @MockBean
-    ClientUpdatingService clientUpdatingService;
-    @MockBean
     ClientBulkService clientBulkService;
     @MockBean
     ClientDeleteService clientDeleteService;
     @MockBean
-    ClientSavingService clientSavingService;
-    @MockBean
-    ClientQueryService clientQueryService;
-    @MockBean
     ClientAccessVerifyService clientAccessVerifyService;
-    @MockBean
-    GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    S3FileService fileService;
-    @MockBean
-    ClientRequestValidator clientRequestValidator;
     @MockBean
     AuthenticationRepository authenticationRepository;
 
