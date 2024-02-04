@@ -65,7 +65,6 @@ public class ClientUpdatingService {
 
         updateClientGroupIfChanged(updateRequest, existingClient);
         ClientUpdater.updateClient(existingClient, updateRequest);
-        existingClient.removeClientImage();
         existingClient.updateImage(newImage);
 
         return entityToOverviewDto(existingClient);
