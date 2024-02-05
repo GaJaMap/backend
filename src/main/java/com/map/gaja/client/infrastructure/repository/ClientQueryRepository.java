@@ -291,7 +291,7 @@ public class ClientQueryRepository {
                 .from(client)
                 .leftJoin(client.clientImage, clientImage)
                 .join(client.group, group)
-                .where(client.user.id.eq(userId).and(client.group.user.id.eq(userId)))
+                .where(client.user.id.eq(userId))
                 .orderBy(client.id.desc())
                 .limit(limit)
                 .fetch();
@@ -299,7 +299,7 @@ public class ClientQueryRepository {
         return result;
     }
 
-    public List<ClientOverviewResponse> findRecentGroupClients(Long groupId, Integer limit) {
+    public List<ClientOverviewResponse> findRecentGroupClients(Long groupId) {
         List<ClientOverviewResponse> result = query
                 .select(
                         Projections.constructor(ClientOverviewResponse.class,
@@ -318,7 +318,6 @@ public class ClientQueryRepository {
                 .join(client.group, group)
                 .where(client.group.id.eq(groupId))
                 .orderBy(client.id.desc())
-                .limit(limit)
                 .fetch();
 
         return result;

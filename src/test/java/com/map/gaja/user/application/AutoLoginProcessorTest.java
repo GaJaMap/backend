@@ -95,14 +95,14 @@ class AutoLoginProcessorTest {
                 .willReturn(Optional.of(user));
         given(groupRepository.findGroupInfoById(anyLong()))
                 .willReturn(Optional.of(groupInfo));
-        given(clientQueryRepository.findRecentGroupClients(anyLong(), anyInt()))
+        given(clientQueryRepository.findRecentGroupClients(anyLong()))
                 .willReturn(clients);
 
         // when
         autoLoginProcessor.process(userId);
 
         // then
-        verify(clientQueryRepository).findRecentGroupClients(user.getReferenceGroupId(), user.getAuthority().getClientLimitCount());
+        verify(clientQueryRepository).findRecentGroupClients(user.getReferenceGroupId());
         verify(groupRepository).findGroupInfoById(user.getReferenceGroupId());
     }
 }

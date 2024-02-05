@@ -46,7 +46,7 @@ public class AutoLoginProcessor {
             return new ClientListResponse(clientList);
         }
 
-        List<ClientOverviewResponse> clientList = clientQueryRepository.findRecentGroupClients(user.getReferenceGroupId(), user.getAuthority().getClientLimitCount());
+        List<ClientOverviewResponse> clientList = clientQueryRepository.findRecentGroupClients(user.getReferenceGroupId());
         return new ClientListResponse(clientList);
 
     }
