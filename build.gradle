@@ -173,6 +173,9 @@ dependencies {
 	implementation 'io.github.resilience4j:resilience4j-circuitbreaker:1.7.1'
 	testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.0'
 
+	// slack
+	implementation 'com.github.maricn:logback-slack-appender:1.6.1'
+
 	compileOnly 'org.projectlombok:lombok'
 //	runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly 'org.postgresql:postgresql' // DB 변경
