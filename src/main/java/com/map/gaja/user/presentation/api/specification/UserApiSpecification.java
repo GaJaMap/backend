@@ -53,7 +53,7 @@ public interface UserApiSpecification {
 
     @Operation(summary = "앱 자동로그인 처리(앱 실행할 때마다 요청)",
             parameters = {
-                    @Parameter(name = "JSESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
+                    @Parameter(name = "SESSIONID", description = "세션 ID", in = ParameterIn.HEADER),
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "사용자가 최근에 참조한 그룹정보와, 그룹에 속한 고객들 응답"),
@@ -61,6 +61,6 @@ public interface UserApiSpecification {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             }
     )
-    ResponseEntity<AutoLoginResponse> autoLogin(@Parameter(hidden = true) String email);
+    ResponseEntity<AutoLoginResponse> autoLogin(@Parameter(hidden = true) Long userId);
 
 }

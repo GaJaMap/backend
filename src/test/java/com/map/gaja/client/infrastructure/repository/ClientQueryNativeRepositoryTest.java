@@ -27,7 +27,8 @@ class ClientQueryNativeRepositoryTest {
     @Autowired
     ClientQueryRepository clientQueryRepository;
 
-    @Autowired ClientRepository clientRepository;
+    @Autowired
+    ClientRepository clientRepository;
 
     @Autowired
     EntityManager em;
@@ -78,7 +79,7 @@ class ClientQueryNativeRepositoryTest {
         List<Long> groupIdList = new ArrayList<>();
         groupIdList.add(groupId);
 
-        List<ClientOverviewResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
+        List<ClientOverviewResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request, nameKeyword);
 
         assertThat(result.size()).isEqualTo(group2ClientList.size());
         double beforeDistance = -1;
@@ -105,7 +106,7 @@ class ClientQueryNativeRepositoryTest {
         groupIdList.add(groupId1);
         groupIdList.add(groupId2);
 
-        List<ClientOverviewResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request,nameKeyword);
+        List<ClientOverviewResponse> result = clientQueryRepository.findClientByConditions(groupIdList, request, nameKeyword);
 
         assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
         result.forEach((client) -> {
@@ -153,5 +154,38 @@ class ClientQueryNativeRepositoryTest {
         result.forEach((client) -> {
             assertThat(client.getClientName()).contains(nameCond);
         });
+    }
+
+    @Test
+    @DisplayName("사용자가 최근에 참조한 전체 그룹에 속해 있는 Client를 조회한다")
+    void findWholeGroupClients() {
+        // when
+        List<ClientOverviewResponse> result = clientQueryRepository.findWholeGroupClients(user.getId(), user.getAuthority().getClientLimitCount());
+
+        // then
+        assertThat(result.size()).isEqualTo(group1ClientList.size() + group2ClientList.size());
+
+        assertThat(result.stream()
+                .filter(c -> c.getGroupInfo().getGroupId().equals(group1.getId()))
+                .count())
+                .isEqualTo(group1ClientList.size());
+
+        assertThat(result.stream()
+                .filter(c -> c.getGroupInfo().getGroupId().equals(group2.getId()))
+                .count())
+                .isEqualTo(group2ClientList.size());
+    }
+
+    @Test
+    @DisplayName("사용자가 최근에 참조한 특정 그룹에 속해 있는 Client를 조회한다")
+    void findRecentGroupClients() {
+        // when
+        List<ClientOverviewResponse> result = clientQueryRepository.findRecentGroupClients(group1.getId());
+
+        // then
+        assertThat(result.stream()
+                .filter(c -> c.getGroupInfo().getGroupId().equals(group1.getId()))
+                .count())
+                .isEqualTo(group1ClientList.size());
     }
 }

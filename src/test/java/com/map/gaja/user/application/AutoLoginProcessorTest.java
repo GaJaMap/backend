@@ -1,11 +1,11 @@
 package com.map.gaja.user.application;
 
-import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
+import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,31 +45,35 @@ class AutoLoginProcessorTest {
     @DisplayName("사용자가 최근에 참조한 전체 그룹 조회")
     void findWholeGroup() {
         // given
-        String email = "test@gmail.com";
-        User user = new User(email);
+        Long userId = 1L;
+        User user = User.builder()
+                .id(userId)
+                .lastLoginDate(LocalDateTime.now())
+                .authority(Authority.FREE)
+                .build();
         List<ClientOverviewResponse> clientList = new ArrayList<>();
 
-        given(clientQueryRepository.findActiveClientByEmail(email, null))
-                .willReturn(clientList);
-
-        given(userRepository.findByEmailAndActive(email))
+        given(userRepository.findById(anyLong()))
                 .willReturn(Optional.of(user));
 
+        given(clientQueryRepository.findWholeGroupClients(anyLong(), anyInt()))
+                .willReturn(clientList);
+
         // when
-        autoLoginProcessor.process(email);
+        autoLoginProcessor.process(userId);
 
         // then
-        verify(clientQueryRepository).findActiveClientByEmail(email, null);
+        verify(clientQueryRepository).findWholeGroupClients(userId, user.getAuthority().getClientLimitCount());
     }
 
     @Test
     @DisplayName("사용자가 최근에 참조한 특정 그룹 조회")
     void findGroup() {
         // given
-        String email = "test@gmail.com";
-        User user = new User(email);
+        Long userId = 1L;
+        User user = new User("test@gmail.com");
         user.accessGroup(1L);
-        List<Client> clients = new ArrayList<>();
+        List<ClientOverviewResponse> clients = new ArrayList<>();
         GroupInfo groupInfo = new GroupInfo() {
             @Override
             public Long getGroupId() {
@@ -86,18 +91,18 @@ class AutoLoginProcessorTest {
             }
         };
 
-        given(userRepository.findByEmailAndActive(email))
+        given(userRepository.findById(anyLong()))
                 .willReturn(Optional.of(user));
-        given(groupRepository.findGroupInfoById(user.getReferenceGroupId()))
+        given(groupRepository.findGroupInfoById(anyLong()))
                 .willReturn(Optional.of(groupInfo));
-        given(clientQueryRepository.findByGroup_Id(user.getReferenceGroupId(), null))
+        given(clientQueryRepository.findRecentGroupClients(anyLong()))
                 .willReturn(clients);
 
         // when
-        autoLoginProcessor.process(email);
+        autoLoginProcessor.process(userId);
 
         // then
-        verify(clientQueryRepository).findByGroup_Id(user.getReferenceGroupId(), null);
+        verify(clientQueryRepository).findRecentGroupClients(user.getReferenceGroupId());
         verify(groupRepository).findGroupInfoById(user.getReferenceGroupId());
     }
 }
