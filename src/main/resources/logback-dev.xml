@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="info">
-
     <!-- 날짜 / 스레드명 / 로깅레벨 / 로그 최대 글자수(36) / 메소드명:줄 / 로그메시지 -->
-    <property name="LOG_PATTERN_COLOR" value = "%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}.%method:%line) - %yellow(%msg%n)"></property>
-    <property name="LOG_PATTERN_WITHOUT_COLOR" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%method:%line - %msg%n" />
-    <property name="TIME_CHECK_LOG_PATTERN_COLOR" value = "%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %yellow(%msg%n)"></property>
+    <property name="LOG_PATTERN_COLOR"
+              value="%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}.%method:%line) - %yellow(%msg%n)"></property>
+    <property name="LOG_PATTERN_WITHOUT_COLOR"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%method:%line - %msg%n"/>
+    <property name="TIME_CHECK_LOG_PATTERN_COLOR"
+              value="%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %yellow(%msg%n)"></property>
 
     <!-- appender는 로그를 어떤 방식으로 넣을 것인지 설정 -->
     <appender name="TIME_CHECK" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -35,9 +37,11 @@
     <appender name="SERVICE_INFO" class="ch.qos.logback.core.FileAppender">
         <append>true</append>
         <file>logs/ServiceInfo.log</file>
+
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>DENY</onMatch>
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
         </filter>
 
         <encoder>
@@ -45,39 +49,37 @@
         </encoder>
     </appender>
 
-    <appender name="SERVICE_ERROR" class="ch.qos.logback.core.FileAppender">
-        <append>true</append>
-        <file>logs/ServiceError.log</file>
+    <!-- slack -->
+    <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-url"/>
+    <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+        <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg %n</pattern>
+        </layout>
+        <username>server-error</username>
+        <queueSize>3</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+
+    <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SLACK"/>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <encoder>
-            <pattern>${LOG_PATTERN_COLOR}</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="APPLICATION" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${LOG_PATTERN_COLOR}</pattern>
-        </encoder>
     </appender>
 
 
-    <!-- 분리된 로그 파일 로그 설정 -->
-    <logger name="com.map.gaja.global.schedule.DeletionTask" level="info" additivity="false">
-        <appender-ref ref="DeletionTask" /> <!-- 삭제 스케줄링 -->
+    <!-- 로그 지정 -->
+    <logger name="com.map.gaja.global.schedule.DeletionTask" level="INFO" additivity="false">
+        <appender-ref ref="DeletionTask"/> <!-- 삭제 스케줄링 -->
     </logger>
 
-    <logger name="com.map.gaja.global.log.TimeCheckLogAspect" level="info" additivity="false">
+    <logger name="com.map.gaja.global.log.TimeCheckLogAspect" level="INFO" additivity="false">
         <appender-ref ref="TIME_CHECK"></appender-ref> <!-- 로직 시간 측정 -->
     </logger>
 
-    <logger name="com.map.gaja" level="info" additivity="false">
-        <appender-ref ref="SERVICE_INFO" /> <!-- 서비스 운영 Info 로그 -->
-        <appender-ref ref="SERVICE_ERROR" /> <!-- 서비스 운영 Error 로그 -->
-    </logger>
-
-    <root level="info">
-        <appender-ref ref="APPLICATION" /> <!-- 프로젝트 실행 로그 -->
+    <root level="INFO">
+        <appender-ref ref="SERVICE_INFO"></appender-ref>
+        <appender-ref ref="ASYNC_SLACK"></appender-ref>
     </root>
 </configuration>
