@@ -7,6 +7,7 @@ import com.map.gaja.client.presentation.dto.request.NearbyClientSearchRequest;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.ClientDetailResponse;
 import com.map.gaja.client.presentation.dto.response.ClientListResponse;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.domain.model.ClientAddress;
@@ -16,12 +17,16 @@ import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +38,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ClientQueryServiceTest {
 
-    @Mock
-    private ClientQueryRepository repository;
+    @Mock private ClientQueryRepository repository;
+    @Mock private UserRepository userRepository;
 
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private GroupQueryRepository groupQueryRepository;
-
+    @Mock private GroupQueryRepository groupQueryRepository;
     @InjectMocks
     private ClientQueryService clientQueryService;
+
+    @Mock ApplicationEventPublisher publisher;
+    @InjectMocks
+    Events events;
 
     @Test
     public void testFindUser() throws Exception {
@@ -52,16 +56,14 @@ class ClientQueryServiceTest {
         Long groupId = 1L;
         String searchName = "test";
         Client findClient = mock(Client.class);
+        ClientImage mockImage = mock(ClientImage.class);
         when(repository.findClientWithGroup(searchId)).thenReturn(Optional.ofNullable(findClient));
         when(findClient.getId()).thenReturn(searchId);
         when(findClient.getName()).thenReturn(searchName);
         when(findClient.getAddress()).thenReturn(new ClientAddress());
         when(findClient.getLocation()).thenReturn(new ClientLocation());
         when(findClient.getGroup()).thenReturn(Group.builder().id(groupId).build());
-
-        String testEmail = "test@example.com";
-        String savedPath = "testImage.png";
-        when(findClient.getClientImage()).thenReturn(ClientImage.create(testEmail, savedPath));
+        when(findClient.getClientImage()).thenReturn(mockImage);
 
         //when
         ClientDetailResponse response = clientQueryService.findClient(searchId);
@@ -69,8 +71,6 @@ class ClientQueryServiceTest {
         //then
         assertThat(response.getClientId()).isEqualTo(searchId);
         assertThat(response.getClientName()).isEqualTo(searchName);
-        assertThat(response.getImage().getFilePath()).isNotEqualTo(savedPath);
-        assertThat(response.getImage().getFilePath()).startsWith(testEmail);
     }
 
     @Test

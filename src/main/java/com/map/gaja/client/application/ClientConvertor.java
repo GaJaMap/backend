@@ -74,7 +74,7 @@ public class ClientConvertor {
     protected static Client dtoToEntity(NewClientRequest request, Group group, User user) {
         AddressDto address = request.getAddress();
         LocationDto location = request.getLocation();
-        return new Client(
+        return Client.createWithoutImage(
                 request.getClientName(),
                 request.getPhoneNumber(),
                 dtoToVo(address),
@@ -84,8 +84,22 @@ public class ClientConvertor {
             );
     }
 
+    protected static Client dtoToEntity(NewClientRequest request, Group group, User user, ClientImage clientImage) {
+        AddressDto address = request.getAddress();
+        LocationDto location = request.getLocation();
+        return Client.createWithImage(
+                request.getClientName(),
+                request.getPhoneNumber(),
+                dtoToVo(address),
+                dtoToVo(location),
+                clientImage,
+                group,
+                user
+        );
+    }
+
     protected static Client dtoToEntity(SimpleNewClientRequest request, Group group, User user) {
-        return new Client(
+        return Client.create(
                 request.getClientName(),
                 request.getPhoneNumber(),
                 group,
@@ -96,7 +110,7 @@ public class ClientConvertor {
     protected static Client dtoToEntity(ParsedClientDto clientData, Group group, User user) {
         ClientAddress address = new ClientAddress(clientData.getAddress(), clientData.getAddressDetail());
         ClientLocation location = dtoToVo(clientData.getLocation());
-        return new Client(
+        return Client.createWithoutImage(
                 clientData.getName(),
                 clientData.getPhoneNumber(),
                 address,

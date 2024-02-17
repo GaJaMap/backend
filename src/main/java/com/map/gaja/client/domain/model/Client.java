@@ -1,5 +1,9 @@
 package com.map.gaja.client.domain.model;
 
+import com.map.gaja.client.event.ClientGroupUpdatedEvent;
+import com.map.gaja.client.event.ClientImageDeletedEvent;
+import com.map.gaja.client.event.GroupClientAddedEvent;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.global.auditing.entity.BaseTimeEntity;
 import com.map.gaja.user.domain.model.User;
@@ -39,29 +43,50 @@ public class Client extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Client(String name, String phoneNumber, Group group, User user) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        updateGroup(group);
-        this.user = user;
+    /** 전화번호를 통한 등록 시 */
+    public static Client create(
+            String name, String phoneNumber,
+            Group group, User user
+    ) {
+        validateRequiredFields(name, group, user);
+
+        Client client = new Client();
+        client.name = name;
+        client.phoneNumber = phoneNumber;
+        client.group = group;
+        client.user = user;
+
+        Events.raise(new GroupClientAddedEvent(group.getId(), user));
+        return client;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, User user) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        updateLocation(location, address);
-        updateGroup(group);
-        this.clientImage = null;
-        this.user = user;
+    /** 엑셀 파일 or 이미지 없는 사용자 등록 시 */
+    public static Client createWithoutImage(
+            String name, String phoneNumber,
+            ClientAddress address, ClientLocation location,
+            Group group, User user
+    ) {
+        Client client = create(name, phoneNumber, group, user);
+        client.updateLocation(location, address);
+        return client;
     }
 
-    public Client(String name, String phoneNumber, ClientAddress address, ClientLocation location, Group group, ClientImage clientImage, User user) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        updateLocation(location, address);
-        updateGroup(group);
-        this.clientImage = clientImage;
-        this.user = user;
+    /** 이미지 있는 사용자 등록 시 */
+    public static Client createWithImage(
+            String name, String phoneNumber,
+            ClientAddress address, ClientLocation location,
+            ClientImage clientImage,
+            Group group, User user
+    ) {
+        Client client = createWithoutImage(name, phoneNumber, address, location, group, user);
+        client.clientImage = clientImage;
+        return client;
+    }
+
+    private static void validateRequiredFields(String name, Group group, User user) {
+        if (name == null || group == null || user == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void updateWithoutClientImage(String name, String phoneNumber, ClientAddress address, ClientLocation location) {
@@ -70,8 +95,12 @@ public class Client extends BaseTimeEntity {
         updateLocation(location, address);
     }
 
-    public void updateGroup(Group group) {
-        this.group = group;
+    public void updateGroup(Group changedGroup) {
+        if(group == changedGroup)
+            return;
+
+        Events.raise(new ClientGroupUpdatedEvent(this.group.getId(), changedGroup.getId(), user));
+        this.group = changedGroup;
     }
 
     private void updateName(String name) {
@@ -88,15 +117,16 @@ public class Client extends BaseTimeEntity {
     }
 
     public void updateImage(ClientImage image) {
+        removeImage();
         this.clientImage = image;
     }
 
-    public void removeClientImage() {
+    public void removeImage() {
         if (clientImage == null) {
             return;
         }
 
-        clientImage.delete();
+        Events.raise(new ClientImageDeletedEvent(this.clientImage));
         this.clientImage = null;
     }
 }

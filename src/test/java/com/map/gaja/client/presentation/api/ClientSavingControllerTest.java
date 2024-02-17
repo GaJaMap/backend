@@ -1,9 +1,7 @@
 package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.ClientAccessVerifyService;
-import com.map.gaja.client.application.ClientQueryService;
-import com.map.gaja.client.application.ClientService;
+import com.map.gaja.client.application.*;
 import com.map.gaja.client.domain.exception.InvalidFileException;
 import com.map.gaja.client.infrastructure.s3.S3FileService;
 import com.map.gaja.client.application.validator.ClientRequestValidator;
@@ -37,26 +35,22 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(ClientController.class)
+@WebMvcTest(ClientSavingController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class ClientPostControllerTest {
+public class ClientSavingControllerTest {
     @Autowired
     MockMvc mvc;
 
     @MockBean
-    ClientService clientService;
-    @MockBean
-    ClientQueryService clientQueryService;
-    @MockBean
-    ClientAccessVerifyService clientAccessVerifyService;
+    ClientBulkService clientBulkService;
     @MockBean
     GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    S3FileService fileService;
     @MockBean
     ClientRequestValidator clientRequestValidator;
     @MockBean
     AuthenticationRepository authenticationRepository;
+    @MockBean
+    ClientSavingService clientSavingService;
 
     private ObjectMapper om;
 
@@ -82,25 +76,6 @@ public class ClientPostControllerTest {
     }
 
     @Test
-    @DisplayName("이미지와 함께 고객 등록 중 이미지 예외")
-    void addClientWithImageFailTest() throws Exception {
-        String testUrl = "/api/clients";
-        NewClientRequest request = ClientRequestCreator.createValidNewRequest(groupId);
-        MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
-        ClientRequestCreator.setNormalField(mockRequest, request);
-        doThrow(InvalidFileException.class).when(fileService).storeFile(any(),any());
-        mockRequest.param("isBasicImage", String.valueOf(false));
-
-        ClientOverviewResponse response = new ClientOverviewResponse();
-        StoredFileDto fileDto = new StoredFileDto("test", "test");
-        response.setImage(fileDto);
-        when(clientService.saveClientWithImage(any(),any())).thenReturn(response);
-
-        mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isPartialContent());
-        verify(clientService, times(1)).saveClientWithImage(any(), any());
-    }
-
-    @Test
     @DisplayName("이미지와 함께 고객 등록")
     void addClientWithImageTest() throws Exception {
         String testUrl = "/api/clients";
@@ -112,10 +87,10 @@ public class ClientPostControllerTest {
         ClientOverviewResponse response = new ClientOverviewResponse();
         StoredFileDto fileDto = new StoredFileDto("test", "test");
         response.setImage(fileDto);
-        when(clientService.saveClientWithImage(any(),any())).thenReturn(response);
+        when(clientSavingService.saveClientWithImage(any(),any())).thenReturn(response);
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isCreated());
-        verify(clientService, times(1)).saveClientWithImage(any(), any());
+        verify(clientSavingService, times(1)).saveClientWithImage(any(), any());
     }
 
     @Test
@@ -126,10 +101,10 @@ public class ClientPostControllerTest {
         MockHttpServletRequestBuilder mockRequest = ClientRequestCreator.createPostRequestWithImage(testUrl);
         ClientRequestCreator.setNormalField(mockRequest, request);
         mockRequest.param("isBasicImage", String.valueOf(false));
-        when(clientService.saveClientWithImage(any(), any())).thenThrow(new GroupNotFoundException());
+        when(clientSavingService.saveClientWithImage(any(), any())).thenThrow(new GroupNotFoundException());
 
         mvc.perform(mockRequest).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
-        verify(clientService, times(1)).saveClientWithImage(any(), any());
+        verify(clientSavingService, times(1)).saveClientWithImage(any(), any());
     }
 
     @Test
@@ -151,7 +126,7 @@ public class ClientPostControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated());
-        verify(clientService, times(1)).saveSimpleClientList(request, "test@gmail.com");
+        verify(clientBulkService, times(1)).saveSimpleClientList(request, "test@gmail.com");
     }
 
 }

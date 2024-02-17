@@ -1,15 +1,10 @@
 package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.ClientAccessVerifyService;
-import com.map.gaja.client.application.ClientQueryService;
-import com.map.gaja.client.application.ClientService;
-import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.application.validator.ClientRequestValidator;
+import com.map.gaja.client.application.*;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
 import com.map.gaja.global.authentication.AuthenticationRepository;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.group.application.GroupAccessVerifyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,25 +25,19 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(ClientController.class)
+@WebMvcTest(ClientDeleteController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-class ClientControllerTest {
+class ClientDeleteControllerTest {
 
     @Autowired
     MockMvc mvc;
 
     @MockBean
-    ClientService clientService;
+    ClientBulkService clientBulkService;
     @MockBean
-    ClientQueryService clientQueryService;
+    ClientDeleteService clientDeleteService;
     @MockBean
     ClientAccessVerifyService clientAccessVerifyService;
-    @MockBean
-    GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    S3FileService fileService;
-    @MockBean
-    ClientRequestValidator clientRequestValidator;
     @MockBean
     AuthenticationRepository authenticationRepository;
 
@@ -71,7 +60,7 @@ class ClientControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isNoContent());
-        verify(clientService, times(1)).deleteClient(clientId);
+        verify(clientDeleteService, times(1)).deleteClient(clientId);
     }
 
     @Test
@@ -89,7 +78,7 @@ class ClientControllerTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(new PrincipalDetails(1L, "test@gmail.com", "FREE")));
 
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isNoContent());
-        verify(clientService, times(1)).deleteBulkClient(groupId, clientIds);
+        verify(clientBulkService, times(1)).deleteBulkClient(groupId, clientIds);
     }
 
 //    @Test
