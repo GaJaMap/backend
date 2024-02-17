@@ -2,14 +2,18 @@ package com.map.gaja.memo.infrastructure;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.memo.domain.model.Memo;
 import com.map.gaja.memo.domain.model.MemoType;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -30,15 +34,20 @@ class MemoRepositoryTest {
     @Autowired
     EntityManager em;
 
+    @Mock
+    ApplicationEventPublisher publisher;
+    @InjectMocks
+    Events events;
+
     @Test
     @DisplayName("User가 가진 Memo를 조회한다.")
     void findByIdAndClientSuccess() {
         // given
         User user = TestEntityCreator.createUser("test@gmail.com");
         Group group = TestEntityCreator.createGroup(user, "group");
-        Client client = TestEntityCreator.createClient(0, group, user);
         em.persist(user);
         em.persist(group);
+        Client client = TestEntityCreator.createClient(0, group, user);
         em.persist(client);
         em.flush();
         em.clear();
@@ -57,9 +66,9 @@ class MemoRepositoryTest {
         // given
         User user = TestEntityCreator.createUser("test@gmail.com");
         Group group = TestEntityCreator.createGroup(user, "group");
-        Client client = TestEntityCreator.createClient(0, group, user);
         em.persist(user);
         em.persist(group);
+        Client client = TestEntityCreator.createClient(0, group, user);
         em.persist(client);
         em.flush();
         em.clear();
@@ -78,11 +87,11 @@ class MemoRepositoryTest {
         // given
         User user = TestEntityCreator.createUser("test@gmail.com");
         Group group = TestEntityCreator.createGroup(user, "group");
+        em.persist(user);
+        em.persist(group);
         Client client = TestEntityCreator.createClient(0, group, user);
         Memo memo = new Memo(null, MemoType.CALL, client, user);
         Memo memo2 = new Memo(null, MemoType.NAVIGATION, client, user);
-        em.persist(user);
-        em.persist(group);
         em.persist(client);
         em.persist(memo);
         em.persist(memo2);
@@ -104,10 +113,10 @@ class MemoRepositoryTest {
         // given
         User user = TestEntityCreator.createUser("test@gmail.com");
         Group group = TestEntityCreator.createGroup(user, "group");
-        Client client = TestEntityCreator.createClient(0, group, user);
-        Memo memo = new Memo(null, MemoType.CALL, client, user);
         em.persist(user);
         em.persist(group);
+        Client client = TestEntityCreator.createClient(0, group, user);
+        Memo memo = new Memo(null, MemoType.CALL, client, user);
         em.persist(client);
         em.persist(memo);
         em.flush();

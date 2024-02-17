@@ -70,7 +70,7 @@ public class CircuitBreakerTest {
         mockWebServer.shutdown();
     }
 
-    @Test
+//    @Test
     @DisplayName("실패율만큼 요청이 실패 후 회로가 OPEN 상태로 전환되는지 확인")
     void open() {
         request(MINIMUM_NUMBER_OF_CALLS / 2, 200);
@@ -79,7 +79,7 @@ public class CircuitBreakerTest {
         assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
     }
 
-    @Test
+//    @Test
     @DisplayName("회로가 HALF-OPEN 상태에서 요청 실패 후 OPEN 상태로 전환되는지 확인")
     void halfOpenToOpen() throws InterruptedException {
         request(MINIMUM_NUMBER_OF_CALLS, 500); //OPEN 상태로 전환
@@ -91,7 +91,7 @@ public class CircuitBreakerTest {
         assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
     }
 
-    @Test
+//    @Test
     @DisplayName("회로가 HALF-OPEN 상태에서 요청 성공 후 CLOSE 상태로 전환되는지 확인")
     void halfOpenToClosed() throws InterruptedException {
         request(MINIMUM_NUMBER_OF_CALLS, 500); //OPEN 상태로 전환

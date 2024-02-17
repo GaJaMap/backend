@@ -1,5 +1,6 @@
 package com.map.gaja.memo.application;
 
+import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
 import com.map.gaja.client.domain.model.Client;
 import com.map.gaja.client.infrastructure.repository.ClientRepository;
@@ -10,6 +11,7 @@ import com.map.gaja.memo.infrastructure.MemoRepository;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
 import com.map.gaja.memo.presentation.dto.response.MemoPageResponse;
 import com.map.gaja.memo.presentation.dto.response.MemoResponse;
+import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,8 +50,9 @@ class MemoServiceTest {
         Long userId = 1L;
         Long clientId = 1L;
         MemoCreateRequest request = new MemoCreateRequest("message", "CALL");
+        User testUser = TestEntityCreator.createUser("test@email.com");
         given(clientRepository.findByIdAndUser(anyLong(), anyLong()))
-                .willReturn(Optional.of(new Client("a", "a", null, null)));
+                .willReturn(Optional.of(mock(Client.class)));
 
         // when
         memoService.create(userId, clientId, request);
