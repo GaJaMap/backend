@@ -5,8 +5,10 @@ import com.map.gaja.group.domain.model.Group;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,8 @@ import static com.map.gaja.user.domain.model.QUser.*;
 @Repository
 @RequiredArgsConstructor
 public class GroupQueryRepository {
+    @Autowired
+    EntityManager em;
     private final JPAQueryFactory query;
 
     /**

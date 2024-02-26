@@ -1,5 +1,6 @@
 package com.map.gaja.user.infrastructure;
 
+import com.map.gaja.common.RepositoryTest;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +15,7 @@ import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
-class UserRepositoryTest {
+class UserRepositoryTest extends RepositoryTest {
     @Autowired
     UserRepository userRepository;
 
