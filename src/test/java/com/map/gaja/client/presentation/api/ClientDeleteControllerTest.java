@@ -1,20 +1,12 @@
 package com.map.gaja.client.presentation.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.*;
 import com.map.gaja.client.presentation.dto.request.ClientIdsRequest;
-import com.map.gaja.global.authentication.AuthenticationRepository;
+import com.map.gaja.common.ControllerTest;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,30 +17,9 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(ClientDeleteController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-class ClientDeleteControllerTest {
-
-    @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    ClientBulkService clientBulkService;
-    @MockBean
-    ClientDeleteService clientDeleteService;
-    @MockBean
-    ClientAccessVerifyService clientAccessVerifyService;
-    @MockBean
-    AuthenticationRepository authenticationRepository;
-
+class ClientDeleteControllerTest extends ControllerTest {
     Long groupId = 1L;
     Long clientId = 1L;
-    private ObjectMapper om;
-
-    @BeforeEach
-    void beforeEach() {
-        om = new ObjectMapper();
-    }
 
     @Test
     @DisplayName("고객 삭제 성공")
@@ -69,7 +40,7 @@ class ClientDeleteControllerTest {
         String testUrl = "/api/group/{groupId}/clients/bulk-delete";
         List<Long> clientIds = List.of(1L, 2L, 3L);
         ClientIdsRequest clientIdsRequest = new ClientIdsRequest(clientIds);
-        String jsonBody = om.writeValueAsString(clientIdsRequest);
+        String jsonBody = mapper.writeValueAsString(clientIdsRequest);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(testUrl, groupId)
                 .with(csrf())
