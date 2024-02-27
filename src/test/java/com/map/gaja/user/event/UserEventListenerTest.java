@@ -1,5 +1,6 @@
 package com.map.gaja.user.event;
 
+import com.map.gaja.common.EventTest;
 import com.map.gaja.global.event.Events;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,13 +13,7 @@ import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
-class UserEventListenerTest {
-    @Autowired
-    ApplicationEventPublisher publisher;
-
-    @MockBean
-    UserEventListener userEventListener;
+class UserEventListenerTest extends EventTest {
 
     @Test
     @DisplayName("로그인에 성공하면 이벤트 리스너가 실행된다.")
