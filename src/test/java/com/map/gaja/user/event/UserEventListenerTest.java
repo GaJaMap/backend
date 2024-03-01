@@ -1,13 +1,8 @@
 package com.map.gaja.user.event;
 
 import com.map.gaja.common.EventTest;
-import com.map.gaja.global.event.Events;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +17,7 @@ class UserEventListenerTest extends EventTest {
         LoginSucceededEvent loginSucceededEvent = new LoginSucceededEvent("email", "APP");
 
         // when
-        Events.raise(loginSucceededEvent);
+        publisher.publishEvent(loginSucceededEvent);
 
         // then
         verify(userEventListener).login(loginSucceededEvent);
@@ -35,7 +30,7 @@ class UserEventListenerTest extends EventTest {
         WithdrawnEvent withdrawnEvent = new WithdrawnEvent("email");
 
         // when
-        Events.raise(withdrawnEvent);
+        publisher.publishEvent(withdrawnEvent);
 
         // then
         verify(userEventListener).withdrawal(withdrawnEvent);
@@ -48,7 +43,7 @@ class UserEventListenerTest extends EventTest {
         AutoLoginSucceededEvent autoLoginSucceededEvent = new AutoLoginSucceededEvent(1L, LocalDateTime.now());
 
         // when
-        Events.raise(autoLoginSucceededEvent);
+        publisher.publishEvent(autoLoginSucceededEvent);
 
         // then
         verify(userEventListener).autoLogin(autoLoginSucceededEvent);
