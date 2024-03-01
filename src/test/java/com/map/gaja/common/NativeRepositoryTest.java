@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestNativeRepositoryConfig.class)
+@Import(TestQuerydslConfig.class)
 @Transactional
 public abstract class NativeRepositoryTest {
 }

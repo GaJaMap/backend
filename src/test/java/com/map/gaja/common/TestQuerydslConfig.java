@@ -4,6 +4,7 @@ import com.map.gaja.client.infrastructure.repository.ClientBulkRepository;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.NativeSqlCreator;
 import com.map.gaja.client.infrastructure.repository.querydsl.sql.PostgreSQLNativeSqlCreator;
+import com.map.gaja.group.infrastructure.GroupQueryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -14,7 +15,7 @@ import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 @TestConfiguration
-public class TestNativeRepositoryConfig {
+public class TestQuerydslConfig {
     @Autowired
     private DataSource dataSource;
 
@@ -44,5 +45,10 @@ public class TestNativeRepositoryConfig {
     @Bean
     public ClientBulkRepository clientBulkRepository() {
         return new ClientBulkRepository(jdbcTemplate());
+    }
+
+    @Bean
+    public GroupQueryRepository groupQueryRepository() {
+        return new GroupQueryRepository(jpaQueryFactory());
     }
 }
