@@ -1,21 +1,14 @@
 package com.map.gaja.group.presentation.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.global.authentication.AuthenticationRepository;
+import com.map.gaja.common.ControllerTest;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.group.application.GroupService;
 import com.map.gaja.group.presentation.dto.request.GroupCreateRequest;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -25,23 +18,7 @@ import java.nio.charset.Charset;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = GroupController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-class GroupControllerTest {
-    @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    GroupService groupService;
-
-    @MockBean
-    GroupController groupController;
-
-    @MockBean
-    AuthenticationRepository authenticationRepository;
-
-    @Autowired
-    ObjectMapper mapper;
+class GroupControllerTest extends ControllerTest {
 
     @Test
     @DisplayName("@Valid 테스트")

@@ -1,5 +1,6 @@
 package com.map.gaja.group.infrastructure;
 
+import com.map.gaja.common.RepositoryTest;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
 import com.map.gaja.user.domain.model.Authority;
@@ -18,9 +19,8 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Transactional
-class GroupRepositoryTest {
+
+class GroupRepositoryTest extends RepositoryTest {
     @Autowired
     GroupRepository groupRepository;
 

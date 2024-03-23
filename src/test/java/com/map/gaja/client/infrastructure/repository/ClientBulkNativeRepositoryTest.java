@@ -2,22 +2,19 @@ package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.common.NativeRepositoryTest;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
-@Transactional
-class ClientBulkNativeRepositoryTest {
+class ClientBulkNativeRepositoryTest extends NativeRepositoryTest {
 
     @Autowired
     ClientBulkRepository repository;

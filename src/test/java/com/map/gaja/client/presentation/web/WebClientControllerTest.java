@@ -1,31 +1,21 @@
 package com.map.gaja.client.presentation.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.ClientBulkService;
-import com.map.gaja.client.application.ClientUpdatingService;
-import com.map.gaja.client.infrastructure.file.FileParsingService;
-import com.map.gaja.client.infrastructure.file.FileValidator;
 import com.map.gaja.client.infrastructure.file.parser.dto.ParsedClientDto;
 import com.map.gaja.client.presentation.dto.request.subdto.LocationDto;
 import com.map.gaja.client.presentation.dto.response.InvalidExcelDataResponse;
-import com.map.gaja.global.authentication.AuthenticationRepository;
+import com.map.gaja.common.ControllerTest;
+
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.group.application.GroupAccessVerifyService;
-import com.map.gaja.group.application.GroupService;
-import com.map.gaja.client.infrastructure.geocode.Geocoder;
 import com.map.gaja.user.domain.model.Authority;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
+
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -42,42 +32,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(WebClientController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-class WebClientControllerTest {
+class WebClientControllerTest extends ControllerTest {
     private final String excelFilePath = "src/test/resources/static/file/sample-success.xlsx";
     private final String testUrl = "/api/clients/file";
-
-    @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    FileParsingService parsingService;
-
-    @MockBean
-    GroupAccessVerifyService groupAccessVerifyService;
-
-    @MockBean
-    ClientUpdatingService clientUpdatingService;
-
-    @MockBean
-    ClientBulkService clientBulkService;
-
-    @MockBean
-    GroupService groupService;
-
-    @MockBean
-    Geocoder geocoder;
-
-    @MockBean
-    FileValidator fileValidator;
-
-    @MockBean
-    AuthenticationRepository userGetter;
-
-    @Autowired
-    ObjectMapper om;
-
     Long groupId = 1L;
 
     @BeforeEach
@@ -95,7 +52,7 @@ class WebClientControllerTest {
         int successSize = successList.size();
         when(parsingService.parseClientFile(any())).thenReturn(successList);
         when(geocoder.convertToCoordinatesAsync(successList)).thenReturn(Mono.empty());
-        when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(authenticationRepository.getAuthority()).thenReturn(List.of(Authority.FREE));
         /*
             doAnswer(invocation -> {
                 List<ClientExcelData> data = invocation.getArgument(0);
@@ -128,7 +85,7 @@ class WebClientControllerTest {
         failList.add(createInvalidClientExcelData(failIdx1));
         failList.add(createInvalidClientExcelData(failIdx2));
         when(parsingService.parseClientFile(any())).thenReturn(failList);
-        when(userGetter.getAuthority()).thenReturn(List.of(Authority.FREE));
+        when(authenticationRepository.getAuthority()).thenReturn(List.of(Authority.FREE));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.multipart(testUrl)
                 .file("excelFile", mockFile.getBytes())
@@ -140,7 +97,7 @@ class WebClientControllerTest {
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(result -> {
                     byte[] response = result.getResponse().getContentAsByteArray();
-                    InvalidExcelDataResponse responseInfo = om.readValue(response, InvalidExcelDataResponse.class);
+                    InvalidExcelDataResponse responseInfo = mapper.readValue(response, InvalidExcelDataResponse.class);
 
                     assertThat(responseInfo.getTotalSize()).isEqualTo(failList.size());
                     assertThat(responseInfo.getFailRowIdx()).containsExactly(failIdx1, failIdx2);
