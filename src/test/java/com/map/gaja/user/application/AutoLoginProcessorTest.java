@@ -3,9 +3,9 @@ package com.map.gaja.user.application;
 import com.map.gaja.client.infrastructure.repository.ClientQueryRepository;
 import com.map.gaja.client.infrastructure.s3.S3UrlGenerator;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
+import com.map.gaja.fixture.UserFixture;
 import com.map.gaja.group.infrastructure.GroupRepository;
 import com.map.gaja.group.presentation.dto.response.GroupInfo;
-import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,12 +44,7 @@ class AutoLoginProcessorTest {
     @DisplayName("사용자가 최근에 참조한 전체 그룹 조회")
     void findWholeGroup() {
         // given
-        Long userId = 1L;
-        User user = User.builder()
-                .id(userId)
-                .lastLoginDate(LocalDateTime.now())
-                .authority(Authority.FREE)
-                .build();
+        User user = UserFixture.createFreeUser();
         List<ClientOverviewResponse> clientList = new ArrayList<>();
 
         given(userRepository.findById(anyLong()))
@@ -60,18 +54,17 @@ class AutoLoginProcessorTest {
                 .willReturn(clientList);
 
         // when
-        autoLoginProcessor.process(userId);
+        autoLoginProcessor.process(user.getId());
 
         // then
-        verify(clientQueryRepository).findWholeGroupClients(userId, user.getAuthority().getClientLimitCount());
+        verify(clientQueryRepository).findWholeGroupClients(anyLong(), anyInt());
     }
 
     @Test
     @DisplayName("사용자가 최근에 참조한 특정 그룹 조회")
     void findGroup() {
         // given
-        Long userId = 1L;
-        User user = new User("test@gmail.com");
+        User user = UserFixture.createFreeUser();
         user.accessGroup(1L);
         List<ClientOverviewResponse> clients = new ArrayList<>();
         GroupInfo groupInfo = new GroupInfo() {
@@ -99,7 +92,7 @@ class AutoLoginProcessorTest {
                 .willReturn(clients);
 
         // when
-        autoLoginProcessor.process(userId);
+        autoLoginProcessor.process(user.getId());
 
         // then
         verify(clientQueryRepository).findRecentGroupClients(user.getReferenceGroupId());

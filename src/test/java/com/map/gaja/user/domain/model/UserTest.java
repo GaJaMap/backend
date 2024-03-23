@@ -1,5 +1,6 @@
 package com.map.gaja.user.domain.model;
 
+import com.map.gaja.fixture.UserFixture;
 import com.map.gaja.global.event.Events;
 import com.map.gaja.user.event.AutoLoginSucceededEvent;
 import org.junit.jupiter.api.DisplayName;
@@ -28,10 +29,7 @@ class UserTest {
     void updateLastLoginDateSuccess() {
         // given
         LocalDateTime beforeDate = LocalDateTime.now().minus(2, ChronoUnit.DAYS);
-        User user = User.builder()
-                .id(1L)
-                .lastLoginDate(beforeDate)
-                .build();
+        User user = UserFixture.createUserWithCustomLastLogin(beforeDate);
 
         // when
         user.updateLastLoginDateIfDifferent(LocalDateTime.now());
@@ -45,9 +43,7 @@ class UserTest {
     void updateLastLoginDateFail() {
         // given
         LocalDateTime currentDate = LocalDateTime.now();
-        User user = User.builder()
-                .lastLoginDate(currentDate)
-                .build();
+        User user = UserFixture.createUserWithCustomLastLogin(currentDate);
 
         // when
         user.updateLastLoginDateIfDifferent(currentDate);
