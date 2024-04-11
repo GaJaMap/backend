@@ -48,6 +48,7 @@ public class Client extends BaseTimeEntity {
             String name, String phoneNumber,
             Group group, User user
     ) {
+        // TODO: 생성자 경량화 후 필드 연결을 따로 빼고 Group 연결시에 GroupAdded 이벤트 발생시킬 것
         validateRequiredFields(name, group, user);
 
         Client client = new Client();
@@ -55,8 +56,6 @@ public class Client extends BaseTimeEntity {
         client.phoneNumber = phoneNumber;
         client.group = group;
         client.user = user;
-
-        Events.raise(new GroupClientAddedEvent(group.getId(), user));
         return client;
     }
 
@@ -68,6 +67,7 @@ public class Client extends BaseTimeEntity {
     ) {
         Client client = create(name, phoneNumber, group, user);
         client.updateLocation(location, address);
+        Events.raise(new GroupClientAddedEvent(group.getId(), user));
         return client;
     }
 
@@ -80,6 +80,7 @@ public class Client extends BaseTimeEntity {
     ) {
         Client client = createWithoutImage(name, phoneNumber, address, location, group, user);
         client.clientImage = clientImage;
+        Events.raise(new GroupClientAddedEvent(group.getId(), user));
         return client;
     }
 
@@ -111,7 +112,7 @@ public class Client extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    private void updateLocation(ClientLocation location, ClientAddress address) {
+    public void updateLocation(ClientLocation location, ClientAddress address) {
         this.location = location;
         this.address = address;
     }
