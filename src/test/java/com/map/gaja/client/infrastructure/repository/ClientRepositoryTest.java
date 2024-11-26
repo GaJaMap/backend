@@ -2,6 +2,7 @@ package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.TestEntityCreator;
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.common.RepositoryTest;
 import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.User;
@@ -18,9 +19,7 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
-class ClientRepositoryTest {
+class ClientRepositoryTest extends RepositoryTest {
     @Autowired
     ClientRepository clientRepository;
 

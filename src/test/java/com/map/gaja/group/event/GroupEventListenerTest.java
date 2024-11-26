@@ -1,5 +1,6 @@
 package com.map.gaja.group.event;
 
+import com.map.gaja.common.EventTest;
 import com.map.gaja.user.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,14 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
 @Transactional
-class GroupEventListenerTest {
-    @Autowired
-    ApplicationEventPublisher publisher;
+class GroupEventListenerTest extends EventTest {
 
-    @MockBean
-    GroupEventListener groupEventListener;
+
 
     @Test
     @DisplayName("그룹이 생성되면 이벤트 리스너가 실행된다.")

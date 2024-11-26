@@ -1,39 +1,23 @@
 package com.map.gaja.memo.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.global.authentication.AuthenticationRepository;
+import com.map.gaja.common.ControllerTest;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.memo.application.MemoService;
 import com.map.gaja.memo.presentation.dto.request.MemoCreateRequest;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = MemoController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-class MemoControllerTest {
-    @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    MemoService memoService;
-
-    @MockBean
-    AuthenticationRepository authenticationRepository;
-
+class MemoControllerTest extends ControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 

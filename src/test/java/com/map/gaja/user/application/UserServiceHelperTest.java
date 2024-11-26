@@ -1,5 +1,6 @@
 package com.map.gaja.user.application;
 
+import com.map.gaja.fixture.UserFixture;
 import com.map.gaja.user.domain.model.User;
 import com.map.gaja.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -22,26 +23,27 @@ class UserServiceHelperTest {
     @Test
     @DisplayName("회원 탈퇴한 유저가 로그인할 경우")
     void withdrawalUserLogin() {
-        String email = "test@gmail.com";
-        User user = User.builder()
-                .email(email)
-                .active(false)
-                .build();
+        // given
+        User user = UserFixture.createWithdrawnUser();
+        when(userRepository.findByEmail(user.getEmail()))
+                .thenReturn(user);
 
-        when(userRepository.findByEmail(email)).thenReturn(user);
-
-        assertThatThrownBy(()->userServiceHelper.loginByEmail(userRepository, email, "APP"));
+        // when, then
+        assertThatThrownBy(() -> userServiceHelper.loginByEmail(userRepository, user.getEmail(), "APP"));
 
     }
 
     @Test
     @DisplayName("신규 유저가 로그인할 경우")
     void newUserLogin() {
+        // given
         String email = "test@gmail.com";
-
         when(userRepository.findByEmail(email)).thenReturn(null);
+
+        // when
         UserServiceHelper.loginByEmail(userRepository, email, "APP");
 
+        // then
         verify(userRepository, times(1)).save(any());
     }
 

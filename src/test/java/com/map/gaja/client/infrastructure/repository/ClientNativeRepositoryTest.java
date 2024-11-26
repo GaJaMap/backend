@@ -1,6 +1,7 @@
 package com.map.gaja.client.infrastructure.repository;
 
 import com.map.gaja.client.domain.model.Client;
+import com.map.gaja.common.NativeRepositoryTest;
 import com.map.gaja.global.event.Events;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.Authority;
@@ -10,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
@@ -20,9 +19,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Transactional
-class ClientNativeRepositoryTest {
+class ClientNativeRepositoryTest extends NativeRepositoryTest {
     @Autowired
     ClientRepository clientRepository;
 

@@ -1,29 +1,17 @@
 package com.map.gaja.client.presentation.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.*;
-import com.map.gaja.client.domain.exception.InvalidFileException;
-import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleClientBulkRequest;
 import com.map.gaja.client.presentation.dto.request.simple.SimpleNewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.map.gaja.global.authentication.AuthenticationRepository;
+import com.map.gaja.common.ControllerTest;
 import com.map.gaja.global.authentication.PrincipalDetails;
-import com.map.gaja.group.application.GroupAccessVerifyService;
 import com.map.gaja.group.domain.exception.GroupNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -35,33 +23,9 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(ClientSavingController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-public class ClientSavingControllerTest {
-    @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    ClientBulkService clientBulkService;
-    @MockBean
-    GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    ClientRequestValidator clientRequestValidator;
-    @MockBean
-    AuthenticationRepository authenticationRepository;
-    @MockBean
-    ClientSavingService clientSavingService;
-
-    private ObjectMapper om;
-
+public class ClientSavingControllerTest extends ControllerTest {
     static Long groupId = 1L;
-    static Long clientId = 1L;
 
-
-    @BeforeEach
-    void beforeEach() {
-        om = new ObjectMapper();
-    }
 
     @Test
     @DisplayName("이미지 없이 고객 등록")
@@ -117,7 +81,7 @@ public class ClientSavingControllerTest {
         );
 
         SimpleClientBulkRequest request = new SimpleClientBulkRequest(groupId, clientsRequest);
-        String jsonBody = om.writeValueAsString(request);
+        String jsonBody = mapper.writeValueAsString(request);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(testUrl, groupId)
                 .with(csrf())

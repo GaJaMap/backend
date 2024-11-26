@@ -1,23 +1,13 @@
 package com.map.gaja.client.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.gaja.client.application.*;
 import com.map.gaja.client.domain.exception.ClientNotFoundException;
-import com.map.gaja.client.domain.exception.InvalidFileException;
-import com.map.gaja.client.infrastructure.s3.S3FileService;
-import com.map.gaja.client.application.validator.ClientRequestValidator;
 import com.map.gaja.client.presentation.dto.request.NewClientRequest;
 import com.map.gaja.client.presentation.dto.response.ClientOverviewResponse;
 import com.map.gaja.client.presentation.dto.subdto.StoredFileDto;
-import com.map.gaja.global.authentication.AuthenticationRepository;
-import com.map.gaja.group.application.GroupAccessVerifyService;
+import com.map.gaja.common.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -25,25 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest(ClientUpdatingController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-public class ClientUpdatingControllerTest {
-    @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    ClientUpdatingService clientUpdatingService;
-    @MockBean
-    ClientAccessVerifyService clientAccessVerifyService;
-    @MockBean
-    GroupAccessVerifyService groupAccessVerifyService;
-    @MockBean
-    ClientRequestValidator clientRequestValidator;
-    @MockBean
-    AuthenticationRepository authenticationRepository;
-
-
-
+public class ClientUpdatingControllerTest extends ControllerTest {
     final String testUri = "/api/group/{groupId}/clients/{clientId}";
 
 

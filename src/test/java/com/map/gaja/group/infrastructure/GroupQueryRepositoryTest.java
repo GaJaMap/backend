@@ -1,5 +1,6 @@
 package com.map.gaja.group.infrastructure;
 
+import com.map.gaja.common.RepositoryTest;
 import com.map.gaja.group.domain.model.Group;
 import com.map.gaja.user.domain.model.Authority;
 import com.map.gaja.user.domain.model.User;
@@ -7,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
@@ -16,10 +15,8 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-@Transactional
-class GroupQueryRepositoryTest {
 
+class GroupQueryRepositoryTest extends RepositoryTest{
     @Autowired
     GroupQueryRepository groupQueryRepository;
 
